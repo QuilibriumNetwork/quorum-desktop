@@ -305,6 +305,14 @@ msgstr "1 răspuns"
 msgid "4-Character Code"
 msgstr "Cod de 4 caractere"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:117
+msgid ""
+"A passkey keeps your account key in your device's hardware, unlocked by your"
+" fingerprint, face or PIN."
+msgstr ""
+"Un passkey îți păstrează cheia contului în hardware-ul dispozitivului tău, "
+"deblocată prin amprenta, fața sau PIN-ul tău."
+
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:80
 msgid ""
 "A passkey uses your device's security features (Face ID, fingerprint, or "
@@ -344,7 +352,7 @@ msgstr "Contul"
 msgid "Account address"
 msgstr "Adresă de cont"
 
-#: src/components/modals/UserSettingsModal/General.tsx:185
+#: src/components/modals/UserSettingsModal/General.tsx:194
 #: src/components/onboarding/steps/DisplayNameStep.tsx:38
 msgid "Account Address"
 msgstr "Adresă de cont"
@@ -372,6 +380,10 @@ msgstr "Adaugă un prieten"
 #: src/components/user/UserProfile.tsx:449
 msgid "Add a note"
 msgstr "Adaugă o notă"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:107
+msgid "Add a passkey"
+msgstr "Adaugă un passkey"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:126
 #: src/components/user/UserProfile.tsx:425
@@ -667,7 +679,7 @@ msgstr "Backup eșuat"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:108
 #: src/components/modals/SpaceSettingsModal/Account.tsx:269
-#: src/components/modals/UserSettingsModal/General.tsx:147
+#: src/components/modals/UserSettingsModal/General.tsx:156
 msgid "Bio"
 msgstr "Bio"
 
@@ -992,7 +1004,7 @@ msgstr "Copiază un link"
 #: src/components/direct/DirectMessage.tsx:1135
 #: src/components/direct/DirectMessage.tsx:1155
 #: src/components/direct/DMUserProfileSidebar.tsx:92
-#: src/components/modals/UserSettingsModal/General.tsx:195
+#: src/components/modals/UserSettingsModal/General.tsx:204
 #: src/components/user/UserProfile.tsx:284
 #: src/components/user/UserProfile.tsx:324
 msgid "Copy address"
@@ -1131,6 +1143,10 @@ msgstr "Creează roluri în Setările Spațiului mai întâi."
 msgid "Create Space"
 msgstr "Creează Spațiu"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:134
+msgid "Create the passkey when asked."
+msgstr "Creează passkey-ul când ți se cere."
+
 #: src/components/modals/CreateSpaceModal.tsx:280
 msgid "Creating Space..."
 msgstr "Creează Spațiu..."
@@ -1151,6 +1167,10 @@ msgstr "Pericol"
 #: src/components/modals/UserSettingsModal/Navigation.tsx:24
 msgid "Danger Zone"
 msgstr "Zonă periculoasă"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:148
+msgid "Danger Zone: reset the app."
+msgstr "Zonă de pericol: resetează aplicația."
 
 #: src/components/ui/ThemeRadioGroup.tsx:23
 #: src/components/ui/ThemeRadioGroup.tsx:25
@@ -1285,8 +1305,8 @@ msgstr "Șterge Space"
 #: src/components/modals/SpaceSettingsModal/General.tsx:141
 #: src/components/modals/SpaceSettingsModal/General.tsx:216
 #: src/components/modals/SpaceSettingsModal/General.tsx:224
-#: src/components/modals/UserSettingsModal/General.tsx:99
-#: src/components/modals/UserSettingsModal/General.tsx:107
+#: src/components/modals/UserSettingsModal/General.tsx:100
+#: src/components/modals/UserSettingsModal/General.tsx:108
 msgid "Delete this image"
 msgstr "Șterge această imagine"
 
@@ -1403,14 +1423,14 @@ msgstr "Mesaje directe"
 msgid "Discover Spaces"
 msgstr "Descoperă Spații"
 
-#: src/components/modals/UserSettingsModal/General.tsx:212
+#: src/components/modals/UserSettingsModal/General.tsx:221
 msgid ""
 "Display a tag from one of your Spaces next to your username in messages."
 msgstr ""
 "Afișează un tag dintr-unul dintre Spațiile tale lângă numele de utilizator "
 "în mesaje."
 
-#: src/components/modals/UserSettingsModal/General.tsx:128
+#: src/components/modals/UserSettingsModal/General.tsx:129
 msgid "Display name"
 msgstr "Nume de afișare"
 
@@ -2077,6 +2097,10 @@ msgstr "Ascunde Canalele Închise"
 msgid "Hide muted channels from sidebar"
 msgstr "Ascunde canalele mute din bara laterală"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:87
+msgid "How to add a passkey"
+msgstr "Cum să adaugi un passkey"
+
 #: src/services/InvitationService.ts:232
 msgid "Hub key not found for this Space."
 msgstr "Cheia hub-ului nu a fost găsită pentru acest Spațiu."
@@ -2186,6 +2210,14 @@ msgstr "Invitații"
 msgid "is typing"
 msgstr "scrie"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:143
+msgid ""
+"It can only be created while an account is being set up, so adding one means"
+" setting this account up again from your key file."
+msgstr ""
+"Poate fi creat doar în timpul configurării unui cont, așa că adăugarea unuia"
+" înseamnă reconfigurarea acestui cont din fișierul tău cheie."
+
 #: src/components/modals/UserSettingsModal/Help.tsx:92
 msgid "Italic"
 msgstr "Italic"
@@ -2246,6 +2278,14 @@ msgid ""
 msgstr ""
 "Păstrează fișierul descărcat în siguranță și privat! Oricine cu acest fișier"
 " poate accesa contul tău."
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:159
+msgid ""
+"Keep the key file somewhere safe until you are through: after the reset it "
+"is the only way back into your account."
+msgstr ""
+"Păstrează fișierul cheie într-un loc sigur până termini: după resetare, este"
+" singura modalitate de a-ți accesa din nou contul."
 
 #: src/components/onboarding/steps/SecurityWarningStep.tsx:16
 msgid "Keep your Key Safe!"
@@ -2710,6 +2750,15 @@ msgstr "Nu s-au găsit Spații lipsă"
 msgid "No muted conversations"
 msgstr "Nicio conversație pe silențios"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:75
+msgid ""
+"No passkey on this account. Your account key is stored on this device, so "
+"anyone who can read its files could take over your account."
+msgstr ""
+"Niciun passkey pe acest cont. Cheia contului tău este stocată pe acest "
+"dispozitiv, așa că oricine poate citi fișierele sale ar putea prelua "
+"controlul contului tău."
+
 #: src/components/message/PinnedMessagesPanel.tsx:195
 msgid "No pinned messages yet"
 msgstr "Nu sunt încă mesaje fixate"
@@ -2756,7 +2805,7 @@ msgstr "Niciun utilizator găsit pentru @{usernameQuery}."
 msgid "No users found!"
 msgstr "Niciun utilizator găsit!"
 
-#: src/components/modals/UserSettingsModal/General.tsx:219
+#: src/components/modals/UserSettingsModal/General.tsx:228
 #: src/components/space/RolePreview.tsx:39
 msgid "None"
 msgstr "Niciunul"
@@ -2859,6 +2908,10 @@ msgstr "Deschideți {0}"
 #: src/components/wallet/WalletPage.tsx:19
 msgid "Open navigation"
 msgstr "Deschideți navigația"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:133
+msgid "Open Quorum in your browser and import that file."
+msgstr "Deschide Quorum în browserul tău și importă acel fișier."
 
 #: src/components/shell/NavRail.tsx:278 src/components/shell/NavRail.tsx:293
 msgid "Open user settings"
@@ -3007,7 +3060,7 @@ msgstr "Se pregătește descărcarea..."
 msgid "Preview"
 msgstr "Previzualizare"
 
-#: src/components/modals/UserSettingsModal/General.tsx:239
+#: src/components/modals/UserSettingsModal/General.tsx:248
 msgid "Preview:"
 msgstr "Previzualizare:"
 
@@ -3071,6 +3124,15 @@ msgstr "Profil public"
 #: src/components/shell/NavRail.tsx:48
 msgid "Public spaces"
 msgstr "Spatii publice"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:129
+msgid ""
+"Quorum for desktop cannot use passkeys. To protect your account key with "
+"one, set your account up in a web browser using your key file."
+msgstr ""
+"Quorum pentru desktop nu poate folosi passkey-uri. Pentru a-ți proteja cheia"
+" contului cu unul, configurează-ți contul într-un browser web folosind "
+"fișierul tău cheie."
 
 #: src/components/Maintenance.tsx:29
 msgid ""
@@ -3447,6 +3509,15 @@ msgstr "Căutare..."
 msgid "Security"
 msgstr "Securitate"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:132
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:146
+msgid "Security tab > Account Key: choose Download file."
+msgstr "Fila Securitate > Cheie cont: alege Descarcă fișier."
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:147
+msgid "Security tab > Data Backup: export a backup."
+msgstr "Fila Securitate > Backup date: exportă o copie de rezervă."
+
 #: src/components/bookmarks/BookmarksPanel.tsx:196
 msgid "See all bookmarks"
 msgstr "Vezi toate marcatoarele"
@@ -3517,6 +3588,12 @@ msgstr "Sesiune criptată"
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:720
 msgid "Set as default channel"
 msgstr "Setează ca canal implicit"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:149
+msgid "Set up again, import your key file, and create the passkey when asked."
+msgstr ""
+"Configurează din nou, importă fișierul tău cheie și creează passkey-ul când "
+"ți se cere."
 
 #: src/components/shell/NavRail.tsx:304
 msgid "Settings"
@@ -3673,7 +3750,7 @@ msgstr "Setări Spațiu"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:40
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:53
-#: src/components/modals/UserSettingsModal/General.tsx:209
+#: src/components/modals/UserSettingsModal/General.tsx:218
 msgid "Space Tag"
 msgstr "Tag Spațiu"
 
@@ -3756,7 +3833,7 @@ msgstr "Atinge pentru a copia"
 msgid "Tell people about yourself in this Space..."
 msgstr "Spune oamenilor despre tine în acest Spațiu..."
 
-#: src/components/modals/UserSettingsModal/General.tsx:159
+#: src/components/modals/UserSettingsModal/General.tsx:168
 msgid "Tell us about yourself..."
 msgstr "Spune-ne despre tine..."
 
@@ -3806,7 +3883,7 @@ msgstr ""
 " chei de Spațiu, deci Spațiile nu au putut fi restaurate. Exportează o copie"
 " de rezervă nouă pentru a le proteja."
 
-#: src/components/modals/UserSettingsModal/General.tsx:151
+#: src/components/modals/UserSettingsModal/General.tsx:160
 msgid "This bio will be visible to others when they view your profile."
 msgstr ""
 "Această biografie va fi vizibilă pentru alții când vor vizualiza profilul "
@@ -3876,7 +3953,7 @@ msgstr ""
 "Acesta este canalul implicit pentru Spațiu. Pentru a-l modifica, accesează "
 "Setările Spațiului → General."
 
-#: src/components/modals/UserSettingsModal/General.tsx:187
+#: src/components/modals/UserSettingsModal/General.tsx:196
 msgid ""
 "This is your public address and is safe to share with anyone you want to "
 "interact with."
@@ -4296,7 +4373,7 @@ msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr ""
 "Încarcă un avatar pentru acest Spațiu - PNG sau JPG - Raport optim 1:1"
 
-#: src/components/modals/UserSettingsModal/General.tsx:117
+#: src/components/modals/UserSettingsModal/General.tsx:118
 msgid "Upload an avatar for your profile - PNG or JPG - Optimal ratio 1:1"
 msgstr ""
 "Încarcă un avatar pentru profilul tău - PNG sau JPG - Raport optim 1:1"
@@ -4648,6 +4725,14 @@ msgstr "Ai fost dezactivat în acest Spațiu"
 msgid "You have new unread messages"
 msgstr "Ai mesaje noi necitite"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:137
+msgid ""
+"You keep the same account and address, and this desktop app carries on "
+"working."
+msgstr ""
+"Păstrezi același cont și adresă, iar această aplicație desktop continuă să "
+"funcționeze."
+
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:56
 msgid ""
 "You must assign yourself a role for moderation actions (except kicking). "
@@ -4823,7 +4908,7 @@ msgstr ""
 "Dimensiunea imaginii tale de profil trebuie să fie de {maxSize} sau mai "
 "puțin și trebuie să fie un fișier cu extensia PNG, JPG sau JPEG."
 
-#: src/components/modals/UserSettingsModal/General.tsx:138
+#: src/components/modals/UserSettingsModal/General.tsx:139
 msgid "Your QNS name <0>{primaryUsername}.q</0> is shown as your name."
 msgstr "Numele tău QNS <0>{primaryUsername}.q</0> este afișat ca nume."
 
@@ -4842,10 +4927,6 @@ msgstr "Video YouTube"
 #: src/components/ui/YouTubeFacade.tsx:114
 msgid "YouTube Video Thumbnail"
 msgstr "Miniatură video YouTube"
-
-#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-#~ msgstr ""
-#~ "Bun venit la Quorum, {name}! Contul tău este securizat și gata de utilizare."
 
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} marcator aici"
@@ -4977,6 +5058,10 @@ msgstr "Miniatură video YouTube"
 
 #~ msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
 #~ msgstr "Încarcă un banner pentru Spațiul tău - PNG sau JPG - Raport optim 3:1"
+
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr ""
+#~ "Bun venit la Quorum, {name}! Contul tău este securizat și gata de utilizare."
 
 #~ msgid "Yesterday at {timeFormatted}"
 #~ msgstr "Ieri la {timeFormatted}"
