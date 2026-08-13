@@ -27,7 +27,23 @@ export default defineConfig({
     // is the only build whose behaviour is worth asserting; this config runs the
     // development build, where they self-detect and fail on purpose. Run them
     // with `yarn test:security`.
-    exclude: ['node_modules', 'dist', 'src/dev/tests/harness/**', 'src/dev/tests/security/**'],
+    // `perf/**` belongs to vitest.perf.config.ts and MUST NOT run here. Those are
+    // load-generating benchmarks, and extra CPU contention raises the failure rate
+    // of the suite's timing-sensitive tests.
+    // Measured 2026-08-13, and stated carefully because the two effects are easy to
+    // conflate: `websocketInboundPickup` and `fetchSpaceReplies` are ALREADY
+    // intermittently load-sensitive — the suite failed once in 8 runs with no bench
+    // present at all. Adding one bench file took that to 3 failures in 6 runs. So
+    // the benches do not create the flakiness, they amplify it; both are worth
+    // fixing, and keeping them apart stops a benchmark from being blamed for a
+    // pre-existing flake (or vice versa). Run them with `yarn bench`.
+    exclude: [
+      'node_modules',
+      'dist',
+      'src/dev/tests/harness/**',
+      'src/dev/tests/security/**',
+      'src/dev/tests/perf/**',
+    ],
     server: {
       deps: {
         inline: [
