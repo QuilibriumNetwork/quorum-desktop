@@ -9,20 +9,20 @@ This is the main index for all documentation, bug reports, and task management.
 - [Config Sync System](docs/config-sync-system.md)
 - [Cryptographic Architecture](docs/cryptographic-architecture.md)
 - [Device Naming](docs/device-naming.md)
-- [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
 - [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
 
 ### .Archived
+- [Android Build Workflow](docs/.archived/android-build-workflow.md)
 - [Cross-Platform Repository Implementation](docs/.archived/cross-platform-repository-implementation.md)
+- [Expo Dev Testing Guide](docs/.archived/expo-dev-testing-guide.md)
 
 ### Debugging
 - [DM Architecture and Debug Playbook](docs/debugging/dm-architecture-and-debug-playbook.md)
 
 ### Development
-- [Android Build Workflow](docs/development/android-build-workflow.md)
 - [Dependency Upgrade Guide](docs/development/dependency-upgrade-guide.md)
 - [Git worktrees and linked dependencies](docs/development/git-worktrees-and-linked-dependencies.md)
 
@@ -115,6 +115,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
 - 📋 [Name resolution: an API that cannot express a partial identity](issues/2026-08-10-identity-resolution-architecture-design.md)
 - 📋 [Identity Resolution Implementation Plan](issues/2026-08-10-identity-resolution-architecture-plan.md)
+- 📋 [Remove the single-repo cross-platform leftovers](issues/2026-08-13-remove-single-repo-cross-platform-leftovers.md)
 
 #### Messagedb
 
@@ -338,7 +339,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Dependabot's 78 alerts, triaged against what actually ships](issues/.open/2026-08-12-dependabot-78-alerts-triage-react-router-bump.md)
 - 📋 [Pre-existing key-handling items for the lead](issues/.open/2026-08-12-pre-existing-key-handling-items-for-the-lead.md)
 - 📋 [Unshipped security branches (local, not pushed)](issues/.open/2026-08-12-unshipped-security-branches.md)
-- 📋 [Rebuild the sync indicator on a per-space "behind by N" signal](issues/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md)
 
 ### Deferred
 
@@ -787,4 +787,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-13 12:35:41
+**Last Updated**: 2026-08-13 13:48:27

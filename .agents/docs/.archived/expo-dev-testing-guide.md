@@ -8,7 +8,7 @@ updated: 2025-09-03T00:00:00.000Z
 
 # Expo Dev Testing Guide
 
-> **⚠️ Deprecated — describes the in-repo `mobile/` test playground (single-repo era).** The `yarn mobile:*` scripts and the `quorum-desktop/mobile/` folder this guide documents are **leftovers from the abandoned single-repo cross-platform plan**. The real mobile app is the separate **`quorum-mobile`** repo, which has its own Expo dev workflow (`yarn start` / `yarn android` / `yarn ios` there). This guide stays only until the stale `mobile/` playground + `mobile:*` scripts are removed from this repo (tracked as a follow-up code/config cleanup — see [`quorum-shared-architecture.md`](quorum-shared-architecture.md) for the current architecture). **For actual mobile dev, work in `quorum-mobile`, not here.**
+> **🗄️ ARCHIVED 2026-08-13 — everything this guide describes has been deleted.** It documented the in-repo `mobile/` Expo playground and the `yarn mobile:*` scripts, both leftovers from the abandoned plan to build the mobile app inside this repo. That workspace was removed on 2026-08-13 (see [`2026-08-13-remove-single-repo-cross-platform-leftovers.md`](../../issues/2026-08-13-remove-single-repo-cross-platform-leftovers.md)); it had not built for months. **None of the commands below will work.** The real mobile app is the separate **`quorum-mobile`** repo with its own Expo workflow. Current architecture: [`quorum-shared-architecture.md`](../quorum-shared-architecture.md). Kept only as a record of how the playground was wired.
 
 Quick setup guide for testing the **old in-repo** Quorum mobile playground with Expo Dev Client (deprecated — see banner above).
 

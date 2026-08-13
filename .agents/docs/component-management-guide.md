@@ -8,7 +8,7 @@ updated: 2025-08-14T00:00:00.000Z
 
 # Component Management & Development Guide
 
-> **🏛️ Architecture status (2026-06-12 — multi-repo).** `quorum-desktop` builds **web + Electron only**. The mobile app is a **separate repo (`quorum-mobile`)**; shared primitives/types/hooks/sync live in the **`quorum-shared`** npm package. `quorum-desktop`'s `src/components/primitives/` is now just a **local barrel re-exporting from `quorum-shared`** (it is not the source of truth). There is **no `mobile/` workspace and no `yarn mobile` script** in this repo anymore (that was the abandoned single-repo playground). The component-management *principles* below are correct; treat any "builds three apps / mobile in this repo / yarn mobile" wording as historical. Canonical doc: [`quorum-shared-architecture.md`](quorum-shared-architecture.md).
+> **🏛️ Architecture status (verified 2026-08-13 — multi-repo).** `quorum-desktop` builds **web + Electron only**. The mobile app is a **separate repo (`quorum-mobile`)**; shared primitives/types/hooks/sync live in the **`quorum-shared`** npm package. `quorum-desktop`'s `src/components/primitives/` is just a **local barrel re-exporting from `quorum-shared`**, not the source of truth. There is no `mobile/` workspace, no `yarn mobile` script and no `.native.tsx` file anywhere in `src/` — all of that was deleted on 2026-08-13 ([removal issue](../issues/2026-08-13-remove-single-repo-cross-platform-leftovers.md)). The component-management *principles* below are correct; treat any "builds three apps / mobile in this repo / yarn mobile" wording as historical. Canonical doc: [`quorum-shared-architecture.md`](quorum-shared-architecture.md).
 
 **READY FOR OFFICIAL DOCS: _Last review: 2025-08-14 10:45 UTC_**
 

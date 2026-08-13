@@ -1,12 +1,20 @@
 ---
 type: task
 title: "mobile-dev — historical reference (single-repo era)"
-status: in-progress
+status: archived
 priority: low
 created: 2026-06-12
+updated: 2026-08-13
 ---
 
 # mobile-dev — historical cross-platform planning
+
+> **⚠️ Two claims below were checked on 2026-08-13 and did not hold. Verify before acting on this file.**
+>
+> 1. **The Passkey-SDK / WASM blocker is resolved.** `2025-08-08-mobile-sdk-integration-issue.md` is listed below as "still unresolved" and "a live constraint for `quorum-mobile`". It is not. `quorum-mobile` went around the problem entirely: it ships a native Expo module, `modules/quorum-crypto/`, with UniFFI Rust bindings (`libchannel.so` per ABI, `Channel.xcframework`, `QuorumCryptoModule.kt`) and has **no dependency on `@quilibrium/quilibrium-js-sdk-channels`**. Do not copy that doc there; it describes an approach they abandoned.
+> 2. **`2026-01-09-mobile-touch-transition-plan.md` is a `quorum-desktop` doc.** It audits *this* repo's mobile-**browser** touch UX (`MobileDrawer`, `MessageActionsDrawer`, `EmojiPickerDrawer`) and concludes they are kept and correct, because desktop-browser-on-a-phone is a supported case here. Only its closing "Template Usage Strategy" section faces mobile. It belongs in this repo.
+>
+> The `mobile/` workspace and all 30 `.native.tsx` files this folder planned around were deleted on 2026-08-13 — see [`../2026-08-13-remove-single-repo-cross-platform-leftovers.md`](../2026-08-13-remove-single-repo-cross-platform-leftovers.md). This folder is now purely a record of a decision, which is why its status is `archived`.
 
 > **What this folder is.** Planning + reference docs from the **original cross-platform effort** (2025-08 → 2026-01), when the plan was to build the mobile app **inside `quorum-desktop`** as a single cross-platform repo. **That approach was abandoned.** The current architecture is multi-repo:
 > - `quorum-desktop` — web + Electron (this repo)
@@ -25,8 +33,8 @@ These 5 already carry a 2026-04-09 "Architecture Status" banner reconciling them
 
 - [`2026-01-09-components-shared-arch-masterplan.md`](2026-01-09-components-shared-arch-masterplan.md) — the architectural philosophy (3-layer primitives/business/app model). Path examples now mean `quorum-shared`.
 - [`2025-08-01-business-logic-extraction-plan.md`](2025-08-01-business-logic-extraction-plan.md) — Phase 1 (hook extraction) shipped; the "Lessons Learned" hook-extraction patterns are evergreen.
-- [`2025-08-08-mobile-sdk-integration-issue.md`](2025-08-08-mobile-sdk-integration-issue.md) — the Passkey-SDK/WASM-vs-React-Native blocker, **still unresolved**; live constraint for `quorum-mobile`.
-- [`2026-01-09-mobile-touch-transition-plan.md`](2026-01-09-mobile-touch-transition-plan.md) — "Template Usage Strategy" for carrying web touch UX into native; useful for `quorum-mobile` devs.
+- [`2025-08-08-mobile-sdk-integration-issue.md`](2025-08-08-mobile-sdk-integration-issue.md) — the Passkey-SDK/WASM-vs-React-Native blocker. ~~Still unresolved; live constraint for `quorum-mobile`.~~ **Corrected 2026-08-13: resolved.** `quorum-mobile` sidestepped the WASM SDK with a native UniFFI module (`modules/quorum-crypto/`). Historical only.
+- [`2026-01-09-mobile-touch-transition-plan.md`](2026-01-09-mobile-touch-transition-plan.md) — ~~useful for `quorum-mobile` devs.~~ **Corrected 2026-08-13:** this is a `quorum-desktop` doc about this repo's mobile-*browser* touch UX, which is kept and correct. Only its closing "Template Usage Strategy" section faces native.
 - [`docs/component-architecture-workflow-explained.md`](docs/component-architecture-workflow-explained.md) — the only developer-facing explanation of the primitive/business/app model; banner already updated.
 
 ### Archived (`.archived/`) — obsolete approach OR work already shipped
@@ -46,4 +54,4 @@ Plus the 5 pre-existing archives (`mobile-dev-plan.md`, `native-business-compone
 
 > **For new mobile work, don't start here.** Use [`port-to-mobile/candidates.md`](../port-to-mobile/candidates.md) (what to port) and [`mobile-tasks-pending.md`](../quorum-shared-migration/mobile-tasks-pending.md) (a signpost to mobile's live trackers — `STATUS.md` / `RECAP.md` in the mobile repo). This folder is history + a few still-useful reference reads.
 
-*Last updated: 2026-06-12 — folder created/cleaned: archived 8 obsolete-or-shipped docs, kept 5 reference docs, re-homed the i18n plan into current tracking.*
+*Last updated: 2026-08-13*

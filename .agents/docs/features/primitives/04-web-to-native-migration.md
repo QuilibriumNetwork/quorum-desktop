@@ -10,6 +10,9 @@ updated: 2025-10-14T00:00:00.000Z
 
 **[← Back to Primitives INDEX](./INDEX.md)**
 
+> **🏛️ Nothing described here is done in this repo (verified 2026-08-13).** Writing a `.native.tsx` file means working in `quorum-shared` (for a primitive) or `quorum-mobile` (for an app component). `quorum-desktop` has held neither a `.native.tsx` nor a `.web.tsx` since 2026-08-13, when the last of the single-repo cross-platform scaffolding was removed ([removal issue](../../../issues/2026-08-13-remove-single-repo-cross-platform-leftovers.md)).
+>
+> Also note that `quorum-mobile` **does not currently consume the shared UI primitives at all** — it renders through its own `components/ui/` with a local skin system, and the agreed direction is that those components eventually move *into* `quorum-shared` rather than being replaced by what is there now. Check `quorum-mobile/.agents/reports/2026-06-28-shared-primitives-on-mobile-analysis.md` before treating this guide as the plan of record.
 
 Complete guide for converting web components to React Native using our cross-platform primitives.
 

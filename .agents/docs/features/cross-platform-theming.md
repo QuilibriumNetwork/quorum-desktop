@@ -8,6 +8,8 @@ updated: 2025-08-04T00:00:00.000Z
 
 # Cross-Platform Theming System
 
+> **🏛️ Architecture status (2026-08-13 — multi-repo).** The React Native half of what follows does not live in this repo. `quorum-desktop` builds web and Electron only; the native theming code sits in `quorum-shared` (`src/primitives/theme/ThemeProvider.native.tsx`) and `quorum-mobile`, which also has its own skin system this document predates. Read the web sections as current and the React Native sections as describing code you would edit elsewhere. See the [removal issue](../../issues/2026-08-13-remove-single-repo-cross-platform-leftovers.md) and [`quorum-shared-architecture.md`](../quorum-shared-architecture.md).
+
 This document describes our comprehensive cross-platform theming architecture that provides consistent theme switching and color management across web and React Native platforms.
 
 ## Overview
