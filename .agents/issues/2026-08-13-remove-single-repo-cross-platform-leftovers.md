@@ -264,13 +264,32 @@ carrying 7,500 lines of reference across a repo boundary now.
 
 ## Verdict on `.agents/issues/mobile-dev/`
 
-**Already audited — do not re-litigate.** The folder was cleaned on 2026-06-12 and
-its [`README.md`](mobile-dev/README.md) records the reasoning per file: 13 docs
-archived as obsolete-or-shipped, 5 kept as reference. Its own guidance is *"for new
-mobile work, don't start here"*.
+**Resolved 2026-08-13: two files rescued, the folder archived.**
 
-Recommendation: **keep the folder, do not delete it, and do not copy anything out of
-it.** It is documentation of a decision and it costs nothing.
+The first pass here recommended leaving the folder alone on the grounds that it was
+already audited (2026-06-12) and cost nothing. That was wrong on the second point. It
+was contributing **19 entries to `INDEX.md`, every one tagged `📋` as an open task**,
+interleaved with real work. "Costs nothing" ignored the only cost it actually had.
+
+Re-examined per file. The 2026-06-12 audit had itself gone stale, and two of the five
+"kept as reference" files turned out not to be about mobile at all:
+
+| File | Verdict |
+|---|---|
+| `2026-01-09-mobile-touch-transition-plan.md` | **Promoted** → [`docs/mobile-browser-touch-support.md`](../docs/mobile-browser-touch-support.md). Documents live desktop code — `MessageActionsDrawer` (376 refs in `src/`), `EmojiPickerDrawer` (117), `MobileDrawer` (87) — serving phones on the *web app*, nothing to do with React Native. It is the only doc those components have. Archiving it would have buried a live subsystem behind a misleading folder name. |
+| `2025-08-01-business-logic-extraction-plan.md` | **Split.** The plan is finished (every box ticked). Its Lessons-Learned half — extraction patterns, common pitfalls, hook sharing, when *not* to extract — governs `src/hooks/business/`, which the whole app uses, and was promoted to [`docs/business-logic-extraction-patterns.md`](../docs/business-logic-extraction-patterns.md). Its `.native.tsx` platform-split section was dropped as now-misleading. The plan itself is archived. |
+| `2025-08-08-mobile-sdk-integration-issue.md` | **Archived.** Solved in `quorum-mobile` by other means (native UniFFI module, no WASM SDK). |
+| `2026-01-09-components-shared-arch-masterplan.md` | **Archived.** Cross-platform theming and modal-to-drawer-for-native; overlaps [`cross-platform-components-guide.md`](../docs/cross-platform-components-guide.md), which is live and now correctly bannered. |
+| `docs/component-architecture-workflow-explained.md` | **Archived.** The primitives/business/app decision framework it explains is covered by the live [`component-management-guide.md`](../docs/component-management-guide.md). The two nav docs that pointed here (`agents-workflow.md`, `docs/features/primitives/INDEX.md`) were repointed there. |
+
+The folder then moved wholesale to `issues/.archived/mobile-dev/` (18 files). Its
+README now records where the two rescued files went and why nothing was copied out.
+
+**Nothing went to `quorum-mobile`.** All three candidates failed on inspection: the
+SDK blocker is solved there differently, the touch plan is a desktop doc, and the
+architecture explainer describes a model that repo does not use — it renders through
+its own `components/ui/` with a local skin system and consumes zero shared UI
+primitives.
 
 > **Two of the README's own claims did not survive checking (2026-08-13).** It was
 > written 2026-06-12 and the world moved. Verify before acting on it:
@@ -295,7 +314,7 @@ it.** It is documentation of a decision and it costs nothing.
 > local `useTheme()`, skin system, no shared primitives). It would arrive as a
 > description of an architecture they do not use. Leave it.
 
-One small fix while we are here: the README's frontmatter says `status: in-progress`,
+The README's frontmatter `status` is now `archived`, which is what it should have been all along — as `in-progress` it was surfacing in active-work views.
 which is wrong for a historical-reference folder — it should be `archived`. That
 status also makes it surface in active-work views it does not belong in.
 

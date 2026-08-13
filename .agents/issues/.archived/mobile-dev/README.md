@@ -9,12 +9,29 @@ updated: 2026-08-13
 
 # mobile-dev — historical cross-platform planning
 
-> **⚠️ Two claims below were checked on 2026-08-13 and did not hold. Verify before acting on this file.**
+> **🗄️ ARCHIVED 2026-08-13. Nothing in this folder is actionable.** The `mobile/`
+> workspace and all 30 `.native.tsx` files everything here planned around were deleted
+> that day — see [`2026-08-13-remove-single-repo-cross-platform-leftovers.md`](../../2026-08-13-remove-single-repo-cross-platform-leftovers.md).
+> The folder was moved wholesale into `issues/.archived/` because it was contributing
+> 19 entries to `INDEX.md`, every one of them tagged as an open task.
 >
-> 1. **The Passkey-SDK / WASM blocker is resolved.** `2025-08-08-mobile-sdk-integration-issue.md` is listed below as "still unresolved" and "a live constraint for `quorum-mobile`". It is not. `quorum-mobile` went around the problem entirely: it ships a native Expo module, `modules/quorum-crypto/`, with UniFFI Rust bindings (`libchannel.so` per ABI, `Channel.xcframework`, `QuorumCryptoModule.kt`) and has **no dependency on `@quilibrium/quilibrium-js-sdk-channels`**. Do not copy that doc there; it describes an approach they abandoned.
-> 2. **`2026-01-09-mobile-touch-transition-plan.md` is a `quorum-desktop` doc.** It audits *this* repo's mobile-**browser** touch UX (`MobileDrawer`, `MessageActionsDrawer`, `EmojiPickerDrawer`) and concludes they are kept and correct, because desktop-browser-on-a-phone is a supported case here. Only its closing "Template Usage Strategy" section faces mobile. It belongs in this repo.
+> **Two files were rescued first, because they were not really about mobile:**
 >
-> The `mobile/` workspace and all 30 `.native.tsx` files this folder planned around were deleted on 2026-08-13 — see [`../2026-08-13-remove-single-repo-cross-platform-leftovers.md`](../2026-08-13-remove-single-repo-cross-platform-leftovers.md). This folder is now purely a record of a decision, which is why its status is `archived`.
+> | Was | Now | Why |
+> |---|---|---|
+> | `2026-01-09-mobile-touch-transition-plan.md` | [`docs/mobile-browser-touch-support.md`](../../../docs/mobile-browser-touch-support.md) | Documents **live desktop code**: `MessageActionsDrawer` (376 refs), `EmojiPickerDrawer` (117), `MobileDrawer` (87). It is about phones using the *web app*, not React Native, and it is the only doc those components have. Archiving it would have buried a live subsystem. |
+> | Lessons-Learned half of `2025-08-01-business-logic-extraction-plan.md` | [`docs/business-logic-extraction-patterns.md`](../../../docs/business-logic-extraction-patterns.md) | Describes how `src/hooks/business/` works — extraction patterns, common pitfalls, when *not* to extract. Still governs a layer used across the whole app. Its one obsolete section (`.native.tsx` platform splits) was dropped. |
+>
+> **Two claims made below did not survive checking on 2026-08-13:**
+>
+> 1. **The Passkey-SDK / WASM blocker is resolved.** `2025-08-08-mobile-sdk-integration-issue.md` is described below as "still unresolved" and "a live constraint for `quorum-mobile`". It is not. `quorum-mobile` went around it entirely with a native Expo module, `modules/quorum-crypto/`, using UniFFI Rust bindings (`libchannel.so` per ABI, `Channel.xcframework`, `QuorumCryptoModule.kt`), and has **no dependency on `@quilibrium/quilibrium-js-sdk-channels`**.
+> 2. **The touch-transition plan was not a mobile doc**, as the table above explains.
+>
+> **Nothing was copied to `quorum-mobile`.** All three candidates failed the check: the
+> SDK issue is solved there by other means, the touch plan is a desktop doc, and
+> `component-architecture-workflow-explained.md` describes a primitives/business/app
+> model that `quorum-mobile` does not use — it renders through its own
+> `components/ui/` with a local skin system and consumes zero shared UI primitives.
 
 > **What this folder is.** Planning + reference docs from the **original cross-platform effort** (2025-08 → 2026-01), when the plan was to build the mobile app **inside `quorum-desktop`** as a single cross-platform repo. **That approach was abandoned.** The current architecture is multi-repo:
 > - `quorum-desktop` — web + Electron (this repo)
