@@ -28,6 +28,22 @@ import type { Space } from '@quilibrium/quorum-shared';
  * This drives the REAL hook via renderHook. It deliberately does NOT
  * re-implement the loop: a copy would measure the copy and would keep passing
  * if the real hook changed.
+ *
+ * TWO KNOWN LIMITS OF THIS INSTRUMENT — found in review, read before trusting
+ * the numbers as a cost model:
+ *
+ *  1. It measures the MENTION half only. `useSpaceReplyCounts` is a structural
+ *     twin and `invalidateNotificationQueries()` invalidates both space-level
+ *     keys, so a real toggle costs roughly DOUBLE what this reports.
+ *  2. It treats the three reads as equal cost. They are not: getConversation is
+ *     an O(1) store.get and getThreadReadTimesForChannel is a small bounded
+ *     index.getAll, but getUnreadMentions (db/messages.ts:2876) is a CURSOR that
+ *     only stops early once it has `limit` MATCHES — so with no unread mentions
+ *     it walks every message since lastReadTimestamp (the whole channel history
+ *     when that is 0). True cost is O(messages scanned), not O(channels).
+ *
+ * So these counts are a lower bound on the SHAPE of the problem, not a
+ * prediction of milliseconds. Converting them to time needs a browser profile.
  */
 
 const USER = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
