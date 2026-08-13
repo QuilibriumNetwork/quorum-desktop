@@ -1,0 +1,385 @@
+---
+type: task
+title: Remove the single-repo cross-platform leftovers from quorum-desktop
+status: in-progress
+priority: medium
+created: 2026-08-13
+updated: 2026-08-13
+---
+
+# Remove the single-repo cross-platform leftovers
+
+## Context
+
+Until early 2026 the plan was to build the mobile app **inside `quorum-desktop`**, as
+one cross-platform repo: an in-repo Expo playground (`mobile/`), `.native.tsx`
+siblings next to every `.web.tsx`, React Native type shims, platform-detection
+utilities, and a component audit tracking which components had been "ported to
+native" yet.
+
+**That approach was abandoned.** The architecture is now multi-repo:
+
+| Repo | Builds |
+|------|--------|
+| `quorum-desktop` (this one) | web + Electron, nothing else |
+| `quorum-mobile` | React Native + Expo, its own `android/`, `eas.json`, `app/` |
+| `quorum-shared` | npm package: types, hooks, sync protocol, UI primitives |
+
+The docs were reconciled with that reality in June 2026, but **the code and build
+config never were**. Several docs even carry a banner promising this cleanup:
+
+> *"This guide stays only until the stale `mobile/` playground + `mobile:*` scripts
+> are removed from this repo (tracked as a follow-up code/config cleanup)."*
+> — [`docs/expo-dev-testing-guide.md`](../docs/expo-dev-testing-guide.md)
+
+It was never actually filed. This issue is that follow-up.
+
+`quorum-shared` is **not** in scope — it is a live dependency
+(`"@quilibrium/quorum-shared": "link:../quorum-shared"`) and the primitives it
+exports are genuinely cross-platform. Only the *in-repo mobile app* scaffolding goes.
+
+---
+
+## Evidence that this is all dead
+
+- **Nothing resolves a `.native` file.** Every folder barrel hardcodes the web
+  implementation — `src/components/user/UserAvatar/index.ts` is literally
+  `export { UserAvatar } from './UserAvatar.web';`. The Vite `resolve.extensions`
+  array prefers `.web.*`, and there is no Metro bundler in this repo to prefer
+  `.native.*`. The only importer of a `.native` file outside `mobile/` is another
+  `.native` file.
+- **They are not type-checked.** `tsconfig.json` has
+  `"exclude": [..., "src/**/*.native.tsx", "src/**/*.native.ts"]`, so 30 files have
+  been drifting with zero compiler coverage for months.
+- **The `mobile/` workspace is abandoned.** Last commit touching it: `908774023`
+  (2026-03-24, a dependency-cleanup sweep). Two commits in six months, neither
+  feature work. It imports `@/components/primitives`, which is now only a SCSS shim
+  re-exporting `quorum-shared` — so the playground almost certainly does not even boot.
+- **It still costs on every install.** `mobile/` is a declared yarn workspace and
+  occupies ~394 MB on disk with its own `node_modules` (Expo 53, RN 0.79, a second
+  React 19 copy).
+- **It is a version-drift trap.** `mobile/package.json` pins Expo ~53 / RN 0.79 while
+  the real `quorum-mobile` is on Expo SDK 54 / RN 0.81.5. Anyone reading this repo for
+  mobile guidance gets stale answers.
+
+---
+
+## Inventory
+
+### A. The `mobile/` Expo playground — **delete, but salvage the test screens first**
+
+50 tracked files, ~8,900 LOC, ~394 MB installed. Expo app shell (`App.tsx`,
+`app.json`, `babel.config.js`, `metro.config.js`, `__empty.js` Metro shim), an
+`assets/` icon set, and 24 primitive/business test screens under `mobile/test/`.
+
+**This is the one part with genuine surviving value — see [Findings](#findings-the-visual-primitives-playground) below.**
+The 22 pure-primitive screens (~7,500 LOC with the two dead ones excluded) are the
+only place `quorum-shared`'s 19 `.native.tsx` primitives can be rendered anywhere in
+the ecosystem. The surrounding Expo/Metro scaffolding is what goes; the screens
+themselves should be relocated, not lost.
+
+### B. Root `package.json` — **strip**
+
+- `"workspaces": ["mobile"]`
+- 6 `mobile:*` scripts (`mobile`, `mobile:clear`, `mobile:tunnel`, `mobile:connect`,
+  `mobile:android`, `mobile:ios`, `mobile:web`)
+
+`yarn.lock` will shrink substantially; regenerate it rather than hand-editing.
+
+### C. `.native.*` source files — **delete** (30 files, ~3,400 LOC)
+
+```
+src/components/Router/Router.native.tsx
+src/components/message/MessageComposer.native.tsx
+src/components/message/MessageTextInput.native.tsx
+src/components/message/TypingIndicator.native.tsx
+src/components/modals/ConfirmationModal.native.tsx
+src/components/space/IconPicker/IconPicker.native.styles.ts
+src/components/space/IconPicker/IconPicker.native.tsx
+src/components/space/SpaceAvatar/SpaceAvatar.native.tsx
+src/components/ui/ClickToCopyContent.native.tsx
+src/components/user/UserAvatar/UserAvatar.native.tsx
+src/components/user/UserInitials/UserInitials.native.tsx
+src/hooks/business/search/useGlobalSearchNavigation.native.ts
+src/hooks/business/search/useKeyboardShortcuts.native.ts
+src/hooks/business/search/useSearchResultsOutsideClick.native.ts
+src/hooks/business/search/useSearchResultsResponsive.native.ts
+src/hooks/business/ui/useTooltipInteraction.native.ts
+src/hooks/business/user/useFileUpload.native.ts
+src/hooks/business/user/useNotificationSettings.native.ts
+src/hooks/platform/clipboard/useClipboard.native.ts
+src/hooks/platform/files/useFileDownload.native.ts
+src/hooks/platform/interactions/useNavigationHotkeys.native.ts
+src/hooks/platform/user/usePasskeyAdapter.native.ts
+src/hooks/useResponsiveLayout.native.ts
+src/hooks/useSearchContext.native.ts
+src/i18n/i18n.native.ts
+src/shims/quilibrium-sdk-channels.native.tsx   (→ leaves src/shims/ empty; remove the dir)
+src/types/react-native-augmentation.d.ts
+src/types/react-native.d.ts
+src/utils/crypto.native.ts
+src/utils/platform.native.ts
+```
+
+> **Check before deleting**, do not assume: `MessageComposer.native.tsx` and
+> `IconPicker.native.tsx` are the most elaborate of these and may contain layout or
+> UX decisions `quorum-mobile` has not yet reproduced. Cheap insurance: they stay in
+> git history, and the pre-removal commit SHA is recorded in the Status section below
+> so a mobile dev can `git show` any of them.
+
+### D. `.web.*` suffixes — **collapse** (10 files)
+
+With no native sibling, the suffix and its one-line barrel are pure ceremony:
+
+```
+Router.web.tsx  IconPicker.web.tsx  SpaceAvatar.web.tsx  UserAvatar.web.tsx
+UserInitials.web.tsx  useTooltipInteraction.web.ts  useClipboard.web.ts
+useFileDownload.web.ts  usePasskeyAdapter.web.ts  crypto.web.ts
+```
+
+Rename each to the plain name and drop the re-export barrel. `src/utils/crypto.ts`
+and `src/hooks/platform/clipboard/useClipboard.ts` are *only* forwarding shims and
+should be absorbed. Once none are left, delete the `resolve.extensions` block in
+[`web/vite.config.ts`](../../web/vite.config.ts) that prioritises `.web.*` over `.native.*`.
+
+**Phase this separately from C.** It is a rename-heavy diff with no behavioural
+content, and mixing it into the deletion commit makes both unreviewable.
+
+### E. Platform detection — **narrow**
+
+[`src/utils/platform.ts`](../../src/utils/platform.ts) exports `isMobile()`,
+`isNative()` and a `getPlatform(): 'web' | 'mobile' | 'electron'` that can never
+return `'mobile'` — it tests `navigator.product === 'ReactNative'`, which is
+unreachable in a browser or Electron build. No caller uses them; the only live
+consumers are `isWeb()` and `isElectron()`.
+
+Separately, [`src/utils/deviceInfo.ts`](../../src/utils/deviceInfo.ts) carries its
+**own private duplicate** `isElectron()` (line 6) plus an `isMobileApp()` (line 11)
+that means "mobile *browser*", not React Native. Worth deduplicating in the same
+pass, but note the two `isElectron()` bodies may not be identical — diff them first.
+
+### F. Build / lint config — **strip**
+
+- [`tsconfig.json`](../../tsconfig.json): drop the two `src/**/*.native.*` excludes.
+- [`eslint.config.js`](../../eslint.config.js): drop 7 `mobile/**` ignore entries and
+  the `mobile/__empty.js` Metro-shim override block.
+- [`.gitignore`](../../.gitignore): drop the "React Native / Expo" block
+  (`mobile/.expo/`, `mobile/node_modules/`, `mobile/.expo-shared/`,
+  `mobile/expo-env.d.ts`), the Metro cache entry, and the RN-debugger entry.
+
+### G. Dev tooling — **decide**
+
+[`src/dev/components-audit/`](../../src/dev/components-audit/) (~7,200 LOC across
+`audit.json`, two dated backups, a 1,400-line viewer, and `update_audit.py`) tracks
+per-component `"native": "todo" | "done" | "not_needed"` and a
+`shared / platform_specific / complex` categorisation. That taxonomy exists to answer
+"what still needs porting to native in this repo" — a question this repo no longer
+asks. `audit.json` was last updated 2026-03-24.
+
+The `shared` vs `platform_specific` axis is arguably still useful for
+quorum-shared migration triage, so this is a judgement call, not an obvious delete.
+The project-local `audit-update` skill depends on it.
+
+### H. Docs — **archive or de-bannerise**
+
+Already carrying accurate deprecation banners; move to `.archived/` once the code
+they describe is gone:
+
+- [`docs/expo-dev-testing-guide.md`](../docs/expo-dev-testing-guide.md)
+- [`docs/development/android-build-workflow.md`](../docs/development/android-build-workflow.md)
+
+Keep, but drop the now-redundant banner and the dead `yarn mobile` references:
+
+- [`docs/cross-platform-components-guide.md`](../docs/cross-platform-components-guide.md) — philosophy still valid
+- [`docs/component-management-guide.md`](../docs/component-management-guide.md) — **its banner is currently wrong**: it claims "There is no `mobile/` workspace and no `yarn mobile` script in this repo anymore." Both still exist. This issue makes the banner true; then delete it.
+- [`docs/features/cross-platform-theming.md`](../docs/features/cross-platform-theming.md)
+- [`docs/features/primitives/04-web-to-native-migration.md`](../docs/features/primitives/04-web-to-native-migration.md) — belongs with the primitives, i.e. arguably in `quorum-shared`
+
+### I. Project skills — **review**
+
+`.claude/skills/primitives/templates/new-primitive-template.tsx` still emits a
+`react-native` import. `mobile-check`, `migrate-to-shared` and `update-shared` are
+all still valid (they target the *sibling* repos, which is the current architecture)
+and stay.
+
+---
+
+## Findings: the visual primitives playground
+
+Investigated 2026-08-13, because "we kept the mobile config so we could still see how
+the primitives look on mobile" is the one real argument for keeping any of this.
+
+**What the screens actually are.** 24 screens, ~7,500 LOC. 22 of them import only
+`@/components/primitives`, which resolves to `../src/components/primitives/index.ts`
+— the barrel that re-exports `@quilibrium/quorum-shared`. So they are, in substance, a
+**quorum-shared native primitives showcase** that happens to live in quorum-desktop.
+The other 2 (`IconPickerTestScreen`, `MessageComposerTestScreen`) import
+`quorum-desktop`'s own `.native.tsx` components and die with §C.
+
+**The value is real and unduplicated.**
+- `quorum-shared` ships **19 `.native.tsx` primitives** (`src/primitives/*/`.native.tsx`)
+  and is a pure library — no example app, no Storybook, no preview surface of any kind.
+- `quorum-mobile` **does not consume shared UI primitives at all**. Its own
+  [2026-06-28 analysis](../../../quorum-mobile/.agents/reports/2026-06-28-shared-primitives-on-mobile-analysis.md)
+  verified it imports only data/logic from shared (`logger`, types, hooks, validators)
+  and renders through its own mature `components/ui/` + `components/shared/` layer with
+  a local skin system.
+
+So these 22 screens are the only rendering surface those 19 primitives have.
+
+**But it does not work.** *(MEASURED, 2026-08-13 — `expo export --platform android`
+from `mobile/`, watchman disabled to get past an unrelated hang on the oversized watch tree)*
+
+```
+Android Bundling failed 13971ms mobile\index.ts (1254 modules)
+Error: Unable to resolve module expo-image from
+  quorum-desktop/src/components/message/MessageComposer.native.tsx
+  expo-image could not be found within the project or in these directories:
+    ..\node_modules
+```
+
+`metro.config.js` sets `nodeModulesPaths: [monorepoRoot/node_modules]` only, so
+mobile-declared-but-unhoisted deps are unreachable. The playground has not been
+runnable for some time, which matches "to be honest, we never do that". Whatever we
+decide, **nobody is losing a working tool** — it is already broken.
+
+**And what it previews is on a path to being replaced.** The same 2026-06-28 analysis
+records the decided direction: mobile's existing UI components should eventually be
+*promoted into* `quorum-shared` as the `.native.tsx` half of each primitive, skins and
+all. If that lands, most of today's 19 shared native primitives are superseded, and a
+showcase built for them ages out with them.
+
+**Recommendation.** Do not defer the cleanup on account of the playground, and do not
+silently bin the screens either. `quorum-mobile` already has an approved, fully
+designed, still-open task for exactly this surface —
+[`.open/2026-06-13-mobile-dev-playground-design.md`](../../../quorum-mobile/.agents/issues/.open/2026-06-13-mobile-dev-playground-design.md)
+— a `__DEV__`-gated expo-router `(dev)` route, one demo file per primitive. Its "Notes
+for the executor" already cites this repo as structural reference. The 22 screens are
+ready-made source material for that task, in a repo where the RN build actually works.
+
+Cheapest correct move: copy `mobile/test/` + `mobile/styles/commonTestStyles.ts` into
+`quorum-mobile` as reference material for that open task, link it from there, then
+delete `mobile/` here. Rebuilding a showcase from scratch later costs far more than
+carrying 7,500 lines of reference across a repo boundary now.
+
+## Verdict on `.agents/issues/mobile-dev/`
+
+**Already audited — do not re-litigate.** The folder was cleaned on 2026-06-12 and
+its [`README.md`](mobile-dev/README.md) records the reasoning per file: 13 docs
+archived as obsolete-or-shipped, 5 kept as reference. Its own guidance is *"for new
+mobile work, don't start here"*.
+
+Recommendation: **keep the folder, do not delete it, and do not copy anything out of
+it.** It is documentation of a decision and it costs nothing.
+
+> **Two of the README's own claims did not survive checking (2026-08-13).** It was
+> written 2026-06-12 and the world moved. Verify before acting on it:
+>
+> - **The Passkey-SDK / WASM blocker is resolved, not "still unresolved".**
+>   `2025-08-08-mobile-sdk-integration-issue.md` describes the Quilibrium WASM SDK
+>   being unusable under React Native. `quorum-mobile` solved this by going around
+>   it entirely: it ships a native Expo module, `modules/quorum-crypto/`, with UniFFI
+>   Rust bindings (`libchannel.so` per ABI, `Channel.xcframework`,
+>   `QuorumCryptoModule.kt`, `channel.swift`) and carries **no dependency on
+>   `@quilibrium/quilibrium-js-sdk-channels` at all**. Copying this doc there would
+>   import a solved problem, described in terms of an approach they abandoned.
+> - **`2026-01-09-mobile-touch-transition-plan.md` is a quorum-desktop doc, not a
+>   mobile one.** It audits *this* repo's mobile-**browser** touch UX (`MobileDrawer`,
+>   `MessageActionsDrawer`, `EmojiPickerDrawer`) and concludes they are KEPT and
+>   correct, because desktop-browser-on-a-phone is a real supported case here. Only
+>   its short closing "Template Usage Strategy" section faces mobile. It belongs here.
+>
+> `docs/component-architecture-workflow-explained.md` is the one plausible copy
+> candidate, but it explains the primitives/business/app three-layer model — which is
+> **not** how `quorum-mobile` is built (own `components/ui/` + `components/shared/`,
+> local `useTheme()`, skin system, no shared primitives). It would arrive as a
+> description of an architecture they do not use. Leave it.
+
+One small fix while we are here: the README's frontmatter says `status: in-progress`,
+which is wrong for a historical-reference folder — it should be `archived`. That
+status also makes it surface in active-work views it does not belong in.
+
+---
+
+## Plan
+
+Each phase is independently shippable and independently verifiable.
+
+- [ ] **Phase 0 — salvage the primitives showcase.** Copy `mobile/test/` (22 screens;
+      drop `IconPickerTestScreen` and `MessageComposerTestScreen`, which test dead
+      desktop `.native` components) plus `mobile/styles/commonTestStyles.ts` into
+      `quorum-mobile` as reference material for its open
+      `2026-06-13-mobile-dev-playground-design` task, and add a pointer from that task.
+      **Blocks Phase 1.** Nothing here is load-bearing today (the playground does not
+      build), so this is preservation, not migration — do not try to make it run.
+- [ ] **Phase 1 — the workspace.** Delete `mobile/`; drop `workspaces` and the 7
+      `mobile:*` scripts from `package.json`; regenerate `yarn.lock`; strip the
+      `mobile/**` entries from `eslint.config.js` and `.gitignore`.
+      *Verify:* `yarn install` clean, `yarn validate`, `yarn build`, `yarn test:run`,
+      `yarn electron:dev` opens a window.
+- [ ] **Phase 2 — the native sources.** Delete the 30 files in §C; remove the
+      `.native.*` excludes from `tsconfig.json`; delete the empty `src/shims/`.
+      Record the pre-removal SHA in Status below.
+      *Verify:* `yarn validate` (should now cover strictly more files than before,
+      not fewer), `yarn build`, `yarn test:run`.
+- [ ] **Phase 3 — narrow platform detection.** Remove `isMobile()`, `isNative()`,
+      and the `'mobile'` arm of `getPlatform()`; deduplicate `isElectron()` against
+      `deviceInfo.ts` after diffing the two bodies.
+      *Verify:* `yarn validate`; manually confirm the Electron titlebar still renders
+      (`App.tsx` gates it on `isWeb() && isElectron()`).
+- [ ] **Phase 4 — collapse the `.web.*` suffixes.** Rename 10 files, absorb the
+      forwarding barrels, drop `resolve.extensions` from `web/vite.config.ts`.
+      Keep this commit pure-rename.
+      *Verify:* `yarn validate`, `yarn build`, `yarn test:run`, and a real app smoke
+      test — avatars, initials, icon picker, clipboard copy, file download, passkey
+      prompt all still work.
+- [ ] **Phase 5 — docs + `.agents` hygiene.** Archive the two deprecated guides,
+      strip the now-true banners from the four kept ones, fix the `mobile-dev`
+      README status, copy the two mobile-facing docs to `quorum-mobile`, rebuild
+      `INDEX.md`.
+- [ ] **Phase 6 — `components-audit`: leave alone.** Decided 2026-08-13: out of scope
+      for this pass. It is dev-only code that never reaches a production bundle, so it
+      costs nothing but repo weight. Revisit separately.
+
+## Risks
+
+- **`yarn.lock` churn is the loudest part of Phase 1** and will look alarming in a
+  diff. It is expected: an entire Expo/RN dependency tree leaves the lockfile.
+  Regenerate it with `yarn install`, never by hand.
+- **Deleting untyped code is safer than it looks here, but not free.** The `.native`
+  files were excluded from `tsc`, so the compiler cannot tell us whether something
+  still references them. The barrel audit above is the real evidence: every barrel
+  names `.web` explicitly.
+- **Phase 4 renames can silently break SCSS imports.** `IconPicker.scss` sits beside
+  `IconPicker.web.tsx`; check relative style imports after each rename rather than
+  at the end.
+- **Do not touch `quorum-shared`.** Its primitives are legitimately cross-platform
+  and `quorum-mobile` consumes them.
+
+## Status
+
+Branch: `chore/remove-single-repo-native-leftovers`.
+
+Issue filed 2026-08-13 after confirming no existing issue covered this — the
+deprecation banners in `expo-dev-testing-guide.md` and `android-build-workflow.md`
+promised a "follow-up code/config cleanup" that was never actually tracked.
+
+Investigation done 2026-08-13; no files removed yet. What was established:
+
+- MEASURED — the `mobile/` playground does not bundle (`expo export --platform
+  android` fails at 1254 modules on an unresolvable `expo-image`). The diagnostic
+  needed `resolver.useWatchman = false` to get past a watchman hang; that edit to
+  `mobile/metro.config.js` was reverted and the file is clean.
+- READ — every folder barrel names `.web` explicitly, so no `.native` file in `src/`
+  is reachable from the web or Electron build.
+- READ — `quorum-shared` has 19 `.native.tsx` primitives and no preview surface;
+  `quorum-mobile` consumes none of them and has an open, approved design for its own
+  `(dev)` playground.
+- READ — the mobile-dev README's "still unresolved" WASM blocker is resolved in
+  `quorum-mobile` via a native UniFFI module.
+
+Awaiting a decision on Phase 0 before any deletion starts.
+
+---
+
+*Last updated: 2026-08-13*
