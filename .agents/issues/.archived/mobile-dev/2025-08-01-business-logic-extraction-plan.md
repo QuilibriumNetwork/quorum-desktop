@@ -1,7 +1,7 @@
 ---
 type: task
 title: Business Logic Extraction & Native Preparation Plan
-status: in-progress
+status: archived
 priority: low
 created: 2025-08-01T00:00:00.000Z
 updated: '2026-03-19'

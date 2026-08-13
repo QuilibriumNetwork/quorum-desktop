@@ -117,7 +117,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
 - 📋 [Name resolution: an API that cannot express a partial identity](issues/2026-08-10-identity-resolution-architecture-design.md)
 - 📋 [Identity Resolution Implementation Plan](issues/2026-08-10-identity-resolution-architecture-plan.md)
-- 📋 [Remove the single-repo cross-platform leftovers](issues/2026-08-13-remove-single-repo-cross-platform-leftovers.md)
 
 #### Messagedb
 
@@ -530,6 +529,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Own identity, Phase 1 — implementation plan](issues/.done/2026-08-05-own-identity-cross-device-sync-plan.md)
 - 📋 [Dev pages: one layout system](issues/.done/2026-08-11-dev-pages-design-system-design.md)
 - 📋 [Dev pages design system — implementation plan](issues/.done/2026-08-11-dev-pages-design-system-plan.md)
+- 📋 [Remove the single-repo cross-platform leftovers](issues/.done/2026-08-13-remove-single-repo-cross-platform-leftovers.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
 - 📋 [Add DM-Specific Action Queue Handlers](issues/.done/dm-action-queue-handlers.md)
@@ -789,4 +789,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-13 14:34:23
+**Last Updated**: 2026-08-13 14:48:09

@@ -381,7 +381,24 @@ phase. Evidence for each is in [Status](#status).
 
 ## Status
 
-Branch: `chore/remove-single-repo-native-leftovers`.
+**2026-08-13 — shipped in PR #340** (`chore: remove the single-repo cross-platform
+leftovers`), squash-merged to `main` as `ac18dacb4`. 971 insertions, 16,563 deletions.
+
+What landed: the `mobile/` Expo workspace and its 7 scripts, 30 `.native.*` files and
+the React Native type declarations, the RN branches of `platform.ts` and
+`deviceInfo.ts`, the 9 `.web.*` suffixes and the `resolve.extensions` array behind
+them, the dead `SpaceAvatar`, and the duplicated `crypto.web.ts`. Build output moved
+to `dist/`. Docs archived or re-bannered, `mobile-dev/` archived with two files
+rescued, and the deploy skill's asset cleanup rewritten to keep-only-what-production-owns.
+
+Two deviations from the plan above, both recorded in place: Phase 0 archived the test
+screens to a cold folder outside the repo rather than copying them into
+`quorum-mobile` (premature — that repo is not ready to build the playground and may
+never adopt most of the primitives), and a commit correcting hardcoded paths in the
+shared-migration skills was dropped during the rebase because a better,
+path-agnostic fix had landed on `main` independently.
+
+Branch: `chore/remove-single-repo-native-leftovers` (local kept, remote deleted).
 
 Issue filed 2026-08-13 after confirming no existing issue covered this — the
 deprecation banners in `expo-dev-testing-guide.md` and `android-build-workflow.md`

@@ -1,7 +1,7 @@
 ---
 type: task
 title: Component Architecture Workflow - Detailed Explanation
-status: in-progress
+status: archived
 priority: low
 created: 2026-01-09T00:00:00.000Z
 updated: '2026-04-09'
