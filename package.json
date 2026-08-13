@@ -44,6 +44,7 @@
     "test": "vitest",
     "test:run": "vitest --run",
     "harness": "vitest --run --config vitest.harness.config.ts",
+    "bench": "vitest --run --config vitest.perf.config.ts",
     "harness:cross": "node src/dev/tests/harness/run-cross.mjs"
   },
   "dependencies": {

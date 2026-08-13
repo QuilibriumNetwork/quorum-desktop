@@ -112,6 +112,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [The roster pull: what it actually does](issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
 - 🐛 [Eight name surfaces never reached the resolver](issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md)
+- 🐛 [Notification switches freeze the UI for ~1.8s](issues/2026-08-13-notification-toggle-freeze-is-the-config-encode-chain.md)
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
@@ -312,6 +313,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Dependabot's 78 alerts, triaged against what actually ships](issues/.open/2026-08-12-dependabot-78-alerts-triage-react-router-bump.md)
 - 📋 [Pre-existing key-handling items for the lead](issues/.open/2026-08-12-pre-existing-key-handling-items-for-the-lead.md)
 - 📋 [Unshipped security branches (local, not pushed)](issues/.open/2026-08-12-unshipped-security-branches.md)
+- 📋 [Move the config-save encode chain to a Web Worker](issues/.open/2026-08-13-config-encode-worker-plan.md)
 - 📋 [Rebuild the sync indicator on a per-space "behind by N" signal](issues/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md)
 
 ### Deferred
@@ -789,4 +791,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-13 14:48:09
+**Last Updated**: 2026-08-13 14:55:25
