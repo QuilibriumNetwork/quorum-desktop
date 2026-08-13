@@ -8,6 +8,7 @@ import { ReactTooltip } from '../../ui';
 import { SpaceTag } from '../../space/SpaceTag';
 import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
 import type { SelectOption } from '../../primitives';
+import PasskeyStatus from './PasskeyStatus';
 
 interface EligibleSpaceTag {
   spaceId: string;
@@ -141,6 +142,14 @@ const General: React.FunctionComponent<GeneralProps> = ({
           </Callout>
         </div>
       )}
+      {/*
+        Renders nothing when a passkey holds the account key, including its own
+        wrapper — hence no <div> here, which would otherwise survive as an empty
+        margin on the protected path. It lives on General rather than Security
+        because it is a standing fact about the account rather than an action,
+        and General is the tab people actually open.
+      */}
+      <PasskeyStatus className="mt-4 mb-4 px-5 max-md:px-4" />
       <div className="modal-content-section">
         <Spacer size="md" direction="vertical" borderTop={true} />
         <div className="text-subtitle-2">
