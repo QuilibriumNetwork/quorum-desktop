@@ -13,6 +13,22 @@ area: notifications / performance
 Flipping a switch in **Space Settings → Account → Notifications** freezes the UI for
 roughly 0.5-2s. Toggling several in succession is worse than additive.
 
+## Status
+
+**2026-08-13 — diagnosis shipped in PR #341**
+(`feat(settings): hide notification options for muted Spaces, and measure the toggle freeze`)
+
+What landed: the measured cause (below), plus the two benches that establish it
+(`yarn bench`) and the `perf/**` config split that keeps them out of the unit suite. Also
+a small unrelated UI change in the same screen — muted Spaces now hide the notification
+options rather than greying them out.
+
+**The freeze is NOT fixed.** Only the diagnosis shipped. Deliberately left `in-progress`
+and `type: bug`: nothing here changes how long a toggle blocks. The fix is scoped
+separately in `.open/2026-08-13-config-encode-worker-plan.md` and is spike-gated.
+
+Still open: everything under "Fix candidates" — none of them are implemented.
+
 Reported 2026-08-13. **The cause is measured, not inferred.** Two earlier diagnoses were
 wrong; the appendix keeps them because the way they failed is instructive.
 
