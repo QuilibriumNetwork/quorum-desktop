@@ -132,6 +132,42 @@ a:hover,
   text-decoration: underline;
 }
 
+/*
+  Inline link that takes on the text around it: same size, weight, family and
+  line height, same colour. For links sitting INSIDE a sentence — in a callout,
+  a modal body, a paragraph — where a link that renders at its own size is a
+  visible defect.
+
+  Works on <button> as well as <a>, and that is the point. A link that performs
+  an action (opening a modal) must be a <button> for keyboard and screen-reader
+  users, but a <button> carries the UA's `font` shorthand plus its own
+  background, border and padding. Preflight resets those property by property;
+  `font: inherit` resets the whole shorthand in one declaration, so nothing of
+  the UA's font survives.
+
+  Deliberately sets NO font-size of its own. `.onboarding-link` hardcodes
+  $text-sm, which is why AppErrorScreen and Maintenance both have to escape it
+  with `!text-base` at the call site. Any class that fixes a size will be fought
+  by whatever text it is dropped into; this one cannot be, because it has
+  nothing to fight with.
+*/
+.link-inline {
+  font: inherit;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.link-inline:hover {
+  color: inherit;
+  text-decoration: underline;
+}
+
 /* === HEADINGS === */
 h1 {
   font-size: 3.2em;

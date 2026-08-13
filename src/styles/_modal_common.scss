@@ -172,6 +172,16 @@
     display: block !important;
   }
 
+  // Same exception, opt-in, for any other modal opened from inside a complex
+  // one. The rule above hides the complex modal's OWN title, because that
+  // layout draws its own header — it was never meant to strip the title from a
+  // modal nested within it, but the selector cannot tell the two apart. Tag a
+  // nested modal with `modal-keeps-title` instead of adding a new selector
+  // here for each one; ConfirmationModal predates this and keeps its own.
+  .modal-keeps-title .quorum-modal-title {
+    display: block !important;
+  }
+
   .quorum-modal-container {
     height: 100%;
     display: flex;
