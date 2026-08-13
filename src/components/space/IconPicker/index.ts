@@ -1,2 +1,2 @@
-export { IconPicker } from './IconPicker.web';
+export { IconPicker } from './IconPicker';
 export * from './types';

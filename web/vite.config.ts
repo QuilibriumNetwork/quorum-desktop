@@ -222,17 +222,6 @@ export default defineConfig(({ command }): UserConfig => ({
       // on-demand transforms). The build phase uses resolvePolyfillShims() instead.
       ...polyfillShimAliases,
     },
-    // Platform-specific resolution - prioritize .web files over .native files
-    extensions: [
-      '.web.tsx',
-      '.web.ts',
-      '.web.jsx',
-      '.web.js',
-      '.tsx',
-      '.ts',
-      '.jsx',
-      '.js',
-    ],
     dedupe: ['react', 'react-dom'],
   },
   optimizeDeps: {

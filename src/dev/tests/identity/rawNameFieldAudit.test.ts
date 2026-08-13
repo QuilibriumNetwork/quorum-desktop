@@ -121,9 +121,9 @@ const EXCEPTIONS: Record<string, string> = {
     'receives an already-RESOLVED `displayName` string via `displayData` (computed by useBatchSearchResultsDisplay, which DOES import src/identity) — a pure presentational pass-through, same category as UserAvatar/NotificationItem.',
   'src/hooks/business/user/useVisibleSenderProfileFallback.ts':
     "already reviewed and extensively documented in-file by a prior tranche (Phase D rows 22-24 fix round 1): every REAL name-rendering consumer has migrated to src/identity; the one remaining `displayName` consumer is quorum-shared's `replaceMentionsWithDisplayNames` building a 'replying to' preview line, and `primaryUsername`/`globalDisplayName` feed `useMentionInput.ts`'s SEARCH matching (outside this migration's scope, cannot call a per-candidate hook in a loop). Not re-verified line-by-line this tranche; deferred to that existing documentation rather than re-litigated.",
-  'src/components/user/UserAvatar/UserAvatar.web.tsx':
+  'src/components/user/UserAvatar/UserAvatar.tsx':
     'receives an already-resolved BARE name as a `displayName` prop (initials/color derivation only), never looks anything up itself.',
-  'src/components/Router/Router.web.tsx':
+  'src/components/Router/Router.tsx':
     'type-only: `displayName` is a field on the app-level `user` object threaded through as a prop to children; Router itself renders none of it.',
   'src/components/modals/ChannelEditorModal.tsx':
     '`role.displayName` is a ROLE name (mention-role option label), not a member name — out of scope per the recipe (role display names are not member names).',
