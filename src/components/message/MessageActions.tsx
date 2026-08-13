@@ -139,7 +139,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   if (canEdit && onEdit) {
     shiftActions.push({
       id: 'edit',
-      icon: 'edit',
+      icon: 'pencil',
       onClick: () => onEdit(),
     });
   }
@@ -259,6 +259,19 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
                 <Icon name="reply" size="md" className="xl:hidden" />
                 <Icon name="reply" size="lg" className="hidden xl:block" />
               </div>
+
+              {/* Edit — promoted out of the dots menu: on your own posts this is
+                  the most common action, so it sits in the toolbar directly. */}
+              {canEdit && onEdit && (
+                <div
+                  onClick={() => onEdit()}
+                  onMouseEnter={() => setHoveredAction('edit')}
+                  className={iconButtonClassMr}
+                >
+                  <Icon name="pencil" size="md" className="xl:hidden" />
+                  <Icon name="pencil" size="lg" className="hidden xl:block" />
+                </div>
+              )}
 
               {/* Dots — open context menu */}
               <div

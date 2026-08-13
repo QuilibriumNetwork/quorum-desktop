@@ -230,7 +230,7 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
 
           {canEdit && onEdit && (
             <button onClick={handleEdit} className="message-actions-menu__item">
-              <Icon name="edit" size="sm" />
+              <Icon name="pencil" size="sm" />
               {t`Edit`}
             </button>
           )}

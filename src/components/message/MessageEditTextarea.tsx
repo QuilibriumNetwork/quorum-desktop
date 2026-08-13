@@ -53,6 +53,27 @@ interface MessageEditTextareaProps {
 }
 
 /**
+ * Nearest ancestor that actually scrolls vertically — the message list's
+ * scroller in practice. Checks scrollHeight too, so a merely `overflow: auto`
+ * wrapper that never overflows is skipped rather than silently swallowing the
+ * scroll adjustment.
+ */
+function findScrollableParent(element: HTMLElement): HTMLElement | null {
+  let node = element.parentElement;
+  while (node) {
+    const { overflowY } = window.getComputedStyle(node);
+    if (
+      (overflowY === 'auto' || overflowY === 'scroll') &&
+      node.scrollHeight > node.clientHeight
+    ) {
+      return node;
+    }
+    node = node.parentElement;
+  }
+  return null;
+}
+
+/**
  * Message edit textarea with markdown toolbar
  * Extracted from Message.tsx for better maintainability
  */
@@ -419,6 +440,42 @@ export function MessageEditTextarea({
       }, 50);
     }
   }, []);
+
+  // Grow upward, not downward.
+  //
+  // The editor lives inside the virtualized message list, so expanding it the
+  // normal way pushes everything below it down — and when the edit starts near
+  // the bottom of the viewport that means the editor pushes its own hint line
+  // (and often the caret) behind the composer. Nudging the scroller by each
+  // height delta pins the editor's BOTTOM edge where it already was and lets
+  // the top edge rise instead, which is what "grows upward" looks like.
+  //
+  // Writing scrollTop directly is how the list's own scroll snapping works
+  // (see MessageList.tsx), so this doesn't fight Virtuoso.
+  useEffect(() => {
+    const input = ENABLE_MENTION_PILLS ? editorRef.current : editTextareaRef.current;
+    if (!input) return;
+
+    const scroller = findScrollableParent(input);
+    if (!scroller) return;
+
+    // Seeded before observing so the ResizeObserver's initial callback — which
+    // fires immediately with the current size — is a no-op rather than a jump.
+    let previousHeight = input.getBoundingClientRect().height;
+
+    const observer = new ResizeObserver(() => {
+      const height = input.getBoundingClientRect().height;
+      const delta = height - previousHeight;
+      previousHeight = height;
+      if (delta !== 0) {
+        scroller.scrollTop += delta;
+      }
+    });
+
+    observer.observe(input);
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Refs are stable; the observed element never swaps for a given edit
 
   const handleSaveEdit = async () => {
     const editNonce = crypto.randomUUID();

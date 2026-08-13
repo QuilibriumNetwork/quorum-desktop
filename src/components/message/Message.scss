@@ -145,17 +145,20 @@
 }
 
 /* === MESSAGE EDIT UI === */
+/* Deliberately chrome-free: the message row itself carries the highlight
+   (`bg-chat-hover`, applied in Message.tsx while editing), so the editor adds
+   no box of its own — the post simply turns into a textarea in place. */
 .message-edit-container {
   margin-top: $s-2;
-  padding: $s-3;
-  background-color: var(--surface-2);
-  border-radius: $rounded-md;
-  border: 1px solid var(--surface-4);
 }
 
 .message-edit-textarea {
   width: 100%;
-  min-height: 60px;
+  /* Exactly one line plus its padding, so a single-line edit sits centered in
+     the box instead of hugging the top of a fixed 60px well. Taller content
+     grows the box from here. */
+  line-height: $leading-5;
+  min-height: calc(#{$leading-5} + #{$s-2} * 2);
   max-height: 200px;
   padding: $s-2;
   background-color: var(--color-field-bg);
@@ -167,21 +170,22 @@
   cursor: text; /* Show text cursor */
   resize: none;
   outline: none;
-  transition: all $duration-150 $ease-in-out;
 
   &::placeholder {
     color: var(--color-field-placeholder);
   }
 
-  &:hover:not(:focus) {
-    background-color: var(--color-field-bg-focus);
-    border-color: var(--color-field-border-hover);
+  /* No accent border or focus ring: this input is already the sole focus of
+     the highlighted row, so the usual field focus treatment only adds noise.
+     `:focus-visible` needs suppressing explicitly — the global accent ring in
+     `_base.scss` matches text inputs and contentEditable on plain mouse focus,
+     not just keyboard, so dropping the field box-shadow alone leaves it. */
+  &:focus {
+    border-color: var(--color-field-border);
   }
 
-  &:focus {
-    border-color: var(--color-field-border-focus);
-    background-color: var(--color-field-bg-focus);
-    box-shadow: 0 0 0 $s-1 var(--color-field-focus-shadow);
+  &:focus-visible {
+    outline: none;
   }
 }
 
