@@ -97,8 +97,6 @@ export default [
   {
     ignores: [
       'dist',
-      'mobile/android/**',
-      'mobile/ios/**',
       'node_modules/**',
       // Git worktrees live here by convention and are full second checkouts,
       // each with its own tsconfig.json. Without this, typescript-eslint finds
@@ -109,23 +107,10 @@ export default [
       '.worktrees/**',
       '**/*.config.js',
       'public/wasm_exec.js',
-      'mobile/babel.config.js',
-      'mobile/metro.config.js',
-      'mobile/postcss.config.js',
-      'mobile/tailwind.config.js',
-      'mobile/update-theme.js',
       '.claude/**',
       '.agents/**',
-      'mobile/test/**',
       'src/i18n/**', // Auto-generated translation files
     ],
-  },
-  // Node.js CJS files (Metro shim etc.)
-  {
-    files: ['mobile/__empty.js'],
-    languageOptions: {
-      globals: globals.node,
-    },
   },
   // JavaScript/JSX files
   {
