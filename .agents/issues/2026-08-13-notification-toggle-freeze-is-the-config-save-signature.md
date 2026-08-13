@@ -1,14 +1,31 @@
 ---
 type: bug
-title: "Notification switches freeze the UI for 0.5-2s, and rapid toggling is disproportionately worse"
+title: "Notification switches freeze the UI for ~1.8s — the config save's signature, NOT the mention recount"
 status: in-progress
-priority: medium
+priority: high
 created: 2026-08-13
 updated: 2026-08-13
 area: notifications / performance
 ---
 
 # Notification switches freeze the UI
+
+> ## ⛔ THE DIAGNOSIS BELOW WAS WRONG. MEASURED AND REFUTED 2026-08-13.
+>
+> Everything from here to "## A/B RESULT" argued that a cross-space mention
+> recount causes the freeze. **A browser A/B disproved it.** Suppressing the
+> recount made the freeze slightly WORSE; suppressing the config save removed
+> 93% of it.
+>
+> | Arm | Blocked | Longest single block |
+> |---|---|---|
+> | baseline | 1817ms | 1699ms |
+> | recount suppressed | **2530ms** | 2372ms |
+> | config save suppressed | **136ms** | 136ms |
+>
+> The wrong reasoning is kept deliberately, because two independent code reviews
+> and three careful readings all failed to catch it and one two-minute
+> measurement did. Jump to **"## A/B RESULT"** for what is actually true.
 
 Toggling a switch in **Space Settings → Account → Notifications** (Space notifications,
 or any per-channel switch) freezes the UI for roughly half a second to two seconds.
@@ -242,6 +259,64 @@ Sketches, deliberately not committed to:
   `['mention-counts', 'space']` key.
 - **Batch the per-channel reads** so a channel costs one IDB round-trip instead of three,
   or run them concurrently rather than sequentially.
+
+## A/B RESULT — the config save is the cause (measured 2026-08-13)
+
+Run in a real browser with `src/dev/perf/toggleFreezeProbe.ts` (branch
+`local/toggle-freeze-ab-DO-NOT-MERGE`), measuring `longtask` entries — contiguous
+main-thread blocks over 50ms, which is precisely the freeze under investigation.
+One click per arm.
+
+| Arm | Blocked | Longest single block | Blocks |
+|---|---|---|---|
+| `baseline` | 1817ms | 1699ms | 2 |
+| `no-invalidate` (recount suppressed) | 2530ms | 2372ms | 2 |
+| `no-enqueue` (config save suppressed) | **136ms** | 136ms | 1 |
+
+**Conclusion: the queued `save-user-config` task causes ~93% of the freeze. The
+mention/reply recount is not a significant contributor.** Suppressing the recount
+did not help at all — it measured *worse* than baseline, which is run-to-run
+variance in the signature and further evidence the recount is irrelevant here.
+
+### The tell that was available all along, for free
+
+`blocks=2`, one of them ~1.7-2.4s. That is **one contiguous synchronous
+operation**. A recount walking hundreds of channels through IndexedDB would
+appear as many small blocks, because every `await` yields. The block *shape*
+discriminated the two hypotheses before any A/B was run, and nobody looked at it.
+Worth remembering: for a freeze, the distribution of block lengths is often more
+diagnostic than the total.
+
+### Note the magnitude
+
+1699-2372ms, against the ~1,000ms recorded for Ed448 signing in 2025-12. Either
+signing got slower or the payload grew — see
+`.agents/issues/.done/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md`,
+which found bookmarks dominating the config blob. Blob size is therefore a
+plausible lever and worth measuring before assuming the signature is irreducible.
+
+### What this invalidates
+
+- The whole "prime suspect" section above, and its proposed fix.
+- The per-space query restructuring proposed by review. It remains *correct* —
+  it removes genuinely wasted work — but it is **not a fix for this bug** and
+  must not be sold as one.
+
+### Next, and it needs no more of the user's time
+
+1. Time `ch.js_sign_ed448` directly against realistic config-blob sizes. The
+   harness config already loads the real WASM SDK, so this is measurable in a
+   bench with no manual testing.
+2. If cost scales with blob size, shrinking the blob (bookmarks) is the cheapest
+   real win.
+3. Re-examine "signing can't move to a Web Worker — requires the private key"
+   from `.archived/background-action-queue-with-worker-crypto.md`. A worker is
+   the same origin and same security context; the key already lives in
+   main-thread JS. That reasoning deserves a second look rather than being
+   inherited — but it is a security-adjacent claim, so it needs an actual
+   argument, not my assumption.
+4. Fix the broken dedup regardless (`hasProcessingTaskWithKey` is computed and
+   never used to gate). Today N toggles cost N signatures.
 
 ## Unrelated finding: two tests in the unit suite are intermittently flaky
 

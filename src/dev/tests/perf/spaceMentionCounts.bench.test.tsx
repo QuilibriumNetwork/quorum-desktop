@@ -6,7 +6,7 @@ import type { Space } from '@quilibrium/quorum-shared';
 
 /**
  * Instrument for "notification switches freeze the UI for 0.5-2s".
- * See .agents/issues/2026-08-13-notification-toggles-freeze-the-ui-via-a-full-mention-recount.md
+ * See .agents/issues/2026-08-13-notification-toggle-freeze-is-the-config-save-signature.md
  *
  * Every mute toggle calls `invalidateNotificationQueries()`, which invalidates
  * the space-wide ['mention-counts','space'] key and re-runs
