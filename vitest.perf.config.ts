@@ -32,7 +32,11 @@ export default defineConfig({
   ],
   test: {
     environment: 'jsdom',
-    setupFiles: ['src/dev/tests/setup.ts'],
+    // The HARNESS setup, not the unit one. src/dev/tests/setup.ts mocks crypto,
+    // which makes it impossible to time the real wasm Ed448 signer — the single
+    // thing configSigning.bench needs to measure. The harness setup is shim-only
+    // (window/Buffer) and leaves real crypto alone.
+    setupFiles: ['src/dev/tests/harness/setup.harness.ts'],
     globals: true,
     css: false,
     include: ['src/dev/tests/perf/**/*.{test,spec}.{js,ts,jsx,tsx}'],

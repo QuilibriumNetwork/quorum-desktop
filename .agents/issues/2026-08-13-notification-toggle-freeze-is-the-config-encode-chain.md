@@ -1,6 +1,6 @@
 ---
 type: bug
-title: "Notification switches freeze the UI for ~1.8s — the config save's signature, NOT the mention recount"
+title: "Notification switches freeze the UI for ~1.8s — the config save encode chain (hex+base64), not the signature"
 status: in-progress
 priority: high
 created: 2026-08-13
@@ -301,6 +301,84 @@ plausible lever and worth measuring before assuming the signature is irreducible
 - The per-space query restructuring proposed by review. It remains *correct* —
   it removes genuinely wasted work — but it is **not a fix for this bug** and
   must not be sold as one.
+
+## MEASURED 2026-08-13 (part 2): it is the ENCODING, not the signature
+
+`yarn bench` → `src/dev/tests/perf/configSigning.bench.test.ts`, real wasm SDK.
+
+**First: signing alone is cheap.** Signing scales only mildly with payload, and
+even a 4MB config (a 10.67MB signed payload) costs ~110ms:
+
+| Config | Signed payload | Sign time |
+|---|---|---|
+| 10 KB | 0.03 MB | 17ms |
+| 1 MB | 2.67 MB | 36ms |
+| 4 MB | 10.67 MB | 110ms |
+
+So the inherited "**Ed448 signing ~1,000ms**" figure from
+`.archived/config-save-space-key-caching.md` does not hold, and every plan built
+on it — including "move signing to a Worker" — was aimed at the wrong 9%.
+
+**Then decompose the whole chain** (`ConfigService.saveConfig` ~832-857):
+
+| Config | JSON | AES-GCM | **hex** | **base64** | sign | TOTAL |
+|---|---|---|---|---|---|---|
+| 1 MB | 5ms | 66ms | 116ms | 214ms | 84ms | 485ms |
+| 4 MB | 27ms | 274ms | **716ms** | **1083ms** | 216ms | **2316ms** |
+
+The 4MB total of **2316ms** lands squarely on the browser-measured block of
+1699-2372ms, so this is very likely the same work.
+
+**String marshalling is 78% of the cost. Signing is 9%.**
+
+### Why it costs so much: a gratuitous expansion chain
+
+The ciphertext is *bytes*, but the code renders it as a **hex string**, utf-8
+encodes that string, then base64s the result:
+
+```
+config S bytes -> JSON S -> AES S -> hex 2S CHARS -> utf8 2S bytes -> base64 2.67S
+```
+
+A 4MB config becomes a **10.67MB base64 string** before it is signed. Each of
+those conversions is a full pass over a multi-megabyte buffer, and in the browser
+`Buffer` is a **polyfill**, not the native Node implementation — which is the most
+likely reason the browser figure is as high as it is.
+
+### This reopens two things previously ruled out
+
+1. **Blob size IS a lever after all.** Every stage is linear in config size, so
+   halving the config roughly halves the freeze. That makes
+   `.done/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md` directly
+   relevant — it was not, when the cost was believed to be a fixed signature.
+2. **The Worker objection does not apply to the expensive part.** The archived
+   reasoning was "signing can't move — it needs the private key". True, but
+   signing is only 9%. JSON + AES + hex + base64 are **91% of the cost and need
+   no private key at all**. They can move off the main thread without touching
+   the security argument, which sidesteps the debate entirely rather than
+   re-litigating it.
+
+### Fix candidates, now ranked by measured cost
+
+1. **Move the encode chain (91%) to a Worker.** No private key involved.
+2. **Avoid the hex round-trip.** `Buffer.from(bytes).toString('hex')` followed by
+   `Buffer.from(hex,'utf-8')` round-trips through a 2S-character string for no
+   reason. Careful: the hex string is what is *sent* (`user_config: ciphertext`)
+   and what the signature must cover, so changing *what is signed* is a wire
+   change needing server and mobile agreement. Changing *how the same bytes are
+   produced* is not.
+3. **Replace the Buffer polyfill on this path** with native `TextEncoder` /
+   chunked base64. Browser `Buffer` is slow at these sizes.
+4. **Shrink the config** (bookmarks are ~75% of it). Linear win across all stages.
+5. **Fix the broken dedup** so N toggles do not cost N full encodes.
+
+### Caveats, stated plainly
+
+- These are **Node** timings. The browser has a slower `Buffer` polyfill, so the
+  split may shift — though the 4MB total already matches the observed block well.
+- The 4MB figure comes from a test fixture, not from the user's actual config. I
+  have **not** measured his real config size. That it reproduces his timing is
+  suggestive, not proof.
 
 ### Next, and it needs no more of the user's time
 
