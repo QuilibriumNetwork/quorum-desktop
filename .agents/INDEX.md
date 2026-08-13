@@ -4,25 +4,27 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📖 Documentation
 
+- [Business Logic Extraction Patterns](docs/business-logic-extraction-patterns.md)
 - [Complete Guide: Cross-Platform React Components for Web + Native](docs/cross-platform-components-guide.md)
 - [Component Management & Development Guide](docs/component-management-guide.md)
 - [Config Sync System](docs/config-sync-system.md)
 - [Cryptographic Architecture](docs/cryptographic-architecture.md)
 - [Device Naming](docs/device-naming.md)
-- [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
+- [Mobile-Browser Touch Support](docs/mobile-browser-touch-support.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
 - [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
 
 ### .Archived
+- [Android Build Workflow](docs/.archived/android-build-workflow.md)
 - [Cross-Platform Repository Implementation](docs/.archived/cross-platform-repository-implementation.md)
+- [Expo Dev Testing Guide](docs/.archived/expo-dev-testing-guide.md)
 
 ### Debugging
 - [DM Architecture and Debug Playbook](docs/debugging/dm-architecture-and-debug-playbook.md)
 
 ### Development
-- [Android Build Workflow](docs/development/android-build-workflow.md)
 - [Dependency Upgrade Guide](docs/development/dependency-upgrade-guide.md)
 - [Git worktrees and linked dependencies](docs/development/git-worktrees-and-linked-dependencies.md)
 
@@ -136,34 +138,6 @@ This is the main index for all documentation, bug reports, and task management.
 #### Messagedb / Done
 
 - 📋 [Extract encryptAndSendToSpace() Helper](issues/messagedb/.done/messageservice-extract-encrypt-helper.md)
-
-#### Mobile Dev
-
-- 📋 [Business Logic Extraction & Native Preparation Plan](issues/mobile-dev/2025-08-01-business-logic-extraction-plan.md)
-- 📋 [Quilibrium SDK Mobile Integration Issue](issues/mobile-dev/2025-08-08-mobile-sdk-integration-issue.md)
-- 📋 [Component Architecture Masterplan - Desktop/Mobile Unification](issues/mobile-dev/2026-01-09-components-shared-arch-masterplan.md)
-- 📋 [Mobile/Touch Implementation Transition Plan](issues/mobile-dev/2026-01-09-mobile-touch-transition-plan.md)
-- 📋 [mobile-dev — historical cross-platform planning](issues/mobile-dev/README.md)
-
-#### Mobile Dev / Archived
-
-- 📋 [Cross-Platform Hooks Refactoring Plan](issues/mobile-dev/.archived/2026-01-09-cross-platform-hooks-refactoring-plan.md)
-- 📋 [CSS to Mobile Colors Sync Script](issues/mobile-dev/.archived/2026-01-09-css-to-mobile-colors-sync.md)
-- 📋 [File Upload Hooks Consolidation Task](issues/mobile-dev/.archived/2026-01-09-file-upload-hooks-consolidation.md)
-- 📋 [Mobile Internationalization (i18n) Implementation Plan](issues/mobile-dev/.archived/2026-01-09-internationalization-i18n-implementation-plan.md)
-- 📋 [Mobile Image Compression Implementation](issues/mobile-dev/.archived/2026-01-09-mobile-image-compression.md)
-- 📋 [React Native Upgrade Risk Assessment](issues/mobile-dev/.archived/2026-01-09-upgrade-to-react-80.md)
-- 📋 [Cross-Platform Development : Revised Plan](issues/mobile-dev/.archived/plan-quick-recap.md)
-- 📋 [Mobile Development Plan - Improved Version](issues/mobile-dev/.archived/mobile-dev-plan.md)
-- 📋 [Mobile/Desktop Behavioral Differences Audit Plan](issues/mobile-dev/.archived/mobile-desktop-audit.md)
-- 📋 [Native Business Components Implementation Plan](issues/mobile-dev/.archived/native-business-components-plan.md)
-- 📋 [Primitive Migration Audit Report](issues/mobile-dev/.archived/primitive-migration-audit.md)
-- 📋 [Sdk Shim Temporary Solutions](issues/mobile-dev/.archived/sdk-shim-temporary-solutions.md)
-- 📋 [Third-Party Component Migration Report](issues/mobile-dev/.archived/third-party-component-migration-report.md)
-
-#### Mobile Dev / Docs
-
-- 📋 [Component Architecture Workflow - Detailed Explanation](issues/mobile-dev/docs/component-architecture-workflow-explained.md)
 
 #### Port From Mobile
 
@@ -557,6 +531,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Own identity, Phase 1 — implementation plan](issues/.done/2026-08-05-own-identity-cross-device-sync-plan.md)
 - 📋 [Dev pages: one layout system](issues/.done/2026-08-11-dev-pages-design-system-design.md)
 - 📋 [Dev pages design system — implementation plan](issues/.done/2026-08-11-dev-pages-design-system-plan.md)
+- 📋 [Remove the single-repo cross-platform leftovers](issues/.done/2026-08-13-remove-single-repo-cross-platform-leftovers.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
 - 📋 [Add DM-Specific Action Queue Handlers](issues/.done/dm-action-queue-handlers.md)
@@ -736,6 +711,33 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [CSS Refactor Analysis Report](issues/.archived/css-refactor/analysis.md)
 - 📋 [CSS Refactor Plan - Claude Code Execution Strategy](issues/.archived/css-refactor/css-refactor-plan.md)
 
+### Mobile Dev
+
+- 📋 [Business Logic Extraction & Native Preparation Plan](issues/.archived/mobile-dev/2025-08-01-business-logic-extraction-plan.md)
+- 📋 [Quilibrium SDK Mobile Integration Issue](issues/.archived/mobile-dev/2025-08-08-mobile-sdk-integration-issue.md)
+- 📋 [Component Architecture Masterplan - Desktop/Mobile Unification](issues/.archived/mobile-dev/2026-01-09-components-shared-arch-masterplan.md)
+- 📋 [mobile-dev — historical cross-platform planning](issues/.archived/mobile-dev/README.md)
+
+### Mobile Dev / Archived
+
+- 📋 [Cross-Platform Hooks Refactoring Plan](issues/.archived/mobile-dev/.archived/2026-01-09-cross-platform-hooks-refactoring-plan.md)
+- 📋 [CSS to Mobile Colors Sync Script](issues/.archived/mobile-dev/.archived/2026-01-09-css-to-mobile-colors-sync.md)
+- 📋 [File Upload Hooks Consolidation Task](issues/.archived/mobile-dev/.archived/2026-01-09-file-upload-hooks-consolidation.md)
+- 📋 [Mobile Internationalization (i18n) Implementation Plan](issues/.archived/mobile-dev/.archived/2026-01-09-internationalization-i18n-implementation-plan.md)
+- 📋 [Mobile Image Compression Implementation](issues/.archived/mobile-dev/.archived/2026-01-09-mobile-image-compression.md)
+- 📋 [React Native Upgrade Risk Assessment](issues/.archived/mobile-dev/.archived/2026-01-09-upgrade-to-react-80.md)
+- 📋 [Cross-Platform Development : Revised Plan](issues/.archived/mobile-dev/.archived/plan-quick-recap.md)
+- 📋 [Mobile Development Plan - Improved Version](issues/.archived/mobile-dev/.archived/mobile-dev-plan.md)
+- 📋 [Mobile/Desktop Behavioral Differences Audit Plan](issues/.archived/mobile-dev/.archived/mobile-desktop-audit.md)
+- 📋 [Native Business Components Implementation Plan](issues/.archived/mobile-dev/.archived/native-business-components-plan.md)
+- 📋 [Primitive Migration Audit Report](issues/.archived/mobile-dev/.archived/primitive-migration-audit.md)
+- 📋 [Sdk Shim Temporary Solutions](issues/.archived/mobile-dev/.archived/sdk-shim-temporary-solutions.md)
+- 📋 [Third-Party Component Migration Report](issues/.archived/mobile-dev/.archived/third-party-component-migration-report.md)
+
+### Mobile Dev / Docs
+
+- 📋 [Component Architecture Workflow - Detailed Explanation](issues/.archived/mobile-dev/docs/component-architecture-workflow-explained.md)
+
 ## 📊 Reports
 
 ### Active Reports
@@ -789,4 +791,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-13 14:52:10
+**Last Updated**: 2026-08-13 14:55:25

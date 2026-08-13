@@ -8,7 +8,11 @@ updated: 2026-02-10T00:00:00.000Z
 
 # Complete Guide: Cross-Platform React Components for Web + Native
 
-> **🏛️ Architecture status (2026-06-12 — multi-repo).** This repo (`quorum-desktop`) builds **web + Electron only**. The mobile app lives in a **separate repo, `quorum-mobile`**; shared types/hooks/sync/primitives live in the **`quorum-shared`** npm package. So when this guide shows a `.native.tsx` file: that file belongs in **`quorum-mobile`** (or, for a primitive, in `quorum-shared`), **NOT** in `quorum-desktop/src/`. Likewise the old `yarn mobile` / `mobile/` test-playground references below are dead — native testing happens in `quorum-mobile`. The component-architecture *philosophy* (primitives vs business logic, the decision framework, logic extraction) remains correct; only the "all in one repo" framing is stale. Canonical doc: [`quorum-shared-architecture.md`](quorum-shared-architecture.md).
+> **🏛️ Architecture status (verified 2026-08-13 — multi-repo).** This repo (`quorum-desktop`) builds **web + Electron only**. The mobile app lives in a **separate repo, `quorum-mobile`**; shared types/hooks/sync/primitives live in the **`quorum-shared`** npm package.
+>
+> **Read every `.native.tsx` example below as illustrative, not as something to create here.** A `.native.tsx` file belongs in `quorum-mobile` (or, for a primitive, in `quorum-shared`). As of 2026-08-13 there is not one left in `quorum-desktop/src/`, nor a `.web.tsx` suffix — with no native sibling to disambiguate from, those files now have plain names and the bundler's platform-extension resolution has been removed ([removal issue](../issues/2026-08-13-remove-single-repo-cross-platform-leftovers.md)). The `yarn mobile` / `mobile/` playground references below are dead too.
+>
+> The component-architecture *philosophy* (primitives vs business logic, the decision framework, logic extraction) remains correct; only the "all in one repo" framing is stale. Canonical doc: [`quorum-shared-architecture.md`](quorum-shared-architecture.md).
 
 **Auto-reviewed and corrected against .agents/docs/component-management-guide.md - still needs human review : _Last review: 2026-02-10 UTC_**
 

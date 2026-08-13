@@ -60,19 +60,26 @@ a pre-bump build into production is the failure this check exists to prevent.
 
 - Run `yarn build` and show the output.
 - If the build fails, **stop and report the error** — do not continue.
-- Confirm `dist/web/` exists and show its size.
+- Confirm `dist/` exists and show its size.
 - **Confirm the built bundle carries the expected version**, with a control that
   proves the check could have failed:
   ```bash
   V=$(node -p "require('./package.json').version")
-  grep -o ".\{10\}$V.\{10\}" dist/web/assets/index-*.js | head -1   # expect a hit
-  grep -c "$V" dist/web/assets/*.js | grep -v ':0'                  # which files carry it
+  grep -o ".\{10\}$V.\{10\}" dist/assets/index-*.js | head -1   # expect a hit
+  grep -c "$V" dist/assets/*.js | grep -v ':0$'                 # which files carry it
   ```
   The version appears in the bundle unquoted and backtick-delimited (e.g.
   ``[`v`,`2.1.0-2`]``), so a `grep '"2.1.0-2"'` with double quotes matches
   nothing and reads as a false negative. Match the bare string.
   As the control, grep for the *previous* version and confirm it is absent — a
   hit means a stale chunk survived and the build is not what it claims to be.
+
+  **Anchor that `:0$`.** Unanchored, `grep -v ':0'` also discards real counts
+  like `:10` and `:20`, and lets other `:0`-containing lines through. Running
+  the control unanchored on 2026-08-13 reported two files carrying an old
+  version that in fact carried nothing — a false alarm on the one check whose
+  entire job is to be trustworthy. Escape the dots too (`2\.0\.9`); an
+  unescaped version string is a regex where `.` matches any character.
 - Report success to the user.
 
 ### 3. Prepare the production repo
@@ -83,16 +90,55 @@ a pre-bump build into production is the failure this check exists to prevent.
 
 ### 4. Replace production assets
 
-- **Ask the user to confirm** before deleting and replacing files. Explain: the next step deletes the old production assets (everything except `CNAME`, `404.html`, `redirect.js`, `handleredirect.js`, `apple/`) and replaces them with the new build.
-- Delete old assets (preserve SPA routing files and `CNAME`):
+**Production owns exactly three paths. The build owns everything else.**
+
+| Production-owned (never delete) | Why |
+|---|---|
+| `CNAME` | the custom domain; losing it takes the site off `app.quorummessenger.com` |
+| `.gitignore` | belongs to the `gh-pages` branch, not to any build |
+| `apple/` | Apple emoji sprites, served but **not** produced by `yarn build` (only `twitter/` is) |
+
+Everything else on `gh-pages` is build output and gets replaced wholesale.
+
+> **`404.html`, `redirect.js` and `handleredirect.js` are build output, not
+> production files.** They live in `quorum-desktop/public/` and Vite copies them
+> into `dist/`, so every deploy overwrites them. Editing them on `gh-pages`
+> looks like it works and is silently reverted by the next deploy — change them
+> in `public/` instead.
+
+- **Ask the user to confirm** before deleting and replacing files. Explain that
+  everything except the three paths above is about to be removed and replaced by
+  the new build.
+- Delete the old build. **Do not enumerate what to delete** — invert it and keep
+  only what production owns, so an asset type the build stops shipping cannot
+  linger:
   ```bash
-  rm -rf assets twitter channelwasm_bg.wasm wasm_exec.js *.ttf *.svg *.png *.ico index.html manifest.webmanifest browserconfig.xml yandex-browser-manifest.json
+  git ls-files -z | grep -zvE '^(CNAME|\.gitignore|apple/)' | xargs -0 -r rm -f
+  find . -mindepth 1 -type d -empty -not -path './.git*' -delete
   ```
-- Copy the new build from `dist/web/`:
+  Sanity-check the scale before trusting it — swap `rm -f` for `wc -l` on the
+  same pipeline. Most tracked files are *survivors*, not deletions, because
+  `apple/` holds several thousand emoji sprites: on 2026-08-13 it selected 3,892
+  files to delete out of 7,695 tracked. A run that proposes deleting nearly
+  everything means the keep-pattern stopped matching.
+
+  The previous version of this step listed extensions (`*.ttf *.svg *.png *.ico`
+  …) and had drifted: it missed `*.gif`, which the build does ship, and still
+  named `browserconfig.xml` and `yandex-browser-manifest.json`, which have
+  existed in neither the build nor production for some time.
+- Confirm the keep-set survived before copying anything over it:
   ```bash
-  cp -r ../quorum-desktop/dist/web/* .
+  ls -d CNAME .gitignore apple    # all three must exist
+  ```
+- Copy the new build from `dist/`:
+  ```bash
+  cp -r ../quorum-desktop/dist/* .
   ```
 - Run `git add -A`, then `git status` to show what changed.
+- **Read the deletions in that status.** Lines beginning `D` mean the build no
+  longer ships a file production was serving. Sometimes that is intended (an
+  asset was genuinely dropped); sometimes it means the build is incomplete. Name
+  them to the user rather than committing past them.
 
 ### 5. Commit
 
@@ -143,4 +189,4 @@ skipped rather than reporting a clean run.
 
 ---
 
-*Last updated: 2026-08-12*
+*Last updated: 2026-08-13*

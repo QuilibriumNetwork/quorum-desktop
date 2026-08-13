@@ -196,7 +196,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 - [Quick Reference Guide](../../../AGENTS.md) - Fast lookup for common tasks and file locations
 - [API Reference](./API-REFERENCE.md) - Quick prop lookup for all primitives
 - [Agents Workflow Guide](../../../agents-workflow.md) - How to use documentation effectively
-- [Component Architecture Guide](../../../issues/mobile-dev/docs/component-architecture-workflow-explained.md) - Overall architecture explanation
+- [Component Management Guide](../../component-management-guide.md) - Overall architecture explanation
 - [Modal System](../modals.md) - Modal implementation patterns
 - [Theming System](../cross-platform-theming.md) - Color system and theming
 - [Responsive Layout](../responsive-layout.md) - Responsive design patterns
