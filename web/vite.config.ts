@@ -107,7 +107,9 @@ export default defineConfig(({ command }): UserConfig => ({
   base: '/', // Use absolute paths for SPA routing compatibility
   build: {
     target: 'es2022', // Support top-level await or error on build for i18n
-    outDir: 'dist/web', // Output to dist/web folder from project root
+    outDir: 'dist', // Output to dist/ from the project root. This was dist/web
+    // back when the repo was also going to build a native app that would need
+    // its own sibling output directory; there is only one build now.
     emptyOutDir: true,
     rolldownOptions: {
       external: (id) => {

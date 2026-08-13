@@ -60,13 +60,13 @@ a pre-bump build into production is the failure this check exists to prevent.
 
 - Run `yarn build` and show the output.
 - If the build fails, **stop and report the error** — do not continue.
-- Confirm `dist/web/` exists and show its size.
+- Confirm `dist/` exists and show its size.
 - **Confirm the built bundle carries the expected version**, with a control that
   proves the check could have failed:
   ```bash
   V=$(node -p "require('./package.json').version")
-  grep -o ".\{10\}$V.\{10\}" dist/web/assets/index-*.js | head -1   # expect a hit
-  grep -c "$V" dist/web/assets/*.js | grep -v ':0'                  # which files carry it
+  grep -o ".\{10\}$V.\{10\}" dist/assets/index-*.js | head -1   # expect a hit
+  grep -c "$V" dist/assets/*.js | grep -v ':0'                  # which files carry it
   ```
   The version appears in the bundle unquoted and backtick-delimited (e.g.
   ``[`v`,`2.1.0-2`]``), so a `grep '"2.1.0-2"'` with double quotes matches
@@ -88,9 +88,9 @@ a pre-bump build into production is the failure this check exists to prevent.
   ```bash
   rm -rf assets twitter channelwasm_bg.wasm wasm_exec.js *.ttf *.svg *.png *.ico index.html manifest.webmanifest browserconfig.xml yandex-browser-manifest.json
   ```
-- Copy the new build from `dist/web/`:
+- Copy the new build from `dist/`:
   ```bash
-  cp -r ../quorum-desktop/dist/web/* .
+  cp -r ../quorum-desktop/dist/* .
   ```
 - Run `git add -A`, then `git status` to show what changed.
 
