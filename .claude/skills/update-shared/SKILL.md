@@ -20,7 +20,17 @@ The shared package is linked locally via `package.json`:
 "@quilibrium/quorum-shared": "link:../quorum-shared"
 ```
 
-The conventional sibling path is `d:/GitHub/Quilibrium/quorum-shared` (Windows) or `/mnt/data/GitHub/Quilibrium/quorum-shared` (Fedora). If that path doesn't exist, ask the user where quorum-shared is located rather than trying to resolve via `node -e` (Windows quoting makes that brittle).
+It is checked out as a **sibling of the quorum-desktop repo root** — that is what
+`link:../quorum-shared` means. Resolve it without hardcoding any machine path:
+
+```bash
+SHARED="$(dirname "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")")/quorum-shared"
+```
+
+`--git-common-dir` (rather than `--show-toplevel`) makes this resolve correctly from a
+linked worktree too, where the `link:` target is still the one checkout beside the
+**main** repo. If `$SHARED` doesn't exist, ask the user where quorum-shared is located
+rather than trying to resolve via `node -e` (Windows quoting makes that brittle).
 
 ## Workflow
 
@@ -127,7 +137,7 @@ When a feature stabilizes and its types should be shared:
 4. Build
 5. In the consuming repo, import: `import { useMyHook } from '@quilibrium/quorum-shared'`
 
-Important: most desktop hooks are NOT shareable yet — the hooks migration is blocked on mobile codebase access (see `.agents/tasks/quorum-shared-migration/designs/2026-03-19-hooks-design.md`). Only add a hook to shared if it has zero context dependencies (no `useMessageDB`, no `usePasskeysContext`, etc.) and zero DOM coupling.
+Important: most desktop hooks are NOT shareable yet — the hooks migration is blocked on mobile codebase access (see `.agents/issues/quorum-shared-migration/designs/`, currently `2026-05-28-hooks-audit-refresh.md`). Only add a hook to shared if it has zero context dependencies (no `useMessageDB`, no `usePasskeysContext`, etc.) and zero DOM coupling.
 
 ### Adding a util
 
@@ -161,3 +171,7 @@ yarn test:run
 ```
 
 No separate test-imports list to maintain — Vitest picks up `*.test.ts` files automatically.
+
+---
+
+*Last updated: 2026-08-13*

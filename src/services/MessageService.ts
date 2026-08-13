@@ -72,7 +72,7 @@ import {
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../utils';
 import { QuorumApiClient } from '../api/baseTypes';
-import { showWarning, noteSyncActivity } from '../utils/toast';
+import { showWarning } from '../utils/toast';
 import { notificationService } from './NotificationService';
 import type { ActionQueueService } from './ActionQueueService';
 import type { ReceiptService, ReceiptEnvelopeFields } from '@quilibrium/quorum-shared';
@@ -6077,8 +6077,6 @@ export class MessageService {
                     spaceId: conversationId.split('/')[0],
                   }),
                 });
-
-                noteSyncActivity();
               }
             }
           } else if (envelope.message.type === 'sync-manifest') {
@@ -6156,8 +6154,6 @@ export class MessageService {
                   }),
                 });
               }
-
-              noteSyncActivity();
             }
 
             // Apply member delta

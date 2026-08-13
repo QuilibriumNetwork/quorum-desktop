@@ -4,7 +4,7 @@ title: "Implementation plan: an identity API that cannot express a partial ident
 status: in-progress
 priority: high
 created: 2026-08-10
-updated: 2026-08-11
+updated: 2026-08-13
 area: identity resolution / QNS / cross-client architecture
 repos: quorum-shared, quorum-desktop, quorum-mobile
 source: writing-plans, from the design at 2026-08-10-identity-resolution-architecture-design.md
@@ -50,7 +50,7 @@ Still open:
 
 ## File Structure
 
-**quorum-shared** (at `D:/GitHub/Quilibrium/quorum-shared`)
+**quorum-shared** (at `E:/GitHub/Quilibrium/quorum-shared`)
 
 | File | Responsibility |
 |---|---|
@@ -79,13 +79,13 @@ Do not delegate. This is the design-bearing change and everything depends on its
 ### Task 1: `MemberIdentity` + `resolveIdentity` in shared
 
 **Files:**
-- Modify: `D:/GitHub/Quilibrium/quorum-shared/src/utils/resolveDisplayName.ts`
-- Test: `D:/GitHub/Quilibrium/quorum-shared/src/utils/resolveIdentity.test.ts`
+- Modify: `E:/GitHub/Quilibrium/quorum-shared/src/utils/resolveDisplayName.ts`
+- Test: `E:/GitHub/Quilibrium/quorum-shared/src/utils/resolveIdentity.test.ts`
 
 - [ ] **Step 1: Branch in shared**
 
 ```bash
-cd /d/GitHub/Quilibrium/quorum-shared
+cd /e/GitHub/Quilibrium/quorum-shared
 git checkout master && git pull
 git checkout -b feat/resolve-identity
 ```
@@ -221,7 +221,7 @@ describe('resolveIdentity — whitespace is absence', () => {
 
 - [ ] **Step 3: Run it and watch it fail**
 
-Run: `cd /d/GitHub/Quilibrium/quorum-shared && npx vitest --run src/utils/resolveIdentity.test.ts`
+Run: `cd /e/GitHub/Quilibrium/quorum-shared && npx vitest --run src/utils/resolveIdentity.test.ts`
 Expected: FAIL — `resolveIdentity` is not exported.
 
 - [ ] **Step 4: Implement**

@@ -11,9 +11,34 @@ Guide for migrating code from `quorum-desktop` to `@quilibrium/quorum-shared` so
 
 ## Prerequisites
 
+### Resolve the two repo paths first
+
+Commands in this guide use `$REPO` and `$SHARED` rather than absolute paths, so they
+work on any machine and any OS. Set them once per shell, from anywhere inside
+quorum-desktop:
+
+```bash
+# The quorum-desktop checkout you are working in (worktree-aware).
+REPO=$(git rev-parse --show-toplevel)
+
+# The quorum-shared sibling checkout. Derived from the MAIN checkout, not the
+# current one, so it stays correct inside a linked worktree.
+SHARED="$(dirname "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")")/quorum-shared"
+```
+
+`quorum-shared` is expected to sit **beside** the quorum-desktop repo root — that is
+what `"link:../quorum-shared"` in `package.json` means. If `$SHARED` doesn't exist,
+ask where quorum-shared is checked out rather than resolving via `node -e` (Windows
+quoting makes that brittle).
+
+> **Why `--git-common-dir` for `$SHARED` but `--show-toplevel` for `$REPO`:** inside a
+> linked worktree those differ. Desktop commands must run against *your* checkout, but
+> the `link:` target is a single shared checkout beside the main one, so resolving it
+> relative to your worktree would point at nothing.
+
 Before starting any migration:
 
-1. **Confirm `link:` dependency is active** in `d:/GitHub/Quilibrium/quorum-desktop/package.json`:
+1. **Confirm `link:` dependency is active** in `$REPO/package.json`:
    ```json
    "@quilibrium/quorum-shared": "link:../quorum-shared"
    ```
@@ -23,7 +48,7 @@ Before starting any migration:
 
 3. **Confirm quorum-shared builds cleanly** before making changes (this is the baseline you'll compare against):
    ```bash
-   cd d:/GitHub/Quilibrium/quorum-shared && yarn build
+   cd $SHARED && yarn build
    ```
 
 ---
@@ -51,10 +76,10 @@ For each candidate file, check:
 
 ```bash
 # What does this file import?
-grep "^import" d:/GitHub/Quilibrium/quorum-desktop/src/<path-to-file>
+grep "^import" $REPO/src/<path-to-file>
 
 # What imports this file?
-grep -r "from.*<module-name>" d:/GitHub/Quilibrium/quorum-desktop/src/ --include="*.ts" --include="*.tsx" -l
+grep -r "from.*<module-name>" $REPO/src/ --include="*.ts" --include="*.tsx" -l
 ```
 
 Classify imports into:
@@ -128,8 +153,8 @@ For components with `.web.tsx` / `.native.tsx` splits:
 
 If the migrated files need npm packages not yet in shared:
 
-1. Check exact versions in `d:/GitHub/Quilibrium/quorum-desktop/package.json`
-2. Add to `d:/GitHub/Quilibrium/quorum-shared/package.json` with matching versions
+1. Check exact versions in `$REPO/package.json`
+2. Add to `$SHARED/package.json` with matching versions
 3. Run `yarn install` in quorum-shared
 4. Verify build: `yarn build`
 
@@ -171,7 +196,7 @@ export { default as dayjs } from './dayjs';
 ### 3e. Verify Build
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-shared
+cd $SHARED
 yarn build
 ```
 
@@ -188,7 +213,7 @@ Expected: 0 errors. All 3 outputs generated (index.mjs, index.js, index.native.j
 Find all files that import from the migrated local paths:
 
 ```bash
-grep -r "from.*utils/<migrated-module>" d:/GitHub/Quilibrium/quorum-desktop/src/ --include="*.ts" --include="*.tsx" -l
+grep -r "from.*utils/<migrated-module>" $REPO/src/ --include="*.ts" --include="*.tsx" -l
 ```
 
 Update each to import from `@quilibrium/quorum-shared`:
@@ -235,34 +260,34 @@ Run these checks in order:
 
 ### 5a. quorum-shared build
 ```bash
-cd d:/GitHub/Quilibrium/quorum-shared && yarn build
+cd $SHARED && yarn build
 ```
 
 ### 5b. quorum-desktop web build
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop && yarn build
+cd $REPO && yarn build
 ```
 
 ### 5c. quorum-desktop dev server
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop && yarn dev
+cd $REPO && yarn dev
 ```
 Verify the app loads in browser — check for blank pages (ESM import failures are silent).
 
 ### 5d. Mobile compatibility (if applicable)
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop && yarn mobile
+cd $REPO && yarn mobile
 ```
 Check Metro bundles without errors. If it fails, look for ESM-only packages (Phase 2d).
 
 ### 5e. Check for DOM API leaks
 ```bash
-grep -r "window\.\|document\.\|navigator\." d:/GitHub/Quilibrium/quorum-shared/src/ --include="*.ts" --include="*.tsx" | grep -v "typeof window" | grep -v "typeof document" | grep -v ".native."
+grep -r "window\.\|document\.\|navigator\." $SHARED/src/ --include="*.ts" --include="*.tsx" | grep -v "typeof window" | grep -v "typeof document" | grep -v ".native."
 ```
 
 ### 5f. Run tests
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop && yarn test
+cd $REPO && yarn test
 ```
 Compare results with previous run — no NEW failures should be introduced.
 
@@ -331,6 +356,4 @@ Documentation upkeep that goes in the desktop PR (not a separate one):
 
 ---
 
-*Last updated: 2026-05-20 — after typing migration. Added: services folder layout (mirror `src/sync/`), vitest mock type strictness gotcha, `@/` alias rewrite reminder, accurate commit/PR/version-bump workflow (squash-merge, version-in-PR, desktop keeps `link:`), `git mv` of done task files, README upkeep notes.*
-
-*Previously: 2026-03-18 — initial skill.*
+*Last updated: 2026-08-13*
