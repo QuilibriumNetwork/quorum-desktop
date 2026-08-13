@@ -297,6 +297,12 @@ msgstr "1개의 대화"
 msgid "4-Character Code"
 msgstr "4자 코드"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:117
+msgid ""
+"A passkey keeps your account key in your device's hardware, unlocked by your"
+" fingerprint, face or PIN."
+msgstr "passkey는 계정 키를 기기 하드웨어에 보관하며, 지문, 얼굴 또는 PIN으로 잠금 해제됩니다."
+
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:80
 msgid ""
 "A passkey uses your device's security features (Face ID, fingerprint, or "
@@ -333,7 +339,7 @@ msgstr "계정"
 msgid "Account address"
 msgstr "계정 주소"
 
-#: src/components/modals/UserSettingsModal/General.tsx:185
+#: src/components/modals/UserSettingsModal/General.tsx:194
 #: src/components/onboarding/steps/DisplayNameStep.tsx:38
 msgid "Account Address"
 msgstr "계정 주소"
@@ -361,6 +367,10 @@ msgstr "친구 추가"
 #: src/components/user/UserProfile.tsx:449
 msgid "Add a note"
 msgstr "노트 추가"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:107
+msgid "Add a passkey"
+msgstr "passkey 추가"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:126
 #: src/components/user/UserProfile.tsx:425
@@ -640,7 +650,7 @@ msgstr "백업 실패"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:108
 #: src/components/modals/SpaceSettingsModal/Account.tsx:269
-#: src/components/modals/UserSettingsModal/General.tsx:147
+#: src/components/modals/UserSettingsModal/General.tsx:156
 msgid "Bio"
 msgstr "바이오"
 
@@ -958,7 +968,7 @@ msgstr "링크 복사"
 #: src/components/direct/DirectMessage.tsx:1135
 #: src/components/direct/DirectMessage.tsx:1155
 #: src/components/direct/DMUserProfileSidebar.tsx:92
-#: src/components/modals/UserSettingsModal/General.tsx:195
+#: src/components/modals/UserSettingsModal/General.tsx:204
 #: src/components/user/UserProfile.tsx:284
 #: src/components/user/UserProfile.tsx:324
 msgid "Copy address"
@@ -1088,6 +1098,10 @@ msgstr "먼저 Space 설정에서 역할을 생성하세요."
 msgid "Create Space"
 msgstr "스페이스 만들기"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:134
+msgid "Create the passkey when asked."
+msgstr "요청 시 passkey를 생성하십시오."
+
 #: src/components/modals/CreateSpaceModal.tsx:280
 msgid "Creating Space..."
 msgstr "스페이스 생성 중..."
@@ -1108,6 +1122,10 @@ msgstr "위험"
 #: src/components/modals/UserSettingsModal/Navigation.tsx:24
 msgid "Danger Zone"
 msgstr "위험 구역"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:148
+msgid "Danger Zone: reset the app."
+msgstr "위험 구역: 앱을 재설정합니다."
 
 #: src/components/ui/ThemeRadioGroup.tsx:23
 #: src/components/ui/ThemeRadioGroup.tsx:25
@@ -1240,8 +1258,8 @@ msgstr "스페이스 삭제"
 #: src/components/modals/SpaceSettingsModal/General.tsx:141
 #: src/components/modals/SpaceSettingsModal/General.tsx:216
 #: src/components/modals/SpaceSettingsModal/General.tsx:224
-#: src/components/modals/UserSettingsModal/General.tsx:99
-#: src/components/modals/UserSettingsModal/General.tsx:107
+#: src/components/modals/UserSettingsModal/General.tsx:100
+#: src/components/modals/UserSettingsModal/General.tsx:108
 msgid "Delete this image"
 msgstr "이 이미지를 삭제하세요"
 
@@ -1352,12 +1370,12 @@ msgstr "직접 메시지"
 msgid "Discover Spaces"
 msgstr "공간 탐색"
 
-#: src/components/modals/UserSettingsModal/General.tsx:212
+#: src/components/modals/UserSettingsModal/General.tsx:221
 msgid ""
 "Display a tag from one of your Spaces next to your username in messages."
 msgstr "메시지에서 사용자 이름 옆에 소유한 Space 중 하나의 태그를 표시합니다."
 
-#: src/components/modals/UserSettingsModal/General.tsx:128
+#: src/components/modals/UserSettingsModal/General.tsx:129
 msgid "Display name"
 msgstr "표시 이름"
 
@@ -2002,6 +2020,10 @@ msgstr "음소거된 채널 숨기기"
 msgid "Hide muted channels from sidebar"
 msgstr "음소거된 채널을 사이드바에서 숨기기"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:87
+msgid "How to add a passkey"
+msgstr "passkey 추가 방법"
+
 #: src/services/InvitationService.ts:232
 msgid "Hub key not found for this Space."
 msgstr "이 스페이스에 대한 허브 키를 찾을 수 없습니다."
@@ -2106,6 +2128,13 @@ msgstr "초대"
 msgid "is typing"
 msgstr "가 입력 중입니다"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:143
+msgid ""
+"It can only be created while an account is being set up, so adding one means"
+" setting this account up again from your key file."
+msgstr ""
+"passkey는 계정 설정 중에만 생성할 수 있으므로, passkey를 추가하려면 키 파일에서 이 계정을 다시 설정해야 합니다."
+
 #: src/components/modals/UserSettingsModal/Help.tsx:92
 msgid "Italic"
 msgstr "기울임"
@@ -2164,6 +2193,12 @@ msgid ""
 "Keep the file you downloaded safe and private! Anyone with this file can "
 "access your account."
 msgstr "다운로드한 파일을 안전하고 비공개로 보관하세요! 이 파일을 가진 사람은 누구나 계정에 접근할 수 있습니다."
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:159
+msgid ""
+"Keep the key file somewhere safe until you are through: after the reset it "
+"is the only way back into your account."
+msgstr "재설정 후에는 계정에 다시 액세스할 수 있는 유일한 방법이므로, 완료될 때까지 키 파일을 안전한 곳에 보관하십시오."
 
 #: src/components/onboarding/steps/SecurityWarningStep.tsx:16
 msgid "Keep your Key Safe!"
@@ -2608,6 +2643,14 @@ msgstr "누락된 공간을 찾을 수 없습니다."
 msgid "No muted conversations"
 msgstr "음소거된 대화가 없습니다"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:75
+msgid ""
+"No passkey on this account. Your account key is stored on this device, so "
+"anyone who can read its files could take over your account."
+msgstr ""
+"이 계정에는 passkey가 없습니다. 계정 키가 이 기기에 저장되어 있으므로, 이 기기의 파일을 읽을 수 있는 사람은 누구나 계정을 "
+"탈취할 수 있습니다."
+
 #: src/components/message/PinnedMessagesPanel.tsx:195
 msgid "No pinned messages yet"
 msgstr "아직 고정된 메시지가 없습니다"
@@ -2652,7 +2695,7 @@ msgstr "@{usernameQuery}에 해당하는 사용자를 찾을 수 없습니다."
 msgid "No users found!"
 msgstr "사용자를 찾을 수 없습니다!"
 
-#: src/components/modals/UserSettingsModal/General.tsx:219
+#: src/components/modals/UserSettingsModal/General.tsx:228
 #: src/components/space/RolePreview.tsx:39
 msgid "None"
 msgstr "없음"
@@ -2751,6 +2794,10 @@ msgstr "열기 {0}"
 #: src/components/wallet/WalletPage.tsx:19
 msgid "Open navigation"
 msgstr "네비게이션 열기"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:133
+msgid "Open Quorum in your browser and import that file."
+msgstr "브라우저에서 Quorum을 열고 해당 파일을 가져오십시오."
 
 #: src/components/shell/NavRail.tsx:278 src/components/shell/NavRail.tsx:293
 msgid "Open user settings"
@@ -2892,7 +2939,7 @@ msgstr "다운로드 준비 중..."
 msgid "Preview"
 msgstr "미리 보기"
 
-#: src/components/modals/UserSettingsModal/General.tsx:239
+#: src/components/modals/UserSettingsModal/General.tsx:248
 msgid "Preview:"
 msgstr "미리 보기:"
 
@@ -2951,6 +2998,14 @@ msgstr "공개 프로필"
 #: src/components/shell/NavRail.tsx:48
 msgid "Public spaces"
 msgstr "공개 공간"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:129
+msgid ""
+"Quorum for desktop cannot use passkeys. To protect your account key with "
+"one, set your account up in a web browser using your key file."
+msgstr ""
+"데스크톱용 Quorum은 passkey를 사용할 수 없습니다. passkey로 계정 키를 보호하려면, 키 파일을 사용하여 웹 브라우저에서"
+" 계정을 설정하십시오."
 
 #: src/components/Maintenance.tsx:29
 msgid ""
@@ -3315,6 +3370,15 @@ msgstr "검색 중..."
 msgid "Security"
 msgstr "보안"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:132
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:146
+msgid "Security tab > Account Key: choose Download file."
+msgstr "보안 탭 > 계정 키: 파일 다운로드를 선택하십시오."
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:147
+msgid "Security tab > Data Backup: export a backup."
+msgstr "보안 탭 > 데이터 백업: 백업을 내보내십시오."
+
 #: src/components/bookmarks/BookmarksPanel.tsx:196
 msgid "See all bookmarks"
 msgstr "모든 마커 보기"
@@ -3383,6 +3447,10 @@ msgstr "세션 암호화됨"
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:720
 msgid "Set as default channel"
 msgstr "기본 채널로 설정"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:149
+msgid "Set up again, import your key file, and create the passkey when asked."
+msgstr "다시 설정하고, 키 파일을 가져온 다음, 요청 시 passkey를 생성하십시오."
 
 #: src/components/shell/NavRail.tsx:304
 msgid "Settings"
@@ -3532,7 +3600,7 @@ msgstr "공간 설정"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:40
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:53
-#: src/components/modals/UserSettingsModal/General.tsx:209
+#: src/components/modals/UserSettingsModal/General.tsx:218
 msgid "Space Tag"
 msgstr "Space 태그"
 
@@ -3613,7 +3681,7 @@ msgstr "복사하려면 탭하세요"
 msgid "Tell people about yourself in this Space..."
 msgstr "이 스페이스에서 당신에 대해 사람들에게 알려주세요..."
 
-#: src/components/modals/UserSettingsModal/General.tsx:159
+#: src/components/modals/UserSettingsModal/General.tsx:168
 msgid "Tell us about yourself..."
 msgstr "자신에 대해 이야기해 주세요..."
 
@@ -3657,7 +3725,7 @@ msgstr ""
 "이 백업은 이전 버전으로 생성되었으며 Space 키가 포함되어 있지 않아 Space를 복원할 수 없었습니다. Space를 보호하려면 새 "
 "백업을 내보내십시오."
 
-#: src/components/modals/UserSettingsModal/General.tsx:151
+#: src/components/modals/UserSettingsModal/General.tsx:160
 msgid "This bio will be visible to others when they view your profile."
 msgstr "이 바이오는 프로필을 볼 때 다른 사용자에게 표시됩니다."
 
@@ -3717,7 +3785,7 @@ msgid ""
 " → General."
 msgstr "이것은 공간의 기본 채널입니다. 변경하려면 공간 설정 → 일반으로 이동하세요."
 
-#: src/components/modals/UserSettingsModal/General.tsx:187
+#: src/components/modals/UserSettingsModal/General.tsx:196
 msgid ""
 "This is your public address and is safe to share with anyone you want to "
 "interact with."
@@ -4103,7 +4171,7 @@ msgstr "당신의 공간을 위한 배너를 업로드하세요 - PNG 또는 JPG
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "이 공간의 아바타를 업로드하세요 - PNG 또는 JPG - 최적 비율 1:1"
 
-#: src/components/modals/UserSettingsModal/General.tsx:117
+#: src/components/modals/UserSettingsModal/General.tsx:118
 msgid "Upload an avatar for your profile - PNG or JPG - Optimal ratio 1:1"
 msgstr "당신의 프로필에 아바타 업로드 - PNG 또는 JPG - 최적 비율 1:1"
 
@@ -4419,6 +4487,12 @@ msgstr "당신는 이 공간에서 음소거되었습니다"
 msgid "You have new unread messages"
 msgstr "새로 읽지 않은 메시지가 있습니다."
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:137
+msgid ""
+"You keep the same account and address, and this desktop app carries on "
+"working."
+msgstr "동일한 계정과 주소를 유지하며, 이 데스크톱 앱은 계속 작동합니다."
+
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:56
 msgid ""
 "You must assign yourself a role for moderation actions (except kicking). "
@@ -4573,7 +4647,7 @@ msgid ""
 " JPEG file extension."
 msgstr "프로필 이미지 크기는 {maxSize} 이하이어야 하며 PNG, JPG 또는 JPEG 파일 확장자여야 합니다."
 
-#: src/components/modals/UserSettingsModal/General.tsx:138
+#: src/components/modals/UserSettingsModal/General.tsx:139
 msgid "Your QNS name <0>{primaryUsername}.q</0> is shown as your name."
 msgstr "당신의 QNS 이름 <0>{primaryUsername}.q</0>가 당신의 이름으로 표시됩니다."
 
@@ -4592,9 +4666,6 @@ msgstr "YouTube 비디오"
 #: src/components/ui/YouTubeFacade.tsx:114
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube 비디오 썸네일"
-
-#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-#~ msgstr "Quorum에 오신 것을 환영합니다, {name}! 계정 보안이 완료되어 사용 준비가 되었습니다."
 
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} 마커가 여기 있습니다"
@@ -4708,6 +4779,9 @@ msgstr "YouTube 비디오 썸네일"
 
 #~ msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
 #~ msgstr "당신의 Space에 배너 업로드 - PNG 또는 JPG - 최적 비율 3:1"
+
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr "Quorum에 오신 것을 환영합니다, {name}! 계정 보안이 완료되어 사용 준비가 되었습니다."
 
 #~ msgid "Yesterday at {timeFormatted}"
 #~ msgstr "어제 {timeFormatted}에"

@@ -305,6 +305,15 @@ msgstr "1 απάντηση"
 msgid "4-Character Code"
 msgstr "Κωδικός 4 χαρακτήρων"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:117
+msgid ""
+"A passkey keeps your account key in your device's hardware, unlocked by your"
+" fingerprint, face or PIN."
+msgstr ""
+"Ένα passkey διατηρεί το κλειδί του λογαριασμού σου στο υλικό της συσκευής "
+"σου, ξεκλειδωμένο με το δακτυλικό σου αποτύπωμα, το πρόσωπό σου ή το PIN "
+"σου."
+
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:80
 msgid ""
 "A passkey uses your device's security features (Face ID, fingerprint, or "
@@ -345,7 +354,7 @@ msgstr "Λογαριασμός"
 msgid "Account address"
 msgstr "Διεύθυνση λογαριασμού"
 
-#: src/components/modals/UserSettingsModal/General.tsx:185
+#: src/components/modals/UserSettingsModal/General.tsx:194
 #: src/components/onboarding/steps/DisplayNameStep.tsx:38
 msgid "Account Address"
 msgstr "Διεύθυνση Λογαριασμού"
@@ -373,6 +382,10 @@ msgstr "Πρόσθεσε έναν φίλο"
 #: src/components/user/UserProfile.tsx:449
 msgid "Add a note"
 msgstr "Προσθήκη σημείωσης"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:107
+msgid "Add a passkey"
+msgstr "Πρόσθεσε ένα passkey"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:126
 #: src/components/user/UserProfile.tsx:425
@@ -670,7 +683,7 @@ msgstr "Αποτυχία Αντιγράφου"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:108
 #: src/components/modals/SpaceSettingsModal/Account.tsx:269
-#: src/components/modals/UserSettingsModal/General.tsx:147
+#: src/components/modals/UserSettingsModal/General.tsx:156
 msgid "Bio"
 msgstr "Βιο"
 
@@ -999,7 +1012,7 @@ msgstr "Αντιγραφή συνδέσμου"
 #: src/components/direct/DirectMessage.tsx:1135
 #: src/components/direct/DirectMessage.tsx:1155
 #: src/components/direct/DMUserProfileSidebar.tsx:92
-#: src/components/modals/UserSettingsModal/General.tsx:195
+#: src/components/modals/UserSettingsModal/General.tsx:204
 #: src/components/user/UserProfile.tsx:284
 #: src/components/user/UserProfile.tsx:324
 msgid "Copy address"
@@ -1138,6 +1151,10 @@ msgstr "Δημιούργησε ρόλους πρώτα στις Ρυθμίσει
 msgid "Create Space"
 msgstr "Δημιουργία Χώρου"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:134
+msgid "Create the passkey when asked."
+msgstr "Δημιούργησε το passkey όταν σου ζητηθεί."
+
 #: src/components/modals/CreateSpaceModal.tsx:280
 msgid "Creating Space..."
 msgstr "Δημιουργία Χώρου..."
@@ -1158,6 +1175,10 @@ msgstr "Κίνδυνος"
 #: src/components/modals/UserSettingsModal/Navigation.tsx:24
 msgid "Danger Zone"
 msgstr "Ζώνη κινδύνου"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:148
+msgid "Danger Zone: reset the app."
+msgstr "Ζώνη κινδύνου: επαναφορά της εφαρμογής."
 
 #: src/components/ui/ThemeRadioGroup.tsx:23
 #: src/components/ui/ThemeRadioGroup.tsx:25
@@ -1292,8 +1313,8 @@ msgstr "Διαγραφή Χώρου"
 #: src/components/modals/SpaceSettingsModal/General.tsx:141
 #: src/components/modals/SpaceSettingsModal/General.tsx:216
 #: src/components/modals/SpaceSettingsModal/General.tsx:224
-#: src/components/modals/UserSettingsModal/General.tsx:99
-#: src/components/modals/UserSettingsModal/General.tsx:107
+#: src/components/modals/UserSettingsModal/General.tsx:100
+#: src/components/modals/UserSettingsModal/General.tsx:108
 msgid "Delete this image"
 msgstr "Διάγραψε αυτή την εικόνα"
 
@@ -1414,14 +1435,14 @@ msgstr "Προσωπικά μηνύματα"
 msgid "Discover Spaces"
 msgstr "Ανακάλυψε Χώρους"
 
-#: src/components/modals/UserSettingsModal/General.tsx:212
+#: src/components/modals/UserSettingsModal/General.tsx:221
 msgid ""
 "Display a tag from one of your Spaces next to your username in messages."
 msgstr ""
 "Εμφάνιση ετικέτας από έναν από τους χώρους σου δίπλα στο όνομά σου στα "
 "μηνύματα."
 
-#: src/components/modals/UserSettingsModal/General.tsx:128
+#: src/components/modals/UserSettingsModal/General.tsx:129
 msgid "Display name"
 msgstr "Όνομα εμφάνισης"
 
@@ -2090,6 +2111,10 @@ msgstr "Απόκρυψη Σιωπηλών Καναλιών"
 msgid "Hide muted channels from sidebar"
 msgstr "Απόκρυψη σιωπηλών καναλιών από την πλευρική γραμμή"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:87
+msgid "How to add a passkey"
+msgstr "Πώς να προσθέσεις ένα passkey"
+
 #: src/services/InvitationService.ts:232
 msgid "Hub key not found for this Space."
 msgstr "Το κλειδί Hub δεν βρέθηκε για αυτόν τον Χώρο."
@@ -2199,6 +2224,15 @@ msgstr "Προσκλήσεις"
 msgid "is typing"
 msgstr "γράφει"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:143
+msgid ""
+"It can only be created while an account is being set up, so adding one means"
+" setting this account up again from your key file."
+msgstr ""
+"Μπορεί να δημιουργηθεί μόνο κατά τη ρύθμιση ενός λογαριασμού, οπότε η "
+"προσθήκη ενός σημαίνει ότι θα ρυθμίσεις ξανά αυτόν τον λογαριασμό από το "
+"αρχείο κλειδιού σου."
+
 #: src/components/modals/UserSettingsModal/Help.tsx:92
 msgid "Italic"
 msgstr "Πλάγια"
@@ -2259,6 +2293,14 @@ msgid ""
 msgstr ""
 "Κράτησε το αρχείο που κατέβασες ασφαλές και ιδιωτικό! Κάθε άτομο που έχει "
 "αυτό το αρχείο μπορεί να αποκτήσει πρόσβαση στον λογαριασμό σου."
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:159
+msgid ""
+"Keep the key file somewhere safe until you are through: after the reset it "
+"is the only way back into your account."
+msgstr ""
+"Κράτησε το αρχείο κλειδιού κάπου ασφαλές μέχρι να τελειώσεις: μετά την "
+"επαναφορά είναι ο μόνος τρόπος να μπεις ξανά στον λογαριασμό σου."
 
 #: src/components/onboarding/steps/SecurityWarningStep.tsx:16
 msgid "Keep your Key Safe!"
@@ -2731,6 +2773,15 @@ msgstr "Δεν βρέθηκαν Χώροι που λείπουν"
 msgid "No muted conversations"
 msgstr "Καμία σιωπηλή συνομιλία"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:75
+msgid ""
+"No passkey on this account. Your account key is stored on this device, so "
+"anyone who can read its files could take over your account."
+msgstr ""
+"Δεν υπάρχει passkey σε αυτόν τον λογαριασμό. Το κλειδί του λογαριασμού σου "
+"αποθηκεύεται σε αυτήν τη συσκευή, οπότε οποιοσδήποτε μπορεί να διαβάσει τα "
+"αρχεία της θα μπορούσε να αναλάβει τον λογαριασμό σου."
+
 #: src/components/message/PinnedMessagesPanel.tsx:195
 msgid "No pinned messages yet"
 msgstr "Δεν υπάρχουν καρφιτσωμένα μηνύματα ακόμα"
@@ -2777,7 +2828,7 @@ msgstr "Δεν βρέθηκε χρήστης για @{usernameQuery}."
 msgid "No users found!"
 msgstr "Δε βρέθηκαν χρήστες!"
 
-#: src/components/modals/UserSettingsModal/General.tsx:219
+#: src/components/modals/UserSettingsModal/General.tsx:228
 #: src/components/space/RolePreview.tsx:39
 msgid "None"
 msgstr "Κανένα"
@@ -2882,6 +2933,11 @@ msgstr "Άνοιγμα {0}"
 #: src/components/wallet/WalletPage.tsx:19
 msgid "Open navigation"
 msgstr "Άνοιγμα πλοήγησης"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:133
+msgid "Open Quorum in your browser and import that file."
+msgstr ""
+"Άνοιξε το Quorum στο πρόγραμμα περιήγησής σου και εισήγαγε αυτό το αρχείο."
 
 #: src/components/shell/NavRail.tsx:278 src/components/shell/NavRail.tsx:293
 msgid "Open user settings"
@@ -3030,7 +3086,7 @@ msgstr "Προετοιμασία λήψης..."
 msgid "Preview"
 msgstr "Προεπισκόπηση"
 
-#: src/components/modals/UserSettingsModal/General.tsx:239
+#: src/components/modals/UserSettingsModal/General.tsx:248
 msgid "Preview:"
 msgstr "Προεπισκόπηση:"
 
@@ -3093,6 +3149,16 @@ msgstr "Δημόσιο προφίλ"
 #: src/components/shell/NavRail.tsx:48
 msgid "Public spaces"
 msgstr "Δημόσιοι χώροι"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:129
+msgid ""
+"Quorum for desktop cannot use passkeys. To protect your account key with "
+"one, set your account up in a web browser using your key file."
+msgstr ""
+"Το Quorum για επιτραπέζιους υπολογιστές δεν μπορεί να χρησιμοποιήσει "
+"passkeys. Για να προστατεύσεις το κλειδί του λογαριασμού σου με ένα, ρύθμισε"
+" τον λογαριασμό σου σε ένα πρόγραμμα περιήγησης ιστού χρησιμοποιώντας το "
+"αρχείο κλειδιού σου."
 
 #: src/components/Maintenance.tsx:29
 msgid ""
@@ -3469,6 +3535,15 @@ msgstr "Αναζητώντας..."
 msgid "Security"
 msgstr "Ασφάλεια"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:132
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:146
+msgid "Security tab > Account Key: choose Download file."
+msgstr "Καρτέλα Ασφάλεια > Κλειδί Λογαριασμού: επίλεξε Λήψη αρχείου."
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:147
+msgid "Security tab > Data Backup: export a backup."
+msgstr "Καρτέλα Ασφάλεια > Αντιγραφή δεδομένων: εξαγωγή αντιγράφου ασφαλείας."
+
 #: src/components/bookmarks/BookmarksPanel.tsx:196
 msgid "See all bookmarks"
 msgstr "Δείτε όλες τις μάρκες"
@@ -3539,6 +3614,12 @@ msgstr "Η συνεδρία είναι κρυπτογραφημένη"
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:720
 msgid "Set as default channel"
 msgstr "Ορισμός ως προεπιλεγμένου καναλιού"
+
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:149
+msgid "Set up again, import your key file, and create the passkey when asked."
+msgstr ""
+"Ρύθμισε ξανά, εισήγαγε το αρχείο κλειδιού σου και δημιούργησε το passkey "
+"όταν σου ζητηθεί."
 
 #: src/components/shell/NavRail.tsx:304
 msgid "Settings"
@@ -3695,7 +3776,7 @@ msgstr "Ρυθμίσεις Χώρου"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:40
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:53
-#: src/components/modals/UserSettingsModal/General.tsx:209
+#: src/components/modals/UserSettingsModal/General.tsx:218
 msgid "Space Tag"
 msgstr "Ετικέτα Χώρου"
 
@@ -3779,7 +3860,7 @@ msgstr "Πάτησε για αντιγραφή"
 msgid "Tell people about yourself in this Space..."
 msgstr "Πες στους ανθρώπους για τον εαυτό σου σε αυτόν τον Χώρο..."
 
-#: src/components/modals/UserSettingsModal/General.tsx:159
+#: src/components/modals/UserSettingsModal/General.tsx:168
 msgid "Tell us about yourself..."
 msgstr "Πες μας για τον εαυτό σου..."
 
@@ -3829,7 +3910,7 @@ msgstr ""
 "Χώρου, οπότε οι Χώροι δεν μπόρεσαν να αποκατασταθούν. Εξήγαγε ένα νέο backup"
 " για να τους προστατεύσεις."
 
-#: src/components/modals/UserSettingsModal/General.tsx:151
+#: src/components/modals/UserSettingsModal/General.tsx:160
 msgid "This bio will be visible to others when they view your profile."
 msgstr "Αυτή η βιογραφία θα είναι ορατή σε άλλους όταν δουν το προφίλ σου."
 
@@ -3899,7 +3980,7 @@ msgstr ""
 "Αυτό είναι το προεπιλεγμένο κανάλι για τον Χώρο. Για να το αλλάξετε "
 "πηγαίνετε στο Ρυθμίσεις Χώρου → Γενικά."
 
-#: src/components/modals/UserSettingsModal/General.tsx:187
+#: src/components/modals/UserSettingsModal/General.tsx:196
 msgid ""
 "This is your public address and is safe to share with anyone you want to "
 "interact with."
@@ -4332,7 +4413,7 @@ msgstr ""
 "Ανέβασε μια εικόνα προφίλ για αυτόν τον Χώρο - PNG ή JPG - Βέλτιστη αναλογία"
 " 1:1"
 
-#: src/components/modals/UserSettingsModal/General.tsx:117
+#: src/components/modals/UserSettingsModal/General.tsx:118
 msgid "Upload an avatar for your profile - PNG or JPG - Optimal ratio 1:1"
 msgstr "Ανέβασε μια εικόνα προφίλ - PNG ή JPG - Βέλτιστη αναλογία 1:1"
 
@@ -4689,6 +4770,14 @@ msgstr "Έχεις σιωπηθεί σε αυτόν τον Χώρο"
 msgid "You have new unread messages"
 msgstr "Έχεις νέα μη αναγνωσμένα μηνύματα"
 
+#: src/components/modals/UserSettingsModal/PasskeyStatus.tsx:137
+msgid ""
+"You keep the same account and address, and this desktop app carries on "
+"working."
+msgstr ""
+"Διατηρείς τον ίδιο λογαριασμό και διεύθυνση, και αυτή η εφαρμογή "
+"επιτραπέζιου υπολογιστή συνεχίζει να λειτουργεί."
+
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:56
 msgid ""
 "You must assign yourself a role for moderation actions (except kicking). "
@@ -4869,7 +4958,7 @@ msgstr ""
 "Το μέγεθος της εικόνας του προφίλ σου πρέπει να είναι {maxSize} ή λιγότερο "
 "και πρέπει να είναι αρχείο τύπου PNG, JPG ή JPEG."
 
-#: src/components/modals/UserSettingsModal/General.tsx:138
+#: src/components/modals/UserSettingsModal/General.tsx:139
 msgid "Your QNS name <0>{primaryUsername}.q</0> is shown as your name."
 msgstr ""
 "Το όνομα QNS σου <0>{primaryUsername}.q</0> εμφανίζεται ως το όνομά σου."
@@ -4889,11 +4978,6 @@ msgstr "YouTube Video"
 #: src/components/ui/YouTubeFacade.tsx:114
 msgid "YouTube Video Thumbnail"
 msgstr "Μικρογραφία YouTube Video"
-
-#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-#~ msgstr ""
-#~ "Καλώς ήρθες στο Quorum, {name}! Ο λογαριασμός σου είναι ασφαλής και έτοιμος "
-#~ "για χρήση."
 
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} μάρκα εδώ"
@@ -5029,6 +5113,11 @@ msgstr "Μικρογραφία YouTube Video"
 #~ msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
 #~ msgstr ""
 #~ "Ανέβασε ένα banner για τον χώρο σου - PNG ή JPG - Βέλτιστη αναλογία 3:1"
+
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr ""
+#~ "Καλώς ήρθες στο Quorum, {name}! Ο λογαριασμός σου είναι ασφαλής και έτοιμος "
+#~ "για χρήση."
 
 #~ msgid "Yesterday at {timeFormatted}"
 #~ msgstr "Χθες στις {timeFormatted}"
