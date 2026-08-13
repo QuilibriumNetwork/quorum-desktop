@@ -32,10 +32,8 @@ msgstr "Χωρίς Ρόλο - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-"Καλώς ήρθες στο Quorum, {name}! Ο λογαριασμός σου είναι ασφαλής και έτοιμος "
-"για χρήση."
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "Καλώς ήρθες στο Quorum, {name}! Ο λογαριασμός σου είναι έτοιμος."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2915,20 +2913,25 @@ msgstr "Η Σελίδα Δεν Βρέθηκε"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"Η δημιουργία passkey απέτυχε. Μπορείς να δοκιμάσεις ξανά, ή να συνεχίσεις "
-"χωρίς Passkey (ακόμη ασφαλές, απλά χωρίς προστασία υλικού συσκευής)."
+"Η ρύθμιση του passkey απέτυχε. Μπορείς να δοκιμάσεις ξανά ή να συνεχίσεις "
+"χωρίς. Χωρίς passkey, το κλειδί του λογαριασμού σου αποθηκεύεται σε αυτήν τη"
+" συσκευή, οπότε οποιοσδήποτε μπορεί να διαβάσει τα αρχεία της θα μπορούσε να"
+" αναλάβει τον λογαριασμό σου."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Τα passkeys δεν υποστηρίζονται από αυτόν τον περιηγητή. Θα πρέπει να "
-"συνεχίσεις χωρίς Passkey (ακόμη ασφαλές, απλά χωρίς προστασία υλικού "
-"συσκευής)."
+"Τα passkey δεν υποστηρίζονται σε αυτό το πρόγραμμα περιήγησης, οπότε θα "
+"πρέπει να συνεχίσεις χωρίς. Το κλειδί του λογαριασμού σου θα αποθηκευτεί σε "
+"αυτήν τη συσκευή, οπότε οποιοσδήποτε μπορεί να διαβάσει τα αρχεία της θα "
+"μπορούσε να αναλάβει τον λογαριασμό σου."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3800,11 +3803,14 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Η ρύθμιση του passkey λήξε. Μπορείς να προσπαθήσεις ξανά, ή να συνεχίσεις "
-"χωρίς passkey (ακόμη ασφαλές, απλά χωρίς προστασία υλικού συσκευής)."
+"Η ρύθμιση του passkey έληξε. Μπορείς να δοκιμάσεις ξανά ή να συνεχίσεις "
+"χωρίς. Χωρίς passkey, το κλειδί του λογαριασμού σου αποθηκεύεται σε αυτήν τη"
+" συσκευή, οπότε οποιοσδήποτε μπορεί να διαβάσει τα αρχεία της θα μπορούσε να"
+" αναλάβει τον λογαριασμό σου."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4641,12 +4647,14 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Ακύρωσες τη ρύθμιση του passkey. Μπορείς να προσπαθήσεις ξανά, ή να "
-"συνεχίσεις χωρίς passkey (ακόμη ασφαλές, απλά χωρίς προστασία υλικού "
-"συσκευής)."
+"Ακύρωσες τη ρύθμιση του passkey. Μπορείς να δοκιμάσεις ξανά ή να συνεχίσεις "
+"χωρίς. Χωρίς passkey, το κλειδί του λογαριασμού σου αποθηκεύεται σε αυτήν τη"
+" συσκευή, οπότε οποιοσδήποτε μπορεί να διαβάσει τα αρχεία της θα μπορούσε να"
+" αναλάβει τον λογαριασμό σου."
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4882,6 +4890,11 @@ msgstr "YouTube Video"
 msgid "YouTube Video Thumbnail"
 msgstr "Μικρογραφία YouTube Video"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr ""
+#~ "Καλώς ήρθες στο Quorum, {name}! Ο λογαριασμός σου είναι ασφαλής και έτοιμος "
+#~ "για χρήση."
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} μάρκα εδώ"
 
@@ -4928,6 +4941,21 @@ msgstr "Μικρογραφία YouTube Video"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Κατανοώ, Εμφάνιση QR"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Η δημιουργία passkey απέτυχε. Μπορείς να δοκιμάσεις ξανά, ή να συνεχίσεις "
+#~ "χωρίς Passkey (ακόμη ασφαλές, απλά χωρίς προστασία υλικού συσκευής)."
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Τα passkeys δεν υποστηρίζονται από αυτόν τον περιηγητή. Θα πρέπει να "
+#~ "συνεχίσεις χωρίς Passkey (ακόμη ασφαλές, απλά χωρίς προστασία υλικού "
+#~ "συσκευής)."
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "Καρφιτσωμένο από {0}"
 
@@ -4958,6 +4986,13 @@ msgstr "Μικρογραφία YouTube Video"
 #~ "Επαναφέρετε τη σύνοδο κρυπτογράφησης εάν τα μηνύματα αποτυγχάνουν να σταλούν"
 #~ " ή να αποκρυπτογραφηθούν. Το επόμενο μήνυμα θα δημιουργήσει μια νέα ασφαλή "
 #~ "σύνδεση."
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Η ρύθμιση του passkey λήξε. Μπορείς να προσπαθήσεις ξανά, ή να συνεχίσεις "
+#~ "χωρίς passkey (ακόμη ασφαλές, απλά χωρίς προστασία υλικού συσκευής)."
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -5000,6 +5035,14 @@ msgstr "Μικρογραφία YouTube Video"
 
 #~ msgid "You"
 #~ msgstr "Εσύ"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Ακύρωσες τη ρύθμιση του passkey. Μπορείς να προσπαθήσεις ξανά, ή να "
+#~ "συνεχίσεις χωρίς passkey (ακόμη ασφαλές, απλά χωρίς προστασία υλικού "
+#~ "συσκευής)."
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

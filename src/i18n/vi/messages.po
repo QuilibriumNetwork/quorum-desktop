@@ -32,10 +32,8 @@ msgstr "Không có vai trò - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-"Chào mừng đến với Quorum, {name}! Tài khoản của bạn đã được bảo mật và sẵn "
-"sàng để sử dụng."
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "Chào mừng đến với Quorum, {name}! Tài khoản của bạn đã sẵn sàng."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2861,19 +2859,25 @@ msgstr "Trang không tìm thấy"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"Cài đặt passkey đã thất bại. Bạn có thể thử lại, hoặc tiếp tục mà không cần "
-"passkey (vẫn an toàn, chỉ không có bảo vệ phần cứng thiết bị)."
+"Thiết lập passkey thất bại. Bạn có thể thử lại hoặc tiếp tục mà không cần "
+"passkey. Nếu không có passkey, khóa tài khoản của bạn sẽ được lưu trữ trên "
+"thiết bị này, vì vậy bất kỳ ai có thể đọc các tệp của thiết bị đều có thể "
+"chiếm quyền điều khiển tài khoản của bạn."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Passkey không được hỗ trợ trên trình duyệt này. Bạn sẽ cần tiếp tục mà không"
-" cần passkey (vẫn an toàn, chỉ không có bảo vệ phần cứng thiết bị)."
+"passkey không được hỗ trợ trên trình duyệt này, vì vậy bạn sẽ cần tiếp tục "
+"mà không cần passkey. Khóa tài khoản của bạn sẽ được lưu trữ trên thiết bị "
+"này, vì vậy bất kỳ ai có thể đọc các tệp của thiết bị đều có thể chiếm quyền"
+" điều khiển tài khoản của bạn."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3743,11 +3747,14 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Thiết lập passkey đã hết thời gian. Bạn có thể thử lại, hoặc tiếp tục mà "
-"không cần passkey (vẫn an toàn, chỉ là không có bảo vệ phần cứng thiết bị)."
+"Thiết lập passkey đã hết thời gian. Bạn có thể thử lại hoặc tiếp tục mà "
+"không cần passkey. Nếu không có passkey, khóa tài khoản của bạn sẽ được lưu "
+"trữ trên thiết bị này, vì vậy bất kỳ ai có thể đọc các tệp của thiết bị đều "
+"có thể chiếm quyền điều khiển tài khoản của bạn."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4555,11 +4562,14 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Bạn đã hủy thiết lập passkey. Bạn có thể thử lại, hoặc tiếp tục mà không cần"
-" passkey (vẫn an toàn, chỉ là không có bảo vệ phần cứng thiết bị)."
+"Bạn đã hủy thiết lập passkey. Bạn có thể thử lại hoặc tiếp tục mà không cần "
+"passkey. Nếu không có passkey, khóa tài khoản của bạn sẽ được lưu trữ trên "
+"thiết bị này, vì vậy bất kỳ ai có thể đọc các tệp của thiết bị đều có thể "
+"chiếm quyền điều khiển tài khoản của bạn."
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4787,6 +4797,11 @@ msgstr "Video YouTube"
 msgid "YouTube Video Thumbnail"
 msgstr "Hình thu nhỏ Video YouTube"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr ""
+#~ "Chào mừng đến với Quorum, {name}! Tài khoản của bạn đã được bảo mật và sẵn "
+#~ "sàng để sử dụng."
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} marcador ở đây"
 
@@ -4831,6 +4846,20 @@ msgstr "Hình thu nhỏ Video YouTube"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Tôi hiểu, Hiển thị QR"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Cài đặt passkey đã thất bại. Bạn có thể thử lại, hoặc tiếp tục mà không cần "
+#~ "passkey (vẫn an toàn, chỉ không có bảo vệ phần cứng thiết bị)."
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkey không được hỗ trợ trên trình duyệt này. Bạn sẽ cần tiếp tục mà không"
+#~ " cần passkey (vẫn an toàn, chỉ không có bảo vệ phần cứng thiết bị)."
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "Được ghim bởi {0}"
 
@@ -4860,6 +4889,13 @@ msgstr "Hình thu nhỏ Video YouTube"
 #~ msgstr ""
 #~ "Đặt lại phiên mã hóa nếu tin nhắn không gửi hoặc giải mã được. Tin nhắn tiếp"
 #~ " theo sẽ thiết lập một kết nối an toàn mới."
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Thiết lập passkey đã hết thời gian. Bạn có thể thử lại, hoặc tiếp tục mà "
+#~ "không cần passkey (vẫn an toàn, chỉ là không có bảo vệ phần cứng thiết bị)."
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4902,6 +4938,13 @@ msgstr "Hình thu nhỏ Video YouTube"
 
 #~ msgid "You"
 #~ msgstr "Bạn"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Bạn đã hủy thiết lập passkey. Bạn có thể thử lại, hoặc tiếp tục mà không cần"
+#~ " passkey (vẫn an toàn, chỉ là không có bảo vệ phần cứng thiết bị)."
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

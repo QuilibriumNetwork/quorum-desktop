@@ -32,8 +32,8 @@ msgstr "Ingen rolle - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr "Velkommen til Quorum, {name}! Din konto er sikret og klar til brug."
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "Velkommen til Quorum, {name}! Din konto er klar."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2865,19 +2865,23 @@ msgstr "Siden blev ikke fundet"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"Passkey opsætning mislykkedes. Du kan prøve igen, eller fortsætte uden "
-"Passkey (stadig sikkert, men uden enhedshardwarebeskyttelse)."
+"Opsætning af passkey mislykkedes. Du kan prøve igen eller fortsætte uden en."
+" Uden en passkey gemmes din kontonøgle på denne enhed, så enhver, der kan "
+"læse dens filer, kan overtage din konto."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Passkeys understøttes ikke i denne browser. Du skal fortsætte uden Passkey "
-"(stadig sikkert, men uden enhedshardwarebeskyttelse)."
+"passkeys understøttes ikke i denne browser, så du skal fortsætte uden en. "
+"Din kontonøgle gemmes på denne enhed, så enhver, der kan læse dens filer, "
+"kan overtage din konto."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3744,11 +3748,13 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Passkey-opsætningen fik timeout. Du kan prøve igen, eller fortsætte uden "
-"Passkey (stadig sikkert, bare uden enhedshardwarebeskyttelse)."
+"Opsætningen af passkey udløb. Du kan prøve igen eller fortsætte uden en. "
+"Uden en passkey gemmes din kontonøgle på denne enhed, så enhver, der kan "
+"læse dens filer, kan overtage din konto."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4555,11 +4561,13 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Du har annulleret passkey-opsætningen. Du kan prøve igen, eller fortsætte "
-"uden Passkey (stadig sikkert, bare uden enhedshardwarebeskyttelse)."
+"Du annullerede opsætningen af passkey. Du kan prøve igen eller fortsætte "
+"uden en. Uden en passkey gemmes din kontonøgle på denne enhed, så enhver, "
+"der kan læse dens filer, kan overtage din konto."
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4784,6 +4792,9 @@ msgstr "YouTube Video"
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube Video Miniature"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr "Velkommen til Quorum, {name}! Din konto er sikret og klar til brug."
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} marke her"
 
@@ -4828,6 +4839,20 @@ msgstr "YouTube Video Miniature"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Jeg forstår, vis QR"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkey opsætning mislykkedes. Du kan prøve igen, eller fortsætte uden "
+#~ "Passkey (stadig sikkert, men uden enhedshardwarebeskyttelse)."
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkeys understøttes ikke i denne browser. Du skal fortsætte uden Passkey "
+#~ "(stadig sikkert, men uden enhedshardwarebeskyttelse)."
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "Fastgjort af {0}"
 
@@ -4857,6 +4882,13 @@ msgstr "YouTube Video Miniature"
 #~ msgstr ""
 #~ "Nulstil krypteringssessionen, hvis beskeder ikke sendes eller dekrypteres. "
 #~ "Den næste besked vil etablere en ny sikker forbindelse."
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkey-opsætningen fik timeout. Du kan prøve igen, eller fortsætte uden "
+#~ "Passkey (stadig sikkert, bare uden enhedshardwarebeskyttelse)."
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4897,6 +4929,13 @@ msgstr "YouTube Video Miniature"
 
 #~ msgid "You"
 #~ msgstr "Du"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Du har annulleret passkey-opsætningen. Du kan prøve igen, eller fortsætte "
+#~ "uden Passkey (stadig sikkert, bare uden enhedshardwarebeskyttelse)."
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

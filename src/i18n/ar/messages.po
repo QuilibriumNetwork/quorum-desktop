@@ -32,8 +32,8 @@ msgstr "لا دور - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr "مرحبًا بك في Quorum، {name}! حسابك آمن ومستعد للبدء."
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "أهلاً بك في Quorum يا {name}! حسابك جاهز للاستخدام."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2828,19 +2828,23 @@ msgstr "الصفحة غير موجودة"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"فشل إعداد passkey. يمكنك المحاولة مرة أخرى، أو المتابعة بدون passkey (ما زال"
-" آمنًا، ولكن بدون حماية أمان الجهاز)."
+"فشل إعداد passkey. يمكنك المحاولة مرة أخرى، أو المتابعة بدونه. بدون passkey،"
+" يتم تخزين مفتاح حسابك على هذا الجهاز، لذا يمكن لأي شخص يمكنه قراءة ملفاته "
+"الاستيلاء على حسابك."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"لا يدعم هذا المتصفح passkey. سيتعين عليك المتابعة بدون passkey (ما زال "
-"آمنًا، ولكن بدون حماية أمان الجهاز)."
+"لا يتم دعم passkeys في هذا المتصفح، لذا ستحتاج إلى المتابعة بدونه. سيتم "
+"تخزين مفتاح حسابك على هذا الجهاز، لذا يمكن لأي شخص يمكنه قراءة ملفاته "
+"الاستيلاء على حسابك."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3693,11 +3697,13 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"انتهت مهلة إعداد passkey. يمكنك المحاولة مرة أخرى، أو الاستمرار بدون passkey"
-" (ما زال آمنًا، ولكن بدون حماية الأجهزة)."
+"انتهت مهلة إعداد passkey. يمكنك المحاولة مرة أخرى، أو المتابعة بدونه. بدون "
+"passkey، يتم تخزين مفتاح حسابك على هذا الجهاز، لذا يمكن لأي شخص يمكنه قراءة "
+"ملفاته الاستيلاء على حسابك."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4480,11 +4486,13 @@ msgstr "يمكنك إدارة إشعارات ذكر المساحة الخاصة 
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"لقد ألغيت إعداد passkey. يمكنك المحاولة مرة أخرى، أو الاستمرار بدون passkey "
-"(ما زال آمنًا، ولكن بدون حماية الأجهزة)."
+"لقد ألغيت إعداد passkey. يمكنك المحاولة مرة أخرى، أو المتابعة بدونه. بدون "
+"passkey، يتم تخزين مفتاح حسابك على هذا الجهاز، لذا يمكن لأي شخص يمكنه قراءة "
+"ملفاته الاستيلاء على حسابك."
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4697,6 +4705,9 @@ msgstr "YouTube Video"
 msgid "YouTube Video Thumbnail"
 msgstr "صورة مصغرة لفيديو YouTube"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr "مرحبًا بك في Quorum، {name}! حسابك آمن ومستعد للبدء."
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} ماركر هنا"
 
@@ -4741,6 +4752,20 @@ msgstr "صورة مصغرة لفيديو YouTube"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "أفهم، عرض QR"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "فشل إعداد passkey. يمكنك المحاولة مرة أخرى، أو المتابعة بدون passkey (ما زال"
+#~ " آمنًا، ولكن بدون حماية أمان الجهاز)."
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "لا يدعم هذا المتصفح passkey. سيتعين عليك المتابعة بدون passkey (ما زال "
+#~ "آمنًا، ولكن بدون حماية أمان الجهاز)."
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "مثبت بواسطة {0}"
 
@@ -4766,6 +4791,13 @@ msgstr "صورة مصغرة لفيديو YouTube"
 #~ msgstr ""
 #~ "أعد تعيين جلسة التشفير إذا فشلت الرسائل في الإرسال أو فك التشفير. ستنشئ "
 #~ "الرسالة التالية اتصالاً آمنًا جديدًا."
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "انتهت مهلة إعداد passkey. يمكنك المحاولة مرة أخرى، أو الاستمرار بدون passkey"
+#~ " (ما زال آمنًا، ولكن بدون حماية الأجهزة)."
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4806,6 +4838,13 @@ msgstr "صورة مصغرة لفيديو YouTube"
 
 #~ msgid "You"
 #~ msgstr "أنت"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "لقد ألغيت إعداد passkey. يمكنك المحاولة مرة أخرى، أو الاستمرار بدون passkey "
+#~ "(ما زال آمنًا، ولكن بدون حماية الأجهزة)."
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

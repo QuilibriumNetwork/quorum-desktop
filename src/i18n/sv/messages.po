@@ -32,10 +32,8 @@ msgstr "Ingen roll - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-"Välkommen till Quorum, {name}! Ditt konto är säkert och klart för "
-"användning."
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "Välkommen till Quorum, {name}! Ditt konto är redo att användas."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2873,19 +2871,23 @@ msgstr "Sidan hittades inte"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"Passkey-inställningen misslyckades. Du kan försöka igen eller fortsätta utan"
-" Passkey (fortfarande säkert, men utan enhetshårdvaruskydd)."
+"Inställningen av passkey misslyckades. Du kan försöka igen, eller fortsätta "
+"utan en. Utan en passkey lagras din kontonyckel på den här enheten, så vem "
+"som helst som kan läsa dess filer kan ta över ditt konto."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Passkeys stöds inte i denna webbläsare. Du måste fortsätta utan Passkey "
-"(fortfarande säkert, men utan enhetshårdvaruskydd)."
+"passkeys stöds inte i den här webbläsaren, så du måste fortsätta utan en. "
+"Din kontonyckel kommer att lagras på den här enheten, så vem som helst som "
+"kan läsa dess filer kan ta över ditt konto."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3753,11 +3755,13 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Passkey-inställningen tog för lång tid. Du kan försöka igen eller fortsätta "
-"utan Passkey (fortfarande säkert, men utan enhetshårdvaruskydd)."
+"Inställningen av passkey tog för lång tid. Du kan försöka igen, eller "
+"fortsätta utan en. Utan en passkey lagras din kontonyckel på den här "
+"enheten, så vem som helst som kan läsa dess filer kan ta över ditt konto."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4572,11 +4576,13 @@ msgstr "Du kan hantera dina Space-aviseringar i varje Spaces inställningar."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Du avbröt Passkey-inställningen. Du kan försöka igen eller fortsätta utan "
-"Passkey (fortfarande säkert, men utan enhetshårdvaruskydd)."
+"Du avbröt inställningen av passkey. Du kan försöka igen, eller fortsätta "
+"utan en. Utan en passkey lagras din kontonyckel på den här enheten, så vem "
+"som helst som kan läsa dess filer kan ta över ditt konto."
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4803,6 +4809,11 @@ msgstr "YouTube Video"
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube Video Miniatyr"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr ""
+#~ "Välkommen till Quorum, {name}! Ditt konto är säkert och klart för "
+#~ "användning."
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} marke här"
 
@@ -4847,6 +4858,20 @@ msgstr "YouTube Video Miniatyr"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Jag förstår, visa QR"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkey-inställningen misslyckades. Du kan försöka igen eller fortsätta utan"
+#~ " Passkey (fortfarande säkert, men utan enhetshårdvaruskydd)."
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkeys stöds inte i denna webbläsare. Du måste fortsätta utan Passkey "
+#~ "(fortfarande säkert, men utan enhetshårdvaruskydd)."
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "Fastsatt av {0}"
 
@@ -4876,6 +4901,13 @@ msgstr "YouTube Video Miniatyr"
 #~ msgstr ""
 #~ "Återställ krypteringssessionen om meddelanden inte skickas eller "
 #~ "dekrypteras. Nästa meddelande kommer att upprätta en ny säker anslutning."
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkey-inställningen tog för lång tid. Du kan försöka igen eller fortsätta "
+#~ "utan Passkey (fortfarande säkert, men utan enhetshårdvaruskydd)."
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4917,6 +4949,13 @@ msgstr "YouTube Video Miniatyr"
 
 #~ msgid "You"
 #~ msgstr "Du"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Du avbröt Passkey-inställningen. Du kan försöka igen eller fortsätta utan "
+#~ "Passkey (fortfarande säkert, men utan enhetshårdvaruskydd)."
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

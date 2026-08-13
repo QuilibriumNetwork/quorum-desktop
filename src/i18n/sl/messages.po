@@ -32,9 +32,8 @@ msgstr "Brez vloge - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-"Dobrodošli v Quorum, {name}! Vaš račun je varovan in pripravljen za uporabo."
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "Dobrodošli v Quorum, {name}! Vaš račun je pripravljen."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2874,19 +2873,23 @@ msgstr "Stran ni bila najdena"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"Nastavitev passkey ni uspela. Poskusite znova ali nadaljujte brez Passkey "
-"(še vedno varno, le brez varnosti naprave)."
+"Nastavitev passkeyja ni uspela. Lahko poskusite znova ali nadaljujete brez "
+"njega. Brez passkeyja je ključ vašega računa shranjen na tej napravi, zato "
+"lahko vsakdo, ki lahko bere njene datoteke, prevzame vaš račun."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Passkey ni podprto v tem brskalniku. Boste morali nadaljevati brez Passkey "
-"(še vedno varno, le brez varnosti naprave)."
+"passkeyji niso podprti v tem brskalniku, zato boste morali nadaljevati brez "
+"njega. Ključ vašega računa bo shranjen na tej napravi, zato lahko vsakdo, ki"
+" lahko bere njene datoteke, prevzame vaš račun."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3753,11 +3756,13 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Nastavitev passkey je potekla. Lahko poskusite znova ali nadaljujete brez "
-"passkey (še vedno varno, le brez zaščite strojne opreme)."
+"Nastavitev passkeyja je potekla. Lahko poskusite znova ali nadaljujete brez "
+"njega. Brez passkeyja je ključ vašega računa shranjen na tej napravi, zato "
+"lahko vsakdo, ki lahko bere njene datoteke, prevzame vaš račun."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4557,11 +4562,13 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Preklicali ste nastavitev passkey. Lahko poskusite znova ali nadaljujete "
-"brez passkey (še vedno varno, le brez zaščite strojne opreme)."
+"Preklicali ste nastavitev passkeyja. Lahko poskusite znova ali nadaljujete "
+"brez njega. Brez passkeyja je ključ vašega računa shranjen na tej napravi, "
+"zato lahko vsakdo, ki lahko bere njene datoteke, prevzame vaš račun."
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4785,6 +4792,10 @@ msgstr "YouTube video"
 msgid "YouTube Video Thumbnail"
 msgstr "Miniatura YouTube videa"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr ""
+#~ "Dobrodošli v Quorum, {name}! Vaš račun je varovan in pripravljen za uporabo."
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} marcar here"
 
@@ -4829,6 +4840,20 @@ msgstr "Miniatura YouTube videa"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Razumem, prikaži QR"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Nastavitev passkey ni uspela. Poskusite znova ali nadaljujte brez Passkey "
+#~ "(še vedno varno, le brez varnosti naprave)."
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkey ni podprto v tem brskalniku. Boste morali nadaljevati brez Passkey "
+#~ "(še vedno varno, le brez varnosti naprave)."
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "Pripeto od {0}"
 
@@ -4857,6 +4882,13 @@ msgstr "Miniatura YouTube videa"
 #~ msgstr ""
 #~ "Ponastavite sejo šifriranja, če sporočil ni mogoče poslati ali dešifrirati. "
 #~ "Naslednje sporočilo bo vzpostavilo novo varno povezavo."
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Nastavitev passkey je potekla. Lahko poskusite znova ali nadaljujete brez "
+#~ "passkey (še vedno varno, le brez zaščite strojne opreme)."
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4897,6 +4929,13 @@ msgstr "Miniatura YouTube videa"
 
 #~ msgid "You"
 #~ msgstr "Vi"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Preklicali ste nastavitev passkey. Lahko poskusite znova ali nadaljujete "
+#~ "brez passkey (še vedno varno, le brez zaščite strojne opreme)."
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

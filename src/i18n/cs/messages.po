@@ -32,9 +32,8 @@ msgstr "Žádná role - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-"Vítej v Quorumu, {name}! Tvůj účet je zabezpečený a připravený k použití."
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "Vítejte v Quorum, {name}! Váš účet je připraven k použití."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2862,19 +2861,23 @@ msgstr "Stránka nebyla nalezena"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"Nastavení passkey selhalo. Můžete to zkusit znovu nebo pokračovat bez "
-"passkey (stále bezpečné, jen bez ochrany zařízení)."
+"Nastavení passkey se nezdařilo. Můžete to zkusit znovu, nebo pokračovat bez "
+"něj. Bez passkey je klíč k vašemu účtu uložen na tomto zařízení, takže "
+"kdokoli, kdo si přečte jeho soubory, by mohl převzít váš účet."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Passkeye nejsou na tomto prohlížeči podporovány. Musíte pokračovat bez "
-"passkey (stále bezpečné, jen bez ochrany zařízení)."
+"passkeys nejsou v tomto prohlížeči podporovány, takže budete muset "
+"pokračovat bez něj. Klíč k vašemu účtu bude uložen na tomto zařízení, takže "
+"kdokoli, kdo si přečte jeho soubory, by mohl převzít váš účet."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3738,11 +3741,13 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Nastavení passkey vypršelo. Můžete to zkusit znovu, nebo pokračovat bez "
-"passkey (stále bezpečné, jen bez hardwarové ochrany zařízení)."
+"Nastavení passkey vypršelo. Můžete to zkusit znovu, nebo pokračovat bez něj."
+" Bez passkey je klíč k vašemu účtu uložen na tomto zařízení, takže kdokoli, "
+"kdo si přečte jeho soubory, by mohl převzít váš účet."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4543,11 +4548,13 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
 "Zrušili jste nastavení passkey. Můžete to zkusit znovu, nebo pokračovat bez "
-"passkey (stále bezpečné, jen bez hardwarové ochrany zařízení)."
+"něj. Bez passkey je klíč k vašemu účtu uložen na tomto zařízení, takže "
+"kdokoli, kdo si přečte jeho soubory, by mohl převzít váš účet."
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4773,6 +4780,10 @@ msgstr "YouTube Video"
 msgid "YouTube Video Thumbnail"
 msgstr "Miniatura YouTube Videa"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr ""
+#~ "Vítej v Quorumu, {name}! Tvůj účet je zabezpečený a připravený k použití."
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} záložka zde"
 
@@ -4818,6 +4829,20 @@ msgstr "Miniatura YouTube Videa"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Rozumím, zobrazit QR"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Nastavení passkey selhalo. Můžete to zkusit znovu nebo pokračovat bez "
+#~ "passkey (stále bezpečné, jen bez ochrany zařízení)."
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkeye nejsou na tomto prohlížeči podporovány. Musíte pokračovat bez "
+#~ "passkey (stále bezpečné, jen bez ochrany zařízení)."
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "Připnul {0}"
 
@@ -4846,6 +4871,13 @@ msgstr "Miniatura YouTube Videa"
 #~ msgstr ""
 #~ "Resetujte šifrovací relaci, pokud se zprávy nedaří odeslat nebo dešifrovat. "
 #~ "Další zpráva naváže nové zabezpečené připojení."
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Nastavení passkey vypršelo. Můžete to zkusit znovu, nebo pokračovat bez "
+#~ "passkey (stále bezpečné, jen bez hardwarové ochrany zařízení)."
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4886,6 +4918,13 @@ msgstr "Miniatura YouTube Videa"
 
 #~ msgid "You"
 #~ msgstr "Ty"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Zrušili jste nastavení passkey. Můžete to zkusit znovu, nebo pokračovat bez "
+#~ "passkey (stále bezpečné, jen bez hardwarové ochrany zařízení)."
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

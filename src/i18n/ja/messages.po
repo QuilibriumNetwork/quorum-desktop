@@ -32,8 +32,8 @@ msgstr "役割なし - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr "Quorumへようこそ、{name}！アカウントは安全に設定され、使用準備ができています。"
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "Quorumへようこそ、{name}！アカウントの準備ができました。"
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2761,17 +2761,19 @@ msgstr "ページが見つかりません"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"passkeyの設定に失敗しました。再度試すか、passkeyなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護がありません）。"
+"passkeyの設定に失敗しました。もう一度お試しいただくか、passkeyなしで続行できます。passkeyがない場合、アカウントキーはこのデバイスに保存されるため、ファイルを読み取れる人なら誰でもあなたのアカウントを乗っ取ることができます。"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"このブラウザではpasskeyがサポートされていません。passkeyなしで続ける必要があります（まだ安全ですが、デバイスのハードウェア保護がありません）。"
+"このブラウザではpasskeyがサポートされていないため、passkeyなしで続行する必要があります。アカウントキーはこのデバイスに保存されるため、ファイルを読み取れる人なら誰でもあなたのアカウントを乗っ取ることができます。"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3608,10 +3610,11 @@ msgstr "お探しのページは存在しないか、移動されました。元
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"passkeyの設定がタイムアウトしました。再度試すか、passkeyなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護はありません）。"
+"passkeyの設定がタイムアウトしました。もう一度お試しいただくか、passkeyなしで続行できます。passkeyがない場合、アカウントキーはこのデバイスに保存されるため、ファイルを読み取れる人なら誰でもあなたのアカウントを乗っ取ることができます。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4343,10 +4346,11 @@ msgstr "各スペースの設定でスペースのメンション通知を管理
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"passkeyの設定をキャンセルしました。再度試すか、passkeyなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護はありません）。"
+"passkeyの設定をキャンセルしました。もう一度お試しいただくか、passkeyなしで続行できます。passkeyがない場合、アカウントキーはこのデバイスに保存されるため、ファイルを読み取れる人なら誰でもあなたのアカウントを乗っ取ることができます。"
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4546,6 +4550,9 @@ msgstr "YouTube動画"
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube動画サムネイル"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr "Quorumへようこそ、{name}！アカウントは安全に設定され、使用準備ができています。"
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} マーカーがあります"
 
@@ -4584,6 +4591,18 @@ msgstr "YouTube動画サムネイル"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "理解しました、QRを表示"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "passkeyの設定に失敗しました。再度試すか、passkeyなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護がありません）。"
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "このブラウザではpasskeyがサポートされていません。passkeyなしで続ける必要があります（まだ安全ですが、デバイスのハードウェア保護がありません）。"
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "{0} によってピン留めされました"
 
@@ -4607,6 +4626,12 @@ msgstr "YouTube動画サムネイル"
 #~ "Reset the encryption session if messages fail to send or decrypt. The next "
 #~ "message will establish a fresh secure connection."
 #~ msgstr "メッセージの送信または復号化に失敗した場合、暗号化セッションをリセットしてください。次のメッセージで新しい安全な接続が確立されます。"
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "passkeyの設定がタイムアウトしました。再度試すか、passkeyなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護はありません）。"
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4643,6 +4668,12 @@ msgstr "YouTube動画サムネイル"
 
 #~ msgid "You"
 #~ msgstr "あなた"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "passkeyの設定をキャンセルしました。再度試すか、passkeyなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護はありません）。"
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

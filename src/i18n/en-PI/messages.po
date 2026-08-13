@@ -32,8 +32,9 @@ msgstr "No Role, matey - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr "Ahoy to Quorum, {name}! Yer account be secured and ready to set sail."
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr ""
+"Welcome to Quorum, {name}! Yer account be shipshape and ready to sail."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2853,19 +2854,23 @@ msgstr "Page Not Found, arrr!"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"Passkey setup failed. Ye can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed, blast it! Ye can try again, or sail on without one. "
+"Without a passkey, yer account key be stashed on this device, so any "
+"landlubber who can read its files could seize yer account."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Passkeys aren't supported on this browser. Ye'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys ain't supported on this here browser, so ye'll need to sail on "
+"without one. Yer account key will be stashed on this device, so any "
+"scallywag who can read its files could seize yer account."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3728,11 +3733,13 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"The passkey setup timed out, matey. Ye can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"The passkey setup took too long, by the kraken! Ye can try again, or sail on"
+" without one. Without a passkey, yer account key be stashed on this device, "
+"so any bilge rat who can read its files could seize yer account."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4530,11 +4537,13 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Ye cancelled the passkey setup. Ye can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Ye cancelled the passkey setup, eh? Ye can try again, or sail on without "
+"one. Without a passkey, yer account key be stashed on this device, so any "
+"swashbuckler who can read its files could seize yer account."
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4751,6 +4760,9 @@ msgstr "YouTube Video"
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube Video Picture"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr "Ahoy to Quorum, {name}! Yer account be secured and ready to set sail."
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} mararker 'ere"
 
@@ -4795,6 +4807,20 @@ msgstr "YouTube Video Picture"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Aye, Show the QR!"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkey setup failed. Ye can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkeys aren't supported on this browser. Ye'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "Nailed to the mast by {0}"
 
@@ -4824,6 +4850,13 @@ msgstr "YouTube Video Picture"
 #~ msgstr ""
 #~ "Reset the encryption session if yer messages fail to send or decrypt, me "
 #~ "hearty. The next message ye send will forge a fresh, secure connection."
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "The passkey setup timed out, matey. Ye can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4865,6 +4898,13 @@ msgstr "YouTube Video Picture"
 
 #~ msgid "You"
 #~ msgstr "Ye"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Ye cancelled the passkey setup. Ye can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

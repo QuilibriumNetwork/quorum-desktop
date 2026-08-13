@@ -32,8 +32,8 @@ msgstr "역할 없음 - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr "Quorum에 오신 것을 환영합니다, {name}! 계정 보안이 완료되어 사용 준비가 되었습니다."
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "Quorum에 오신 것을 환영합니다, {name}님! 당신의 계정이 준비되었습니다."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2782,17 +2782,21 @@ msgstr "페이지를 찾을 수 없습니다"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"passkey 설정이 실패했습니다. 다시 시도하거나 passkey 없이 계속할 수 있습니다(안전하지만 기기 하드웨어 보호 없이)."
+"passkey 설정에 실패했습니다. 다시 시도하거나 passkey 없이 계속할 수 있습니다. passkey가 없으면 당신의 계정 키가 이"
+" 장치에 저장되므로, 해당 파일을 읽을 수 있는 사람은 누구나 당신의 계정을 탈취할 수 있습니다."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"이 브라우저에서는 passkey를 지원하지 않습니다. passkey 없이 계속할 수 있습니다(안전하지만 기기 하드웨어 보호 없이)."
+"이 브라우저에서는 passkey가 지원되지 않으므로 passkey 없이 계속해야 합니다. 당신의 계정 키는 이 장치에 저장되므로, 해당 "
+"파일을 읽을 수 있는 사람은 누구나 당신의 계정을 탈취할 수 있습니다."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3631,11 +3635,12 @@ msgstr "찾고 있는 페이지는 존재하지 않거나 이동되었습니다.
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"passkey 설정 시간이 초과되었습니다. 다시 시도하거나, passkey 없이 계속 진행할 수 있습니다 (아직 안전하지만, 기기 "
-"하드웨어 보호 없이)."
+"passkey 설정 시간이 초과되었습니다. 다시 시도하거나 passkey 없이 계속할 수 있습니다. passkey가 없으면 당신의 계정 "
+"키가 이 장치에 저장되므로, 해당 파일을 읽을 수 있는 사람은 누구나 당신의 계정을 탈취할 수 있습니다."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4376,11 +4381,12 @@ msgstr "각 공간의 설정에서 공간 멘션 알림을 관리할 수 있습�
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"passkey 설정을 취소했습니다. 다시 시도하거나, passkey 없이 계속 진행할 수 있습니다 (아직 안전하지만, 기기 하드웨어 보호"
-" 없이)."
+"passkey 설정을 취소했습니다. 다시 시도하거나 passkey 없이 계속할 수 있습니다. passkey가 없으면 당신의 계정 키가 이"
+" 장치에 저장되므로, 해당 파일을 읽을 수 있는 사람은 누구나 당신의 계정을 탈취할 수 있습니다."
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4587,6 +4593,9 @@ msgstr "YouTube 비디오"
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube 비디오 썸네일"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr "Quorum에 오신 것을 환영합니다, {name}! 계정 보안이 완료되어 사용 준비가 되었습니다."
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} 마커가 여기 있습니다"
 
@@ -4626,6 +4635,18 @@ msgstr "YouTube 비디오 썸네일"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "이해했습니다, QR 표시"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "passkey 설정이 실패했습니다. 다시 시도하거나 passkey 없이 계속할 수 있습니다(안전하지만 기기 하드웨어 보호 없이)."
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "이 브라우저에서는 passkey를 지원하지 않습니다. passkey 없이 계속할 수 있습니다(안전하지만 기기 하드웨어 보호 없이)."
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "{0}에 의해 고정됨"
 
@@ -4649,6 +4670,13 @@ msgstr "YouTube 비디오 썸네일"
 #~ "Reset the encryption session if messages fail to send or decrypt. The next "
 #~ "message will establish a fresh secure connection."
 #~ msgstr "메시지 전송 또는 해독에 실패하는 경우 암호화 세션을 재설정합니다. 다음 메시지는 새로운 보안 연결을 설정합니다."
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "passkey 설정 시간이 초과되었습니다. 다시 시도하거나, passkey 없이 계속 진행할 수 있습니다 (아직 안전하지만, 기기 "
+#~ "하드웨어 보호 없이)."
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4686,6 +4714,13 @@ msgstr "YouTube 비디오 썸네일"
 
 #~ msgid "You"
 #~ msgstr "당신"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "passkey 설정을 취소했습니다. 다시 시도하거나, passkey 없이 계속 진행할 수 있습니다 (아직 안전하지만, 기기 하드웨어 보호"
+#~ " 없이)."
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

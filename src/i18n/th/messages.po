@@ -32,10 +32,8 @@ msgstr "ไม่มีบทบาท - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-"ยินดีต้อนรับสู่ Quorum, {name}! "
-"บัญชีของคุณได้รับการรักษาความปลอดภัยและพร้อมใช้งานแล้ว"
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "ยินดีต้อนรับสู่ Quorum, {name}! บัญชีของคุณพร้อมใช้งานแล้ว"
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2847,19 +2845,23 @@ msgstr "ไม่พบหน้า"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"การตั้งค่า Passkey ล้มเหลว คุณสามารถลองใหม่ หรือดำเนินการต่อโดยไม่ใช้ "
-"Passkey (ยังคงปลอดภัย แต่ไม่มีการป้องกันด้วยฮาร์ดแวร์ของอุปกรณ์)"
+"การตั้งค่า passkey ล้มเหลว คุณสามารถลองอีกครั้ง หรือดำเนินการต่อโดยไม่มี "
+"passkey หากไม่มี passkey คีย์บัญชีของคุณจะถูกเก็บไว้ในอุปกรณ์นี้ "
+"ดังนั้นใครก็ตามที่สามารถอ่านไฟล์ได้ก็สามารถเข้าควบคุมบัญชีของคุณได้"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Passkeys ไม่ได้รับการสนับสนุนบนเบราว์เซอร์นี้ คุณจะต้องดำเนินการต่อโดยไม่ใช้"
-" Passkey (ยังคงปลอดภัย แต่ไม่มีการป้องกันด้วยฮาร์ดแวร์ของอุปกรณ์)"
+"เบราว์เซอร์นี้ไม่รองรับ passkey ดังนั้นคุณจะต้องดำเนินการต่อโดยไม่มี passkey"
+" คีย์บัญชีของคุณจะถูกเก็บไว้ในอุปกรณ์นี้ "
+"ดังนั้นใครก็ตามที่สามารถอ่านไฟล์ได้ก็สามารถเข้าควบคุมบัญชีของคุณได้"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3714,11 +3716,13 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
 "การตั้งค่า passkey หมดเวลา คุณสามารถลองอีกครั้ง หรือดำเนินการต่อโดยไม่มี "
-"Passkey (ยังคงปลอดภัย แต่ไม่มีการป้องกันฮาร์ดแวร์ของอุปกรณ์)"
+"passkey หากไม่มี passkey คีย์บัญชีของคุณจะถูกเก็บไว้ในอุปกรณ์นี้ "
+"ดังนั้นใครก็ตามที่สามารถอ่านไฟล์ได้ก็สามารถเข้าควบคุมบัญชีของคุณได้"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4516,11 +4520,13 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"คุณได้ยกเลิกการตั้งค่า passkey คุณสามารถลองอีกครั้ง หรือดำเนินการต่อโดยไม่มี"
-" Passkey (ยังคงปลอดภัย แต่ไม่มีการป้องกันฮาร์ดแวร์ของอุปกรณ์)"
+"คุณยกเลิกการตั้งค่า passkey คุณสามารถลองอีกครั้ง หรือดำเนินการต่อโดยไม่มี "
+"passkey หากไม่มี passkey คีย์บัญชีของคุณจะถูกเก็บไว้ในอุปกรณ์นี้ "
+"ดังนั้นใครก็ตามที่สามารถอ่านไฟล์ได้ก็สามารถเข้าควบคุมบัญชีของคุณได้"
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4742,6 +4748,11 @@ msgstr "วิดีโอ YouTube"
 msgid "YouTube Video Thumbnail"
 msgstr "ภาพขนาดย่อวิดีโอ YouTube"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr ""
+#~ "ยินดีต้อนรับสู่ Quorum, {name}! "
+#~ "บัญชีของคุณได้รับการรักษาความปลอดภัยและพร้อมใช้งานแล้ว"
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} บุ๊กมาร์กที่นี่"
 
@@ -4785,6 +4796,20 @@ msgstr "ภาพขนาดย่อวิดีโอ YouTube"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "ฉันเข้าใจ แสดง QR"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "การตั้งค่า Passkey ล้มเหลว คุณสามารถลองใหม่ หรือดำเนินการต่อโดยไม่ใช้ "
+#~ "Passkey (ยังคงปลอดภัย แต่ไม่มีการป้องกันด้วยฮาร์ดแวร์ของอุปกรณ์)"
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkeys ไม่ได้รับการสนับสนุนบนเบราว์เซอร์นี้ คุณจะต้องดำเนินการต่อโดยไม่ใช้"
+#~ " Passkey (ยังคงปลอดภัย แต่ไม่มีการป้องกันด้วยฮาร์ดแวร์ของอุปกรณ์)"
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "ถูกปักหมุดโดย {0}"
 
@@ -4813,6 +4838,13 @@ msgstr "ภาพขนาดย่อวิดีโอ YouTube"
 #~ msgstr ""
 #~ "รีเซ็ตเซสชันการเข้ารหัสหากข้อความส่งหรือถอดรหัสไม่สำเร็จ "
 #~ "ข้อความถัดไปจะสร้างการเชื่อมต่อที่ปลอดภัยใหม่"
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "การตั้งค่า passkey หมดเวลา คุณสามารถลองอีกครั้ง หรือดำเนินการต่อโดยไม่มี "
+#~ "Passkey (ยังคงปลอดภัย แต่ไม่มีการป้องกันฮาร์ดแวร์ของอุปกรณ์)"
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4853,6 +4885,13 @@ msgstr "ภาพขนาดย่อวิดีโอ YouTube"
 
 #~ msgid "You"
 #~ msgstr "คุณ"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "คุณได้ยกเลิกการตั้งค่า passkey คุณสามารถลองอีกครั้ง หรือดำเนินการต่อโดยไม่มี"
+#~ " Passkey (ยังคงปลอดภัย แต่ไม่มีการป้องกันฮาร์ดแวร์ของอุปกรณ์)"
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

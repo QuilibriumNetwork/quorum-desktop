@@ -32,9 +32,8 @@ msgstr "Fără rol - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-"Bun venit la Quorum, {name}! Contul tău este securizat și gata de utilizare."
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "Bun venit la Quorum, {name}! Contul tău este gata de utilizare."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2891,19 +2890,25 @@ msgstr "Pagina nu a fost găsită"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"Configurarea passkey-ului a eșuat. Poți încerca din nou sau să continui fără"
-" passkey (încă sigur, doar fără protecția hardware a dispozitivului)."
+"Configurarea passkey a eșuat. Poți încerca din nou sau poți continua fără "
+"una. Fără un passkey, cheia contului tău este stocată pe acest dispozitiv, "
+"așa că oricine poate citi fișierele sale ar putea prelua controlul contului "
+"tău."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Passkey-urile nu sunt susținute de acest browser. Va trebui să continui fără"
-" passkey (încă sigur, doar fără protecția hardware a dispozitivului)."
+"passkey-urile nu sunt acceptate pe acest browser, așa că va trebui să "
+"continui fără una. Cheia contului tău va fi stocată pe acest dispozitiv, așa"
+" că oricine poate citi fișierele sale ar putea prelua controlul contului "
+"tău."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3775,11 +3780,14 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Configurarea passkey-ului a expirat. Poți încerca din nou sau continua fără "
-"passkey (încă sigur, doar fără protecția hardware a dispozitivului)."
+"Configurarea passkey a expirat. Poți încerca din nou sau poți continua fără "
+"una. Fără un passkey, cheia contului tău este stocată pe acest dispozitiv, "
+"așa că oricine poate citi fișierele sale ar putea prelua controlul contului "
+"tău."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4598,11 +4606,14 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Ai anulat configurarea passkey-ului. Poți încerca din nou sau continua fără "
-"passkey (încă sigur, doar fără protecția hardware a dispozitivului)."
+"Ai anulat configurarea passkey. Poți încerca din nou sau poți continua fără "
+"una. Fără un passkey, cheia contului tău este stocată pe acest dispozitiv, "
+"așa că oricine poate citi fișierele sale ar putea prelua controlul contului "
+"tău."
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4832,6 +4843,10 @@ msgstr "Video YouTube"
 msgid "YouTube Video Thumbnail"
 msgstr "Miniatură video YouTube"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr ""
+#~ "Bun venit la Quorum, {name}! Contul tău este securizat și gata de utilizare."
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} marcator aici"
 
@@ -4878,6 +4893,20 @@ msgstr "Miniatură video YouTube"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Înțeleg, Afișează QR"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Configurarea passkey-ului a eșuat. Poți încerca din nou sau să continui fără"
+#~ " passkey (încă sigur, doar fără protecția hardware a dispozitivului)."
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkey-urile nu sunt susținute de acest browser. Va trebui să continui fără"
+#~ " passkey (încă sigur, doar fără protecția hardware a dispozitivului)."
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "Fixat de {0}"
 
@@ -4907,6 +4936,13 @@ msgstr "Miniatură video YouTube"
 #~ msgstr ""
 #~ "Resetează sesiunea de criptare dacă mesajele nu se trimit sau nu se "
 #~ "decriptează. Următorul mesaj va stabili o nouă conexiune securizată."
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Configurarea passkey-ului a expirat. Poți încerca din nou sau continua fără "
+#~ "passkey (încă sigur, doar fără protecția hardware a dispozitivului)."
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4947,6 +4983,13 @@ msgstr "Miniatură video YouTube"
 
 #~ msgid "You"
 #~ msgstr "Tu"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Ai anulat configurarea passkey-ului. Poți încerca din nou sau continua fără "
+#~ "passkey (încă sigur, doar fără protecția hardware a dispozitivului)."
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

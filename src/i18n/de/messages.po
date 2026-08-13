@@ -32,10 +32,8 @@ msgstr "Keine Rolle - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-"Willkommen bei Quorum, {name}! Dein Konto ist gesichert und bereit zum "
-"Einsatz."
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "Willkommen bei Quorum, {name}! Dein Konto ist bereit."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2910,19 +2908,24 @@ msgstr "Seite nicht gefunden"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"Passkey-Einrichtung fehlgeschlagen. Du kannst es erneut versuchen oder ohne "
-"Passkey fortfahren (immer noch sicher, nur ohne Gerätesicherheit)."
+"Die passkey-Einrichtung ist fehlgeschlagen. Du kannst es erneut versuchen "
+"oder ohne fortfahren. Ohne einen passkey wird dein Kontoschlüssel auf diesem"
+" Gerät gespeichert, sodass jeder, der dessen Dateien lesen kann, dein Konto "
+"übernehmen könnte."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Passkeys werden in diesem Browser nicht unterstützt. Du musst ohne Passkey "
-"fortfahren (immer noch sicher, nur ohne Gerätesicherheit)."
+"passkeys werden in diesem Browser nicht unterstützt, daher musst du ohne "
+"fortfahren. Dein Kontoschlüssel wird auf diesem Gerät gespeichert, sodass "
+"jeder, der dessen Dateien lesen kann, dein Konto übernehmen könnte."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3795,12 +3798,14 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Die Passkey-Einrichtung ist abgelaufen. Du kannst es erneut versuchen oder "
-"ohne Passkey fortfahren (immer noch sicher, aber ohne Hardware-Schutz des "
-"Geräts)."
+"Die passkey-Einrichtung hat ein Zeitlimit überschritten. Du kannst es erneut"
+" versuchen oder ohne fortfahren. Ohne einen passkey wird dein Kontoschlüssel"
+" auf diesem Gerät gespeichert, sodass jeder, der dessen Dateien lesen kann, "
+"dein Konto übernehmen könnte."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4630,12 +4635,14 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Du hast die Passkey-Einrichtung abgebrochen. Du kannst es erneut versuchen "
-"oder ohne Passkey fortfahren (immer noch sicher, aber ohne Hardware-Schutz "
-"des Geräts)."
+"Du hast die passkey-Einrichtung abgebrochen. Du kannst es erneut versuchen "
+"oder ohne fortfahren. Ohne einen passkey wird dein Kontoschlüssel auf diesem"
+" Gerät gespeichert, sodass jeder, der dessen Dateien lesen kann, dein Konto "
+"übernehmen könnte."
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4872,6 +4879,11 @@ msgstr "YouTube-Video"
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube-Video-Vorschaubild"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr ""
+#~ "Willkommen bei Quorum, {name}! Dein Konto ist gesichert und bereit zum "
+#~ "Einsatz."
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} Lesezeichen hier"
 
@@ -4919,6 +4931,20 @@ msgstr "YouTube-Video-Vorschaubild"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Ich verstehe, QR anzeigen"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkey-Einrichtung fehlgeschlagen. Du kannst es erneut versuchen oder ohne "
+#~ "Passkey fortfahren (immer noch sicher, nur ohne Gerätesicherheit)."
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Passkeys werden in diesem Browser nicht unterstützt. Du musst ohne Passkey "
+#~ "fortfahren (immer noch sicher, nur ohne Gerätesicherheit)."
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "Angeheftet von {0}"
 
@@ -4949,6 +4975,14 @@ msgstr "YouTube-Video-Vorschaubild"
 #~ "Setze die Verschlüsselungssitzung zurück, wenn Nachrichten nicht gesendet "
 #~ "oder entschlüsselt werden können. Die nächste Nachricht stellt eine neue "
 #~ "sichere Verbindung her."
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Die Passkey-Einrichtung ist abgelaufen. Du kannst es erneut versuchen oder "
+#~ "ohne Passkey fortfahren (immer noch sicher, aber ohne Hardware-Schutz des "
+#~ "Geräts)."
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4992,6 +5026,14 @@ msgstr "YouTube-Video-Vorschaubild"
 
 #~ msgid "You"
 #~ msgstr "Du"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Du hast die Passkey-Einrichtung abgebrochen. Du kannst es erneut versuchen "
+#~ "oder ohne Passkey fortfahren (immer noch sicher, aber ohne Hardware-Schutz "
+#~ "des Geräts)."
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

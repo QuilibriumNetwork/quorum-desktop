@@ -32,8 +32,8 @@ msgstr "无角色 - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr "欢迎来到 Quorum，{name}！您的账户已安全设置，随时可用。"
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "欢迎来到 Quorum，{name}！您的账户已准备就绪。"
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2750,15 +2750,20 @@ msgstr "页面未找到"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
-msgstr "passkey设置失败。您可以再次尝试，或者在不使用passkey的情况下继续（仍然安全，只是没有设备硬件保护）。"
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
+msgstr ""
+"passkey 设置失败。您可以重试，或不使用 passkey 继续。如果没有 "
+"passkey，您的账户密钥将存储在此设备上，因此任何可以读取其文件的人都可能接管您的账户。"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
-msgstr "此浏览器不支持passkey。您需要在不使用passkey的情况下继续（仍然安全，只是没有设备硬件保护）。"
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
+msgstr ""
+"此浏览器不支持 passkey，因此您需要不使用 passkey 继续。您的账户密钥将存储在此设备上，因此任何可以读取其文件的人都可能接管您的账户。"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3585,9 +3590,12 @@ msgstr "您要查找的页面不存在或已被移动。让我们帮您回到正
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
-msgstr "设置passkey超时。您可以重试，或者在不使用passkey的情况下继续（仍然安全，只是没有设备硬件保护）。"
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
+msgstr ""
+"passkey 设置超时。您可以重试，或不使用 passkey 继续。如果没有 "
+"passkey，您的账户密钥将存储在此设备上，因此任何可以读取其文件的人都可能接管您的账户。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4310,9 +4318,12 @@ msgstr "您可以在每个空间的设置中管理您的空间提及通知。"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
-msgstr "您取消了passkey设置。您可以重试，或者在不使用passkey的情况下继续（仍然安全，只是没有设备硬件保护）。"
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
+msgstr ""
+"您取消了 passkey 设置。您可以重试，或不使用 passkey 继续。如果没有 "
+"passkey，您的账户密钥将存储在此设备上，因此任何可以读取其文件的人都可能接管您的账户。"
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4503,6 +4514,9 @@ msgstr "YouTube 视频"
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube 视频缩略图"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr "欢迎来到 Quorum，{name}！您的账户已安全设置，随时可用。"
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} 个书签在此"
 
@@ -4540,6 +4554,16 @@ msgstr "YouTube 视频缩略图"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "我明白，显示二维码"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr "passkey设置失败。您可以再次尝试，或者在不使用passkey的情况下继续（仍然安全，只是没有设备硬件保护）。"
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr "此浏览器不支持passkey。您需要在不使用passkey的情况下继续（仍然安全，只是没有设备硬件保护）。"
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "由 {0} 置顶"
 
@@ -4563,6 +4587,11 @@ msgstr "YouTube 视频缩略图"
 #~ "Reset the encryption session if messages fail to send or decrypt. The next "
 #~ "message will establish a fresh secure connection."
 #~ msgstr "如果消息发送或解密失败，请重置加密会话。下一条消息将建立新的安全连接。"
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr "设置passkey超时。您可以重试，或者在不使用passkey的情况下继续（仍然安全，只是没有设备硬件保护）。"
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4598,6 +4627,11 @@ msgstr "YouTube 视频缩略图"
 
 #~ msgid "You"
 #~ msgstr "你"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr "您取消了passkey设置。您可以重试，或者在不使用passkey的情况下继续（仍然安全，只是没有设备硬件保护）。"
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "

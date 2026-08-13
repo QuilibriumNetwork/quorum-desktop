@@ -32,9 +32,8 @@ msgstr "Nessun ruolo - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-"Benvenuto/a su Quorum, {name}! Il tuo account è protetto e pronto all'uso."
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "Benvenuto/a su Quorum, {name}! Il tuo account è pronto all'uso."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -2889,19 +2888,25 @@ msgstr "Pagina non trovata"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+"Passkey setup failed. You can try again, or continue without one. Without a "
+"passkey your account key is stored on this device, so anyone who can read "
+"its files could take over your account."
 msgstr ""
-"La configurazione della passkey è fallita. Puoi riprovare o continuare senza"
-" Passkey (ancora sicuro, ma senza la protezione hardware del dispositivo)."
+"La configurazione della passkey non è riuscita. Puoi riprovare o continuare "
+"senza. Senza una passkey la chiave del tuo account è memorizzata su questo "
+"dispositivo, quindi chiunque possa leggerne i file potrebbe prendere il "
+"controllo del tuo account."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+"Passkeys aren't supported on this browser, so you'll need to continue "
+"without one. Your account key will be stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Le passkey non sono supportate da questo browser. Dovrai continuare senza "
-"Passkey (ancora sicuro, ma senza la protezione hardware del dispositivo)."
+"Le passkey non sono supportate su questo browser, quindi dovrai continuare "
+"senza. La chiave del tuo account verrà memorizzata su questo dispositivo, "
+"quindi chiunque possa leggerne i file potrebbe prendere il controllo del tuo"
+" account."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid ""
@@ -3774,12 +3779,14 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+"The passkey setup timed out. You can try again, or continue without one. "
+"Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"La configurazione della passkey è scaduta. Puoi riprovare, o continuare "
-"senza Passkey (ancora sicuro, solo senza protezione hardware del "
-"dispositivo)."
+"La configurazione della passkey è scaduta. Puoi riprovare o continuare "
+"senza. Senza una passkey la chiave del tuo account è memorizzata su questo "
+"dispositivo, quindi chiunque possa leggerne i file potrebbe prendere il "
+"controllo del tuo account."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid ""
@@ -4604,12 +4611,14 @@ msgstr ""
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+"You cancelled the passkey setup. You can try again, or continue without one."
+" Without a passkey your account key is stored on this device, so anyone who "
+"can read its files could take over your account."
 msgstr ""
-"Hai annullato la configurazione della passkey. Puoi riprovare, o continuare "
-"senza Passkey (ancora sicuro, solo senza protezione hardware del "
-"dispositivo)."
+"Hai annullato la configurazione della passkey. Puoi riprovare o continuare "
+"senza. Senza una passkey la chiave del tuo account è memorizzata su questo "
+"dispositivo, quindi chiunque possa leggerne i file potrebbe prendere il "
+"controllo del tuo account."
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
@@ -4838,6 +4847,10 @@ msgstr "Video di YouTube"
 msgid "YouTube Video Thumbnail"
 msgstr "Miniatura del video di YouTube"
 
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr ""
+#~ "Benvenuto/a su Quorum, {name}! Il tuo account è protetto e pronto all'uso."
+
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} marcatori qui"
 
@@ -4883,6 +4896,20 @@ msgstr "Miniatura del video di YouTube"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Ho capito, Mostra QR"
 
+#~ msgid ""
+#~ "Passkey setup failed. You can try again, or continue without Passkey (still "
+#~ "secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "La configurazione della passkey è fallita. Puoi riprovare o continuare senza"
+#~ " Passkey (ancora sicuro, ma senza la protezione hardware del dispositivo)."
+
+#~ msgid ""
+#~ "Passkeys aren't supported on this browser. You'll need to continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Le passkey non sono supportate da questo browser. Dovrai continuare senza "
+#~ "Passkey (ancora sicuro, ma senza la protezione hardware del dispositivo)."
+
 #~ msgid "Pinned by {0}"
 #~ msgstr "Fissato da {0}"
 
@@ -4912,6 +4939,14 @@ msgstr "Miniatura del video di YouTube"
 #~ msgstr ""
 #~ "Reimposta la sessione di crittografia se i messaggi non vengono inviati o "
 #~ "decifrati. Il prossimo messaggio stabilirà una nuova connessione sicura."
+
+#~ msgid ""
+#~ "The passkey setup timed out. You can try again, or continue without Passkey "
+#~ "(still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "La configurazione della passkey è scaduta. Puoi riprovare, o continuare "
+#~ "senza Passkey (ancora sicuro, solo senza protezione hardware del "
+#~ "dispositivo)."
 
 #~ msgid ""
 #~ "This action cannot be undone and will permanently delete this Space and all "
@@ -4952,6 +4987,14 @@ msgstr "Miniatura del video di YouTube"
 
 #~ msgid "You"
 #~ msgstr "Tu"
+
+#~ msgid ""
+#~ "You cancelled the passkey setup. You can try again, or continue without "
+#~ "Passkey (still secure, just without device hardware protection)."
+#~ msgstr ""
+#~ "Hai annullato la configurazione della passkey. Puoi riprovare, o continuare "
+#~ "senza Passkey (ancora sicuro, solo senza protezione hardware del "
+#~ "dispositivo)."
 
 #~ msgid ""
 #~ "You won't be able to rejoin unless you are re-invited. Your existing "
