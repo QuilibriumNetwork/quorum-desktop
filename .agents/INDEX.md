@@ -339,6 +339,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Dependabot's 78 alerts, triaged against what actually ships](issues/.open/2026-08-12-dependabot-78-alerts-triage-react-router-bump.md)
 - 📋 [Pre-existing key-handling items for the lead](issues/.open/2026-08-12-pre-existing-key-handling-items-for-the-lead.md)
 - 📋 [Unshipped security branches (local, not pushed)](issues/.open/2026-08-12-unshipped-security-branches.md)
+- 📋 [Move the config-save encode chain to a Web Worker](issues/.open/2026-08-13-config-encode-worker-plan.md)
 - 📋 [Rebuild the sync indicator on a per-space "behind by N" signal](issues/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md)
 
 ### Deferred
@@ -788,4 +789,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-13 14:33:32
+**Last Updated**: 2026-08-13 14:52:10
