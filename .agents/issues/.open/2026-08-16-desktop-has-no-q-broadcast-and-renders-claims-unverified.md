@@ -33,7 +33,11 @@ them is a live security gap that does not depend on the other at all.
 Do §4 first. It is smaller, it is independent, and §5 is unsafe without it.
 
 Do not start by reading the mobile repo end to end. Read this file, then the
-four locations in §3.
+locations in §3 — every one re-verified against `main` on 2026-08-16.
+
+**§9 records four decisions already taken.** Nothing in this file is left open
+for you to choose; if you find yourself weighing one of those four, read §9
+instead.
 
 ---
 
@@ -112,7 +116,15 @@ This is a security fix and stands alone. It needs none of §5.
 ### 4.1 The check
 
 One comparison, and mobile's `verifyQnsClaim.ts` is the reference
-implementation. Port it or lift it into `quorum-shared/src/qns/`:
+implementation. **Put it in `quorum-shared/src/qns/`, not in desktop** (decided
+on review, 2026-08-16). `deriveAddress` and `resolveName` already live there,
+§4.3 puts the batched resolver there too, and mobile will want to drop its local
+copy once this exists — a desktop-local predicate would have to move later
+anyway.
+
+⚠️ Practical consequence: **an edit to `quorum-shared/src` does not reach this
+app until you `yarn build` in the shared repo.** Desktop imports the built
+`dist`. A predicate that appears not to work is more often an unbuilt one.
 
 ```
 claimed name ──resolve──▶ resolveKey (ed448)
@@ -222,14 +234,30 @@ both.**
   the fixed list it was written to avoid.
 
 ⚠️ **`hasAnnounceableIdentity` (`src/utils/spaceProfilePayload.ts:115-123`) will
-swallow the claim for exactly the users who need it most.** It gates whether the
-announce fires at all, and tests only `displayName || userIcon ||
-globalDisplayName || globalUserIcon`. A user whose only identity is an elected
-`.q` — no display name, no avatar — fails it, so the announce never fires and the
-name never leaves the device. Add the claim to that predicate, or state in a
-comment why an announce carrying only a `.q` is deliberately not worth its cost.
-Either is defensible; silently leaving it is not, because the failure is
-invisible and looks like a receive bug on the other client.
+swallow the claim for exactly the users who need it most.** It is the pre-filter
+at `MessageService.ts:1275`, ahead of the signature gate, and tests only
+`displayName || userIcon || globalDisplayName || globalUserIcon`. A user whose
+only identity is an elected `.q` — no display name, no avatar — fails it, so the
+announce never fires and the name never leaves the device.
+
+**Decided on review (2026-08-16): add `payload.primaryUsername` to that
+predicate.** Its docstring says it exists to stop a *fresh account whose config
+has not synced* broadcasting an all-empty payload. A real elected name is not an
+empty payload, so it belongs in the test, and truthiness is the right operator
+here — `''` alone genuinely is nothing to announce.
+
+⚠️ **That leaves one residual case, and it is the un-election again.** A user
+with no name and no avatar who elects `alice.q` and then clears it produces a
+payload that is once more all-falsy, so the pre-filter blocks the clear and their
+spacemates keep rendering `alice.q`. **Do not pre-emptively engineer around
+this — measure it first** (test 10 in §7). If it reproduces, the minimal fix is
+at the call site rather than in the predicate: let a space that already has a
+recorded announce bypass `hasAnnounceableIdentity`, since the fresh-account case
+the filter protects is by definition one that has never announced. Check first
+whether the member-digest reconciliation (`MemberDigest` → `MemberDelta`, see
+`spaceProfileGate.ts:12-16`) already repairs the stale row once
+`claimed_primary_username` is part of the digest — if it does, the gap closes
+itself and needs no code.
 
 Including the field also doubles as the migration: every stored signature
 predates it, so none match and the next rebroadcast goes out once — on the DM
@@ -249,7 +277,8 @@ this by adding it to shared** as part of this task.
 Store it under its own key, **never as `primary_username`**:
 
 - space: `applyProfileUpdate` (`MessageService.ts:269`) → the member row
-- DM: `handleDMProfileUpdate` (`MessageService.ts:962-973`) → the conversation row
+- DM: `handleDMProfileUpdate` (`MessageService.ts:957-979`, merge at `:966-971`)
+  → the conversation row
 
 Call it `claimed_primary_username`, matching mobile. The separate key is a
 security property, not a naming preference: surfaces that skip verification read
@@ -342,6 +371,16 @@ equivalents are `__tests__/identityProviderRosterClaims.test.tsx` and
    just the provider. Mobile's space half shipped broken precisely because the
    claim arrived, was stored, was verifiable, and nothing read it — and every
    provider-level test passed throughout.
+10. **The announce pre-filter, both directions** (`hasAnnounceableIdentity`, see
+    §5.1). (a) A payload whose ONLY content is an elected `primaryUsername`
+    announces — this must go red before the §5.1 predicate change, which is what
+    proves the test is live. (b) The same account then un-electing produces an
+    all-falsy payload: assert what actually happens rather than what should. This
+    is the measurement that decides whether the residual gap in §5.1 needs any
+    code at all, so record the result in this file either way.
+11. **The claim survives a `quorum-shared` rebuild.** Trivial but it is the
+    single most common false failure here: run `yarn build` in the shared repo
+    before concluding the predicate is broken (§4.1).
 
 **Then revert the ownership check to `true` and confirm 2, 3 and 5 go red.**
 
@@ -369,25 +408,25 @@ about which from screenshots before that panel existed.
   because it writes to an external public system.
 - **Adding the field to `quorum-shared`.** Deliberate, see §5.1.
 
-## Blockers
+## 9. Decisions taken — do not reopen these
 
-- 🛑 **Does this file belong in `.agents/issues/.secret/`?** Not the reviewer's
-  call, so it has been left in `.open/`. The repo rule (`.agents/AGENTS.md` →
-  "Security-sensitive issues") sends an issue to `.secret/` when it describes an
-  attack that works against code users are running today, with mechanism and
-  `file:line` pointers. §4 has the mechanism and the pointers. What it may not
-  have is a live injection vector: §1 states the server rejects every
-  public-profile publish carrying `primary_username` (quorum-mobile#240), and
-  that field is the only way into `sources.profiles`. If that holds, the
-  vulnerable render path is real but currently unreachable, and `.open/` is
-  right — until #240 is fixed, at which point it becomes live with no further
-  change to desktop.
-  - Options: (a) leave in `.open/` and re-decide if #240 is fixed before this
-    ships; (b) move to `.secret/` and drop it from `INDEX.md` now, treating the
-    unreachability as unverified; (c) verify #240 against the live API first,
-    then decide with a measurement instead of a quotation.
-  - ⚠️ The server behaviour is quoted from this file, READ not MEASURED. Nobody
-    on this review pass tried the publish.
+No open questions remain. Four forks were closed on the 2026-08-16 review pass;
+they are recorded here so the next agent does not re-litigate them.
+
+| Question | Decision | Where |
+|---|---|---|
+| `.secret/` or `.open/`? | **`.open/`.** Stays indexed and visible. Settled by the file's owner, 2026-08-16 | this section |
+| Port the ownership predicate into desktop, or lift it into shared? | **Lift into `quorum-shared/src/qns/`**, alongside the batched resolver | §4.1 |
+| Add the claim to `hasAnnounceableIdentity`, or document why not? | **Add it**, truthiness | §5.1 |
+| Fix the un-election pre-filter gap up front? | **No — measure it first** (§7 test 10b), then fix only if it reproduces | §5.1 |
+
+On the `.secret/` call, for the record: §4 does carry a mechanism and `file:line`
+pointers, which is normally the trigger. It stays public anyway, and the
+supporting argument is that §1's injection vector is server-blocked upstream
+(quorum-mobile#240), so the vulnerable render path is real but not currently
+reachable. ⚠️ **That server behaviour is READ from this file, not MEASURED** —
+nobody on the review pass attempted the publish. Treat it as the reason the
+decision is comfortable rather than as the decision itself.
 
 ---
 
@@ -403,3 +442,12 @@ about which from screenshots before that panel existed.
 - Line drift corrected: DM send is 700-706 not 701-707; IdentitySources is 28-51 not 28-50; handleDMProfileUpdate is 957-979 with the merge at 966-971.
 - FLAGGED not resolved: whether this belongs in .secret/ per the repo rule -- §4 has mechanism and file:line, but §1 claims the only injection vector is server-blocked (quorum-mobile#240). That claim is READ, not MEASURED. Left in .open/ with options in ## Blockers.
 - No status or type change: type bug and status open both still correct, folder agrees. Nothing was implemented, so no box was checked.
+
+**2026-08-16 - claude-opus-5**: Second pass, same session: closed every open fork so the file is implementable without further decisions. Added §9 recording all four. No new code verification was needed beyond tracing hasAnnounceableIdentity to its call site.
+- RESOLVED by the owner: stays in .open/, not .secret/. Removed the ## Blockers section and recorded the decision plus its READ-not-MEASURED caveat in §9.
+- RESOLVED §4.1: the ownership predicate goes into quorum-shared/src/qns/, not desktop -- deriveAddress and resolveName already live there and §4.3 puts the batch resolver there too. Added the yarn-build-the-dist gotcha, which is the most likely false failure.
+- RESOLVED §5.1: add primaryUsername to hasAnnounceableIdentity with truthiness. Traced it to MessageService.ts:1275, where it is the pre-filter ahead of the signature gate. Its docstring scopes it to fresh unsynced accounts, and an elected name is not an empty payload.
+- RESOLVED §5.1 residual: an all-falsy un-election still trips the same pre-filter. Deliberately NOT engineered around -- turned into §7 test 10b to be measured first, with the minimal call-site fix named only as the fallback, and a prior question about whether MemberDigest reconciliation already repairs it.
+- Added §7 tests 10 and 11: the pre-filter in both directions (10a must go red before the predicate change, which is what proves it live), and a shared-rebuild check.
+- Fixed the §5.2 handleDMProfileUpdate line ref to 957-979 to match the §3 table, and the intro's stale 'four locations in §3' now the table has ten rows.
+- Status open, type bug, folder .open/ all still correct and in agreement.
