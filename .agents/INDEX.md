@@ -750,6 +750,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Notification preference architecture — desktop vs mobile](reports/2026-05-28-notification-architecture-divergence.md)
 - [App Lock / Password Gate — Feasibility Research](reports/2026-06-22-app-lock-password-gate-research.md)
 - [PWA feasibility — quorum-desktop as the mobile fallback](reports/2026-08-05-pwa-mobile-fallback-feasibility.md)
+- [Triage of the 87 live issues](reports/2026-08-16-issue-backlog-triage.md)
 - [Channel Ordering Feature Analysis](reports/channel-ordering-feature-analysis_2026-01-07.md)
 - [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
@@ -795,4 +796,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-16 15:38:41
+**Last Updated**: 2026-08-16 15:59:09
