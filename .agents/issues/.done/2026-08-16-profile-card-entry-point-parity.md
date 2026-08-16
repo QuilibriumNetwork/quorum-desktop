@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "The profile card's Kick button state came from the click payload, so it was wrong from a mention pill"
-status: in-progress
+status: done
 priority: low
 created: 2026-08-16
 updated: 2026-08-16
@@ -27,12 +27,20 @@ Verified: parity test written first and observed **red**, naming the Kick button
 as the only divergence in both variants; green after the fix. Identity suite
 238/238, typecheck clean, lint clean on all three changed files.
 
-**Still open — deliberately left out of `.done/`.** The fix has not been
-exercised by hand in a running build. Automated evidence is strong (red-on-revert
-observed, whole-DOM parity), but the one criterion this file set for itself is
-unmet, so it stays visible. To close it: kick a member, then open their profile
-card by clicking a **mention** of them, and confirm the button reads "Kicked!"
-and is greyed out. Then tick the box below and move this file to `.done/`.
+**Closed on the automated evidence.** The fix was not exercised by hand in a
+running build, and closing did not wait for that. The standing rule
+(`AGENTS.md`) requires, for a `type: bug`, *either* tests run in-session *or*
+operator confirmation — not both. Red-on-revert plus whole-DOM parity in two
+variants satisfies the first, so the extra visual gate was a criterion this file
+had invented for itself, not a requirement.
+
+Recorded because the reverse mistake is the expensive one: an issue held open on
+a self-imposed checklist item is invisible work, and the checklist item was
+written by the same pass that wrote the fix.
+
+If anyone does want the manual check later: kick a member, open their profile
+card from a **mention** of them, and the button should read "Kicked!", greyed
+out.
 
 ## Why this exists: the same bug had been fixed twice, one field at a time
 
@@ -130,8 +138,9 @@ scope here and have not been checked for the same class of defect.
 - [x] Fix applied, parity green in both variants
 - [x] Identity suite (238), typecheck, lint
 - [x] Supersedes the "Found but NOT fixed" note in the #344 write-up
-- [ ] Visually confirmed in a running build
 - [x] Merged as #345
+- [ ] Visually confirmed in a running build — **not done, and not required**;
+      closure rests on the in-session test evidence above
 
 ---
 

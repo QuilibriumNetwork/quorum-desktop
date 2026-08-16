@@ -114,7 +114,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [Eight name surfaces never reached the resolver](issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md)
 - 🐛 [Notification switches freeze the UI for ~1.8s](issues/2026-08-13-notification-toggle-freeze-is-the-config-encode-chain.md)
 - 🐛 [Desktop has no `.q` broadcast, and trusts a `.q` it never checks](issues/2026-08-16-desktop-has-no-q-broadcast-and-renders-claims-unverified.md)
-- 🐛 [The profile card's Kick button state came from the click payload](issues/2026-08-16-profile-card-entry-point-parity.md)
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
@@ -400,6 +399,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [`hover:text-*` utilities generate no CSS — REFUTED](issues/.done/2026-08-12-hover-text-utilities-generate-no-css.md)
 - 🐛 [Four typography classes have no working colour](issues/.done/2026-08-12-typography-classes-have-no-working-colour.md)
 - 🐛 [Mute/Block/Kick confirmations show no avatar when the profile card was opened from a mention pill](issues/.done/2026-08-16-moderation-confirmations-show-no-avatar-from-a-mention-pill.md)
+- 🐛 [The profile card's Kick button state came from the click payload](issues/.done/2026-08-16-profile-card-entry-point-parity.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -795,4 +795,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-16 15:36:13
+**Last Updated**: 2026-08-16 15:38:41
