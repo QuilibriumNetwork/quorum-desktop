@@ -106,6 +106,32 @@ export function claimedNamesIn(profiles: ProfileMap, limit: number = QNS_CLAIM_L
 }
 
 /**
+ * Build an `address -> name` map, returning the stable empty object when `pick`
+ * found nothing for anyone.
+ *
+ * The stable-empty part is the reason this is a helper rather than two loops:
+ * these maps feed `IdentitySources`, which feeds memos all the way down to a
+ * virtualised list, so a fresh `{}` per render would invalidate every one of
+ * them on every tick. Keeping that trick in ONE place means the two callers
+ * cannot drift into doing it differently.
+ */
+function namesBy(
+  profiles: ProfileMap,
+  pick: (address: string) => string | null,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  let found = false;
+  for (const address of Object.keys(profiles)) {
+    const name = pick(address);
+    if (name) {
+      out[address] = name;
+      found = true;
+    }
+  }
+  return found ? out : NO_NAMES;
+}
+
+/**
  * `address -> the profile's display name`. No trust claim, so no check.
  *
  * Separate from the verified map on purpose: a display name is not something
@@ -113,16 +139,7 @@ export function claimedNamesIn(profiles: ProfileMap, limit: number = QNS_CLAIM_L
  * on screen to protect a value that needs no protecting.
  */
 export function profileGlobalNamesFrom(profiles: ProfileMap): Record<string, string> {
-  const out: Record<string, string> = {};
-  let any = false;
-  for (const address of Object.keys(profiles)) {
-    const name = (profiles[address]?.display_name ?? '').trim();
-    if (name) {
-      out[address] = name;
-      any = true;
-    }
-  }
-  return any ? out : NO_NAMES;
+  return namesBy(profiles, (address) => (profiles[address]?.display_name ?? '').trim() || null);
 }
 
 /**
@@ -140,23 +157,16 @@ export function verifiedNamesFrom(
   records: QnsBatchResult,
   isExempt: (name: string, address: string) => boolean = isExemptClaim,
 ): Record<string, string> {
-  const out: Record<string, string> = {};
-  let any = false;
-
-  for (const address of Object.keys(profiles)) {
+  return namesBy(profiles, (address) => {
     const claim = claimOf(profiles[address]);
-    if (!claim) continue;
+    if (!claim) return null;
 
     // The claimant address is the key of the map the claim arrived in — never a
     // value read out of the claim's own payload, which would let a forger
     // supply both sides of the comparison.
-    if (isExempt(claim, address) || claimedNameBelongsTo(records[claim], address)) {
-      out[address] = claim;
-      any = true;
-    }
-  }
-
-  return any ? out : NO_NAMES;
+    const proven = isExempt(claim, address) || claimedNameBelongsTo(records[claim], address);
+    return proven ? claim : null;
+  });
 }
 
 /**
@@ -169,6 +179,25 @@ export function verifiedNamesFrom(
  * it for cost without saying so here — and note the interactive lookup in
  * `useResolveQnsName.ts` deliberately uses a DIFFERENT, shorter value for a
  * different question. The two are not meant to agree.
+ *
+ * ## Known cost: the key is the name SET, so a growing set re-resolves all of it
+ *
+ * Scrolling a channel adds claimants one at a time. Each addition changes
+ * `namesKey`, which React Query treats as a new query, so the WHOLE accumulated
+ * set is fetched again rather than just the new name. Nested providers whose
+ * sets differ by even one address likewise do not share a cache entry.
+ *
+ * This is a deliberate trade, and quorum-mobile made the same one for the same
+ * reason: a 100-name batch was measured at ~190ms against ~167ms for a single
+ * name, so re-resolving everything costs barely more than resolving the delta,
+ * and it avoids a per-name bookkeeping layer. The abort signal above keeps the
+ * superseded requests from finishing.
+ *
+ * **If it ever does show up as a real cost, the fix is per-name cache entries**
+ * (one query key per name, coalesced into a batch by a dataloader-style layer),
+ * which makes additions incremental and shares every resolved name across all
+ * providers automatically. Do NOT reach for a shorter `staleTime` instead — the
+ * batch is what buys headroom here, and the TTL is a security parameter.
  */
 export function useVerifiedQnsNames(profiles: ProfileMap): Record<string, string> {
   const names = React.useMemo(() => claimedNamesIn(profiles), [profiles]);
@@ -178,7 +207,10 @@ export function useVerifiedQnsNames(profiles: ProfileMap): Record<string, string
 
   const { data } = useQuery({
     queryKey: ['qns-verify-claims', namesKey],
-    queryFn: () => resolveNamesBatch(names),
+    // `signal` so a request superseded by a widening set is abandoned rather
+    // than left to finish and have its answer discarded — see the note on
+    // re-resolution below, which is what makes that happen at all.
+    queryFn: ({ signal }) => resolveNamesBatch(names, signal),
     enabled: names.length > 0,
     staleTime: 60 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,

@@ -68,65 +68,15 @@ vi.mock('../../../utils/platform', () => ({
   isTouchDevice: () => false,
 }));
 
-vi.mock('@quilibrium/quorum-shared', () => {
-  // The real algorithm, not a stub. `resolveSpaceMemberName` delegates to
-  // `resolveIdentity` for both the space/QNS/global ladder AND the guard that
-  // drops a name forging the verified `.q` marker — stubbing this to a
-  // constant would switch that guard off for anything this panel renders, and
-  // a mock that silently disables a security rule is worse than no mock.
-  const hasReservedQnsSuffix = (name: string) =>
-    name.replace(/[.．﹒․]/g, '.').trim().toLowerCase().endsWith('.q');
-
-  const present = (s?: string | null): string | null => {
-    const t = (s ?? '').trim();
-    return t.length ? t : null;
-  };
-  const presentUnreserved = (s?: string | null): string | null => {
-    const t = present(s);
-    if (!t) return null;
-    return hasReservedQnsSuffix(t) ? null : t;
-  };
-  const truncate = (addr: string): string =>
-    addr.length > 10 ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : addr;
-
-  return {
-    formatRelativeTime: () => '2h ago',
-    resolveIdentity: (
-      identity: {
-        address: string;
-        spaceName: string | null;
-        qnsName: string | null;
-        globalName: string | null;
-      },
-      { scope }: { scope: 'space' | 'global' },
-    ) => {
-      const qns = presentUnreserved(identity.qnsName);
-      const global = presentUnreserved(identity.globalName);
-      if (scope === 'space') {
-        const space = presentUnreserved(identity.spaceName);
-        if (space && space !== global) return { name: space, isQnsVerified: false };
-      }
-      if (qns) return { name: qns, isQnsVerified: true };
-      if (global) return { name: global, isQnsVerified: false };
-      return { name: truncate(identity.address), isQnsVerified: false };
-    },
-    hasReservedQnsSuffix,
-  };
-});
-
-// Mock primitives
-vi.mock('@/components/primitives', () => ({
-  Icon: ({ name, className }: { name: string; className?: string }) => (
-    <span data-testid={`icon-${name}`} className={className}>{name}</span>
-  ),
-  Button: ({ children, icon, disabled, tooltip, className, onClick, ...rest }: any) => (
-    <button className={className} disabled={disabled} onClick={onClick} title={tooltip} {...rest}>
-      {icon && <span data-testid={`icon-${icon}`}>{icon}</span>}
-      {children}
-    </button>
-  ),
-  Flex: ({ children, className, ...rest }: any) => <div className={className} {...rest}>{children}</div>,
-  Container: ({ children, className, ...rest }: any) => <div className={className} {...rest}>{children}</div>,
+// Pins WIRING, not QNS ownership. Only the final ownership comparison is
+// stubbed, because the address fixtures here are arbitrary and no real ed448
+// key derives to them. The claim still travels the whole real path, so this
+// still fails if the provider stops populating the verified map. Ownership
+// itself is pinned in `identity/verifiedQnsNames.test.ts` and shared's
+// `verifyQnsClaim.test.ts`, both mutation-proven.
+vi.mock('@quilibrium/quorum-shared', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@quilibrium/quorum-shared')>()),
+  claimedNameBelongsTo: () => true,
 }));
 
 // Mock ListSearchInput to a simple input
