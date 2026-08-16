@@ -130,7 +130,13 @@ Red-before-green was observed in the correct order: all 4 failed with
 `userIcon: undefined` against the expected roster icon, including the control
 arm showing the two entry points diverging, before any production change.
 
-## Found but NOT fixed — `isKicked` has the same shape
+## Found but NOT fixed here — `isKicked` has the same shape
+
+> **Superseded 2026-08-16.** Fixed in the follow-up, together with a parity test
+> that asserts the whole card renders identically from both entry points rather
+> than chasing one field at a time. See
+> `2026-08-16-profile-card-entry-point-parity.md`. The section below is kept as
+> the original finding.
 
 `UserProfile.tsx:529/532/540` reads `props.user.isKicked`, also from the raw
 caller payload. From a mention pill it is `undefined`, so for an
