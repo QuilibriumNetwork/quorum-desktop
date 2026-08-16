@@ -95,6 +95,21 @@ vi.mock('@/components/message/MessagePreview', () => ({
   MessagePreview: () => null,
 }));
 
+// This test pins WIRING — that the name the identity module resolves is the one
+// this surface renders. It is not a test of QNS ownership, which lives in
+// `identity/verifiedQnsNames.test.ts` and shared's `verifyQnsClaim.test.ts`,
+// both mutation-proven.
+//
+// The claim still travels the real path (profile -> claimedNamesIn ->
+// verifiedQnsNames -> IdentitySources -> the ladder), so this still fails if the
+// provider stops populating the verified map. Only the final comparison is
+// stubbed, because the address fixtures here are arbitrary and no real key
+// derives to them.
+vi.mock('@quilibrium/quorum-shared', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@quilibrium/quorum-shared')>()),
+  claimedNameBelongsTo: () => true,
+}));
+
 import { PinnedMessagesPanel } from '@/components/message/PinnedMessagesPanel';
 import { IdentityScopeProvider } from '@/identity/identityProvider';
 

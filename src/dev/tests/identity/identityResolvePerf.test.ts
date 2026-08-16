@@ -31,28 +31,29 @@ const addressAt = (i: number): string => `QmPerf${String(i).padStart(4, '0')}${'
 function buildSources(count: number): { addresses: string[]; sources: IdentitySources } {
   const addresses = Array.from({ length: count }, (_, i) => addressAt(i));
   const roster: Record<string, RosterNameRow> = {};
-  const profiles: IdentitySources['profiles'] = {};
+  const profileGlobalNames: IdentitySources['profileGlobalNames'] = {};
+  const verifiedQnsNames: IdentitySources['verifiedQnsNames'] = {};
   addresses.forEach((address, i) => {
     // Mixed shapes, like a real roster: some with a per-space nickname, some
-    // with only a global name, some with a QNS-verified profile.
+    // with only a global name, some with a QNS name that verified.
     roster[address] = {
       display_name: i % 3 === 0 ? `Nick ${i}` : '',
       global_display_name: `Member ${i}`,
     };
     if (i % 2 === 0) {
-      profiles[address] = {
-        display_name: `Profile ${i}`,
-        primary_username: i % 4 === 0 ? `user${i}` : undefined,
-        profile_image: '',
-        bio: '',
-        timestamp: 1,
-        signature: '',
-      };
+      profileGlobalNames[address] = `Profile ${i}`;
+      if (i % 4 === 0) verifiedQnsNames[address] = `user${i}`;
     }
   });
   return {
     addresses,
-    sources: { rostersBySpace: { 'space-1': roster }, profiles, selfAddress: null, selfProfile: null },
+    sources: {
+      rostersBySpace: { 'space-1': roster },
+      profileGlobalNames,
+      verifiedQnsNames,
+      selfAddress: null,
+      locallyKnownNames: {},
+    },
   };
 }
 

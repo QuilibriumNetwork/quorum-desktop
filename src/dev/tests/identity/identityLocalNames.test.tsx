@@ -47,6 +47,16 @@ vi.mock('@/api/baseTypes', () => ({
   isHandledFetchError: () => false,
 }));
 
+// This file pins the local-name TIER ORDER, not QNS ownership (that lives in
+// `verifiedQnsNames.test.ts` and shared's `verifyQnsClaim.test.ts`, both
+// mutation-proven). The claim still travels the real path, so this still fails
+// if the provider stops populating the verified map — only the final comparison
+// is stubbed, because `ADDR` is an arbitrary fixture no real key derives to.
+vi.mock('@quilibrium/quorum-shared', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@quilibrium/quorum-shared')>()),
+  claimedNameBelongsTo: () => true,
+}));
+
 import { IdentityScopeProvider } from '@/identity/identityProvider';
 import { MemberName } from '@/identity/MemberName';
 

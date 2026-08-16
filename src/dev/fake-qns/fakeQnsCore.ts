@@ -171,6 +171,57 @@ export function deriveFakeQName(address: string): string {
 }
 
 /**
+ * Is this claim one THIS overlay synthesized for THIS address?
+ *
+ * Exists because claim verification would otherwise make the whole instrument
+ * inert. A synthesized name (`qa1234`) is registered nowhere, so the genuine
+ * ownership check strips every one of them: the overlay would inject names, the
+ * verifier would remove them, and every QNS surface would render exactly as it
+ * did before the overlay existed — the panel reporting success while showing
+ * nothing. That failure looks identical to "the feature is broken", which is
+ * the most expensive kind of dev-tool bug.
+ *
+ * Deliberately narrow. It exempts ONLY names this module would itself produce
+ * for that exact address:
+ *
+ * - an explicit entry's `primaryUsername`, which is a deliberate act, and
+ * - the derived `qa…` name, and only while `giveEveryoneAName` is on.
+ *
+ * A REAL registration that happens to pass through `applyFakeQns` untouched is
+ * NOT exempt, and must not be: verifying real names is the one behaviour the
+ * instrument exists to observe, so exempting them would hide the regression it
+ * was built to catch.
+ *
+ * ⚠️ There is no production path to this. Its only caller,
+ * `identity/qnsClaimExemption.ts`, sits behind a `process.env.NODE_ENV` gate
+ * that the bundler folds to a constant, so the call is dead code and this
+ * module loses its last importer.
+ *
+ * Both halves are checked, by different means: `qnsClaimExemption.test.ts`
+ * asserts the RUNTIME gate refuses outside development, and the build-time half
+ * was MEASURED by grepping `dist/` after `yarn build` (2026-08-16 — zero
+ * occurrences of `deriveFakeQName`, `isFakeClaimFor`, `applyFakeQns` or the
+ * storage key across 71 bundle files). Re-run that grep if the gate changes
+ * shape; a unit test cannot see it.
+ *
+ * Anything that made this reachable in production would be a way to render an
+ * unverified `.q`, which is the entire thing verification prevents.
+ */
+export function isFakeClaimFor(name: string, address: string): boolean {
+  const claim = (name ?? '').trim();
+  const addr = (address ?? '').trim();
+  if (!claim || !addr) return false;
+
+  const state = getFakeQnsState();
+  if (!state.enabled) return false;
+
+  const entry = state.entries[addr.toLowerCase()];
+  if (entry) return !!entry.primaryUsername && entry.primaryUsername === claim;
+
+  return state.giveEveryoneAName && deriveFakeQName(addr) === claim;
+}
+
+/**
  * The seam. Called from `QuorumApiClient.getPublicProfile` with whatever the
  * server actually returned, or `null` for a 404.
  *

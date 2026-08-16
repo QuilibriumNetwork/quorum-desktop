@@ -26,9 +26,9 @@ describe('identityFromMaps — tier assembly', () => {
       rostersBySpace: {
         'space-1': { [ADDR]: { display_name: 'Mod Alice', global_display_name: 'Alice' } },
       },
-      profiles: {},
+      verifiedQnsNames: {},
+      profileGlobalNames: {},
       selfAddress: null,
-      selfProfile: null,
       locallyKnownNames: {},
     });
     expect(r).toEqual({
@@ -44,23 +44,26 @@ describe('identityFromMaps — tier assembly', () => {
       rostersBySpace: {
         'space-1': { [ADDR]: { display_name: '', global_display_name: 'Roster Alice' } },
       },
-      profiles: { [ADDR]: { display_name: 'Profile Alice', primary_username: 'alice' } },
+      profileGlobalNames: { [ADDR]: 'Profile Alice' },
+      verifiedQnsNames: { [ADDR]: 'alice' },
       selfAddress: null,
-      selfProfile: null,
       locallyKnownNames: {},
     });
     expect(r.globalName).toBe('Roster Alice');
     expect(r.qnsName).toBe('alice');
   });
 
-  it('takes qnsName ONLY from the public profile', () => {
+  it('takes qnsName ONLY from the verified map', () => {
     // A roster row cannot carry primary_username; that is why bookmarks and
-    // notifications showed a nickname but never a ".q".
+    // notifications showed a nickname but never a ".q". Since verification
+    // moved upstream, the rule is stronger: the ONLY way a `.q` renders is an
+    // entry somebody already proved, so a roster row cannot produce one and
+    // neither can an unverified profile claim.
     const r = identityFromMaps(ADDR, 'space-1', {
       rostersBySpace: { 'space-1': { [ADDR]: { display_name: 'Alice' } } },
-      profiles: {},
+      verifiedQnsNames: {},
+      profileGlobalNames: {},
       selfAddress: null,
-      selfProfile: null,
       locallyKnownNames: {},
     });
     expect(r.qnsName).toBeNull();
@@ -69,9 +72,9 @@ describe('identityFromMaps — tier assembly', () => {
   it('returns an all-null identity for an unknown address, never undefined', () => {
     const r = identityFromMaps(ADDR, undefined, {
       rostersBySpace: {},
-      profiles: {},
+      verifiedQnsNames: {},
+      profileGlobalNames: {},
       selfAddress: null,
-      selfProfile: null,
       locallyKnownNames: {},
     });
     expect(r).toEqual({ address: ADDR, spaceName: null, qnsName: null, globalName: null });
@@ -83,9 +86,9 @@ describe('identityFromMaps — tier assembly', () => {
       rostersBySpace: {
         'space-1': { [ADDR]: { display_name: 'Mod Alice', global_display_name: 'Alice' } },
       },
-      profiles: { [ADDR]: { display_name: 'Alice', primary_username: 'alice' } },
+      profileGlobalNames: { [ADDR]: 'Alice' },
+      verifiedQnsNames: { [ADDR]: 'alice' },
       selfAddress: null,
-      selfProfile: null,
       locallyKnownNames: {},
     });
     expect(r.spaceName).toBeNull();
@@ -102,9 +105,9 @@ describe('identityFromMaps — offline (design constraint 5)', () => {
       rostersBySpace: {
         'space-1': { [ADDR]: { display_name: '', global_display_name: 'Alice' } },
       },
-      profiles: {},
+      verifiedQnsNames: {},
+      profileGlobalNames: {},
       selfAddress: null,
-      selfProfile: null,
       locallyKnownNames: {},
     });
     expect(r.globalName).toBe('Alice');
@@ -113,17 +116,38 @@ describe('identityFromMaps — offline (design constraint 5)', () => {
 });
 
 describe('identityFromMaps — the self tier', () => {
-  it('reads YOUR OWN qnsName from your own public profile', () => {
+  it('reads YOUR OWN qnsName from your own public profile, on the same path as anyone else', () => {
     // currentPasskeyInfo carries no primary_username. Special-casing self from
     // it is what broke your own DM messages and your own profile card.
+    //
+    // Self used to have its own branch here, reading a separate `selfProfile`
+    // field. It no longer does, and that is deliberate: your own claim is
+    // verified on exactly the same path as everybody else's, because a name you
+    // have not registered does not become yours just because you are the one
+    // looking at it.
     const r = identityFromMaps(ADDR, undefined, {
       rostersBySpace: {},
-      profiles: {},
+      verifiedQnsNames: { [ADDR]: 'gatto' },
+      profileGlobalNames: { [ADDR]: 'GattoPardo Mobile' },
       selfAddress: ADDR,
-      selfProfile: { display_name: 'GattoPardo Mobile', primary_username: 'gatto' },
       locallyKnownNames: {},
     });
     expect(r.qnsName).toBe('gatto');
+    expect(r.globalName).toBe('GattoPardo Mobile');
+  });
+
+  it('does NOT give self a shortcut past verification', () => {
+    // The paired negative, and the one that would have caught a "self is always
+    // trusted" shortcut. With no verified entry, self renders their global name
+    // and no ".q" — same as any other unproven claimant.
+    const r = identityFromMaps(ADDR, undefined, {
+      rostersBySpace: {},
+      verifiedQnsNames: {},
+      profileGlobalNames: { [ADDR]: 'GattoPardo Mobile' },
+      selfAddress: ADDR,
+      locallyKnownNames: {},
+    });
+    expect(r.qnsName).toBeNull();
     expect(r.globalName).toBe('GattoPardo Mobile');
   });
 });
@@ -137,9 +161,9 @@ describe('identityFromMaps — the local-name tier (fix round 1, DM identity los
   it('falls back to the local name when neither the roster nor a fetched profile knows one', () => {
     const r = identityFromMaps(ADDR, undefined, {
       rostersBySpace: {},
-      profiles: {},
+      verifiedQnsNames: {},
+      profileGlobalNames: {},
       selfAddress: null,
-      selfProfile: null,
       locallyKnownNames: { [ADDR]: 'Bob (from conversation)' },
     });
     expect(r.globalName).toBe('Bob (from conversation)');
@@ -149,9 +173,9 @@ describe('identityFromMaps — the local-name tier (fix round 1, DM identity los
   it('a fetched public profile still wins over the local name — the local name is the LAST resort, not the first', () => {
     const r = identityFromMaps(ADDR, undefined, {
       rostersBySpace: {},
-      profiles: { [ADDR]: { display_name: 'Published Bob', primary_username: 'bob' } },
+      profileGlobalNames: { [ADDR]: 'Published Bob' },
+      verifiedQnsNames: { [ADDR]: 'bob' },
       selfAddress: null,
-      selfProfile: null,
       locallyKnownNames: { [ADDR]: 'Bob (from conversation)' },
     });
     expect(r.globalName).toBe('Published Bob');
@@ -163,9 +187,9 @@ describe('identityFromMaps — the local-name tier (fix round 1, DM identity los
       rostersBySpace: {
         'space-1': { [ADDR]: { display_name: '', global_display_name: 'Roster Alice' } },
       },
-      profiles: {},
+      verifiedQnsNames: {},
+      profileGlobalNames: {},
       selfAddress: null,
-      selfProfile: null,
       locallyKnownNames: { [ADDR]: 'Local Alice' },
     });
     expect(r.globalName).toBe('Roster Alice');
@@ -174,9 +198,9 @@ describe('identityFromMaps — the local-name tier (fix round 1, DM identity los
   it('an empty locallyKnownNames map (every Space surface) changes nothing', () => {
     const r = identityFromMaps(ADDR, undefined, {
       rostersBySpace: {},
-      profiles: {},
+      verifiedQnsNames: {},
+      profileGlobalNames: {},
       selfAddress: null,
-      selfProfile: null,
       locallyKnownNames: {},
     });
     expect(r.globalName).toBeNull();

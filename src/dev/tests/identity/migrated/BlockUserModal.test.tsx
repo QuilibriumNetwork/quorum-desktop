@@ -37,6 +37,22 @@ vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
   usePasskeysContext: () => ({ currentPasskeyInfo: { address: 'QmSelf000000000000000000000000000000000000' } }),
 }));
 
+// This test pins WIRING — that the name the identity module resolves is the one
+// this surface renders. It is not a test of QNS ownership, which lives in
+// `identity/verifiedQnsNames.test.ts` and shared's `verifyQnsClaim.test.ts`,
+// both mutation-proven.
+//
+// The claim still travels the real path (profile -> claimedNamesIn ->
+// verifiedQnsNames -> IdentitySources -> the ladder), so this test still fails
+// if the provider stops populating the verified map. Only the final comparison
+// is stubbed, because `ADDR` here is an arbitrary fixture and no real key
+// derives to it — the alternative would be regenerating every address fixture
+// in 40 files from a known keypair.
+vi.mock('@quilibrium/quorum-shared', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@quilibrium/quorum-shared')>()),
+  claimedNameBelongsTo: () => true,
+}));
+
 import BlockUserModal from '@/components/modals/BlockUserModal';
 import { IdentityScopeProvider, type RosterNameRow } from '@/identity';
 

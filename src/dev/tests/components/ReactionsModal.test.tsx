@@ -84,6 +84,18 @@ vi.mock('@/components/context/useMessageDB', () => ({
   }),
 }));
 
+// This test pins WIRING — that the name the identity module resolves is the one
+// this surface renders. QNS ownership itself is tested in
+// `identity/verifiedQnsNames.test.ts` and shared's `verifyQnsClaim.test.ts`,
+// both mutation-proven. The claim still travels the real path here, so this
+// still fails if the provider stops populating the verified map; only the final
+// comparison is stubbed, because the address fixtures are arbitrary and no real
+// key derives to them.
+vi.mock('@quilibrium/quorum-shared', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@quilibrium/quorum-shared')>()),
+  claimedNameBelongsTo: () => true,
+}));
+
 const ADDR = 'QmPeerFEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 const SPACE_ID = 'space-1';
 const CHANNEL_ID = 'channel-1'; // distinct from SPACE_ID — the ordinary, non-DM shape

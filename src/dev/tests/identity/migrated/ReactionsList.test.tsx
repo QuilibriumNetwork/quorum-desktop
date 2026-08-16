@@ -48,6 +48,21 @@ vi.mock('@/components/context/ReactionsModalProvider', () => ({
   useReactionsModal: () => ({ showReactionsModal: vi.fn() }),
 }));
 
+// This test pins WIRING — that the name the identity module resolves is the one
+// this surface renders. It is not a test of QNS ownership, which lives in
+// `identity/verifiedQnsNames.test.ts` and shared's `verifyQnsClaim.test.ts`,
+// both mutation-proven.
+//
+// The claim still travels the real path (profile -> claimedNamesIn ->
+// verifiedQnsNames -> IdentitySources -> the ladder), so this still fails if the
+// provider stops populating the verified map. Only the final comparison is
+// stubbed, because the address fixtures here are arbitrary and no real key
+// derives to them.
+vi.mock('@quilibrium/quorum-shared', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@quilibrium/quorum-shared')>()),
+  claimedNameBelongsTo: () => true,
+}));
+
 // The real Tooltip defers its content to a hover/floating-ui portal that
 // doesn't render in jsdom without simulated interaction — dump `content`
 // into a plain, always-present element instead so the resolved names can be

@@ -146,6 +146,18 @@ vi.mock('../../../components/ui/DropdownPanel', () => ({
     isOpen ? <div data-testid="dropdown-panel">{headerContent}{children}</div> : null,
 }));
 
+// This test pins WIRING — that the name the identity module resolves is the one
+// this surface renders. QNS ownership itself is tested in
+// `identity/verifiedQnsNames.test.ts` and shared's `verifyQnsClaim.test.ts`,
+// both mutation-proven. The claim still travels the real path here, so this
+// still fails if the provider stops populating the verified map; only the final
+// comparison is stubbed, because the address fixtures are arbitrary and no real
+// key derives to them.
+vi.mock('@quilibrium/quorum-shared', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@quilibrium/quorum-shared')>()),
+  claimedNameBelongsTo: () => true,
+}));
+
 import { ThreadsListPanel } from '../../../components/thread/ThreadsListPanel';
 import { IdentityScopeProvider } from '../../../identity';
 

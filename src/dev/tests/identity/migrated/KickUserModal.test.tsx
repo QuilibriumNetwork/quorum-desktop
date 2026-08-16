@@ -47,6 +47,21 @@ vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
   usePasskeysContext: () => ({ currentPasskeyInfo: { address: 'QmSelf000000000000000000000000000000000000' } }),
 }));
 
+// This test pins WIRING — that the name the identity module resolves is the one
+// this surface renders. It is not a test of QNS ownership, which lives in
+// `identity/verifiedQnsNames.test.ts` and shared's `verifyQnsClaim.test.ts`,
+// both mutation-proven.
+//
+// The claim still travels the real path (profile -> claimedNamesIn ->
+// verifiedQnsNames -> IdentitySources -> the ladder), so this still fails if the
+// provider stops populating the verified map. Only the final comparison is
+// stubbed, because the address fixtures here are arbitrary and no real key
+// derives to them.
+vi.mock('@quilibrium/quorum-shared', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@quilibrium/quorum-shared')>()),
+  claimedNameBelongsTo: () => true,
+}));
+
 // Bypasses the kick action's own machinery (registration/actionQueue) — this
 // test is about NAME resolution, not the kick action itself.
 vi.mock('@/hooks', async (importOriginal) => {
