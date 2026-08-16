@@ -15,15 +15,24 @@ related:
 
 ## Status
 
-**2026-08-16 — fixed on branch `fix/profile-card-entry-point-parity`, not yet
-merged.** `isKicked` now resolves from the roster row, and a new parity test
-asserts the whole card renders identically from both entry points.
+**2026-08-16 — shipped in PR #345** (`fix(identity): resolve the profile card's
+kicked state from the roster, and assert entry-point parity`).
+
+What landed: `isKicked` now resolves from the roster row inside
+`useProfileCardIdentityFields`, and `profileCardEntryPointParity.test.tsx`
+asserts the whole card renders identically from both entry points, in the card
+and drawer variants.
 
 Verified: parity test written first and observed **red**, naming the Kick button
-as the only divergence in both the card and drawer variants; green after the fix.
-Identity suite 238/238, typecheck clean, lint clean on all three changed files.
+as the only divergence in both variants; green after the fix. Identity suite
+238/238, typecheck clean, lint clean on all three changed files.
 
-Not yet visually confirmed in a running build.
+**Still open — deliberately left out of `.done/`.** The fix has not been
+exercised by hand in a running build. Automated evidence is strong (red-on-revert
+observed, whole-DOM parity), but the one criterion this file set for itself is
+unmet, so it stays visible. To close it: kick a member, then open their profile
+card by clicking a **mention** of them, and confirm the button reads "Kicked!"
+and is greyed out. Then tick the box below and move this file to `.done/`.
 
 ## Why this exists: the same bug had been fixed twice, one field at a time
 
@@ -122,7 +131,7 @@ scope here and have not been checked for the same class of defect.
 - [x] Identity suite (238), typecheck, lint
 - [x] Supersedes the "Found but NOT fixed" note in the #344 write-up
 - [ ] Visually confirmed in a running build
-- [ ] Merged
+- [x] Merged as #345
 
 ---
 
