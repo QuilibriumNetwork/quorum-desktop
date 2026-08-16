@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Mute/Block/Kick confirmations show no avatar when the profile card was opened from a mention pill"
-status: in-progress
+status: done
 priority: low
 created: 2026-08-16
 updated: 2026-08-16
@@ -14,13 +14,19 @@ related:
 
 ## Status
 
-**2026-08-16 — fixed on branch `fix/moderation-modal-avatar-resolved-icon`, not yet
-merged.** Three one-word swaps in `UserProfile.tsx` plus a new test file. Tests
-written first and observed failing with `userIcon: undefined` — the reported
-symptom — then green after the fix. Identity suite 234/234, adjacent component
-and hook suites 184/184, typecheck clean, lint clean on both changed files.
+**2026-08-16 — shipped in PR #344** (`fix(identity): moderation confirmations use
+the resolved avatar, not the caller payload`).
 
-Not yet visually confirmed in a running build.
+What landed: three call sites in `UserProfile.tsx` now pass `resolvedUserIcon`
+instead of `props.user.userIcon` when opening the Block/Mute/Kick confirmations,
+plus `moderationModalHandoffIcon.test.tsx` asserting the hand-off payload from an
+address-only click.
+
+Verified: tests written first and observed **red** with `userIcon: undefined` —
+the exact reported symptom — including the control arm showing the two entry
+points diverging; green after the fix. Identity suite 234/234, adjacent component
+and hook suites 184/184, typecheck clean, lint clean on both changed files.
+**Visually confirmed by the operator** in a running build.
 
 ## The report
 
@@ -142,8 +148,8 @@ made this change harder to review. Worth its own issue if it bothers anyone.
 - [x] Test written first, observed red for the reported reason
 - [x] Fix applied, test green
 - [x] Identity suite (234), adjacent suites (184), typecheck, lint
-- [ ] Visually confirmed in a running build, from both entry points
-- [ ] Merged
+- [x] Visually confirmed in a running build, from both entry points
+- [x] Merged as #344
 
 ---
 
