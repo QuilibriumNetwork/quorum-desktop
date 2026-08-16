@@ -25,6 +25,27 @@ Scope: the 87 files that are neither done nor archived (11 in root, 76 in
   **have not been confirmed by reading each file**. Treat the counts as an
   order of magnitude, not a roster. Files also appear in more than one list.
 
+> ## ⚠️ CORRECTION, 2026-08-16 (same day)
+>
+> **The first version of this report published wrong age figures.** It claimed
+> 31 files older than six months and 18 older than a year. The real numbers are
+> **25** and **4**.
+>
+> Cause: a parser bug in the triage script, not a property of the repo. Many
+> files write `updated: '2026-01-09'` with **single** quotes, and the script
+> stripped only double quotes, so those dates failed to parse and were bucketed
+> as maximally old.
+>
+> The corrected figures are below. The section that drew a conclusion from the
+> bad numbers has been rewritten, and its recommendation withdrawn.
+>
+> Second correction, from the operator and unrelated to the bug: **stale does not
+> mean archivable.** An old issue is often just something there has not been time
+> for. `.deferred/` means "might never be implemented, in limbo pending a
+> decision", and `.archived/` means overtaken. Neither describes a valid, wanted,
+> unstarted bug. The original recommendation to sweep old files into those
+> folders was wrong on that ground too.
+
 ## The headline
 
 | | count | share |
@@ -32,43 +53,51 @@ Scope: the 87 files that are neither done nor archived (11 in root, 76 in
 | Live files total | **87** | |
 | ...in `issues/` root ("being worked on right now") | 11 | |
 | ...in `.open/` | 76 | |
-| Older than 6 months | **31** | 36% |
-| Older than 1 year | **18** | 21% |
+| Older than 6 months | 25 | 29% |
+| Older than 1 year | 4 | 5% |
 | Updated within 30 days | 44 | 51% |
+| Carrying one bulk `2026-01-09` stamp | **17** | 20% |
+| No parseable date at all | 1 | 1% |
 | Mention a PR that already shipped | **12** | 14% |
 | Design/plan pairs (10 files, 5 features) | 10 | 11% |
 
-## The finding that changes the plan
+## The age pile is smaller and tamer than it first looked
 
-**The dominant problem is not the missing folders. It is a legacy graveyard.**
+Only **4** files are over a year old, and 25 are over six months. Of those 25:
 
-31 of 87 files have not been touched in six months; 18 have not been touched in
-over a year. A large cluster shares the exact date `2026-01-09`, which looks like
-a bulk migration stamp rather than real activity, so those files' `updated:`
-dates overstate how live they are.
+| priority | count |
+|---|---|
+| high | 4 |
+| medium | 9 |
+| low | 12 |
 
-That is roughly a third of the backlog which nobody is going to action, sitting
-in the same list as this week's work. No new status folder addresses it, because
-these files are not blocked and not awaiting verification. They are simply not
-going to be done, and nothing has ever said so.
+So 21 of the 25 are medium or low. That is what a backlog looks like, not a
+graveyard. They are correctly filed as `open`: still valid, still wanted, nobody
+has had time. Moving them would mislabel them.
 
-The proposed `.blocked/` and `.needs-verification/` folders would relocate
-somewhere between 15 and 20 files. Worth doing, and correct, but a second-order
-win against 31.
+**17 of the 25 share one `2026-01-09` stamp**, which is a bulk edit rather than
+real activity. For those files the age number measures nothing except when the
+migration ran, so "219 days untouched" should not be read as neglect.
 
-Oldest examples, all `status: open`:
+The genuinely interesting subset is small: **4 high-priority bugs that have been
+buried for six months or more.**
 
 ```
-585d  2025-01-08-pinned-messages-panel-clicks-and-message-list-disappearing.md
-572d  2025-01-21-markdown-line-break-inconsistency.md
-378d  2025-08-03-message-hash-navigation-conflict.md
-371d  2025-08-10-modal-gesture-handling-technical-debt.md
-360d  2025-08-21-messagedb-cross-platform-storage-issue.md
-280d  2025-11-09-expired-invite-card-validation-timing.md
+360d  high  bug  2025-08-21-messagedb-cross-platform-storage-issue.md
+246d  high  bug  2026-01-09-config-sync-space-loss-race-condition.md
+219d  high  bug  2026-01-09-safari-passkey-session-loss-random-logout.md
+219d  high  bug  2026-01-09-space-owner-privacy-limitation.md
 ```
 
-One file (`2026-04-14-display-name-input-layout-shift-on-error.md`) has an
-unparseable date field, so it has no age at all.
+That is the real cost of the current scan: not that old files exist, but that
+four high-priority bugs are indistinguishable, at a glance, from twelve
+low-priority ones filed the same week.
+
+Which points at ordering rather than relocation. Nothing needs to move; the list
+needs to be read in priority order.
+
+One file, `2026-04-14-display-name-input-layout-shift-on-error.md`, has no
+`created:` or `updated:` field at all and cannot be aged.
 
 ## Category 2: work that already shipped, still filed as live (12 files)
 
@@ -132,33 +161,44 @@ are caught by the same pattern.
 
 ## Recommendation, revised by the data
 
-Ordered by measured impact, not by how interesting the change is.
+Ordered by measured impact, not by how interesting the change is. Revised after
+the correction above; the original list led with a file sweep that should not
+happen.
 
-1. **Decide the fate of the 31 stale files.** They belong in `.deferred/` (still
-   want it, not now) or `.archived/` (overtaken, never doing it). Both folders
-   already exist, so this needs no new machinery at all: it is a judgement pass,
-   probably an hour, and it removes a third of the noise.
+1. **Sort the scan by priority, not by date. Move nothing.** The age pile is a
+   normal backlog, mostly low and medium, correctly filed as `open`. The actual
+   defect is that 4 high-priority bugs sit undifferentiated among 21 low and
+   medium ones. Ordering fixes that; relocation would only mislabel valid work.
 2. **Add a way to say "partial".** 12 files are partly shipped and there is no
-   vocabulary for it. This is the real gap the original complaint pointed at, and
-   it is a different gap from "blocked". Simplest form: keep `status: open` and
-   require a `## Status` line naming what shipped and what remains, which most of
-   these already do — then the fix is that scanning tools *surface* that line
-   rather than a new folder.
-3. **Then** add `blocked` and `needs-verification`. Still correct, still cheap,
-   but it moves 15-20 files, not 31.
+   vocabulary for it: the desktop half landed and mobile has not, or three of
+   four slices are done. A single `status:` cannot express that, so two-thirds
+   finished work reads exactly like work not started. Most of these files already
+   spell it out in a `## Status` line, so the cheapest fix is for scanning tools
+   to *surface* that line rather than for a new folder to exist.
+3. **Then** add `blocked` and `needs-verification`. Correct and cheap; moves
+   15-20 files.
 4. **`type: reference` for epic tracking docs** (roadmap, runbook, workflow,
    README, candidates). Roughly 30 files outside this 87 which will never be
-   done and appear in every in-progress scan. Independent of everything above.
+   done and appear in every in-progress scan. Independent of everything above,
+   and probably the best effort-to-benefit ratio in the list.
+
+**Fix the parser bug in whatever reads these files.** Single-quoted YAML dates
+broke this report's own numbers; anything else parsing frontmatter by regex will
+hit the same thing. Normalising the 17 quoted `updated:` values and adding the
+missing dates on the one undated file is a two-minute cleanup.
 
 ## What this report does NOT establish
 
 - Per-file category assignments are keyword-derived, not read. Before any file
   moves, each needs a human or a careful pass to confirm.
-- Whether the stale files should be deferred or archived. That is a product
-  call, not a mechanical one.
 - Whether quorum-mobile has the same distribution. Assumed similar, unmeasured.
-- The `2026-01-09` cluster is assumed to be a migration stamp because so many
-  files share it. Not confirmed against git history.
+- The `2026-01-09` cluster is assumed to be a migration stamp because 17 files
+  share the exact value. Not confirmed against git history.
+- Whether the 4 buried high-priority bugs are still real. They are old enough
+  that some may already be fixed incidentally.
+- How the index and other scanning tools currently order issues. The
+  sort-by-priority recommendation assumes they do not already, which was not
+  checked.
 
 ---
 
