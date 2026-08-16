@@ -21,7 +21,7 @@ import { useQuery } from '@tanstack/react-query';
 import { buildSpacesFetcher } from '../../../hooks/queries/spaces/buildSpacesFetcher';
 import { buildSpacesKey } from '../../../hooks/queries/spaces/buildSpacesKey';
 import { useMessageDB } from '../../context/useMessageDB';
-import { useUserPublicProfile } from '../../../hooks/business/user/useUserPublicProfile';
+import { useResolvedMemberName } from '../../../identity';
 import { validateDisplayName, validateUserBio } from '../../../hooks/business/validation';
 import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
 import General from './General';
@@ -105,9 +105,23 @@ const UserSettingsModal: React.FunctionComponent<{
   } = useUserSettings();
 
   // The user's own QNS primary name (if any) — drives the override notice in
-  // General. Sourced from their public profile, same hook used elsewhere.
-  const { data: ownPublicProfile } = useUserPublicProfile(currentPasskeyInfo?.address);
-  const primaryUsername = ownPublicProfile?.primary_username || undefined;
+  // General.
+  //
+  // Read through the identity module, NOT from `public_profile.primary_username`
+  // directly, because the notice claims "your QNS name X.q is shown as your
+  // name" and that has to actually be true. An unverified claim renders nowhere
+  // in the app (see `identityProvider.tsx`'s `verifiedQnsNames`), so sourcing it
+  // raw here would state the opposite of what every other surface does — and
+  // would be the one place left that appends `.q` to something nobody checked.
+  //
+  // Self is not exempt from the check. A name you have not registered does not
+  // become yours because you are the one looking at it.
+  const selfResolved = useResolvedMemberName(currentPasskeyInfo?.address ?? '', {
+    enrich: true,
+    global: true,
+    surface: 'UserSettingsModal',
+  });
+  const primaryUsername = selfResolved.isQnsVerified ? selfResolved.name : undefined;
 
   // Spaces for Space Tag selector (using useQuery to avoid Suspense requirement)
   const { messageDB } = useMessageDB();

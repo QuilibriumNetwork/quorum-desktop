@@ -151,10 +151,17 @@ const EXCEPTIONS: Record<string, string> = {
     'onboarding flow state — same reasoning.',
   'src/hooks/business/user/useAuthenticationFlow.ts':
     'builds the initial self user record straight from the passkey response during sign-in/sign-up, before any provider or public profile exists — the legitimate bootstrap source, not a render.',
+  // ⚠️ These two reasons were TOO BROAD and hid a real defect. "Editing your own
+  // profile" is true of the input fields, and it silently also covered a
+  // READ-ONLY render of the verified-QNS marker: General rendered
+  // `{primaryUsername}.q` from a claim nobody had checked, and UserSettingsModal
+  // sourced it straight from `public_profile.primary_username`. Narrowed to name
+  // what is actually allowed, so the next reviewer can check the claim against
+  // the file instead of reading "settings form" and moving on.
   'src/components/modals/UserSettingsModal/General.tsx':
-    "settings form editing YOUR OWN profile (display name + primary username fields) — the operator's explicit exception category.",
+    'settings form editing YOUR OWN profile (display name / bio INPUTS — nothing to resolve, it is what the user is typing). Its one READ of `primaryUsername` renders the `.q` notice, and that value arrives ALREADY VERIFIED from UserSettingsModal — a presentational pass-through, same category as UserAvatar.tsx. It must never resolve or verify a claim itself.',
   'src/components/modals/UserSettingsModal/UserSettingsModal.tsx':
-    'same settings-form category as General.tsx (the tab container/save logic).',
+    'same settings-form category as General.tsx (tab container / save logic). It derives the `.q` notice value through `useResolvedMemberName` (verified), NOT from `public_profile.primary_username` — pinned by `userSettingsSelfQnsNotice.test.ts`. Reverting that read to the raw profile is the regression this entry exists to make visible.',
   'src/hooks/business/user/useUserSettings.ts':
     'business logic behind the self-settings form (General.tsx/UserSettingsModal.tsx) — editing your own profile.',
   'src/hooks/business/spaces/useSpaceProfile.ts':
