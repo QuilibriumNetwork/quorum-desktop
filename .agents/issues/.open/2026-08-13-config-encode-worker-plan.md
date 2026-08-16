@@ -54,13 +54,23 @@ The worker must return results to the main thread. At a 4MB config those are an 
 string and a ~10.7MB base64 string. Structured-cloning them back is a copy, and if that
 copy costs 500ms the gain largely evaporates.
 
-- [ ] Bench `postMessage` round-trip cost for an 8MB string and a 10.7MB string
-      (`src/dev/tests/perf/`, run with `yarn bench`).
+- [ ] Bench `postMessage` round-trip cost for an 8MB string and a 10.7MB string.
+      ⚠️ `yarn bench` runs under **jsdom, which has no `Worker`** — `new Worker` throws
+      there. Two options: bench Node `worker_threads` inside `src/dev/tests/perf/` (same
+      V8 structured-clone serializer, acceptable as a first-order proxy), or get the
+      faithful browser number by extending the probe harness on
+      `local/toggle-freeze-ab-DO-NOT-MERGE`. State in the recorded result which one it is.
 - [ ] Compare against transferring an `ArrayBuffer` with a **Transferable**, which is
       zero-copy and may be dramatically cheaper.
-- [ ] **Decision gate:** if string cloning is expensive, change the contract so the worker
-      returns `ArrayBuffer`s (transferred) and the main thread does the final cheap
-      conversion, or move signing into the worker too so only a small signature comes back.
+- [ ] **Decision gate.** "Expensive" means: the **main-thread** share of the round-trip
+      exceeds ~150ms at these sizes (the success band for the whole fix is 150-350ms
+      total blocked, so a 150ms copy would eat most of the budget). If so, change the
+      contract so the worker returns `ArrayBuffer`s (transferred) and the main thread
+      does the final cheap conversion, or move signing into the worker too so only a
+      small signature comes back.
+      ⚠️ The signing option is not free: it puts the raw private key in the worker, which is
+      Job B's security question all over again. Prefer the Transferable contract; in-worker
+      signing is a last resort needing its own review, not a casual fallback.
 
 Do not write the worker until this number exists.
 
@@ -68,6 +78,12 @@ Do not write the worker until this number exists.
 
 - [ ] `src/workers/configEncode.worker.ts` (new folder — production worker code, distinct
       from `src/dev/`).
+- [ ] **Structure: pure module + thin shell.** Put the encode chain in a pure module
+      (e.g. `src/workers/configEncode.ts`) that touches no worker or DOM globals; the
+      `.worker.ts` file is a thin `onmessage` shell around it. The main-thread fallback
+      (Step 3) calls the **same module** — one implementation executed in either place,
+      never two copies that must be kept byte-identical by hand. This is also what makes
+      Step 4's equality test easy: the test imports the pure module directly.
 - [ ] Input: `{ configJson: string | ArrayBuffer, key: CryptoKey, iv: Uint8Array, ts: number }`
 - [ ] Work: AES-GCM encrypt → hex → append iv hex → utf-8 → append 8 timestamp bytes → base64
 - [ ] Output: `{ ciphertext, signedPayload }` in whatever representation Step 1 chose
@@ -78,12 +94,25 @@ Do not write the worker until this number exists.
 
 ## STEP 3 — Wire it into ConfigService
 
-- [ ] Replace the inline chain at `ConfigService.ts:832-857` with an `await` on the worker.
+- [ ] Replace the inline chain at `ConfigService.ts:832-858` with an `await` on the worker.
 - [ ] **Keep a main-thread fallback.** If the worker fails to construct (Electron quirk,
-      CSP, bundling problem), fall back to the existing inline path. Saving the user's
-      config must never depend on the worker starting. This is a correctness requirement,
-      not a nicety.
+      CSP, bundling problem), fall back to running the same pure encode module (Step 2)
+      on the main thread — do **not** keep a second inline copy of the chain. Saving the
+      user's config must never depend on the worker starting. This is a correctness
+      requirement, not a nicety.
+- [ ] The fallback must also cover **runtime** failure, not just construction. A worker
+      `error`/`messageerror` mid-save must reject the awaited promise (then fall back
+      inline or let the queue's retry handle it) — a save must never hang on a dead worker.
 - [ ] One worker instance, created lazily on first save and reused. Do not spawn per save.
+- [ ] **Correlate request and response** (an id per message), or serialize saves through
+      the worker. One reused worker with two in-flight saves that swap replies means the
+      wrong bytes get signed — exactly the silent auth failure Step 4 warns about, and
+      invisible to every test that saves one config at a time.
+- [ ] **Keep the RPC plumbing separate from the config logic.** The id correlation, error
+      propagation and fallback wrapper are generic worker plumbing (e.g. a small
+      `src/workers/workerRpc.ts`), with nothing config-specific in them. Job B — and any
+      future worker, e.g. a config *decode* path — should reuse that helper instead of
+      rebuilding it.
 
 ## STEP 4 — Verification
 
@@ -94,10 +123,18 @@ The first item is the one that matters; the rest support it.
       exact bytes, so a one-byte difference is a silent auth failure, not a visible bug.
       Assert equality of both `ciphertext` and `signedPayload` against the existing code
       path across several sizes including an empty config.
+      ⚠️ Two traps: (1) after Step 3 the "existing code path" no longer exists in
+      production code — **copy today's inline chain verbatim into the test file as a
+      frozen reference implementation** (Buffer and all) before rewiring, and assert
+      new-module output equals reference output. (2) The unit suite's setup **mocks
+      crypto** (see the comment at `vitest.perf.config.ts:35-38`) — an equality test
+      there would compare mocks with mocks and prove nothing. Run this test under the
+      harness setup (`setup.harness.ts`), where crypto is real.
 - [ ] Falsification check: deliberately corrupt one byte in the worker output and confirm
       the test goes red. An equality test that cannot fail is worse than none.
 - [ ] `yarn test:run` green; `tsc --noEmit` exit 0.
-- [ ] **Electron.** Build and run the Electron app, save a config, confirm the worker
+- [ ] **Electron.** Build and run the **packaged** Electron app (the prod path loads over
+      `file://` — see Risks; dev mode proves nothing), save a config, confirm the worker
       loads and the fallback is not silently doing all the work. Workers behave
       differently there and this was flagged untested in the 2025 plan.
 
@@ -119,7 +156,7 @@ disappoints.
 
 | Risk | Handling |
 |---|---|
-| Electron worker behaviour untested | Step 4; fallback path means worst case is today's performance, not breakage |
+| Electron worker behaviour untested | Step 4; fallback path means worst case is today's performance, not breakage. Specifics (`web/electron/main.cjs:110-119`): **prod loads `dist/index.html` over `file://` with `webSecurity: true`; dev loads localhost with `webSecurity: false`** — so a dev-mode Electron check proves nothing about the packaged app, and `file://` is where Chromium workers historically misbehave. Also check Vite's `worker.format`: dev serves the worker as a module while the build default bundles it as classic iife, so dev and packaged builds run different worker types. Test the packaged build. |
 | No Vite worker config exists in the repo | Use `new Worker(new URL('./configEncode.worker.ts', import.meta.url), { type: 'module' })`, which Vite supports natively |
 | Byte-drift breaks server-side signature verification | Step 4's equality test is the gate |
 | postMessage copy eats the win | Step 1 measures it before any code is written |
@@ -151,3 +188,19 @@ docs are stale and misleading on the point.
 ---
 
 *Last updated: 2026-08-13*
+
+## Review Log
+**2026-08-13 - claude-fable-5**: First review pass. Verified every code reference against the codebase: key import extractable:false confirmed at ConfigService.ts:702-711; encode chain confirmed at 832-858 (plan said 857, corrected); CSP quote verbatim at web/index.html:8 and the worker-src fallback reasoning is correct; broken dedup confirmed (ActionQueueService.ts:126 computed, 140-142 log-only); all referenced .agents docs, yarn bench and vitest.perf.config.ts exist. Nothing implemented yet (no src/workers/, no new Worker in src) so plan stays open. All edits applied, none pending.
+- Added missing edge case: request/response correlation (or serialization) on the reused worker — two in-flight saves swapping replies would sign the wrong bytes, a silent auth failure invisible to single-save tests
+- Added missing edge case: fallback must cover runtime worker failure (error/messageerror mid-save), not only construction failure — a save must never hang on a dead worker
+- Added security caveat to the Step 1 decision gate: the move-signing-into-the-worker escape hatch reopens Job B's raw-private-key question and must not be treated as a casual fallback
+- Enriched Electron risk with MEASURED facts from web/electron/main.cjs:110-119: prod loads over file:// with webSecurity:true, dev loads localhost with webSecurity:false, so only the packaged build is a valid test; flagged Vite worker.format dev-vs-build difference (module vs iife) as a thing to check
+
+**2026-08-13 - claude-fable-5**: Follow-up in the same session, at the owner's request: added two structural notes so extensibility does not depend on the implementer rediscovering them.
+- Step 2: encode chain lives in a pure module with a thin worker shell; the Step 3 fallback calls the same module, so there is one implementation, not two hand-synced copies
+- Step 3: RPC plumbing (id correlation, error propagation, fallback wrapper) kept generic and separate from config-specific logic so Job B and future workers can reuse it
+
+**2026-08-13 - claude-fable-5**: Handoff-readiness pass: closed three gaps a fresh agent would hit, all verified against the repo, not inferred.
+- Step 1: yarn bench runs under jsdom (vitest.perf.config.ts:34) which has no Worker — spelled out the two valid bench routes (Node worker_threads as proxy, or the browser probe harness) and required the result to say which was used
+- Step 1: defined the decision gate numerically — main-thread round-trip share over ~150ms triggers the Transferable contract
+- Step 4: the byte-identical test needs a frozen copy of today's inline chain inside the test file, because Step 3 deletes the production reference; and it must run under setup.harness.ts since the unit suite setup mocks crypto and would compare mocks with mocks
