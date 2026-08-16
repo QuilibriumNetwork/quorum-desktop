@@ -83,12 +83,16 @@ carries raw `profiles`, which is exactly why §4 is possible.
 | What | Where | State |
 |---|---|---|
 | The unverified read | `src/identity/identityProvider.tsx:108` — `qnsName: nn(profile?.primary_username)` | **no check of any kind** |
-| Sources shape | `src/identity/identityProvider.tsx:28-50` — `profiles: Record<string, PublicProfileResponse \| null>`, commented "the ONLY source of primary_username" | holds the raw claim |
-| Space send | `src/hooks/business/spaces/useSpaceProfile.ts:313-323` | sends `displayName` / `userIcon` / `bio` only |
-| DM send | `src/services/MessageService.ts:701-707` | same three fields |
-| DM send gate signature | `src/utils/dmProfileGate.ts:102-108` — `dmProfileSignature` | three fields; **no QNS field** |
+| Sources shape | `src/identity/identityProvider.tsx:28-51` — `profiles: Record<string, PublicProfileResponse \| null>`, commented "the ONLY source of primary_username" | holds the raw claim |
+| Space send — **on-connect announce** | `src/utils/spaceProfilePayload.ts:74-106` `buildSpaceProfileWirePayload`, called from `src/services/MessageService.ts:1130-1147` | builds BOTH slots; **the only path that carries the global slot** |
+| Space wire field list | `src/utils/spaceProfilePayload.ts:31-41` — `SpaceProfileWireFields` | the type the new field must be declared on |
+| Space send — modal save | `src/hooks/business/spaces/useSpaceProfile.ts:313-323` | override slot ONLY, and only fields that CHANGED |
+| DM send | `src/services/MessageService.ts:700-706` | `displayName` / `userIcon` / `bio` only |
+| DM send gate signature | `src/utils/dmProfileGate.ts:102-108` — `dmProfileSignature` | hardcoded three-field list; **no QNS field, must be edited** |
+| Space announce signature | `src/utils/spaceProfileGate.ts:84-95` — `spaceProfileSignature` | signs `Object.entries(payload)`; **already covers a new field — do NOT edit** |
+| Space announce gate | `src/utils/spaceProfilePayload.ts:115-123` — `hasAnnounceableIdentity` | four fields, none a QNS name — see §5.1 |
 | Space receive | `src/services/MessageService.ts:269` — `applyProfileUpdate` | six fields, none a QNS name |
-| DM receive | `src/services/MessageService.ts:962-973` — `handleDMProfileUpdate` | writes `displayName` / `icon` / `bio` only |
+| DM receive | `src/services/MessageService.ts:957-979` — `handleDMProfileUpdate` (merge at `:966-971`) | writes `displayName` / `icon` / `bio` only |
 
 Available already, do not rebuild:
 
@@ -163,6 +167,15 @@ a name that has been transferred away keeps verifying under its previous owner.
 Match it. Do not shorten it for freshness or lengthen it for cost without saying
 so in the code.
 
+⚠️ Desktop already has a QNS cache at a DIFFERENT value, sitting right where you
+will be working: `useResolveQnsName.ts:25-26` uses **5 minutes**, with a comment
+claiming it "matches mobile's QNS resolution cache window". That hook serves the
+interactive name lookup (type a name, see whose it is) and 5 minutes is fine for
+it. The verification cache is a separate thing at 1 hour. **Do not reuse that
+hook for verification, and do not harmonise the two numbers in either
+direction** — they answer different questions and only one of them is a security
+parameter.
+
 ## 5. SECOND: send and read the broadcast
 
 Only after §4. A client that reads the wire field without checking it exposes
@@ -170,23 +183,59 @@ its own users regardless of what the other client does.
 
 ### 5.1 Send
 
-Add `primaryUsername` to both payloads:
+Add `primaryUsername` to both payloads. Send it **unconditionally, including the
+empty string.** `''` is a deliberate un-election and has to reach the peer, or
+dropping a primary name never propagates and the old name renders for everyone
+else forever.
 
-- space: `useSpaceProfile.ts:313-323`
-- DM: `MessageService.ts:701-707`
+**DM** — `MessageService.ts:700-706`.
 
-Send it **unconditionally, including the empty string.** `''` is a deliberate
-un-election and has to reach the peer, or dropping a primary name never
-propagates and the old name renders for everyone else forever.
+**Space** — ⚠️ **the target is `buildSpaceProfileWirePayload`
+(`src/utils/spaceProfilePayload.ts:74-106`), NOT the profile modal.** Declare the
+field on `SpaceProfileWireFields` (`:31-41`) and emit it there. Reasoning, since
+this is the easiest thing in the whole file to get wrong:
 
-⚠️ **Add it to `dmProfileSignature` (`src/utils/dmProfileGate.ts:102-108`) and to
-the space announce signature.** Miss this and electing a name broadcasts
-nothing whenever the rest of the payload is unchanged: the gate reads it as
-"same as last time". This is not hypothetical — it is the single most likely way
-to ship this looking correct and having it do nothing.
+- §5.2 puts the claim in the **global slot group**, and `buildSpaceProfileWirePayload`
+  is the only path that builds the global slot at all. It is what the on-connect
+  announce sends (`MessageService.ts:1130-1147`).
+- `useSpaceProfile.ts:313-323` is the per-space profile modal. It sends the
+  **override** slot, and only fields the user just CHANGED. Add the claim only
+  there and a user who elects a `.q` broadcasts nothing until they happen to also
+  edit a per-space nickname — in a space they have never opened the modal for,
+  never. That is precisely the §5.3 half-built shape.
 
-Including it also doubles as the migration: every stored signature predates the
-field, so none match and the next rebroadcast goes out to every partner once.
+⚠️ **Signatures: the two gates need OPPOSITE treatment. Do not apply one rule to
+both.**
+
+- **DM — must edit.** `dmProfileSignature` (`src/utils/dmProfileGate.ts:102-108`)
+  builds its canonical object from a hardcoded three-field list. A field it does
+  not name is invisible to it, so electing a name would broadcast nothing
+  whenever the other three are unchanged: the gate reads "same as last time".
+- **Space — must NOT edit.** `spaceProfileSignature`
+  (`src/utils/spaceProfileGate.ts:84-95`) iterates `Object.entries(payload)` and
+  signs whatever it is handed. Its docstring (`:71-75`) says this is deliberate,
+  "so a field added to the wire later cannot silently fall outside the change
+  detection", and `SpaceProfileWireFields` is a type ALIAS rather than an
+  interface (`spaceProfilePayload.ts:27-30`) specifically to let the whole payload
+  be handed over without re-listing fields. Adding the claim to the payload is
+  already enough. Editing this function to name the field re-introduces by hand
+  the fixed list it was written to avoid.
+
+⚠️ **`hasAnnounceableIdentity` (`src/utils/spaceProfilePayload.ts:115-123`) will
+swallow the claim for exactly the users who need it most.** It gates whether the
+announce fires at all, and tests only `displayName || userIcon ||
+globalDisplayName || globalUserIcon`. A user whose only identity is an elected
+`.q` — no display name, no avatar — fails it, so the announce never fires and the
+name never leaves the device. Add the claim to that predicate, or state in a
+comment why an announce carrying only a `.q` is deliberately not worth its cost.
+Either is defensible; silently leaving it is not, because the failure is
+invisible and looks like a receive bug on the other client.
+
+Including the field also doubles as the migration: every stored signature
+predates it, so none match and the next rebroadcast goes out once — on the DM
+side because the field list changed, on the space side because the payload
+gained a key. This only holds if it really is sent unconditionally; an omitted
+empty claim leaves the space signature byte-identical and no announce fires.
 
 The field is **additive and undeclared** in `quorum-shared` —
 `UpdateProfileMessage` has no QNS field, and mobile sends it through an untyped
@@ -320,6 +369,37 @@ about which from screenshots before that panel existed.
   because it writes to an external public system.
 - **Adding the field to `quorum-shared`.** Deliberate, see §5.1.
 
+## Blockers
+
+- 🛑 **Does this file belong in `.agents/issues/.secret/`?** Not the reviewer's
+  call, so it has been left in `.open/`. The repo rule (`.agents/AGENTS.md` →
+  "Security-sensitive issues") sends an issue to `.secret/` when it describes an
+  attack that works against code users are running today, with mechanism and
+  `file:line` pointers. §4 has the mechanism and the pointers. What it may not
+  have is a live injection vector: §1 states the server rejects every
+  public-profile publish carrying `primary_username` (quorum-mobile#240), and
+  that field is the only way into `sources.profiles`. If that holds, the
+  vulnerable render path is real but currently unreachable, and `.open/` is
+  right — until #240 is fixed, at which point it becomes live with no further
+  change to desktop.
+  - Options: (a) leave in `.open/` and re-decide if #240 is fixed before this
+    ships; (b) move to `.secret/` and drop it from `INDEX.md` now, treating the
+    unreachability as unverified; (c) verify #240 against the live API first,
+    then decide with a measurement instead of a quotation.
+  - ⚠️ The server behaviour is quoted from this file, READ not MEASURED. Nobody
+    on this review pass tried the publish.
+
 ---
 
 *Last updated: 2026-08-16*
+
+## Review Log
+**2026-08-16 - claude-opus-5**: Re-verified every file:line claim against main (commit c8d331b2e). All of §3 held except line drift; §4's security claim confirmed exact at identityProvider.tsx:108. Found one error that would have shipped the fix doing nothing, one instruction that was actively wrong, and one unmentioned gate that swallows the feature.
+- WRONG TARGET (would ship broken): §5.1 named useSpaceProfile.ts:313-323 as the space send. That is the per-space profile MODAL, which sends only the override slot and only CHANGED fields. The global slot -- where §5.2 puts the claim -- is built solely by buildSpaceProfileWirePayload (spaceProfilePayload.ts:74-106, called from MessageService.ts:1130-1147), the on-connect announce. Rewrote §5.1 and split the §3 row into both paths.
+- INVERTED INSTRUCTION: §5.1 said to add the field to dmProfileSignature AND the space announce signature. True for DM (dmProfileGate.ts:102-108 has a hardcoded 3-field list, must be edited); FALSE and harmful for space -- spaceProfileSignature (spaceProfileGate.ts:84-95) iterates Object.entries(payload) and its docstring at :71-75 says that is deliberate so a later wire field cannot fall outside change detection. Split the warning into opposite treatments.
+- MISSING GATE: hasAnnounceableIdentity (spaceProfilePayload.ts:115-123) tests only displayName/userIcon/globalDisplayName/globalUserIcon, so a user whose only identity is an elected .q never announces at all. Unmentioned anywhere in the file; added to §3 and §5.1 with a decision required.
+- CACHE TRAP: §4.4 mandates a 1-hour verification TTL, but useResolveQnsName.ts:25-26 already sets 5 minutes with a comment claiming it matches mobile. Different caches, adjacent code; added a do-not-harmonise note.
+- CONFIRMED UNCHANGED: shared exports resolveName (singular) and deriveAddress only -- no resolveBatch, no claimedNameBelongsTo anywhere in desktop or shared, so §4.3's build cost stands.
+- Line drift corrected: DM send is 700-706 not 701-707; IdentitySources is 28-51 not 28-50; handleDMProfileUpdate is 957-979 with the merge at 966-971.
+- FLAGGED not resolved: whether this belongs in .secret/ per the repo rule -- §4 has mechanism and file:line, but §1 claims the only injection vector is server-blocked (quorum-mobile#240). That claim is READ, not MEASURED. Left in .open/ with options in ## Blockers.
+- No status or type change: type bug and status open both still correct, folder agrees. Nothing was implemented, so no box was checked.
