@@ -173,6 +173,14 @@ const UserProfile: React.FunctionComponent<{
   // `openBlockUser`/`openMuteUser`/`openKickUser` anymore (was
   // `displayName: resolvedNameText`, the exact field-threading this refactor
   // removes; see KickUserModal/MuteUserModal/BlockUserModal).
+  //
+  // The AVATAR is the exception, and the reason those three call sites below
+  // must pass `resolvedUserIcon` rather than `props.user.userIcon`: the icon
+  // is not a name, so the identity module does not carry it, and the modals
+  // take `userIcon` as a plain prop with no ladder of their own. Handing them
+  // the raw caller payload reproduced the mention-pill bug one hop further
+  // down — the card showed the photo, and the confirmation it opened showed
+  // initials. See `moderationModalHandoffIcon.test.tsx`.
   const [noteValue, setNoteValue] = React.useState('');
   const [noteCharCount, setNoteCharCount] = React.useState(0);
   const [isNoteFocused, setIsNoteFocused] = React.useState(false);
@@ -488,7 +496,7 @@ const UserProfile: React.FunctionComponent<{
                     onClick={() => {
                       openBlockUser({
                         address: props.user.address,
-                        userIcon: props.user.userIcon,
+                        userIcon: resolvedUserIcon,
                         spaceId: props.spaceId!,
                         isUnblocking: isUserBlocked,
                       });
@@ -511,7 +519,7 @@ const UserProfile: React.FunctionComponent<{
                     onClick={() => {
                       openMuteUser({
                         address: props.user.address,
-                        userIcon: props.user.userIcon,
+                        userIcon: resolvedUserIcon,
                         isUnmuting: isUserMuted,
                       });
                       props.dismiss?.();
@@ -532,7 +540,7 @@ const UserProfile: React.FunctionComponent<{
                       if (props.user.isKicked) return;
                       openKickUser({
                         address: props.user.address,
-                        userIcon: props.user.userIcon,
+                        userIcon: resolvedUserIcon,
                       });
                       props.dismiss?.();
                     }}
