@@ -50,7 +50,18 @@ const isPlaceholderName = isPlaceholderDisplayName;
  * A conversation row augmented with the partner's QNS primary username, sourced
  * from the same public-profile fetch this hook already performs. Additive and
  * desktop-only — the shared `Conversation` type is untouched, so mobile is
- * unaffected. The DM sidebar resolves `name.q` (Model B) from this field.
+ * unaffected.
+ *
+ * ⚠️ **Do not render this field, and do not append `.q` to it.** It is the RAW,
+ * self-reported claim exactly as the server returned it — nobody has checked
+ * that the account owns the name. Name resolution moved to the identity module
+ * and no longer reads it (see `DirectMessageContactsList.tsx`, which says the
+ * same from the consuming side); the one place allowed to decide a claim is
+ * genuine is `identity/useVerifiedQnsNames.ts`.
+ *
+ * This comment previously said the DM sidebar resolved `name.q` from this
+ * field. That stopped being true, and a reader who believed it would wire a new
+ * consumer straight to an unverified claim.
  */
 export type ConversationWithQns = Conversation & { primaryUsername?: string };
 

@@ -84,6 +84,17 @@ vi.mock('@/components/context/useMessageDB', () => ({
   }),
 }));
 
+// Pins WIRING, not QNS ownership. Only the final ownership comparison is
+// stubbed, because the address fixtures here are arbitrary and no real ed448
+// key derives to them. The claim still travels the whole real path, so this
+// still fails if the provider stops populating the verified map. Ownership
+// itself is pinned in `identity/verifiedQnsNames.test.ts` and shared's
+// `verifyQnsClaim.test.ts`, both mutation-proven.
+vi.mock('@quilibrium/quorum-shared', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@quilibrium/quorum-shared')>()),
+  claimedNameBelongsTo: () => true,
+}));
+
 const ADDR = 'QmPeerFEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 const SPACE_ID = 'space-1';
 const CHANNEL_ID = 'channel-1'; // distinct from SPACE_ID — the ordinary, non-DM shape

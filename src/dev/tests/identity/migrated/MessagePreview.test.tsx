@@ -39,6 +39,17 @@ vi.mock('@/api/baseTypes', () => ({
   isHandledFetchError: () => false,
 }));
 
+// Pins WIRING, not QNS ownership. Only the final ownership comparison is
+// stubbed, because the address fixtures here are arbitrary and no real ed448
+// key derives to them. The claim still travels the whole real path, so this
+// still fails if the provider stops populating the verified map. Ownership
+// itself is pinned in `identity/verifiedQnsNames.test.ts` and shared's
+// `verifyQnsClaim.test.ts`, both mutation-proven.
+vi.mock('@quilibrium/quorum-shared', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@quilibrium/quorum-shared')>()),
+  claimedNameBelongsTo: () => true,
+}));
+
 import { MessagePreview } from '@/components/message/MessagePreview';
 import { IdentityScopeProvider, MemberName } from '@/identity';
 import { buildSpaceMembersKey } from '@/hooks/queries/spaceMembers/buildSpaceMembersKey';

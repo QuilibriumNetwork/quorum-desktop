@@ -4,6 +4,7 @@ import type { MemberIdentity } from '@quilibrium/quorum-shared';
 import { QuorumApiClient, isHandledFetchError } from '../api/baseTypes';
 import type { PublicProfileResponse } from '../api/baseTypes';
 import { publicProfileQueryKey } from '../hooks/business/user/useUserPublicProfile';
+import { profileGlobalNamesFrom, useVerifiedQnsNames } from './useVerifiedQnsNames';
 
 // Stable reference for callers that pass no `locallyKnownNames` (every Space
 // surface) — a fresh `{}` literal on every render would invalidate the
@@ -28,10 +29,37 @@ export const EMPTY_ROSTERS_BY_SPACE: Record<string, Record<string, RosterNameRow
 export interface IdentitySources {
   /** spaceId -> address -> roster row. Local, from messageDB.getSpaceMembers. */
   rostersBySpace: Record<string, Record<string, RosterNameRow>>;
-  /** address -> public profile. The ONLY source of primary_username. */
-  profiles: Record<string, PublicProfileResponse | null>;
+  /**
+   * address -> a QNS name PROVEN to belong to that address.
+   *
+   * ⚠️ There is deliberately NO profile object in here, and that is a security
+   * property rather than a tidiness one. `primary_username` is a self-reported
+   * CLAIM: it arrives inside someone else's profile and nothing upstream checks
+   * it. While this interface carried the raw profile, every surface could read
+   * the claim and render a `.q` for it, and desktop's single read did exactly
+   * that — no check of any kind.
+   *
+   * Now an unverified claim has nowhere to live. Only `useVerifiedQnsNames` can
+   * write this map, and only after resolving the name and deriving the claimed
+   * owner's address back to the address the claim arrived with. A surface
+   * cannot render a forged `.q` even by mistake, because there is nothing to
+   * render it FROM — which is what makes "no surface forgot" provable rather
+   * than hopeful.
+   *
+   * An address absent from this map is UNPROVEN, and that deliberately includes
+   * not-yet-known: a lookup in flight yields no entry, so the global name
+   * renders and only ever upgrades INTO a `.q`.
+   */
+  verifiedQnsNames: Record<string, string>;
+  /**
+   * address -> the display name from that address's public profile.
+   *
+   * Split out from the verified map because a display name carries no
+   * ownership claim — nobody can own "Alice" — so it needs no lookup and must
+   * not be delayed behind one.
+   */
+  profileGlobalNames: Record<string, string>;
   selfAddress: string | null;
-  selfProfile: PublicProfileResponse | null;
   /**
    * address -> a name known LOCALLY, with no network round-trip. Fed by a
    * caller that already has this in memory — today that's a DM's
@@ -96,22 +124,28 @@ export function identityFromMaps(
   sources: IdentitySources,
 ): MemberIdentity {
   const row = spaceId ? sources.rostersBySpace[spaceId]?.[address] : undefined;
-  const isSelf = !!sources.selfAddress && sources.selfAddress === address;
-  // Self's identity comes from its own public profile. `currentPasskeyInfo` is
-  // the device-local auth record and carries no QNS name.
-  const profile = isSelf ? sources.selfProfile : (sources.profiles[address] ?? null);
 
   return {
     address,
     // Only a real space context can have a per-space nickname.
     spaceName: nn(row?.display_name),
-    qnsName: nn(profile?.primary_username),
+    // Already verified, or absent. This read used to be
+    // `nn(profile?.primary_username)` — the raw claim, with no check of any
+    // kind. The check now happens once, upstream, in `useVerifiedQnsNames`;
+    // see `IdentitySources.verifiedQnsNames` for why it cannot live here.
+    //
+    // Self is not a special case. Its identity comes from its own public
+    // profile like anyone else's (`currentPasskeyInfo` is the device-local auth
+    // record and carries no QNS name), and self's own claim is verified on the
+    // same path — a name you have not registered does not become yours because
+    // you are the one looking.
+    qnsName: nn(sources.verifiedQnsNames[address]),
     // Prefer the live roster global slot, then the published profile, then a
     // name known only locally (no fetch) — never a second, parallel lookup
     // path; this is the one place the tiers merge.
     globalName:
       nn(row?.global_display_name) ??
-      nn(profile?.display_name) ??
+      nn(sources.profileGlobalNames[address]) ??
       nn(sources.locallyKnownNames[address]),
   };
 }
@@ -262,6 +296,12 @@ export const IdentityScopeProvider: React.FunctionComponent<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addresses, updatedAtKey]);
 
+  // The two maps that replace the raw profile object. Derived HERE, at the one
+  // point every profile this provider fetched passes through, so there is
+  // exactly one place that can write a verified name.
+  const profileGlobalNames = React.useMemo(() => profileGlobalNamesFrom(profiles), [profiles]);
+  const verifiedQnsNames = useVerifiedQnsNames(profiles);
+
   React.useEffect(() => {
     if (selfAddress) request(selfAddress);
   }, [selfAddress, request]);
@@ -293,30 +333,40 @@ export const IdentityScopeProvider: React.FunctionComponent<{
     () => (parent ? mergeRostersBySpace(parent.sources.rostersBySpace, rostersBySpace) : rostersBySpace),
     [parent, rostersBySpace],
   );
-  const mergedProfiles = React.useMemo(
-    () => (parent ? mergeFlat(parent.sources.profiles, profiles) : profiles),
-    [parent, profiles],
+  const mergedVerifiedQnsNames = React.useMemo(
+    () => (parent ? mergeFlat(parent.sources.verifiedQnsNames, verifiedQnsNames) : verifiedQnsNames),
+    [parent, verifiedQnsNames],
+  );
+  const mergedProfileGlobalNames = React.useMemo(
+    () => (parent ? mergeFlat(parent.sources.profileGlobalNames, profileGlobalNames) : profileGlobalNames),
+    [parent, profileGlobalNames],
   );
   const mergedLocallyKnownNames = React.useMemo(
     () => (parent ? mergeFlat(parent.sources.locallyKnownNames, locallyKnownNames) : locallyKnownNames),
     [parent, locallyKnownNames],
   );
 
-  const selfProfile = selfAddress ? (mergedProfiles[selfAddress] ?? null) : null;
-
   const value = React.useMemo<IdentityContextValue>(
     () => ({
       sources: {
         rostersBySpace: mergedRostersBySpace,
-        profiles: mergedProfiles,
+        verifiedQnsNames: mergedVerifiedQnsNames,
+        profileGlobalNames: mergedProfileGlobalNames,
         selfAddress,
-        selfProfile,
         locallyKnownNames: mergedLocallyKnownNames,
       },
       defaultSpaceId: spaceId,
       request,
     }),
-    [mergedRostersBySpace, mergedProfiles, selfAddress, selfProfile, mergedLocallyKnownNames, spaceId, request],
+    [
+      mergedRostersBySpace,
+      mergedVerifiedQnsNames,
+      mergedProfileGlobalNames,
+      selfAddress,
+      mergedLocallyKnownNames,
+      spaceId,
+      request,
+    ],
   );
 
   return <IdentityContext.Provider value={value}>{children}</IdentityContext.Provider>;

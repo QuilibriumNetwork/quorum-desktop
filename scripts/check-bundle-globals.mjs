@@ -61,7 +61,27 @@ const ALLOWED = new Set([
  * bare substring rather than as an assignment, because for these the bar is
  * "does not occur at all".
  */
-const FORBIDDEN_ANYWHERE = ['__keyset'];
+const FORBIDDEN_ANYWHERE = [
+  '__keyset',
+  // The dev-only QNS overlay, and with it `isFakeClaimFor` — the one code path
+  // that returns "this `.q` claim is fine, skip the ownership check". It is
+  // excluded from production only because `identity/qnsClaimExemption.ts` gates
+  // its call on `process.env.NODE_ENV`, which the bundler folds to a constant,
+  // leaving `fakeQnsCore` with no importer. That is a property of how the
+  // bundler happens to optimise, so it needs a guard rather than a comment: a
+  // refactor that moves the gate behind a runtime value (a config object, a
+  // feature flag) would silently ship a verification bypass, and every existing
+  // test would still pass.
+  //
+  // The STORAGE KEY is the load-bearing entry: it is a string literal, and
+  // string literals survive minification. The function names below are mangled
+  // in a minified build and so would NOT catch a regression there on their own —
+  // they are kept for unminified builds and for readability at the call site.
+  'dev.fakeQns.state',
+  'deriveFakeQName',
+  'isFakeClaimFor',
+  'applyFakeQns',
+];
 
 function walk(dir) {
   if (!existsSync(dir)) return [];

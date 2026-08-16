@@ -48,6 +48,17 @@ vi.mock('@/components/context/ReactionsModalProvider', () => ({
   useReactionsModal: () => ({ showReactionsModal: vi.fn() }),
 }));
 
+// Pins WIRING, not QNS ownership. Only the final ownership comparison is
+// stubbed, because the address fixtures here are arbitrary and no real ed448
+// key derives to them. The claim still travels the whole real path, so this
+// still fails if the provider stops populating the verified map. Ownership
+// itself is pinned in `identity/verifiedQnsNames.test.ts` and shared's
+// `verifyQnsClaim.test.ts`, both mutation-proven.
+vi.mock('@quilibrium/quorum-shared', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@quilibrium/quorum-shared')>()),
+  claimedNameBelongsTo: () => true,
+}));
+
 // The real Tooltip defers its content to a hover/floating-ui portal that
 // doesn't render in jsdom without simulated interaction — dump `content`
 // into a plain, always-present element instead so the resolved names can be
