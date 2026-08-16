@@ -117,6 +117,8 @@ export interface UseProfileCardIdentityFieldsArgs {
   spaceId?: string;
   callerIcon?: string;
   callerBio?: string;
+  /** Pre-fill only, and the LOWEST rung for this one — see the return value. */
+  callerIsKicked?: boolean;
   publicProfileIcon?: string;
   publicProfileBio?: string;
   ownConfigBio?: string;
@@ -127,10 +129,15 @@ export function useProfileCardIdentityFields({
   spaceId,
   callerIcon,
   callerBio,
+  callerIsKicked,
   publicProfileIcon,
   publicProfileBio,
   ownConfigBio,
-}: UseProfileCardIdentityFieldsArgs): { userIcon?: string; bio?: string } {
+}: UseProfileCardIdentityFieldsArgs): {
+  userIcon?: string;
+  bio?: string;
+  isKicked?: boolean;
+} {
   const { messageDB } = useMessageDB();
 
   const { data: members } = useQuery({
@@ -165,11 +172,25 @@ export function useProfileCardIdentityFields({
     return {
       userIcon: pickProfileCardIcon(sources),
       bio: pickProfileCardBio(sources),
+      // Membership state, not an identity field, so it is not a ladder: the
+      // roster row is the ONLY real source (`MessageService` writes it there,
+      // `useChannelData` reads it from there). The caller value is a stale
+      // snapshot of that same row, so it serves only until the roster read
+      // lands — and only when there is no row at all, e.g. a DM.
+      //
+      // NOTE the precedence is the REVERSE of the avatar's above, deliberately.
+      // The avatar puts the caller first to avoid a flash, which is safe
+      // because the two agree. Here they can disagree: a caller snapshot taken
+      // before the kick says `false` while the roster says `true`, and letting
+      // a stale `false` win would re-enable a moderation action against someone
+      // already removed. Freshness beats flicker for a destructive control.
+      isKicked: member ? Boolean(member.isKicked) : callerIsKicked,
     };
   }, [
     member,
     callerIcon,
     callerBio,
+    callerIsKicked,
     publicProfileIcon,
     publicProfileBio,
     ownConfigBio,

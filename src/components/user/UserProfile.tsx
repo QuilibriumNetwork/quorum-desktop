@@ -159,11 +159,16 @@ const UserProfile: React.FunctionComponent<{
   // what feeds the initials fallback below, so it always agrees with the name
   // actually rendered beside it (design constraint 4 of the identity
   // migration: the avatar and the name must not disagree).
-  const { userIcon: resolvedUserIcon, bio: resolvedBio } = useProfileCardIdentityFields({
+  const {
+    userIcon: resolvedUserIcon,
+    bio: resolvedBio,
+    isKicked: resolvedIsKicked,
+  } = useProfileCardIdentityFields({
     address: props.user.address,
     spaceId: props.spaceId,
     callerIcon: props.user.userIcon as string | undefined,
     callerBio: props.user.bio as string | undefined,
+    callerIsKicked: props.user.isKicked as boolean | undefined,
     publicProfileIcon: openedUserPublicProfile?.profile_image,
     publicProfileBio: openedUserPublicProfile?.bio,
     ownConfigBio: ownConfig?.bio,
@@ -534,10 +539,10 @@ const UserProfile: React.FunctionComponent<{
                     type="danger-outline"
                     size="compact"
                     fullWidth
-                    disabled={props.user.isKicked}
+                    disabled={resolvedIsKicked}
                     iconName="ban"
                     onClick={() => {
-                      if (props.user.isKicked) return;
+                      if (resolvedIsKicked) return;
                       openKickUser({
                         address: props.user.address,
                         userIcon: resolvedUserIcon,
@@ -545,7 +550,7 @@ const UserProfile: React.FunctionComponent<{
                       props.dismiss?.();
                     }}
                   >
-                    {props.user.isKicked ? t`Kicked!` : t`Kick`}
+                    {resolvedIsKicked ? t`Kicked!` : t`Kick`}
                   </Button>
                 )}
               </div>
