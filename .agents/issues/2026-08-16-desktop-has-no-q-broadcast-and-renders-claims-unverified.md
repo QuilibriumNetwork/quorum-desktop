@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Desktop never sends or reads a broadcast .q, and renders a profile .q with no ownership check at all"
-status: open
+status: in-progress
 priority: critical
 complexity: large
 ai_generated: true
@@ -21,19 +21,24 @@ related:
 
 ## For the agent picking this up — read this first
 
-**There are TWO independent problems here.** They share a subsystem, and one of
-them is a live security gap that does not depend on the other at all.
+**There are TWO independent problems here. §4 IS DONE AND SHIPPED. §5 IS NOT.**
 
-- **§4 is a security fix.** Desktop renders a `.q` from a fetched public profile
-  without ever asking whether that account owns the name. Ship this even if
-  nothing else in this file gets done.
-- **§5 is parity work.** Desktop neither sends nor reads the broadcast that
-  carries a `.q` today.
+- ~~**§4 is a security fix.**~~ **SHIPPED 2026-08-16** in desktop #343 and
+  quorum-shared #81. Desktop now verifies a claimed `.q` against the resolver
+  before rendering it. **Do not re-implement it** — read §10 for what landed,
+  then §4 only as background.
+- **§5 is parity work, and it is what remains.** Desktop still neither sends nor
+  reads the broadcast that carries a `.q`. Start here.
 
-Do §4 first. It is smaller, it is independent, and §5 is unsafe without it.
+§5 was deliberately left until after §4, because a client that reads the wire
+field without checking it exposes its own users regardless of what the other
+client does. That precondition is now met, so §5 is unblocked.
 
 Do not start by reading the mobile repo end to end. Read this file, then the
-locations in §3 — every one re-verified against `main` on 2026-08-16.
+locations in §3 — every one re-verified against `main` on 2026-08-16. ⚠️ The §3
+table describes the code **before** §4 landed; the rows about the unverified read
+and the sources shape are now historical. The send/receive rows, which are what
+§5 needs, are still accurate.
 
 **§9 records four decisions already taken.** Nothing in this file is left open
 for you to choose; if you find yourself weighing one of those four, read §9
@@ -427,6 +432,55 @@ supporting argument is that §1's injection vector is server-blocked upstream
 reachable. ⚠️ **That server behaviour is READ from this file, not MEASURED** —
 nobody on the review pass attempted the publish. Treat it as the reason the
 decision is comfortable rather than as the decision itself.
+
+## 10. Status
+
+**2026-08-16 — §4 shipped. §5 remains.**
+
+Landed in quorum-shared [#81](https://github.com/QuilibriumNetwork/quorum-shared/pull/81)
+(`2.1.0-43`) and quorum-desktop [#343](https://github.com/QuilibriumNetwork/quorum-desktop/pull/343).
+
+**What landed (§4 — the security fix):**
+
+- `claimedNameBelongsTo` and `resolveNamesBatch` in `quorum-shared/src/qns/`,
+  per the §4.1 decision to lift rather than port. Batching chunks at 100.
+- `IdentitySources` no longer carries a profile object. It carries
+  `verifiedQnsNames` and `profileGlobalNames`, so an unverified claim has
+  nowhere to live (§4.2 as specified). Self lost its special branch.
+- One batched lookup per screen, 1-hour `staleTime`, demand-driven off the
+  existing profile-fetch mechanism — no new per-address request (§4.3, §4.4,
+  §5.4's bounding rule applied early).
+- A narrow `NODE_ENV`-gated exemption for the dev QNS overlay, without which its
+  synthesized names would be stripped and the instrument would go inert. The
+  post-build guard now fails if that bypass reaches a production bundle.
+
+**Verification actually performed** (§7's bar, for the §4 half):
+
+- Tests 1, 2, 3, 7 and 8 are covered. Mutation-proven in both repos: forcing the
+  ownership comparison to `true` turns the impostor cases red.
+- MEASURED against the live resolver: the rightful owner of a real registered
+  name verifies, an impostor claiming that same name does not, and a name with
+  no Quorum binding verifies for nobody.
+- MEASURED: the 100/101 batch limit, and that an unregistered name returns a
+  `null` slot at HTTP 200 rather than a 404.
+- Cross-client: shared derives the same address mobile does from the same key.
+- 158 test files / 1468 tests green; typecheck and production build clean.
+- Tests 4, 5, 6 and 9 are **not** covered — they all concern broadcast claims,
+  which is §5.
+
+**Still open (§5):** everything under "SECOND: send and read the broadcast".
+Desktop sends no `primaryUsername` on either the space announce or the DM
+payload, and reads none on either receive path. Until it does, a `.q` can only
+arrive via the public-profile route, which §1 records as server-broken upstream
+(quorum-mobile#240).
+
+⚠️ **Consequence worth knowing before §5:** desktop users can currently neither
+publish a new `.q` nor see one from a mobile user who elected a name today. §4
+made the `.q` desktop shows trustworthy; §5 is what makes one arrive.
+
+**Not verified:** the §1/§8 claim that the server rejects every public-profile
+publish carrying `primary_username` is still READ from this file, not MEASURED.
+Nobody has attempted the publish.
 
 ---
 
