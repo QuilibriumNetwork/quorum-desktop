@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { i18n } from '@lingui/core';
 import { messages } from '@/i18n/en/messages';
@@ -24,12 +24,10 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
+  // The component reads its record straight from localStorage, so each case has
+  // to start from "nothing recorded" or an earlier case's backup would silence
+  // the next one.
   localStorage.clear();
-  vi.useRealTimers();
-});
-
-afterEach(() => {
-  vi.useRealTimers();
 });
 
 const noop = () => {};
