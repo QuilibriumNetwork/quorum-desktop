@@ -37,12 +37,19 @@
  */
 
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = fileURLToPath(new URL('..', import.meta.url));
-const bundleDir = process.argv[2]
-  ? join(repoRoot, process.argv[2])
+// An absolute argument is used as-is. Blindly joining it onto repoRoot produces
+// a nonsense path that does not exist, and "directory not found" then reads as
+// a clean failure rather than as bad input — which is how the fixture tests for
+// this script first came back green for the wrong reason.
+const bundleArg = process.argv[2];
+const bundleDir = bundleArg
+  ? isAbsolute(bundleArg)
+    ? bundleArg
+    : join(repoRoot, bundleArg)
   : join(repoRoot, 'dist');
 
 const SCANNED_EXTENSIONS = ['.js', '.mjs', '.cjs', '.html'];
@@ -82,6 +89,20 @@ if (!existsSync(bundleDir)) {
 }
 
 const files = walk(bundleDir);
+
+// Mirrors check-bundle-globals.mjs. A check that passes because it looked at
+// nothing is worse than no check: it converts "unbuilt or misconfigured tree"
+// into a green tick, which is exactly the shape of failure this script exists
+// to catch. `yarn build` chains on `&&`, so exiting 0 here would report success
+// on a build that never happened.
+if (files.length === 0) {
+  console.error(
+    `[check-bundle-dev-imports] No bundle found under ${relative(repoRoot, bundleDir) || bundleDir}.\n` +
+      '  Run `yarn build` first. Refusing to report success on an unbuilt tree.'
+  );
+  process.exit(1);
+}
+
 const findings = [];
 
 for (const file of files) {

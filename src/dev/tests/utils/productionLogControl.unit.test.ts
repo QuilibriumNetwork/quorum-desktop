@@ -4,6 +4,7 @@ import {
   createLogControl,
   installLogControl,
   LOG_CONTROL_GLOBAL,
+  __verifyRedactionForTests,
 } from '../../../utils/productionLogControl';
 
 const CANARY = 'CANARY-b7f3e9a1-TOP-SECRET-MESSAGE-BODY';
@@ -98,6 +99,35 @@ describe('productionLogControl — the escape hatch', () => {
     expect(control.status()).toContain('OFF');
     control.enable();
     expect(control.status()).toContain('ON');
+  });
+
+  it('detects that redaction is genuinely active', () => {
+    logger.configure({ enabled: true, minLevel: 'warn', redact: true });
+    expect(__verifyRedactionForTests()).toBe(true);
+  });
+
+  it('detects a build that ignores `redact` — the stale-link case', () => {
+    // A stale linked quorum-shared absorbs the `redact` key and ignores it,
+    // which is behaviourally identical to redact:false. The probe must notice.
+    logger.configure({ enabled: true, minLevel: 'warn', redact: false });
+    expect(__verifyRedactionForTests()).toBe(false);
+  });
+
+  it('refuses to enable, rather than promising redaction it cannot deliver', () => {
+    // Simulated by making the logger unable to redact. enable() must NOT claim
+    // "message content excluded", and must leave logging OFF.
+    const realConfigure = logger.configure;
+    try {
+      logger.configure = ((cfg: Record<string, unknown>) =>
+        realConfigure.call(logger, { ...cfg, redact: false })) as typeof logger.configure;
+      const message = createLogControl().enable();
+      expect(message).toContain('NOT enabled');
+      expect(message).not.toContain('message content excluded');
+    } finally {
+      logger.configure = realConfigure;
+    }
+    logger.warn('should stay silent');
+    expect(warn).not.toHaveBeenCalled();
   });
 
   it('installs under the documented global name', () => {

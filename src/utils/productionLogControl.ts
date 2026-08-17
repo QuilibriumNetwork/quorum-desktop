@@ -45,15 +45,75 @@ export interface LogControl {
 
 export const LOG_CONTROL_GLOBAL = 'quorumLogger';
 
+const PROBE_MARKER = 'qlRedactionProbe';
+
+/**
+ * Proves the LINKED quorum-shared build actually redacts, instead of assuming it.
+ *
+ * ⚠️ This is not paranoia about our own code, it is about which build is on
+ * disk. `package.json` depends on quorum-shared via `link:../quorum-shared`, a
+ * filesystem link to a sibling checkout whose `dist/` is gitignored and built
+ * by hand. Nothing in the deploy path verifies that sibling is on a commit
+ * containing the redaction.
+ *
+ * If it is stale, `logger.configure({ redact: true })` is silently accepted —
+ * the old config object just absorbs the extra key — and `createLogMethod`
+ * never consults it. Logs then go out FULLY unredacted while `enable()` below
+ * promises the opposite. That is worse than the pre-existing behaviour of
+ * logging nothing at all, and nothing about it is visible.
+ *
+ * So: push a canary through the real logger and check it came out transformed.
+ * Verifies behaviour, not a version string, which is the only check a stale
+ * build cannot pass.
+ */
+const redactionIsActive = (): boolean => {
+  const original = console.error;
+  let seen = '';
+  try {
+    console.error = (...args: unknown[]) => {
+      seen = args
+        .map((a) =>
+          a && typeof a === 'object' && 'message' in a
+            ? String((a as { message: unknown }).message)
+            : String(a)
+        )
+        .join(' ');
+    };
+    logger.error(new Error(`probe "${PROBE_MARKER}" end`));
+  } catch {
+    return false;
+  } finally {
+    console.error = original;
+  }
+  // Empty means nothing was logged at all, so nothing was proven either way.
+  return seen !== '' && !seen.includes(PROBE_MARKER);
+};
+
+/** Exported for tests. Not part of the exposed global. */
+export const __verifyRedactionForTests = redactionIsActive;
+
 export const createLogControl = (): LogControl => ({
   enable: () => {
     // minLevel and redact are set TOGETHER and are not caller-configurable.
     // Opening the hatch without either one is the failure mode this prevents.
     logger.configure({ enabled: true, minLevel: 'warn', redact: true });
+
+    if (!redactionIsActive()) {
+      // Say so loudly rather than repeating a promise that is not being kept.
+      // The likely cause is a stale linked quorum-shared build.
+      logger.configure({ enabled: false });
+      return [
+        'Diagnostics NOT enabled — this build cannot redact message content.',
+        'Enabling anyway could print parts of decrypted messages to the console,',
+        'so it has been left off.',
+        'If you are a developer: rebuild quorum-shared (yarn build) and reload.',
+      ].join('\n');
+    }
+
     return [
       'Diagnostics ON — warnings and errors only, message content excluded.',
       'Reproduce the problem, then copy the console output.',
-      `Review it before sharing: it can still contain space and device identifiers.`,
+      'Review it before sharing: it can still contain space and device identifiers.',
       `Turn it back off with ${LOG_CONTROL_GLOBAL}.disable()`,
     ].join('\n');
   },

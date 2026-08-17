@@ -32,17 +32,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Deliberately NOT behind a NODE_ENV guard, and deliberately not under src/dev/
-// — unlike everything above, this is meant to ship. The logger disables itself
-// in production builds, so without a reachable switch no real user's session can
-// ever produce a diagnostic. quorum-shared always intended `logger.enable()` to
-// be that switch, but `logger` is module-private inside the bundle, so it has
-// never been callable in a shipped build.
+// — unlike the block above, this is meant to ship. It is what makes production
+// diagnostics reachable at all.
 //
-// What is exposed is a narrow wrapper, never the logger itself: it pins
-// minLevel to 'warn' (so the log tier, which prints decrypted message content,
-// stays dark) and turns redaction on (so plaintext a JS engine echoed into an
-// Error message is stripped). See src/utils/productionLogControl.ts for why
-// exposing `logger.enable()` directly would be actively dangerous.
+// The safety properties, and why a narrow wrapper is exposed rather than the
+// logger itself, are documented once in src/utils/productionLogControl.ts.
+// Do not restate them here; two copies drift.
 if (typeof window !== 'undefined') {
   installLogControl(window as unknown as Record<string, unknown>);
 }
