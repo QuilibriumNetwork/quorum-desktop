@@ -207,13 +207,13 @@ msgstr "{0} результати"
 #. placeholder {0}: result.spacesAlreadyPresent.length
 #: src/components/modals/UserSettingsModal/Security.tsx:354
 msgid "{0} Spaces were already on this device and were left unchanged."
-msgstr "{0} Простірів вже були на цьому пристрої та залишилися без змін."
+msgstr "{0} Просторів вже були на цьому пристрої та залишилися без змін."
 
 #. placeholder {0}: result.spacesFailed.length
 #. placeholder {1}: result.spacesFailed .map((s) => s.reason) .join('; ')
 #: src/components/modals/UserSettingsModal/Security.tsx:369
 msgid "{0} Spaces were skipped: {1}"
-msgstr "{0} Простірів було пропущено: {1}"
+msgstr "{0} Просторів було пропущено: {1}"
 
 #: src/components/bookmarks/BookmarksPage.tsx:225
 msgid "{bookmarkCount} bookmark"
@@ -911,7 +911,7 @@ msgstr "Ключ конфігурації"
 
 #: src/services/InvitationService.ts:241
 msgid "Config key not found for this Space."
-msgstr "Ключ конфігурації не знайдено для цього Простіру."
+msgstr "Ключ конфігурації не знайдено для цього Простору."
 
 #: src/components/direct/DirectMessageContactsList.tsx:440
 #: src/components/space/SpacesSidebar.tsx:252
@@ -1026,7 +1026,7 @@ msgstr "Не вдалося додати Простір"
 #: src/services/ConfigService.ts:439
 msgid "Could not decrypt Space manifest — key no longer opens it"
 msgstr ""
-"Не вдалося розшифрувати маніфест Простіру — ключ більше не відкриває його"
+"Не вдалося розшифрувати маніфест Простору — ключ більше не відкриває його"
 
 #: src/components/message/InviteLink.tsx:38
 #: src/hooks/business/invites/useInviteProcessing.ts:46
@@ -1665,7 +1665,7 @@ msgid ""
 "can restore them if you lose access to this device."
 msgstr ""
 "Експортуйте зашифровану резервну копію Ваших прямих повідомлень та Ваших "
-"Простірів, щоб Ви могли відновити їх, якщо втратите доступ до цього "
+"Просторів, щоб Ви могли відновити їх, якщо втратите доступ до цього "
 "пристрою."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:232
@@ -2068,7 +2068,7 @@ msgstr "Як додати passkey"
 
 #: src/services/InvitationService.ts:232
 msgid "Hub key not found for this Space."
-msgstr "Ключ хаба не знайдено для цього Простіру."
+msgstr "Ключ хаба не знайдено для цього Простору."
 
 #: src/components/onboarding/steps/WelcomeStep.tsx:32
 msgid "I already have an account"
@@ -2603,9 +2603,9 @@ msgid ""
 " links keep working. This typically affects spaces created on the desktop "
 "app before June 2026."
 msgstr ""
-"Нові запрошення не можуть бути видані з цього пристрою для цього Простіру. "
+"Нові запрошення не можуть бути видані з цього пристрою для цього Простору. "
 "Існуючі посилання-запрошення продовжують працювати. Це зазвичай стосується "
-"Простірів, створених у настільному додатку до червня 2026 року."
+"Просторів, створених у настільному додатку до червня 2026 року."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:562
 msgid ""
@@ -2628,7 +2628,7 @@ msgid ""
 "it or send it via DM."
 msgstr ""
 "Нові одноразові запрошення не можуть бути видані з цього пристрою для цього "
-"Простіру. Публічне посилання-запрошення все ще працює — перейдіть до "
+"Простору. Публічне посилання-запрошення все ще працює — перейдіть до "
 "<0>Публічного посилання</0> вище, щоб скопіювати його або надіслати через "
 "особисте повідомлення."
 
@@ -2682,7 +2682,7 @@ msgstr "Немає емодзі"
 msgid ""
 "No encryption state found for this Space. Cannot generate public invite."
 msgstr ""
-"Не знайдено стану шифрування для цього Простіру. Неможливо згенерувати "
+"Не знайдено стану шифрування для цього Простору. Неможливо згенерувати "
 "публічне запрошення."
 
 #: src/services/InvitationService.ts:95
@@ -2690,7 +2690,7 @@ msgid ""
 "No encryption state found for this Space. The Space may need to be "
 "initialized or you may need to generate a public invite link first."
 msgstr ""
-"Не знайдено стану шифрування для цього Простіру. Можливо, Простір потрібно "
+"Не знайдено стану шифрування для цього Простору. Можливо, Простір потрібно "
 "ініціалізувати, або Вам потрібно спочатку згенерувати публічне посилання для"
 " запрошення."
 
@@ -2813,7 +2813,7 @@ msgstr "Сповіщення для {0}"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:335
 msgid "Notifications for this Space"
-msgstr "Сповіщення для цього Простіру"
+msgstr "Сповіщення для цього Простору"
 
 #: src/components/message/MentionDropdown.tsx:230
 msgid "Notify all members"
@@ -2846,7 +2846,7 @@ msgstr "Онлайн"
 #: src/services/InvitationService.ts:226
 msgid "Only space owners can generate public invite links."
 msgstr ""
-"Лише власники Простіру можуть генерувати публічні посилання-запрошення."
+"Лише власники Простору можуть генерувати публічні посилання-запрошення."
 
 #. placeholder {0}: props.spaceName
 #: src/components/discover-page/SpaceCard.tsx:61
@@ -2889,7 +2889,7 @@ msgid ""
 " your global profile are unaffected."
 msgstr ""
 "Перевизначте своє відображуване ім'я, аватар та біографію для цього "
-"Простіру. Інші Простіри та Ваш глобальний профіль не будуть зачеплені."
+"Простору. Інші Простори та Ваш глобальний профіль не будуть зачеплені."
 
 #: src/components/NotFound.tsx:18
 msgid "Page Not Found"
@@ -3308,7 +3308,7 @@ msgstr "Відновлено {0} Простір(ів)"
 #. placeholder {0}: result.spacesRestored.length
 #: src/components/modals/UserSettingsModal/Security.tsx:349
 msgid "Restored {0} Spaces."
-msgstr "Відновлено {0} Простірів."
+msgstr "Відновлено {0} Просторів."
 
 #: src/components/modals/UserSettingsModal/Help.tsx:171
 msgid "Restoring..."
@@ -3544,7 +3544,7 @@ msgstr "Нескінченно багато людей набирають тек
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:408
 msgid "Share this Space's public invite link. Anyone with the link can join."
 msgstr ""
-"Поділіться публічним посиланням-запрошенням цього Простіру. Будь-хто, хто "
+"Поділіться публічним посиланням-запрошенням цього Простору. Будь-хто, хто "
 "має посилання, може приєднатися."
 
 #: src/components/modals/UserSettingsModal/Help.tsx:81
@@ -3647,7 +3647,7 @@ msgid ""
 "Space message history is not included in backups; it syncs from other "
 "members."
 msgstr ""
-"Історія повідомлень Простіру не включається в резервні копії; вона "
+"Історія повідомлень Простору не включається в резервні копії; вона "
 "синхронізується з іншими учасниками."
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:161
@@ -3679,7 +3679,7 @@ msgstr "Простір не знайдено"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:338
 msgid "Space notifications"
-msgstr "Сповіщення Простіру"
+msgstr "Сповіщення Простору"
 
 #: src/components/space/ChannelList.tsx:198
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:207
@@ -3813,16 +3813,16 @@ msgid ""
 "This backup is inconsistent: it reports Space keys but contains no Space "
 "list, so Spaces could not be restored."
 msgstr ""
-"Ця резервна копія непослідовна: вона повідомляє про ключі Простіру, але не "
-"містить списку Простірів, тому Простіри не вдалося відновити."
+"Ця резервна копія непослідовна: вона повідомляє про ключі Простору, але не "
+"містить списку Просторів, тому Простори не вдалося відновити."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:383
 msgid ""
 "This backup was made by an older version and contains no Space keys, so "
 "Spaces could not be restored. Export a fresh backup to protect them."
 msgstr ""
-"Ця резервна копія була створена старою версією і не містить ключів Простіру,"
-" тому Простіри не вдалося відновити. Експортуйте нову резервну копію, щоб "
+"Ця резервна копія була створена старою версією і не містить ключів Простору,"
+" тому Простори не вдалося відновити. Експортуйте нову резервну копію, щоб "
 "захистити їх."
 
 #: src/components/modals/UserSettingsModal/General.tsx:181
@@ -3865,9 +3865,9 @@ msgid ""
 "\n"
 "Space message history is not included. It syncs back from other members."
 msgstr ""
-"Цей файл містить Вашу історію прямих повідомлень та ключі до Ваших Простірів, включаючи право власності на будь-які створені Вами. Відкрити його може лише цей обліковий запис.\n"
+"Цей файл містить Вашу історію прямих повідомлень та ключі до Ваших Просторів, включаючи право власності на будь-які створені Вами. Відкрити його може лише цей обліковий запис.\n"
 "\n"
-"Історія повідомлень Простіру не включається. Вона синхронізується з іншими учасниками."
+"Історія повідомлень Простору не включається. Вона синхронізується з іншими учасниками."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:772
 msgid "This hides itself after 60 seconds."
@@ -3905,12 +3905,12 @@ msgstr ""
 msgid "This link does not expire. Anyone with it can join your Space."
 msgstr ""
 "Це посилання не має терміну дії. Будь-хто, хто має його, може приєднатися до"
-" Вашого Простіру."
+" Вашого Простору."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:424
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr ""
-"Це посилання було згенеровано власником Простіру. Воно не має терміну дії."
+"Це посилання було згенеровано власником Простору. Воно не має терміну дії."
 
 #: src/components/notifications/NotificationPanel.tsx:203
 msgid ""
@@ -3966,7 +3966,7 @@ msgstr "Ця тема була закрита"
 
 #: src/hooks/business/spaces/useInviteManagement.ts:223
 msgid "This user is already a member of this Space."
-msgstr "Цей користувач вже є учасником цього Простіру."
+msgstr "Цей користувач вже є учасником цього Простору."
 
 #: src/components/modals/MuteUserModal.tsx:134
 msgid "This user will be able to send messages in this Space again."
@@ -4172,7 +4172,7 @@ msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
 " corrupted."
 msgstr ""
-"Не вдається залишити Простір через неповну конфігурацію. Дані Простіру "
+"Не вдається залишити Простір через неповну конфігурацію. Дані Простору "
 "можуть бути пошкоджені."
 
 #: src/hooks/business/user/useSpaceRecovery.ts:40
@@ -4307,7 +4307,7 @@ msgstr ""
 #: src/components/modals/SpaceSettingsModal/General.tsx:234
 msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 2:1"
 msgstr ""
-"Завантажте банер для Вашого Простіру – PNG або JPG – Оптимальне "
+"Завантажте банер для Вашого Простору – PNG або JPG – Оптимальне "
 "співвідношення 2:1"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:237
@@ -4405,7 +4405,7 @@ msgstr "Переглянути тему"
 msgid ""
 "Waiting for Spaces to finish syncing before this device publishes again."
 msgstr ""
-"Очікування завершення синхронізації Простірів, перш ніж цей пристрій знову "
+"Очікування завершення синхронізації Просторів, перш ніж цей пристрій знову "
 "опублікує."
 
 #: src/components/shell/NavRail.tsx:60 src/components/wallet/WalletPage.tsx:30
@@ -4492,7 +4492,7 @@ msgid ""
 "you want them to recognize who you are. Off by default."
 msgstr ""
 "Коли увімкнено, будь-хто з Вашою адресою Quorum може бачити Ваше "
-"відображуване ім'я, аватар і біографію, навіть поза Простірами, які Ви "
+"відображуване ім'я, аватар і біографію, навіть поза Просторами, які Ви "
 "ділите. Це корисно, коли хтось надсилає Вам особисте повідомлення, і Ви "
 "хочете, щоб він впізнав Вас. За замовчуванням вимкнено."
 
@@ -4501,7 +4501,7 @@ msgid ""
 "When on, everyone in a Space channel sees when you're typing, and you see "
 "when they're typing."
 msgstr ""
-"Коли увімкнено, кожен у каналі Простіру бачить, коли Ви друкуєте, і Ви "
+"Коли увімкнено, кожен у каналі Простору бачить, коли Ви друкуєте, і Ви "
 "бачите, коли друкують вони."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:181
@@ -4809,7 +4809,7 @@ msgid ""
 msgstr ""
 "Ваше відображуване ім'я, зображення профілю та біографія будуть доступні для"
 " читання будь-кому, хто має Вашу адресу Quorum, включно з людьми поза "
-"Простірами, які Ви з ними ділите. Існуючі учасники Простіру бачитимуть Ваш "
+"Просторами, які Ви з ними ділите. Існуючі учасники Простору бачитимуть Ваш "
 "останній профіль, навіть якщо вони приєдналися до того, як Ви його "
 "налаштували. Ви можете вимкнути це в будь-який час."
 
@@ -4840,7 +4840,7 @@ msgid ""
 msgstr ""
 "Ваш приватний ключ є єдиним доказом права власності на Ваш обліковий запис. "
 "Будь-хто, хто має його, може видати себе за Вас і вкрасти доходи Apex Вашого"
-" Простіру. Ніколи не діліться ним."
+" Простору. Ніколи не діліться ним."
 
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
