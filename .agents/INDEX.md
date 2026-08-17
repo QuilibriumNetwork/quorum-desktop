@@ -305,7 +305,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [One rule for names, no rule for avatars, and three tiers that disagree across clients](issues/.open/2026-08-04-desktop-avatar-resolver-and-cross-client-name-tier-drift.md)
 - 📋 [Guided install flow for Safari users](issues/.open/2026-08-05-guided-install-flow-for-safari-web-users.md)
 - 📋 [Config sync overhaul](issues/.open/2026-08-07-config-sync-overhaul-design.md)
-- 📋 [Make `allowSync` a per-device setting](issues/.open/2026-08-08-make-allowsync-a-per-device-setting.md)
 - 📋 [Record and show what the last config publish actually did](issues/.open/2026-08-08-record-and-show-what-the-last-config-publish-actually-did.md)
 - 📋 [Backup/restore overhaul](issues/.open/2026-08-09-backup-restore-overhaul-design.md)
 - 📋 [Composer drafts](issues/.open/2026-08-10-composer-drafts-design.md)
@@ -535,6 +534,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Does mobile need the desktop identity fixes?](issues/.done/2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md)
 - 📋 [Your own identity, on your own devices](issues/.done/2026-08-05-own-identity-cross-device-sync-design.md)
 - 📋 [Own identity, Phase 1 — implementation plan](issues/.done/2026-08-05-own-identity-cross-device-sync-plan.md)
+- 📋 [Make `allowSync` a per-device setting](issues/.done/2026-08-08-make-allowsync-a-per-device-setting.md)
 - 📋 [Dev pages: one layout system](issues/.done/2026-08-11-dev-pages-design-system-design.md)
 - 📋 [Dev pages design system — implementation plan](issues/.done/2026-08-11-dev-pages-design-system-plan.md)
 - 📋 [Remove the single-repo cross-platform leftovers](issues/.done/2026-08-13-remove-single-repo-cross-platform-leftovers.md)
@@ -798,4 +798,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-17 14:17:38
+**Last Updated**: 2026-08-17 14:45:36

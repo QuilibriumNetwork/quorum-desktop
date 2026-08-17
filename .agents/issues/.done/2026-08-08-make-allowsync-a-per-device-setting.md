@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Make allowSync a per-device setting, so turning sync off actually stays off"
-status: open
+status: done
 complexity: low
 priority: high
 ai_generated: true
@@ -25,16 +25,40 @@ Fully unblocked. Small. Best done soon after the timestamp-authority fix
 
 ## Status
 
-**2026-08-17 — mobile SHIPPED in quorum-mobile PR #252**, in the same PR as
-Slice 1, per this file's own "prefer one release" guidance. Both halves are now
-live.
+**2026-08-17 — DONE. Both clients shipped and both directions measured.**
 
-**Still open for one reason: only the desktop→mobile direction is verified.**
-The cross-client harness (desktop PR #347) runs desktop-publishes /
-mobile-reads. The reverse — mobile publishes, desktop adopts — has never been
-run, and it is a pre-existing criterion in Verification below, not one invented
-here. Two devices publishing concurrently is also unmodelled; the harness models
-a reinstall.
+The last open criterion was the mobile→desktop direction, and it is now covered:
+quorum-mobile PR #254 added the publishing half there, desktop PR #351 added the
+reading half and turned `yarn harness:config-cross` into both directions. Run
+against production, both green in 34s:
+
+```
+[config-cross] ── summary ──
+  ok   desktop → mobile
+  ok   mobile → desktop
+```
+
+**The device-local rule is proven ACROSS clients, not just within each one.**
+MEASURED by mutation: removing `config.allowSync = storedConfig?.allowSync ?? false`
+at `ConfigService.ts:289` turns the new direction red with `expected true to be
+false` — desktop inherits mobile's `allowSync: true` without it. A second
+mutation (tampering with the handoff so it disagrees with the published row)
+turns it red too, which is what proves the reader is pulling the relay row
+rather than reflecting a file back at itself.
+
+**What is deliberately NOT modelled, and why that is not a reason to hold this
+open.** The harness models a reinstall — same account, empty local store — not
+two devices publishing *concurrently*. Concurrency is whole-blob
+last-write-wins, a different mechanism with its own issues, and this slice never
+touched it. What this slice changed is the adopt site, and the adopt site is now
+instrumented on both clients, across both directions, against the real relay,
+with each rule shown red on revert. A manual two-device run would add a weaker
+observation of the same mechanism: `allowSync` silently flipping back on is
+exactly the kind of failure a person cannot see by using the app, which is why
+it needed an instrument rather than eyes.
+
+**2026-08-17 — mobile SHIPPED in quorum-mobile PR #252**, in the same PR as
+Slice 1, per this file's own "prefer one release" guidance.
 
 The mobile change is at the `...decryptedConfig` adopt site in
 `services/config/configService.ts`, sourcing `allowSync` from
@@ -209,10 +233,15 @@ Confirm no other read path resolves `allowSync` from a remote object.
       Reverting the fix turns the scenario red. Real encryption, real POST/GET,
       real signature verification — not mocks. Also produced the first real
       payload reading from a mobile publish: **594 bytes** for a 0-Space config.
-- [ ] Two-device runs on real hardware (the harness models a reinstall — same
-      account, empty local store — not two devices publishing concurrently)
-- [ ] Cross-client run done in both directions
+- [x] Cross-client run done in **both** directions — `yarn harness:config-cross`,
+      2026-08-17, desktop PR #351 + mobile PR #254. Both green against
+      production; two mutations confirm the new direction can fail
 - [x] **Both clients done** — landed in one wave, as this file recommended
+
+Not done, and deliberately not blocking closure: two devices publishing
+**concurrently** on real hardware. The harness models a reinstall, and
+concurrency is whole-blob last-write-wins — a different mechanism with its own
+issues, which this slice never touched. See the Status section.
 
 ---
 

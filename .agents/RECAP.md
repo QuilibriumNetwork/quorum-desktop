@@ -10,7 +10,7 @@ updated: 2026-08-17
 
 ## Dashboard
 
-> Updated: 2026-08-17 · 92 live · 75 startable · 7 nearly done · 10 blocked
+> Updated: 2026-08-17 · 91 live · 74 startable · 7 nearly done · 10 blocked
 
 **Next step:** Finish production diagnostics (Option 2: a diagnostics toggle with an export) — it is the only route that gets a failure report from a user who will never open devtools, and three separate issues are now waiting on evidence it would collect.
 
@@ -27,7 +27,7 @@ updated: 2026-08-17
 
 ### Nearly done — needs a check
 
-- **Config sync slices 1 and 2 — both clients shipped, two gaps left.** [Record what the last publish did](issues/.open/2026-08-08-record-and-show-what-the-last-config-publish-actually-did.md) and [make `allowSync` per-device](issues/.open/2026-08-08-make-allowsync-a-per-device-setting.md) landed on mobile in quorum-mobile #252, and #347 added a cross-client harness (`yarn harness:config-cross`) that proves a config written here reaches mobile intact. Remaining: **release-build verification** on mobile, which is the whole point of slice 1 and which no harness can reach; and the **mobile→desktop direction**, since the harness only runs desktop→mobile.
+- **Config sync slice 1 — one thing left, and it needs eyes.** [Record what the last publish did](issues/.open/2026-08-08-record-and-show-what-the-last-config-publish-actually-did.md). Slice 2 closed (below). The release-build criterion turned out to be reachable cold: mobile #254/#255 prove the record is written under the real shipping log configuration, and `yarn check:release-bundle` asserts every failure string survives into the production bundle. What remains is watching the line render on a device, plus three untouched desktop-side items (queue classification, Rule 1 on the failure path, the `payloadBytes` cross-check).
 - [Six name surfaces never reached the resolver](issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md) — shipped in PR #325, suite green with every rule shown red on revert. Held open deliberately; confirm in the running app and close.
 - [Desktop shows a stale display name except in User Settings](issues/.open/2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md) — shipped in PR #313 and device-verified. Held open on purpose; decide whether anything still remains.
 - [MASTER RECAP: control-message authorization](issues/.open/2026-06-25-MASTER-RECAP-control-message-auth.md) — every row of its own table reads DONE on both clients. Only release-timing coordination remains, which the file calls outside our control.
@@ -71,6 +71,7 @@ Nothing in flight.
 |------|----------|-----------|
 | 2026-08-17 | `allowSync` stays **off** by default, so backups carry the whole recovery story | Measured: with sync off the server holds nothing, and an eviction takes Spaces and profile as well as DMs. Turning sync on would recover more, but the default is a deliberate privacy position — so the answer is to prevent the wipe (M2) and make a backup exist when it happens anyway (M4, shipped #350), not to sync more |
 | 2026-08-17 | Nothing tells users their DM sessions were not restored | Not actionable (the conversation re-establishes itself), not visible (the only symptom is a message you never received), and unsayable in the user's vocabulary. Reasons recorded in `docs/features/user-data-backup.md` so the same copy is not re-proposed (#350) |
+| 2026-08-17 | Cross-client sync is measured in BOTH directions, not one | The two ConfigService implementations are independent code sharing only a type, so "desktop's blob decrypts on mobile" is not evidence about the reverse. The one-directional harness could not have seen the drift its own merge-asymmetry issue was filed for (#351) |
 | 2026-08-17 | The mid-close retry helper is gated on field evidence, not queued as follow-up work | It is 104 hand-edits across the storage layer, most landing where no test watches, to remove a brief self-healing hiccup. #346 added the instrument that can say whether forced closes reach real users at all; build it if the data says so (#346) |
 | 2026-08-16 | The recap is regenerated from issue bodies and never sorts on `priority:` | The field is a cached judgement that goes stale in prose-only updates; four of nine sampled disagreed with their own body |
 | 2026-08-16 | Profile-card fields resolve from the address, not from the click payload | A mention-pill click carries only an address, so any field read from the payload rendered differently depending on which pill was clicked (#344, #345) |

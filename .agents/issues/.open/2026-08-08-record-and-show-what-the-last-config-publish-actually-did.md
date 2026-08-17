@@ -53,6 +53,34 @@ threshold follow once §4.1 is answered or the data explains itself.
 
 ## Status
 
+**2026-08-17 — the release-build criterion is mostly closed, and its stated
+premise turned out to be false.** quorum-mobile PR #254 and #255.
+
+Three things now cover it, none of which needed a device:
+
+1. **The record does not depend on logging.** Two test arms in
+   `configPublishOutcome.test.ts`: one runs the *actual* shipping configuration
+   (`enabled: true, minLevel: 'warn'`) and shows `debug` dying while `warn`
+   survives; the other disables logging entirely, which is stricter than
+   production, as a robustness check. MEASURED by mutation both ways.
+2. **The instrument survives into the shipped artifact.**
+   `yarn check:release-bundle` exports a real production bundle (26 MB of Hermes
+   bytecode) and asserts the record key and all four failure strings are present.
+   A negative control runs first, and a deliberately-missing string exits 1.
+   This kills the dead-code-elimination class of failure — it proves presence,
+   not that anything runs.
+3. **The premise was stale.** "The existing signal is compiled out there" has
+   been false on mobile since PR #227. See the ⚠️ under "What landed on mobile"
+   above; four comments in shipped code were asserting it, and this slice was
+   justified with it. The slice is still right — a console line cannot reach a
+   user — but for a different reason than the one written down.
+
+**Still open.** Nobody has watched the status line render on a device, and
+several pre-existing desktop-side items below are untouched: the queue still
+classifying `400` as permanent versus a timeout as retryable, Rule 1 on the
+failure path, and the `payloadBytes` cross-check. Those are the reason this file
+stays here, not the render.
+
 **2026-08-17 — mobile SHIPPED in quorum-mobile PR #252.** `@quilibrium/quorum-shared`
 published past 2.1.0-41 and mobile's pin is now **2.1.0-43**, which carries
 `PublishOutcome` and `LastPublish`. Branch `feat/config-sync-slice1-2`, together
@@ -69,9 +97,24 @@ What landed on mobile:
 - `components/SyncStatusLine.tsx`, failures-only, rendered under "Enable Sync" in
   `ProfileModal`'s Privacy & Sync section. Copy is **word-for-word identical to
   desktop's**, minus the lingui `t` macro, since mobile has no i18n library.
-- The record is written **before** each `logger.*` call, so it does not inherit
-  the release-build no-op that made this branch silent on mobile in the first
-  place.
+- The record is written independently of the `logger.*` call on every branch.
+
+  > ⚠️ **Two errors in the original wording here, corrected 2026-08-17.** It said
+  > the record is written *before* each log (it follows it on most branches;
+  > only independence matters, not order), and it said this avoids "the
+  > release-build no-op". **There is no release-build no-op on mobile.**
+  > `installLoggingPolicy` has reconfigured the shared logger to
+  > `enabled: true, minLevel: 'warn'` in production since quorum-mobile PR #227
+  > (2026-08-04), so warn and error do reach the device console in a release
+  > build. The claim was stale before this slice was written and was repeated
+  > through it. Corrected in mobile PR #255. The real justification is a log's
+  > REACH: a console line needs a cable and `adb logcat`, so it reaches a
+  > developer and never a user.
+  >
+  > Desktop is genuinely different — `productionLogControl.ts` only attaches an
+  > opt-in diagnostics hatch and nothing calls `enable()` at startup, so the
+  > `__DEV__` default stands there. Same shared logger, opposite defaults. Do
+  > not carry either conclusion across.
 
 19 tests (8 recording + 11 render). Every one confirmed able to fail: 11
 individual mutations were applied and each turned its specific test red.
@@ -435,8 +478,16 @@ One line of text, no new controls:
       independent and all three are easy to half-implement.
 - [ ] `payloadBytes` matches the real ciphertext length. Cross-check one reading
       against `.agents/tools/dm-debug/08-self-identity-sources.js`.
-- [ ] Mobile: verify in a **release** build, not just dev. The whole point is that
-      the existing signal is compiled out there.
+- [x] Mobile: the recording path verified against a **release** build — mobile
+      PR #254/#255. The record is written under the real shipping log
+      configuration, and `yarn check:release-bundle` asserts the record key and
+      every failure string survive minification into the production bundle.
+      NOTE the rationale originally given here ("the existing signal is compiled
+      out there") is **false** and has been since PR #227 — see Status.
+- [ ] Mobile: watch the status line actually RENDER on a device. Airplane mode,
+      change a setting, the warning appears; reconnect, change a setting, it
+      **clears**. The second half is the control arm — a line stuck permanently
+      on passes the first check and is still broken.
 - [ ] No new field appears in the synced blob. Diff a payload before and after.
 
 ## Definition of Done
@@ -453,7 +504,8 @@ One line of text, no new controls:
       — PR #321
 - [x] Status line in both clients' privacy settings — desktop PR #322, mobile
       2026-08-17. Both failures-only, identical copy
-- [ ] Verified in a mobile release build
+- [x] Verified in a mobile release build — the recording path and the bundle,
+      PR #254/#255. The on-device render remains, in Verification above
 - [x] Revert tests confirmed red — 11 mutations on mobile, each turning its own
       test red, against a baseline verified before mutating
 - [x] **Both clients done**
