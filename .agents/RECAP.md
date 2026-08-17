@@ -12,14 +12,14 @@ updated: 2026-08-17
 
 > Updated: 2026-08-17 · 92 live · 75 startable · 7 nearly done · 10 blocked
 
-**Next step:** Reproduce Safari's 7-day ITP wipe against a real browser — it destroys DM history and ratchet state permanently, and nobody has yet watched it happen to a real account.
+**Next step:** Finish production diagnostics (Option 2: a diagnostics toggle with an export) — it is the only route that gets a failure report from a user who will never open devtools, and three separate issues are now waiting on evidence it would collect.
 
 ### Do next
 
 | # | Issue | Why it matters |
 |---|-------|----------------|
-| 1 | [Safari wipes all IndexedDB after 7 idle days](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md) | Permanent loss of DM history and ratchet state for Safari users on the live site. Unverified against a real browser, so the reproduction IS step one. |
-| 2 | [Production diagnostics reach a developer, not an ordinary user](issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md) | Half done. PR #349 shipped `quorumLogger.enable()`, so warn/error can now be read in a production build — but only by someone willing to open devtools. The remaining piece (Option 2: a diagnostics toggle with an export) is the only route that gets a report from a user who never will. |
+| 1 | [Production diagnostics reach a developer, not an ordinary user](issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md) | Half done. PR #349 shipped `quorumLogger.enable()`, so warn/error can now be read in a production build — but only by someone willing to open devtools. The remaining piece (Option 2: a diagnostics toggle with an export) is the only route that gets a report from a user who never will, and it is now the shared gate on the forced-close evidence and on measuring whether storage eviction reaches real users at all. |
+| 2 | [Safari wipes all IndexedDB after 7 idle days](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md) | **Reframed 2026-08-17 by PR #350.** The app-side consequence is now measured headlessly, and the correction matters: with `allowSync` off (the default) an eviction takes Spaces and profile too, not just DMs. M4 shipped — a backup reminder for sync-off users. What is left is either **Mac-gated** (WebKit's 7-day trigger, the installed-app exemption, M2's passkey Phase 0) or small and unbuilt (M3 `persist()`, M5, M6). Do the small ones here; the reproduction waits on Apple hardware. |
 | 3 | [A reconnecting client starves control-message processing](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md) | Sync requests expire unread, so a new joiner is answered by nobody. Already confirmed in the harness with the failing line captured, so it is ready to fix. |
 | 4 | [The config upload has no size guard and fails silently](issues/.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md) | No client measures the payload before sending. A config save can fail with the user believing it succeeded. |
 | 5 | [Config sync space loss race condition](issues/.open/2026-01-09-config-sync-space-loss-race-condition.md) | Spaces can be lost outright. Filed January and never actioned; still reads as a data-loss path. |
@@ -69,6 +69,8 @@ Nothing in flight.
 
 | date | decision | rationale |
 |------|----------|-----------|
+| 2026-08-17 | `allowSync` stays **off** by default, so backups carry the whole recovery story | Measured: with sync off the server holds nothing, and an eviction takes Spaces and profile as well as DMs. Turning sync on would recover more, but the default is a deliberate privacy position — so the answer is to prevent the wipe (M2) and make a backup exist when it happens anyway (M4, shipped #350), not to sync more |
+| 2026-08-17 | Nothing tells users their DM sessions were not restored | Not actionable (the conversation re-establishes itself), not visible (the only symptom is a message you never received), and unsayable in the user's vocabulary. Reasons recorded in `docs/features/user-data-backup.md` so the same copy is not re-proposed (#350) |
 | 2026-08-17 | The mid-close retry helper is gated on field evidence, not queued as follow-up work | It is 104 hand-edits across the storage layer, most landing where no test watches, to remove a brief self-healing hiccup. #346 added the instrument that can say whether forced closes reach real users at all; build it if the data says so (#346) |
 | 2026-08-16 | The recap is regenerated from issue bodies and never sorts on `priority:` | The field is a cached judgement that goes stale in prose-only updates; four of nine sampled disagreed with their own body |
 | 2026-08-16 | Profile-card fields resolve from the address, not from the click payload | A mention-pill click carries only an address, so any field read from the payload rendered differently depending on which pill was clicked (#344, #345) |

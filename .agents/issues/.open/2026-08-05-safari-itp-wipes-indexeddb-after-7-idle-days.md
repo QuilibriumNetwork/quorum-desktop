@@ -23,6 +23,28 @@ related_reports:
 
 ## Status
 
+**2026-08-17 — M4 shipped in PR #350** (`feat(settings): remind sync-off users
+that this device is their only copy`), along with the two measurements this
+issue asked for.
+
+What landed: a warning on the General settings tab shown only when `allowSync`
+is off and no backup was taken in 30 days, linking straight to Data Backup;
+`utils/lastBackup.ts` to record exports; and the `dm-itp-wipe` and
+`space-wipe-restore` harness scenarios that establish claims B and C below.
+
+**Stays open — deliberately.** The remaining work needs Apple hardware or is
+unbuilt:
+
+- **Claim A is still unverified** and cannot be verified on this machine. Real
+  Safari, and a 7-day counter that cannot be advanced from outside.
+- **M2** (guided install) — specced separately, unbuilt, and gated on the same
+  hardware for its own Phase 0 (does passkey auth work in an installed iOS web
+  app).
+- **M3** (`navigator.storage.persist()`) — unbuilt.
+- **M5** (add ITP eviction to the backup doc's list of loss scenarios) — not
+  done. PR #350 touched that doc for a different reason and did not add it.
+- **M6** (record the user-level ITP opt-out) — not done.
+
 **The consequence is now measured. The Safari trigger is not.**
 
 The issue makes two claims, and they need different instruments:
@@ -280,7 +302,26 @@ Genuinely protects Chrome and Firefox users against quota-pressure eviction, and
 succeeds on Safari once the app is installed. Log the result so we can see, in the
 field, how often it is granted.
 
-### M4 — Prompt for a backup on a schedule (UX, medium) → **UNBLOCKED, and now the highest-value unbuilt item**
+### M4 — Prompt for a backup → ✅ **SHIPPED 2026-08-17 in PR #350**
+
+> **What landed.** `BackupStatus` on the General settings tab, directly below
+> the passkey warning. Shown only when `allowSync` is off **and** no backup was
+> taken in the last 30 days, so a sync-on user never sees it. No dismiss button:
+> taking the backup is the dismissal, because an X would silence the warning
+> while leaving the user equally exposed. The link lands on the Data Backup
+> section and moves focus there. `utils/lastBackup.ts` records exports, written
+> inside the hook so the silent no-keyset return cannot mark a user as covered.
+>
+> **Not a schedule.** It prompts; it does not export. And it only reaches users
+> who open Settings — which, as `SyncStatusLine` already notes for itself, is
+> the population least in need of it. A surface outside Settings was considered
+> and deliberately deferred; that remains the real gap.
+>
+> **Known limit, accepted:** an anchor-click download reports nothing back, so
+> cancelling the browser's save dialog still records a backup. The 30-day expiry
+> bounds it to being reminded late rather than never.
+
+Original reasoning, kept because it explains why this was blocked for so long:
 
 The `.qmbak` export exists but is manual and buried in Settings → Privacy/Security.
 A periodic nudge (or an automatic export to the Downloads folder in Electron)
