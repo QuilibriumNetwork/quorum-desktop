@@ -29,7 +29,40 @@ cp src/dev/tests/harness/.env.example src/dev/tests/harness/.env.local
 
 yarn harness ping        # slice 1: a bot registers, connects, subscribes
 yarn harness             # run every scenario
+
+yarn harness:config-cross   # cross-client config sync, BOTH directions — see below
 ```
+
+### Cross-client config sync (`yarn harness:config-cross`)
+
+Spans both repos. quorum-mobile must be checked out beside this one; nothing in
+it is modified, the orchestrator just drives its existing scenarios.
+
+```
+[config-cross] ── summary ──
+  ok   desktop → mobile
+  ok   mobile → desktop
+```
+
+Each direction is publish-then-read for one shared throwaway account: one client
+writes the settings row, the other pulls it and asserts against a handoff file
+recording what was actually sent. Asserting against the handoff rather than a
+constant is deliberate — two repos can drift into agreeing about a value neither
+of them ever transmitted.
+
+**Both directions, because one is not symmetric evidence.** The two
+`ConfigService` implementations are independent code sharing only a type;
+encryption, signing and field ordering are written twice. "Desktop's blob
+decrypts on mobile" says nothing about the reverse, and the known
+merge-asymmetry issue exists because the two drifted apart.
+
+`--only=to-mobile` / `--only=to-desktop` runs a single direction. The halves are
+sequential rather than concurrent, unlike `run-cross.mjs`: a config is a row on
+a server, so the two clients never need to be live at the same time. Both
+directions write the same row, which is also why they cannot overlap.
+
+Each reader refuses a handoff older than 30 minutes. Without that, a stale file
+lets a run pass against a row written days ago — a green that proves nothing.
 
 No `.env.local` is required — with no keys the harness generates its own throwaway
 accounts, which is all the transport scenarios need.
@@ -253,4 +286,4 @@ See `2026-07-27-headless-dm-harness.md` under .agents/issues/ for the DM slice p
 `.agents/issues/transport/2026-07-27-headless-space-harness.md` for the space one,
 and `.agents/issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §1 for the DM
 findings.
-*Last updated: 2026-08-02*
+*Last updated: 2026-08-17*
