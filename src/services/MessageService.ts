@@ -105,7 +105,6 @@ import {
   type SpaceProfileWireFields,
 } from '../utils/spaceProfilePayload';
 import { preferIncomingProfileField } from '../utils/conversationProfile';
-import { safeError } from '../utils/safeError';
 import { createRosterConvergenceTracker } from '../utils/rosterConvergence';
 import { UndecryptableFrameTracker, frameKey } from '../utils/frameRetry';
 import { ThreadService } from './ThreadService';
@@ -4523,11 +4522,13 @@ export class MessageService {
             // long-standing "DM direction goes permanently dead" bug: the sender kept
             // encrypting to a session the receiver had torn down.
             // (https://signal.org/docs/specifications/doubleratchet/)
-            // safeError, not the raw object: a failing decrypt can carry the
-            // first 10 chars of the PLAINTEXT in its message, echoed there by
-            // V8 when JSON.parse runs on decrypted content. See
+            // NOTE: a failing decrypt can carry the first 10 chars of the
+            // PLAINTEXT in its message, echoed there by V8 when JSON.parse runs
+            // on decrypted content. It is safe to pass the raw error here only
+            // because quorum-shared's logger redacts it at the choke point when
+            // logs are exposed in production. Do not "simplify" that away.
             // .agents/issues/.open/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md
-            logger.error('[MessageService] DM decrypt failed (ConfirmDoubleRatchetSenderSession) — skipping frame, keeping session', safeError(decryptError));
+            logger.error('[MessageService] DM decrypt failed (ConfirmDoubleRatchetSenderSession) — skipping frame, keeping session', decryptError);
             this.retainOrDropUndecryptableFrame(
               'Confirm',
               message,
@@ -4663,10 +4664,10 @@ export class MessageService {
             // long-standing "DM direction goes permanently dead" bug: the sender kept
             // encrypting to a session the receiver had torn down.
             // (https://signal.org/docs/specifications/doubleratchet/)
-            // safeError, not the raw object — see the note at the sibling
+            // See the plaintext-echo note at the sibling
             // ConfirmDoubleRatchetSenderSession catch above. This is the site
-            // where the leak was actually measured.
-            logger.error('[MessageService] DM decrypt failed (DoubleRatchetInboxDecrypt) — skipping frame, keeping session', safeError(decryptError));
+            // where that leak was actually measured.
+            logger.error('[MessageService] DM decrypt failed (DoubleRatchetInboxDecrypt) — skipping frame, keeping session', decryptError);
             this.retainOrDropUndecryptableFrame(
               'InboxDecrypt',
               message,
