@@ -27,6 +27,14 @@ interface SecurityProps {
   removedDevices?: string[];
   deviceNames?: { [inboxAddress: string]: string };
   saveDeviceName?: (name: string) => Promise<void>;
+  /**
+   * Arrived here from the backup reminder rather than from the sidebar, so
+   * bring Data Backup into view. It sits below two other sections, far enough
+   * down that landing at the top of this tab leaves it off screen.
+   */
+  focusBackup?: boolean;
+  /** Called once the scroll has happened, so a later sidebar visit does not repeat it. */
+  onBackupFocused?: () => void;
 }
 
 const Security: React.FunctionComponent<SecurityProps> = ({
@@ -40,7 +48,38 @@ const Security: React.FunctionComponent<SecurityProps> = ({
   removedDevices = [],
   deviceNames = {},
   saveDeviceName,
+  focusBackup = false,
+  onBackupFocused,
 }) => {
+  const backupHeadingRef = React.useRef<HTMLDivElement>(null);
+
+  /**
+   * Bring Data Backup into view when the user arrived via the reminder.
+   *
+   * Inside a rAF, not directly in the effect: this tab mounts in the same
+   * commit that sets the flag, and scrolling before the browser has laid the
+   * new content out measures the wrong offsets and lands short.
+   *
+   * Focus moves too, not just the scroll. A keyboard or screen-reader user who
+   * follows a "Save a backup" link and lands with focus still on the old tab
+   * has not arrived anywhere — the heading takes `tabIndex={-1}` so it can
+   * receive focus programmatically without joining the tab order.
+   */
+  React.useEffect(() => {
+    if (!focusBackup) return;
+    const id = requestAnimationFrame(() => {
+      const el = backupHeadingRef.current;
+      if (el) {
+        el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        el.focus({ preventScroll: true });
+      }
+      // Cleared even when the ref is missing, so a failed scroll cannot leave
+      // the flag armed and re-fire on every later visit to this tab.
+      onBackupFocused?.();
+    });
+    return () => cancelAnimationFrame(id);
+  }, [focusBackup, onBackupFocused]);
+
   // QR display state. The confirmation itself is a ConfirmationModal (below);
   // this only tracks the reveal.
   const [showQRCode, setShowQRCode] = React.useState(false);
@@ -616,7 +655,13 @@ const Security: React.FunctionComponent<SecurityProps> = ({
         </div>
 
         <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="text-subtitle-2 mb-2">{t`Data Backup`}</div>
+        <div
+          ref={backupHeadingRef}
+          tabIndex={-1}
+          className="text-subtitle-2 mb-2 outline-none"
+        >
+          {t`Data Backup`}
+        </div>
         <div className="modal-content-info">
           <div className="flex flex-col gap-2">
             <div className="flex flex-col gap-2 p-3 rounded-md border">
