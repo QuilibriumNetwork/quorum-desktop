@@ -15,7 +15,6 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
 msgstr "Файл не може бути більшим за {maxFileSize}"
@@ -31,16 +30,16 @@ msgid "No Role - {count}"
 msgstr "Без ролі - {count}"
 
 #. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1883
+msgid "Send a message to #{channel_name}"
+msgstr "Надіслати повідомлення #{channel_name}"
+
+#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is ready to go."
 msgstr ""
 "Ласкаво просимо до Quorum, {name}! Ваш обліковий запис готовий до "
 "використання."
-
-#. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1883
-msgid "Send a message to #{channel_name}"
-msgstr "Надіслати повідомлення #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:149
@@ -53,16 +52,6 @@ msgstr "Більше"
 #: src/components/message/ReactionsList.tsx:156
 msgid "Reacted by"
 msgstr "Відреагували"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:161
-msgid "Failed to process image"
-msgstr "Не вдалося обробити зображення"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:314
-msgid "Replying to {user}"
-msgstr "Відповідаю {user}"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.tsx:825
@@ -89,9 +78,9 @@ msgstr "був вигнаний"
 msgid "Send a message to {user}"
 msgstr "Надіслати повідомлення {user}"
 
-#: src/components/message/Message.tsx:1007
-#: src/components/message/Message.tsx:1020
-#: src/components/message/Message.tsx:1141
+#: src/components/message/Message.tsx:1011
+#: src/components/message/Message.tsx:1024
+#: src/components/message/Message.tsx:1145
 msgid "(edited)"
 msgstr "(відредаговано)"
 
@@ -100,7 +89,7 @@ msgid "(empty)"
 msgstr "(порожньо)"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:122
-#: src/components/user/UserProfile.tsx:421
+#: src/components/user/UserProfile.tsx:434
 msgid "(only visible to you)"
 msgstr "(лише видно вам)"
 
@@ -120,8 +109,8 @@ msgstr "[Зображення]"
 msgid "[Message]"
 msgstr "[Повідомлення]"
 
-#: src/components/message/Message.tsx:755
-#: src/components/message/Message.tsx:1232
+#: src/components/message/Message.tsx:759
+#: src/components/message/Message.tsx:1236
 msgid "[Original message was deleted]"
 msgstr "[Оригінальне повідомлення було видалено]"
 
@@ -131,7 +120,7 @@ msgid "[Sticker]"
 msgstr "[Стікер]"
 
 #. placeholder {0}: result.conversationsSkippedAsDeleted
-#: src/components/modals/UserSettingsModal/Security.tsx:320
+#: src/components/modals/UserSettingsModal/Security.tsx:359
 msgid ""
 "{0} conversations were not restored because you deleted them after this "
 "backup was made."
@@ -140,7 +129,7 @@ msgstr ""
 "резервної копії."
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Security.tsx:409
+#: src/components/modals/UserSettingsModal/Security.tsx:448
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} пристроїв, позначених для видалення. Натисніть \"Зберегти зміни\", щоб "
@@ -162,7 +151,7 @@ msgid "{0} mentioned you in {spaceName}"
 msgstr "{0} згадав вас у {spaceName}"
 
 #. placeholder {0}: result.messagesSkippedAsDeleted
-#: src/components/modals/UserSettingsModal/Security.tsx:325
+#: src/components/modals/UserSettingsModal/Security.tsx:364
 msgid ""
 "{0} messages were not restored because you deleted them after this backup "
 "was made."
@@ -216,13 +205,13 @@ msgid "{0} results"
 msgstr "{0} результати"
 
 #. placeholder {0}: result.spacesAlreadyPresent.length
-#: src/components/modals/UserSettingsModal/Security.tsx:315
+#: src/components/modals/UserSettingsModal/Security.tsx:354
 msgid "{0} Spaces were already on this device and were left unchanged."
 msgstr "{0} Простірів вже були на цьому пристрої та залишилися без змін."
 
 #. placeholder {0}: result.spacesFailed.length
 #. placeholder {1}: result.spacesFailed .map((s) => s.reason) .join('; ')
-#: src/components/modals/UserSettingsModal/Security.tsx:330
+#: src/components/modals/UserSettingsModal/Security.tsx:369
 msgid "{0} Spaces were skipped: {1}"
 msgstr "{0} Простірів було пропущено: {1}"
 
@@ -266,17 +255,17 @@ msgstr "{hours} годин"
 msgid "{replyCount} replies"
 msgstr "{replyCount} відповіді"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:369
+#: src/components/modals/SpaceSettingsModal/Account.tsx:370
 #: src/components/notifications/NotificationPanel.tsx:115
 msgid "@everyone"
 msgstr "@everyone"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:374
+#: src/components/modals/SpaceSettingsModal/Account.tsx:375
 #: src/components/notifications/NotificationPanel.tsx:119
 msgid "@roles"
 msgstr "@roles"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:364
+#: src/components/modals/SpaceSettingsModal/Account.tsx:365
 #: src/components/notifications/NotificationPanel.tsx:111
 msgid "@you"
 msgstr "@you"
@@ -293,7 +282,7 @@ msgstr "0 = назавжди"
 msgid "0 hours"
 msgstr "0 годин"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:408
+#: src/components/modals/UserSettingsModal/Security.tsx:447
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 пристрій, позначений для видалення. Натисніть \"Зберегти зміни\", щоб "
@@ -334,16 +323,16 @@ msgstr ""
 "Багаторазове посилання, яке може використовувати будь-хто для приєднання. "
 "Поділіться ним у соціальних мережах або на своєму веб-сайті."
 
-#: src/services/MessageService.ts:6527 src/services/NotificationService.ts:297
+#: src/services/MessageService.ts:6532 src/services/NotificationService.ts:297
 msgid "a role"
 msgstr "роль"
 
-#: src/services/MessageService.ts:6537 src/services/NotificationService.ts:296
+#: src/services/MessageService.ts:6542 src/services/NotificationService.ts:296
 #: src/services/NotificationService.ts:309
 msgid "a Space"
 msgstr "Простір"
 
-#: src/components/user/UserProfile.tsx:413
+#: src/components/user/UserProfile.tsx:426
 msgid "About"
 msgstr "Про"
 
@@ -355,12 +344,12 @@ msgstr "Обліковий запис"
 msgid "Account address"
 msgstr "Адреса облікового запису"
 
-#: src/components/modals/UserSettingsModal/General.tsx:194
+#: src/components/modals/UserSettingsModal/General.tsx:215
 #: src/components/onboarding/steps/DisplayNameStep.tsx:38
 msgid "Account Address"
 msgstr "Адреса облікового запису"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:541
+#: src/components/modals/UserSettingsModal/Security.tsx:580
 msgid "Account Key"
 msgstr "Ключ облікового запису"
 
@@ -380,7 +369,7 @@ msgid "Add a friend"
 msgstr "Додати друга"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:147
-#: src/components/user/UserProfile.tsx:449
+#: src/components/user/UserProfile.tsx:462
 msgid "Add a note"
 msgstr "Додати нотатку"
 
@@ -389,7 +378,7 @@ msgid "Add a passkey"
 msgstr "Додати passkey"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:126
-#: src/components/user/UserProfile.tsx:425
+#: src/components/user/UserProfile.tsx:438
 msgid "Add a personal note..."
 msgstr "Додати особисту нотатку..."
 
@@ -451,7 +440,7 @@ msgstr ""
 "використовувати лише в Просторі. Ви можете завантажити PNG, JPG або GIF, "
 "макс 25МБ (автоматично оптимізовано)."
 
-#: src/components/user/UserProfile.tsx:404
+#: src/components/user/UserProfile.tsx:417
 msgid "Adding..."
 msgstr "Додається..."
 
@@ -473,7 +462,7 @@ msgstr "Розширені налаштування"
 
 #: src/components/direct/DirectMessageContactsList.tsx:487
 #: src/components/modals/ChannelEditorModal.tsx:206
-#: src/components/modals/SpaceSettingsModal/Account.tsx:359
+#: src/components/modals/SpaceSettingsModal/Account.tsx:360
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:162
 #: src/components/notifications/NotificationPanel.tsx:265
 msgid "All"
@@ -552,7 +541,7 @@ msgstr ""
 "Анімовані стікерні GIF не можуть бути більшими за 750KB. Будь ласка, "
 "оптимізуйте свій GIF для використання стікерів."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:719
+#: src/components/modals/UserSettingsModal/Security.tsx:764
 msgid ""
 "Anyone who photographs this code owns your account. Scan it now, then close "
 "this."
@@ -560,7 +549,7 @@ msgstr ""
 "Будь-хто, хто сфотографує цей код, володітиме Вашим обліковим записом. "
 "Відскануйте його зараз, потім закрийте це."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:269
+#: src/components/modals/UserSettingsModal/Security.tsx:308
 msgid ""
 "Anyone who sees or photographs this code can take full control of your account and steal any funds it holds.\n"
 "\n"
@@ -570,7 +559,7 @@ msgstr ""
 "\n"
 "Продовжуйте, лише якщо Ви перебуваєте в приватному місці та готові негайно сканувати. Код приховується через 60 секунд."
 
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:232
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:252
 msgid "App version"
 msgstr "Версія програми"
 
@@ -649,7 +638,7 @@ msgstr "Ви впевнені, що хочете зняти закріпленн
 msgid "attach image"
 msgstr "додати зображення"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:391
+#: src/components/modals/UserSettingsModal/Security.tsx:430
 msgid "Authorized Devices"
 msgstr "Авторизовані пристрої"
 
@@ -674,13 +663,9 @@ msgstr "Повернутися до списку Просторів"
 msgid "Back Up Your Account Key"
 msgstr "Зробіть резервну копію ключа облікового запису"
 
-#: src/hooks/platform/files/useFileDownload.native.ts:128
-msgid "Backup Failed"
-msgstr "Резервне копіювання не вдалося"
-
 #: src/components/direct/DMUserProfileSidebar.tsx:108
 #: src/components/modals/SpaceSettingsModal/Account.tsx:269
-#: src/components/modals/UserSettingsModal/General.tsx:156
+#: src/components/modals/UserSettingsModal/General.tsx:177
 msgid "Bio"
 msgstr "Біо"
 
@@ -693,7 +678,7 @@ msgid "Bio is too long"
 msgstr "Біографія занадто довга"
 
 #: src/components/modals/BlockUserModal.tsx:114
-#: src/components/user/UserProfile.tsx:498
+#: src/components/user/UserProfile.tsx:511
 msgid "Block"
 msgstr "Заблокувати"
 
@@ -719,9 +704,9 @@ msgstr "Досягнуто ліміту закладок! Видаліть де�
 msgid "Bookmark message"
 msgstr "Додати до закладок"
 
-#: src/components/message/Message.tsx:959
-#: src/components/message/Message.tsx:1055
-#: src/components/message/Message.tsx:1170
+#: src/components/message/Message.tsx:963
+#: src/components/message/Message.tsx:1059
+#: src/components/message/Message.tsx:1174
 msgid "Bookmarked"
 msgstr "Закладено"
 
@@ -756,16 +741,11 @@ msgstr ""
 msgid "Busy"
 msgstr "Зайнятий"
 
-#: src/hooks/business/user/useFileUpload.native.ts:40
-msgid "Camera"
-msgstr "Камера"
-
 #: src/components/modals/UserSettingsModal/SyncStatusLine.tsx:65
 msgid "Can't sync: no key is available on this device."
 msgstr "Не вдається синхронізувати: на цьому пристрої немає доступного ключа."
 
 #: src/components/modals/BlockUserModal.tsx:106
-#: src/components/modals/ConfirmationModal.native.tsx:28
 #: src/components/modals/ConfirmationModal.tsx:31
 #: src/components/modals/ConversationSettingsModal.tsx:105
 #: src/components/modals/ConversationSettingsModal.tsx:132
@@ -773,20 +753,19 @@ msgstr "Не вдається синхронізувати: на цьому пр
 #: src/components/modals/MuteUserModal.tsx:148
 #: src/components/modals/UserSettingsModal/Help.tsx:32
 #: src/components/modals/UserSettingsModal/Privacy.tsx:295
-#: src/components/modals/UserSettingsModal/Security.tsx:194
-#: src/components/modals/UserSettingsModal/Security.tsx:227
-#: src/components/modals/UserSettingsModal/Security.tsx:252
-#: src/components/modals/UserSettingsModal/Security.tsx:271
+#: src/components/modals/UserSettingsModal/Security.tsx:233
+#: src/components/modals/UserSettingsModal/Security.tsx:266
+#: src/components/modals/UserSettingsModal/Security.tsx:291
+#: src/components/modals/UserSettingsModal/Security.tsx:310
 #: src/components/notifications/NotificationPanel.tsx:205
 #: src/hooks/business/channels/useChannelManagement.ts:244
 #: src/hooks/business/messages/useMessageActions.ts:457
 #: src/hooks/business/messages/usePinnedMessages.ts:338
 #: src/hooks/business/spaces/useRoleManagement.ts:78
-#: src/hooks/business/user/useFileUpload.native.ts:48
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/components/message/MessageEditTextarea.tsx:750
+#: src/components/message/MessageEditTextarea.tsx:807
 msgid "CANCEL"
 msgstr "Скасувати"
 
@@ -866,19 +845,15 @@ msgstr "Канали"
 msgid "choose file"
 msgstr "виберіть файл"
 
-#: src/hooks/business/user/useFileUpload.native.ts:37
-msgid "Choose how you'd like to add your profile image"
-msgstr "Виберіть, як ви хочете додати своє зображення профілю"
-
 #: src/components/modals/UserSettingsModal/Appearance.tsx:45
 msgid "Choose your preferred theme for Quorum."
 msgstr "Виберіть свій улюблений стиль для Quorum."
 
 #: src/components/modals/ChannelEditorModal.tsx:207
-#: src/components/modals/SpaceSettingsModal/Account.tsx:360
+#: src/components/modals/SpaceSettingsModal/Account.tsx:361
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:163
 #: src/components/notifications/NotificationPanel.tsx:266
-#: src/components/space/IconPicker/IconPicker.web.tsx:195
+#: src/components/space/IconPicker/IconPicker.tsx:195
 msgid "Clear"
 msgstr "Очистити"
 
@@ -895,7 +870,7 @@ msgstr "Очищення сповіщень з тегом: {tag}"
 #: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:127
 #: src/components/modals/LeaveSpaceModal.tsx:71
-#: src/components/modals/SpaceSettingsModal/Account.tsx:483
+#: src/components/modals/SpaceSettingsModal/Account.tsx:484
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "Натисніть ще раз, щоб підтвердити"
@@ -985,14 +960,12 @@ msgstr "Розмова з {counterpartLabel}"
 
 #: src/components/message/MessageActionsMenu.tsx:223
 #: src/components/message/MessageActionsMenu.tsx:228
-#: src/components/ui/ClickToCopyContent.native.tsx:202
-#: src/components/ui/ClickToCopyContent.native.tsx:274
 #: src/components/ui/ClickToCopyContent.tsx:153
 #: src/components/ui/ClickToCopyContent.tsx:209
 msgid "Copied!"
 msgstr "Скопійовано!"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:251
+#: src/components/modals/UserSettingsModal/Security.tsx:290
 msgid "Copy"
 msgstr "Копіювати"
 
@@ -1004,17 +977,13 @@ msgstr "Скопіювати посилання"
 #: src/components/direct/DirectMessage.tsx:1135
 #: src/components/direct/DirectMessage.tsx:1155
 #: src/components/direct/DMUserProfileSidebar.tsx:92
-#: src/components/modals/UserSettingsModal/General.tsx:204
-#: src/components/user/UserProfile.tsx:284
-#: src/components/user/UserProfile.tsx:324
+#: src/components/modals/UserSettingsModal/General.tsx:225
+#: src/components/user/UserProfile.tsx:297
+#: src/components/user/UserProfile.tsx:337
 msgid "Copy address"
 msgstr "Скопіювати адресу"
 
-#: src/components/ui/ClickToCopyContent.native.tsx:166
-msgid "Copy Failed"
-msgstr "Копіювання не вдалося"
-
-#: src/components/modals/UserSettingsModal/Security.tsx:484
+#: src/components/modals/UserSettingsModal/Security.tsx:523
 msgid "Copy full address"
 msgstr "Копіювати повну адресу"
 
@@ -1023,7 +992,7 @@ msgstr "Копіювати повну адресу"
 msgid "Copy invite link to clipboard"
 msgstr "Скопіювати посилання на запрошення в буфер обміну"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:569
+#: src/components/modals/UserSettingsModal/Security.tsx:608
 msgid "Copy key"
 msgstr "Копіювати ключ"
 
@@ -1042,11 +1011,11 @@ msgstr "Скопіювати повідомлення"
 msgid "Copy message link"
 msgstr "Скопіювати посилання на повідомлення"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:249
+#: src/components/modals/UserSettingsModal/Security.tsx:288
 msgid "Copy your private key?"
 msgstr "Скопіювати Ваш приватний ключ?"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:684
+#: src/components/modals/UserSettingsModal/Security.tsx:729
 msgid "Copying..."
 msgstr "Копіювання..."
 
@@ -1176,7 +1145,7 @@ msgstr "Зона небезпеки: скинути додаток."
 msgid "Dark"
 msgstr "Темний"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:619
+#: src/components/modals/UserSettingsModal/Security.tsx:663
 msgid "Data Backup"
 msgstr "Резервне копіювання даних"
 
@@ -1219,7 +1188,6 @@ msgstr "видалити"
 
 #: src/components/message/MessageActions.tsx:97
 #: src/components/message/MessageActionsMenu.tsx:265
-#: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:30
 #: src/components/modals/ConversationSettingsModal.tsx:104
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:443
@@ -1303,8 +1271,8 @@ msgstr "Видалити Простір"
 #: src/components/modals/SpaceSettingsModal/General.tsx:141
 #: src/components/modals/SpaceSettingsModal/General.tsx:216
 #: src/components/modals/SpaceSettingsModal/General.tsx:224
-#: src/components/modals/UserSettingsModal/General.tsx:100
-#: src/components/modals/UserSettingsModal/General.tsx:108
+#: src/components/modals/UserSettingsModal/General.tsx:107
+#: src/components/modals/UserSettingsModal/General.tsx:115
 msgid "Delete this image"
 msgstr "Видалити це зображення"
 
@@ -1396,7 +1364,7 @@ msgstr "Назва пристрою не може містити HTML"
 msgid "Device name must be {0} characters or less"
 msgstr "Назва пристрою повинна містити {0} символів або менше"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:394
+#: src/components/modals/UserSettingsModal/Security.tsx:433
 msgid ""
 "Devices currently authorized to receive new messages on your account. "
 "Removing a device stops new messages from reaching it. It does not log the "
@@ -1420,14 +1388,14 @@ msgstr "Пряма повідомлення"
 msgid "Discover Spaces"
 msgstr "Відкрийте для себе Простори"
 
-#: src/components/modals/UserSettingsModal/General.tsx:221
+#: src/components/modals/UserSettingsModal/General.tsx:242
 msgid ""
 "Display a tag from one of your Spaces next to your username in messages."
 msgstr ""
 "Відображайте мітку з одного з ваших Просторів поруч із вашим ім'ям у "
 "повідомленнях."
 
-#: src/components/modals/UserSettingsModal/General.tsx:129
+#: src/components/modals/UserSettingsModal/General.tsx:136
 msgid "Display name"
 msgstr "Відображуване ім'я"
 
@@ -1447,15 +1415,15 @@ msgstr "Відображуване ім'я занадто довге"
 msgid "Documentation"
 msgstr "Документація"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:730
+#: src/components/modals/UserSettingsModal/Security.tsx:775
 msgid "Done"
 msgstr "Готово"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:226
+#: src/components/modals/UserSettingsModal/Security.tsx:265
 msgid "Download"
 msgstr "Завантажити"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:558
+#: src/components/modals/UserSettingsModal/Security.tsx:597
 msgid "Download file"
 msgstr "Завантажити файл"
 
@@ -1463,7 +1431,7 @@ msgstr "Завантажити файл"
 msgid "Download Key Backup"
 msgstr "Завантажити резервну копію ключа"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:587
+#: src/components/modals/UserSettingsModal/Security.tsx:626
 msgid ""
 "Download saves a .key file. Copy puts the raw key (hex) on your clipboard. "
 "Show QR is for importing into the Quorum mobile app."
@@ -1472,7 +1440,7 @@ msgstr ""
 "у Ваш буфер обміну. Показати QR-код призначено для імпорту в мобільний "
 "додаток Quorum."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:223
+#: src/components/modals/UserSettingsModal/Security.tsx:262
 msgid "Download your private key?"
 msgstr "Завантажити Ваш приватний ключ?"
 
@@ -1633,7 +1601,7 @@ msgstr "Введіть деталі вручну"
 msgid "Enter Quorum"
 msgstr "Увійдіть до Quorum"
 
-#: src/components/message/MessageEditTextarea.tsx:752
+#: src/components/message/MessageEditTextarea.tsx:809
 msgid "Enter to"
 msgstr "Введіть для"
 
@@ -1667,7 +1635,7 @@ msgstr "Помилка запиту дозволу на сповіщення:"
 msgid "Error showing notification:"
 msgstr "Помилка показу сповіщення:"
 
-#: src/components/message/MessageEditTextarea.tsx:737
+#: src/components/message/MessageEditTextarea.tsx:794
 msgid "Esc to"
 msgstr "Esc для"
 
@@ -1683,15 +1651,15 @@ msgstr "Розгорнути бокову панель"
 msgid "Explore"
 msgstr "Досліджувати"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:641
+#: src/components/modals/UserSettingsModal/Security.tsx:686
 msgid "Export"
 msgstr "Експорт"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:191
+#: src/components/modals/UserSettingsModal/Security.tsx:230
 msgid "Export a backup?"
 msgstr "Експортувати резервну копію?"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:632
+#: src/components/modals/UserSettingsModal/Security.tsx:677
 msgid ""
 "Export an encrypted backup of your direct messages and your Spaces, so you "
 "can restore them if you lose access to this device."
@@ -1700,12 +1668,12 @@ msgstr ""
 "Простірів, щоб Ви могли відновити їх, якщо втратите доступ до цього "
 "пристрою."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:193
+#: src/components/modals/UserSettingsModal/Security.tsx:232
 msgid "Export backup"
 msgstr "Експортувати резервну копію"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:641
-#: src/components/modals/UserSettingsModal/Security.tsx:760
+#: src/components/modals/UserSettingsModal/Security.tsx:686
+#: src/components/modals/UserSettingsModal/Security.tsx:805
 msgid "Exporting..."
 msgstr "Експортування..."
 
@@ -1714,7 +1682,7 @@ msgstr "Експортування..."
 msgid "Failed to block user"
 msgstr "Не вдалося заблокувати користувача"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:127
+#: src/components/modals/UserSettingsModal/Security.tsx:166
 msgid "Failed to copy private key"
 msgstr "Не вдалося скопіювати приватний ключ"
 
@@ -1740,7 +1708,7 @@ msgstr "Не вдалося видалити повідомлення"
 msgid "Failed to edit message"
 msgstr "Не вдалося редагувати повідомлення"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:290
+#: src/components/modals/UserSettingsModal/Security.tsx:329
 msgid "Failed to export backup"
 msgstr "Не вдалося експортувати резервну копію"
 
@@ -1751,7 +1719,7 @@ msgstr ""
 "Не вдалося згенерувати посилання для запрошення. Будь ласка, спробуйте ще "
 "раз."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:369
+#: src/components/modals/UserSettingsModal/Security.tsx:408
 msgid "Failed to import backup"
 msgstr "Не вдалося імпортувати резервну копію"
 
@@ -1781,7 +1749,7 @@ msgstr "Не вдалося розібрати повідомлення WebSocke
 msgid "Failed to pin message"
 msgstr "Не вдалося закріпити повідомлення"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:94
+#: src/components/modals/UserSettingsModal/Security.tsx:133
 msgid "Failed to read your private key"
 msgstr "Не вдалося прочитати Ваш приватний ключ"
 
@@ -1828,7 +1796,7 @@ msgstr "Не вдалося зберегти налаштування спові
 msgid "Failed to save notification settings"
 msgstr "Не вдалося зберегти налаштування сповіщень"
 
-#: src/hooks/business/user/useUserSettings.ts:489
+#: src/hooks/business/user/useUserSettings.ts:504
 #: src/services/ActionQueueHandlers.ts:105
 msgid "Failed to save settings"
 msgstr "Не вдалося зберегти налаштування"
@@ -1841,7 +1809,7 @@ msgstr "Не вдалося зберегти налаштування Прост
 msgid "Failed to send invite. Please try again."
 msgstr "Не вдалося надіслати запрошення. Будь ласка, спробуйте ще раз."
 
-#: src/components/message/Message.tsx:1625
+#: src/components/message/Message.tsx:1629
 msgid "Failed to send."
 msgstr "Не вдалося надіслати."
 
@@ -2089,8 +2057,8 @@ msgstr "Приховати ключ"
 msgid "Hide Muted Channels"
 msgstr "Сховати заглушені канали"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:447
-#: src/components/modals/SpaceSettingsModal/Account.tsx:450
+#: src/components/modals/SpaceSettingsModal/Account.tsx:448
+#: src/components/modals/SpaceSettingsModal/Account.tsx:451
 msgid "Hide muted channels from sidebar"
 msgstr "Приховати вимкнені канали з бічної панелі"
 
@@ -2110,8 +2078,8 @@ msgstr "У мене вже є обліковий запис"
 msgid "I understand"
 msgstr "Я розумію"
 
-#: src/components/message/Message.tsx:974
-#: src/components/message/Message.tsx:1070
+#: src/components/message/Message.tsx:978
+#: src/components/message/Message.tsx:1074
 msgid "I'm new!"
 msgstr "Я новачок!"
 
@@ -2128,7 +2096,7 @@ msgstr ""
 "натисніть, щоб повторно опублікувати його. URL-адреса посилання залишається "
 "незмінною."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:650
+#: src/components/modals/UserSettingsModal/Security.tsx:695
 msgid "Import a backup instead"
 msgstr "Замість цього імпортувати резервну копію"
 
@@ -2148,7 +2116,7 @@ msgstr "Імпортуйте ключ облікового запису"
 msgid "Important messages will be pinned here"
 msgstr "Важливі повідомлення будуть закріплені тут"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:650
+#: src/components/modals/UserSettingsModal/Security.tsx:695
 msgid "Importing..."
 msgstr "Імпорт..."
 
@@ -2156,7 +2124,7 @@ msgstr "Імпорт..."
 msgid "Inline Code"
 msgstr "Вбудований код"
 
-#: src/services/MessageService.ts:4934
+#: src/services/MessageService.ts:4943
 msgid "invalid address for signature"
 msgstr "недійсна адреса для підпису"
 
@@ -2302,20 +2270,12 @@ msgstr ""
 "Ключ повинен містити {ED448_PRIVATE_KEY_HEX_LENGTH} символів "
 "({0}/{ED448_PRIVATE_KEY_HEX_LENGTH})."
 
-#: src/hooks/platform/files/useFileDownload.native.ts:107
-msgid "Key Ready"
-msgstr "Ключ готовий"
-
-#: src/hooks/platform/files/useFileDownload.native.ts:88
-msgid "Key Saved"
-msgstr "Ключ збережено"
-
 #: src/components/modals/UserSettingsModal/Help.tsx:76
 msgid "Keyboard Shortcuts"
 msgstr "Гарячі клавіші"
 
 #: src/components/modals/KickUserModal.tsx:127
-#: src/components/user/UserProfile.tsx:540
+#: src/components/user/UserProfile.tsx:553
 msgid "Kick"
 msgstr "Викинути"
 
@@ -2323,7 +2283,7 @@ msgstr "Викинути"
 msgid "Kick User"
 msgstr "Викинути користувача"
 
-#: src/components/user/UserProfile.tsx:540
+#: src/components/user/UserProfile.tsx:553
 msgid "Kicked!"
 msgstr "Виключено!"
 
@@ -2341,13 +2301,13 @@ msgid "Leave {0}"
 msgstr "Вийти {0}"
 
 #: src/components/modals/LeaveSpaceModal.tsx:69
-#: src/components/modals/SpaceSettingsModal/Account.tsx:481
+#: src/components/modals/SpaceSettingsModal/Account.tsx:482
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:100
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:239
 msgid "Leave Space"
 msgstr "Покинути Простір"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:461
+#: src/components/modals/SpaceSettingsModal/Account.tsx:462
 msgid "Leave this Space"
 msgstr "Залишити цей Простір"
 
@@ -2438,7 +2398,7 @@ msgstr "Зробити роль невидимою"
 msgid "Make role public"
 msgstr "Зробити роль публічною"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:384
+#: src/components/modals/UserSettingsModal/Security.tsx:423
 msgid ""
 "Manage authorized devices, key export, mobile import, and encrypted message "
 "backups."
@@ -2510,9 +2470,9 @@ msgstr "Згадати всіх"
 msgid "Message actions"
 msgstr "Дії з повідомленнями"
 
-#: src/components/message/Message.tsx:990
-#: src/components/message/Message.tsx:1086
-#: src/components/message/Message.tsx:1146
+#: src/components/message/Message.tsx:994
+#: src/components/message/Message.tsx:1090
+#: src/components/message/Message.tsx:1150
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr "Повідомлення не має дійсного підпису, це може бути не від відправника"
@@ -2550,7 +2510,7 @@ msgstr "Більше реакцій"
 msgid "Must be exactly 4 characters"
 msgstr "Повинно бути рівно 4 символи"
 
-#: src/components/user/UserProfile.tsx:520
+#: src/components/user/UserProfile.tsx:533
 msgid "Mute"
 msgstr "Вимкнути звук"
 
@@ -2805,13 +2765,13 @@ msgstr "Користувача не знайдено для @{usernameQuery}."
 msgid "No users found!"
 msgstr "Користувачів не знайдено!"
 
-#: src/components/modals/UserSettingsModal/General.tsx:228
+#: src/components/modals/UserSettingsModal/General.tsx:249
 #: src/components/space/RolePreview.tsx:39
 msgid "None"
 msgstr "Немає"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:122
-#: src/components/user/UserProfile.tsx:421
+#: src/components/user/UserProfile.tsx:434
 msgid "Note"
 msgstr "Нотатка"
 
@@ -2859,7 +2819,7 @@ msgstr "Сповіщення для цього Простіру"
 msgid "Notify all members"
 msgstr "Повідомити всіх учасників"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:348
+#: src/components/modals/SpaceSettingsModal/Account.tsx:349
 msgid "Notify me for:"
 msgstr "Сповіщати мене про:"
 
@@ -2874,12 +2834,6 @@ msgstr ""
 #: src/components/user/UserOnlineStateIndicator.tsx:32
 msgid "Offline"
 msgstr "Офлайн"
-
-#: src/hooks/platform/files/useFileDownload.native.ts:89
-#: src/hooks/platform/files/useFileDownload.native.ts:109
-#: src/hooks/platform/files/useFileDownload.native.ts:128
-msgid "OK"
-msgstr "Гаразд"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:214
 msgid "One-Time"
@@ -2983,11 +2937,11 @@ msgstr "Вставити ключ"
 msgid "Paste your private key"
 msgstr "Вставте Ваш приватний ключ"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:521
+#: src/components/modals/UserSettingsModal/Security.tsx:560
 msgid "Pending"
 msgstr "Очікує"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:507
+#: src/components/modals/UserSettingsModal/Security.tsx:546
 msgid "Pending removal - click Save to confirm"
 msgstr "Очікує на видалення - натисніть Зберегти, щоб підтвердити"
 
@@ -2995,10 +2949,6 @@ msgstr "Очікує на видалення - натисніть Зберегт
 #: src/components/space/RolePreview.tsx:34
 msgid "Permissions:"
 msgstr "Дозволи:"
-
-#: src/hooks/business/user/useFileUpload.native.ts:44
-msgid "Photo Library"
-msgstr "Бібліотека фото"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:340
 msgid "pin"
@@ -3035,15 +2985,15 @@ msgstr "Закріпити повідомлення"
 msgid "Pin/Unpin without confirmation"
 msgstr "Закріпити/зняти закріплення без підтвердження"
 
-#: src/components/message/Message.tsx:943
-#: src/components/message/Message.tsx:1039
-#: src/components/message/Message.tsx:1159
+#: src/components/message/Message.tsx:947
+#: src/components/message/Message.tsx:1043
+#: src/components/message/Message.tsx:1163
 msgid "Pinned"
 msgstr "Закріплено"
 
-#: src/components/message/Message.tsx:942
-#: src/components/message/Message.tsx:1038
-#: src/components/message/Message.tsx:1158
+#: src/components/message/Message.tsx:946
+#: src/components/message/Message.tsx:1042
+#: src/components/message/Message.tsx:1162
 msgid "Pinned by {pinnedByName}"
 msgstr "Закріплено {pinnedByName}"
 
@@ -3051,7 +3001,7 @@ msgstr "Закріплено {pinnedByName}"
 msgid "Pinned Messages"
 msgstr "Закріплені повідомлення"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:744
+#: src/components/modals/UserSettingsModal/Security.tsx:789
 msgid "Preparing download..."
 msgstr "Підготовка до завантаження..."
 
@@ -3059,7 +3009,7 @@ msgstr "Підготовка до завантаження..."
 msgid "Preview"
 msgstr "Попередній перегляд"
 
-#: src/components/modals/UserSettingsModal/General.tsx:248
+#: src/components/modals/UserSettingsModal/General.tsx:269
 msgid "Preview:"
 msgstr "Попередній перегляд:"
 
@@ -3077,7 +3027,7 @@ msgstr "Конфіденційність"
 msgid "Private key (hex)"
 msgstr "Приватний ключ (hex)"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:603
+#: src/components/modals/UserSettingsModal/Security.tsx:642
 msgid ""
 "Private key copied. Quorum will clear it from your clipboard in 60 seconds. "
 "Clipboard history tools keep their own copy, so clear those too."
@@ -3086,17 +3036,13 @@ msgstr ""
 "через 60 секунд. Інструменти історії буфера обміну зберігають власну копію, "
 "тому очистіть їх також."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:604
+#: src/components/modals/UserSettingsModal/Security.tsx:643
 msgid ""
 "Private key copied. Store it securely, then clear your clipboard and your "
 "clipboard history."
 msgstr ""
 "Приватний ключ скопійовано. Зберігайте його безпечно, потім очистіть буфер "
 "обміну та його історію."
-
-#: src/hooks/platform/files/useFileDownload.native.ts:88
-msgid "Private key saved to selected folder"
-msgstr "Приватний ключ збережено в обрану папку"
 
 #: src/components/message/MessageComposer.tsx:776
 msgid "Processing image... This may take a moment for large files."
@@ -3182,7 +3128,7 @@ msgstr "Квитанції про прочитання"
 msgid "Read-only"
 msgstr "Тільки для читання"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:699
+#: src/components/modals/UserSettingsModal/Security.tsx:744
 msgid "Reading your key..."
 msgstr "Читання Вашого ключа..."
 
@@ -3223,7 +3169,7 @@ msgstr ""
 "Перезавантаження зазвичай вирішує проблему. Якщо вона продовжує виникати, "
 "перевірте <0>status.quilibrium.com</0> на наявність оновлень сервісу."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:521
+#: src/components/modals/UserSettingsModal/Security.tsx:560
 msgid "Remove"
 msgstr "Видалити"
 
@@ -3239,11 +3185,11 @@ msgstr "Видалити закладку"
 msgid "Remove from Favorites"
 msgstr "Видалити з обраного"
 
-#: src/components/user/UserProfile.tsx:376
+#: src/components/user/UserProfile.tsx:389
 msgid "Removing..."
 msgstr "Видалення..."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:492
+#: src/components/modals/UserSettingsModal/Security.tsx:531
 msgid "Rename this device"
 msgstr "Перейменувати цей пристрій"
 
@@ -3251,7 +3197,7 @@ msgstr "Перейменувати цей пристрій"
 msgid "Reopen"
 msgstr "Відкрити"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:380
+#: src/components/modals/SpaceSettingsModal/Account.tsx:381
 #: src/components/notifications/NotificationPanel.tsx:124
 msgid "Replies"
 msgstr "Відповіді"
@@ -3350,7 +3296,7 @@ msgstr ""
 
 #. placeholder {0}: result.messagesWritten
 #. placeholder {1}: result.conversationsWritten
-#: src/components/modals/UserSettingsModal/Security.tsx:306
+#: src/components/modals/UserSettingsModal/Security.tsx:345
 msgid "Restored {0} messages and {1} conversations."
 msgstr "Відновлено {0} повідомлень і {1} розмов."
 
@@ -3360,7 +3306,7 @@ msgid "Restored {0} Space(s)"
 msgstr "Відновлено {0} Простір(ів)"
 
 #. placeholder {0}: result.spacesRestored.length
-#: src/components/modals/UserSettingsModal/Security.tsx:310
+#: src/components/modals/UserSettingsModal/Security.tsx:349
 msgid "Restored {0} Spaces."
 msgstr "Відновлено {0} Простірів."
 
@@ -3369,7 +3315,7 @@ msgid "Restoring..."
 msgstr "Відновлення..."
 
 #: src/components/discover-page/DiscoverTab.tsx:89
-#: src/components/message/Message.tsx:1633
+#: src/components/message/Message.tsx:1637
 msgid "Retry"
 msgstr "Спробувати ще раз"
 
@@ -3382,16 +3328,20 @@ msgstr "Ролі"
 msgid "Save"
 msgstr "Зберегти"
 
-#: src/components/message/MessageEditTextarea.tsx:771
+#: src/components/message/MessageEditTextarea.tsx:828
 msgid "SAVE"
 msgstr "ЗБЕРЕГТИ"
+
+#: src/components/modals/UserSettingsModal/BackupStatus.tsx:94
+msgid "Save a backup"
+msgstr "Зберегти резервну копію"
 
 #: src/components/modals/ChannelEditorModal.tsx:216
 #: src/components/modals/FolderEditorModal.tsx:110
 #: src/components/modals/GroupEditorModal.tsx:97
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:779
 #: src/components/modals/ThreadSettingsModal.tsx:184
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:375
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:406
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Зберегти зміни"
@@ -3402,13 +3352,9 @@ msgid "Save Edit History"
 msgstr "Зберегти історію редагувань"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:764
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:364
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:395
 msgid "Save Failed"
 msgstr "Не вдалося зберегти"
-
-#: src/hooks/platform/files/useFileDownload.native.ts:99
-msgid "Save Private Key"
-msgstr "Зберегти приватний ключ"
 
 #: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:31
 msgid "Save to Passkey"
@@ -3446,11 +3392,11 @@ msgstr "Шукати емодзі..."
 msgid "Search failed: {0}"
 msgstr "Пошук не вдався: {0}"
 
-#: src/hooks/useSearchContext.native.ts:98 src/hooks/useSearchContext.ts:90
+#: src/hooks/useSearchContext.ts:90
 msgid "Search here"
 msgstr "Шукайте тут"
 
-#: src/hooks/useSearchContext.native.ts:96 src/hooks/useSearchContext.ts:88
+#: src/hooks/useSearchContext.ts:88
 msgid "Search in this Space"
 msgstr "Пошук у цьому Просторі"
 
@@ -3500,7 +3446,7 @@ msgid "Searching..."
 msgstr "Шукаю..."
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:20
-#: src/components/modals/UserSettingsModal/Security.tsx:381
+#: src/components/modals/UserSettingsModal/Security.tsx:420
 msgid "Security"
 msgstr "Безпека"
 
@@ -3518,17 +3464,13 @@ msgstr ""
 msgid "See all bookmarks"
 msgstr "Переглянути всі маркери"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:357
+#: src/components/modals/SpaceSettingsModal/Account.tsx:358
 msgid "Select"
 msgstr "Вибрати"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:161
 msgid "Select permissions"
 msgstr "Вибрати дозволи"
-
-#: src/hooks/business/user/useFileUpload.native.ts:36
-msgid "Select Profile Image"
-msgstr "Вибрати зображення профілю"
 
 #: src/components/modals/ChannelEditorModal.tsx:204
 msgid "Select Roles"
@@ -3562,7 +3504,7 @@ msgstr "Надіслати запрошення"
 msgid "Send Link"
 msgstr "Надіслати посилання"
 
-#: src/components/user/UserProfile.tsx:468
+#: src/components/user/UserProfile.tsx:481
 msgid "Send Message"
 msgstr "Надіслати повідомлення"
 
@@ -3572,7 +3514,7 @@ msgstr "Надіслати повідомлення"
 msgid "Send via DM"
 msgstr "Надіслати через особисте повідомлення"
 
-#: src/components/message/Message.tsx:1618
+#: src/components/message/Message.tsx:1622
 msgid "Sending..."
 msgstr "Надсилається..."
 
@@ -3610,7 +3552,7 @@ msgstr ""
 msgid "Shift + Click"
 msgstr "Shift + Click"
 
-#: src/components/message/MessageEditTextarea.tsx:773
+#: src/components/message/MessageEditTextarea.tsx:830
 msgid "Shift+Enter for new line"
 msgstr "Shift+Enter для нового рядка"
 
@@ -3640,12 +3582,12 @@ msgstr "Показати заглушені канали"
 msgid "Show Online Status"
 msgstr "Показати онлайн-статус"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:270
-#: src/components/modals/UserSettingsModal/Security.tsx:581
+#: src/components/modals/UserSettingsModal/Security.tsx:309
+#: src/components/modals/UserSettingsModal/Security.tsx:620
 msgid "Show QR"
 msgstr "Показати QR"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:268
+#: src/components/modals/UserSettingsModal/Security.tsx:307
 msgid "Show your private key as a QR code?"
 msgstr "Показати Ваш приватний ключ як QR-код?"
 
@@ -3674,7 +3616,7 @@ msgstr "Увійти в Quorum"
 msgid "Skip for now"
 msgstr "Пропустити зараз"
 
-#: src/services/MessageService.ts:6510
+#: src/services/MessageService.ts:6515
 msgid "Someone"
 msgstr "Хтось"
 
@@ -3700,7 +3642,7 @@ msgstr "Опис Простору"
 msgid "Space ID"
 msgstr "Ідентифікатор Простору"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:348
+#: src/components/modals/UserSettingsModal/Security.tsx:387
 msgid ""
 "Space message history is not included in backups; it syncs from other "
 "members."
@@ -3746,7 +3688,7 @@ msgstr "Налаштування Простору"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:40
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:53
-#: src/components/modals/UserSettingsModal/General.tsx:218
+#: src/components/modals/UserSettingsModal/General.tsx:239
 msgid "Space Tag"
 msgstr "Мітка Простору"
 
@@ -3806,13 +3748,19 @@ msgstr ""
 "Синхронізація не вдається: сервер відхилив Ваші налаштування. Ваші зміни "
 "збережено на цьому пристрої."
 
+#: src/components/modals/UserSettingsModal/BackupStatus.tsx:87
+msgid ""
+"Sync is off, so this device holds the only copy of your messages and Spaces."
+" A backup file is the only way to get them back if this browser loses its "
+"data."
+msgstr ""
+"Синхронізація вимкнена, тому цей пристрій містить єдину копію Ваших "
+"повідомлень та Просторів. Файл резервної копії — це єдиний спосіб відновити "
+"їх, якщо цей браузер втратить свої дані."
+
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:591
 msgid "Sync Kick Status"
 msgstr "Синхронізувати статус виключення"
-
-#: src/services/SyncService.ts:488
-msgid "Syncing..."
-msgstr "Синхронізація..."
 
 #: src/components/ui/ThemeRadioGroup.tsx:29
 #: src/components/ui/ThemeRadioGroup.tsx:31
@@ -3823,15 +3771,11 @@ msgstr "Система"
 msgid "Tag Image"
 msgstr "Зображення мітки"
 
-#: src/components/ui/ClickToCopyContent.native.tsx:55
-msgid "Tap to copy"
-msgstr "Натисніть, щоб скопіювати"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:275
 msgid "Tell people about yourself in this Space..."
 msgstr "Розкажіть людям про себе в цьому Просторі..."
 
-#: src/components/modals/UserSettingsModal/General.tsx:168
+#: src/components/modals/UserSettingsModal/General.tsx:189
 msgid "Tell us about yourself..."
 msgstr "Розкажіть нам про себе..."
 
@@ -3864,7 +3808,7 @@ msgstr ""
 " на цьому пристрої, тому будь-хто, хто може читати його файли, може отримати"
 " доступ до Вашого облікового запису."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:337
+#: src/components/modals/UserSettingsModal/Security.tsx:376
 msgid ""
 "This backup is inconsistent: it reports Space keys but contains no Space "
 "list, so Spaces could not be restored."
@@ -3872,7 +3816,7 @@ msgstr ""
 "Ця резервна копія непослідовна: вона повідомляє про ключі Простіру, але не "
 "містить списку Простірів, тому Простіри не вдалося відновити."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:344
+#: src/components/modals/UserSettingsModal/Security.tsx:383
 msgid ""
 "This backup was made by an older version and contains no Space keys, so "
 "Spaces could not be restored. Export a fresh backup to protect them."
@@ -3881,7 +3825,7 @@ msgstr ""
 " тому Простіри не вдалося відновити. Експортуйте нову резервну копію, щоб "
 "захистити їх."
 
-#: src/components/modals/UserSettingsModal/General.tsx:160
+#: src/components/modals/UserSettingsModal/General.tsx:181
 msgid "This bio will be visible to others when they view your profile."
 msgstr "Це біо буде видимим для інших, коли вони переглядатимуть ваш профіль."
 
@@ -3911,11 +3855,11 @@ msgstr ""
 "Цей опис буде видимий у запрошеннях і показаний людям, коли вони шукають або"
 " приєднуються до вашого Простору за допомогою посилання для запрошення."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:530
+#: src/components/modals/UserSettingsModal/Security.tsx:569
 msgid "This device"
 msgstr "Цей пристрій"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:192
+#: src/components/modals/UserSettingsModal/Security.tsx:231
 msgid ""
 "This file contains your direct message history and the keys to your Spaces, including ownership of any you created. Only this account can open it.\n"
 "\n"
@@ -3925,7 +3869,7 @@ msgstr ""
 "\n"
 "Історія повідомлень Простіру не включається. Вона синхронізується з іншими учасниками."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:727
+#: src/components/modals/UserSettingsModal/Security.tsx:772
 msgid "This hides itself after 60 seconds."
 msgstr "Це приховується через 60 секунд."
 
@@ -3949,7 +3893,7 @@ msgstr ""
 "Це канал за замовчуванням для Простору. Щоб змінити його, перейдіть до "
 "налаштувань Простору → Загальні."
 
-#: src/components/modals/UserSettingsModal/General.tsx:196
+#: src/components/modals/UserSettingsModal/General.tsx:217
 msgid ""
 "This is your public address and is safe to share with anyone you want to "
 "interact with."
@@ -3989,7 +3933,7 @@ msgstr "Цю сторінку не вдалося завантажити"
 msgid "This public invite link is no longer valid."
 msgstr "Це публічне посилання запрошення більше не дійсне."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:250
+#: src/components/modals/UserSettingsModal/Security.tsx:289
 msgid ""
 "This puts your account's private key on the clipboard in plain text. Anyone who can read your clipboard can take full control of your account.\n"
 "\n"
@@ -3999,7 +3943,7 @@ msgstr ""
 "\n"
 "Історія буфера обміну та інструменти синхронізації зберігають власну копію, яку Quorum не може очистити. Вставте її в безпечне місце, потім очистіть буфер обміну та його історію."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:224
+#: src/components/modals/UserSettingsModal/Security.tsx:263
 msgid ""
 "This saves your account's private key to your device as an unencrypted text file, named after your account address.\n"
 "\n"
@@ -4108,7 +4052,6 @@ msgstr "Теми"
 msgid "Timeout in 10 seconds anyway..."
 msgstr "Тайм-аут через 10 секунд будь-як..."
 
-#: src/components/modals/ConfirmationModal.native.tsx:58
 #: src/components/modals/ConfirmationModal.tsx:92
 msgid ""
 "TIP: Hold down shift when clicking {protipAction} to bypass this "
@@ -4224,10 +4167,6 @@ msgstr ""
 "Не вдалося стиснути зображення наліпок. Будь ласка, використовуйте менші "
 "зображення."
 
-#: src/components/ui/ClickToCopyContent.native.tsx:166
-msgid "Unable to copy to clipboard"
-msgstr "Не вдалося скопіювати в буфер обміну"
-
 #: src/services/SpaceService.ts:574
 msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
@@ -4266,7 +4205,7 @@ msgid "Unable to restore: not logged in"
 msgstr "Не вдалося відновити: не увійшли в систему"
 
 #: src/components/modals/BlockUserModal.tsx:114
-#: src/components/user/UserProfile.tsx:498
+#: src/components/user/UserProfile.tsx:511
 msgid "Unblock"
 msgstr "Розблокувати"
 
@@ -4276,7 +4215,7 @@ msgstr "Розблокувати користувача"
 
 #: src/components/direct/DirectMessageContactsList.tsx:490
 #: src/components/modals/JoinSpaceModal.tsx:110
-#: src/services/MessageService.ts:4260 src/services/MessageService.ts:6409
+#: src/services/MessageService.ts:4260 src/services/MessageService.ts:6414
 msgid "Unknown"
 msgstr "Невідомо"
 
@@ -4290,24 +4229,24 @@ msgid "Unknown time"
 msgstr "Невідомий час"
 
 #: src/components/direct/DirectMessageContactsList.tsx:53
-#: src/components/message/MessageEditTextarea.tsx:556
-#: src/components/message/MessageEditTextarea.tsx:588
-#: src/components/message/MessageEditTextarea.tsx:595
-#: src/components/message/MessageEditTextarea.tsx:599
-#: src/components/message/MessageEditTextarea.tsx:605
+#: src/components/message/MessageEditTextarea.tsx:613
+#: src/components/message/MessageEditTextarea.tsx:645
+#: src/components/message/MessageEditTextarea.tsx:652
+#: src/components/message/MessageEditTextarea.tsx:656
+#: src/components/message/MessageEditTextarea.tsx:662
 #: src/components/modals/NewDirectMessageModal.tsx:78
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:204 src/services/MessageService.ts:3652
 #: src/services/MessageService.ts:3847 src/services/MessageService.ts:4115
-#: src/services/MessageService.ts:4219 src/services/MessageService.ts:6984
-#: src/services/MessageService.ts:7100 src/services/MessageService.ts:7185
-#: src/services/MessageService.ts:7407 src/services/MessageService.ts:7609
+#: src/services/MessageService.ts:4219 src/services/MessageService.ts:6989
+#: src/services/MessageService.ts:7105 src/services/MessageService.ts:7190
+#: src/services/MessageService.ts:7412 src/services/MessageService.ts:7614
 #: src/utils/identityPlaceholder.ts:47
 msgid "Unknown User"
 msgstr "Невідомий користувач"
 
 #: src/components/modals/MuteUserModal.tsx:157
-#: src/components/user/UserProfile.tsx:520
+#: src/components/user/UserProfile.tsx:533
 msgid "Unmute"
 msgstr "Увімкнути звук"
 
@@ -4377,7 +4316,7 @@ msgstr ""
 "Завантажте аватар для цього Простору - PNG або JPG - Оптимальне "
 "співвідношення 1:1"
 
-#: src/components/modals/UserSettingsModal/General.tsx:118
+#: src/components/modals/UserSettingsModal/General.tsx:125
 msgid "Upload an avatar for your profile - PNG or JPG - Optimal ratio 1:1"
 msgstr ""
 "Завантажте аватар для вашого профілю - PNG або JPG - Оптимальне "
@@ -4405,10 +4344,6 @@ msgstr "Завантажити зображення"
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:62
 msgid "Upload Sticker"
 msgstr "Завантажити стікер"
-
-#: src/hooks/platform/files/useFileDownload.native.ts:108
-msgid "Use \"Save to Files\" to save your private key"
-msgstr "Використовуйте \"Зберегти в файлах\", щоб зберегти свій приватний ключ"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:219
 #: src/components/modals/SpaceSettingsModal/Account.tsx:227
@@ -4603,19 +4538,19 @@ msgstr ""
 "Якщо увімкнено, ваші контакти у особистих повідомленнях бачатимуть, коли ви "
 "набираєте текст, і ви бачите, коли вони набирають."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:370
+#: src/components/modals/SpaceSettingsModal/Account.tsx:371
 msgid "When someone mentions @everyone"
 msgstr "Коли хтось згадує @everyone"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:375
+#: src/components/modals/SpaceSettingsModal/Account.tsx:376
 msgid "When someone mentions a role you have"
 msgstr "Коли хтось згадує роль, яку ви маєте"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:365
+#: src/components/modals/SpaceSettingsModal/Account.tsx:366
 msgid "When someone mentions you directly"
 msgstr "Коли хтось згадує вас безпосередньо"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:381
+#: src/components/modals/SpaceSettingsModal/Account.tsx:382
 msgid "When someone replies to your messages"
 msgstr "Коли хтось відповідає на ваші повідомлення"
 
@@ -4760,7 +4695,7 @@ msgstr ""
 "впливає лише на Ваш перегляд, і лише в цьому Просторі. Ви можете "
 "розблокувати в будь-який час."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:467
+#: src/components/modals/SpaceSettingsModal/Account.tsx:468
 msgid ""
 "You'll need an invite to rejoin, though a public invite link will still work"
 " if this Space has one. Your existing messages will NOT be deleted."
@@ -4893,11 +4828,11 @@ msgstr ""
 msgid "Your next message will establish a fresh secure connection."
 msgstr "Ваше наступне повідомлення встановить нове безпечне з'єднання."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:713
+#: src/components/modals/UserSettingsModal/Security.tsx:758
 msgid "Your private key"
 msgstr "Ваш приватний ключ"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:545
+#: src/components/modals/UserSettingsModal/Security.tsx:584
 msgid ""
 "Your private key is the only proof of ownership of your account. Anyone who "
 "has it can impersonate you and steal your Space's Apex earnings. Never share"
@@ -4915,7 +4850,7 @@ msgstr ""
 "Розмір вашого зображення профілю має бути {maxSize} або менше і має бути у "
 "форматі PNG, JPG або JPEG."
 
-#: src/components/modals/UserSettingsModal/General.tsx:139
+#: src/components/modals/UserSettingsModal/General.tsx:146
 msgid "Your QNS name <0>{primaryUsername}.q</0> is shown as your name."
 msgstr "Ваше ім'я QNS <0>{primaryUsername}.q</0> відображається як Ваше ім'я."
 
@@ -4934,6 +4869,12 @@ msgstr "Відео YouTube"
 #: src/components/ui/YouTubeFacade.tsx:114
 msgid "YouTube Video Thumbnail"
 msgstr "Мініатюра відео YouTube"
+
+#~ msgid "Failed to process image"
+#~ msgstr "Не вдалося обробити зображення"
+
+#~ msgid "Replying to {user}"
+#~ msgstr "Відповідаю {user}"
 
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} маркери тут"
@@ -4961,6 +4902,18 @@ msgstr "Мініатюра відео YouTube"
 #~ "Ви впевнені, що хочете покинути цей Простір? Ви не зможете приєднатися "
 #~ "знову, якщо вас не запросять знову."
 
+#~ msgid "Backup Failed"
+#~ msgstr "Резервне копіювання не вдалося"
+
+#~ msgid "Camera"
+#~ msgstr "Камера"
+
+#~ msgid "Choose how you'd like to add your profile image"
+#~ msgstr "Виберіть, як ви хочете додати своє зображення профілю"
+
+#~ msgid "Copy Failed"
+#~ msgstr "Копіювання не вдалося"
+
 #~ msgid "Display Name"
 #~ msgstr "Ім'я для відображення"
 
@@ -4980,6 +4933,15 @@ msgstr "Мініатюра відео YouTube"
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Я розумію, показати QR"
 
+#~ msgid "Key Ready"
+#~ msgstr "Ключ готовий"
+
+#~ msgid "Key Saved"
+#~ msgstr "Ключ збережено"
+
+#~ msgid "OK"
+#~ msgstr "Гаразд"
+
 #~ msgid ""
 #~ "Passkey setup failed. You can try again, or continue without Passkey (still "
 #~ "secure, just without device hardware protection)."
@@ -4993,6 +4955,9 @@ msgstr "Мініатюра відео YouTube"
 #~ msgstr ""
 #~ "Passkey не підтримуються цим браузером. Ви зможете продовжити без passkey "
 #~ "(все одно захищено, просто без апаратного захисту пристрою)."
+
+#~ msgid "Photo Library"
+#~ msgstr "Бібліотека фото"
 
 #~ msgid "Pinned by {0}"
 #~ msgstr "Закріплено {0}"
@@ -5011,6 +4976,9 @@ msgstr "Мініатюра відео YouTube"
 #~ "Приватний ключ скопійовано. Зберігайте його надійно та очистіть буфер "
 #~ "обміну, коли закінчите."
 
+#~ msgid "Private key saved to selected folder"
+#~ msgstr "Приватний ключ збережено в обрану папку"
+
 #~ msgid "QR code will auto-hide in 60 seconds"
 #~ msgstr "QR-код автоматично сховається через 60 секунд"
 
@@ -5023,6 +4991,18 @@ msgstr "Мініатюра відео YouTube"
 #~ msgstr ""
 #~ "Скиньте сеанс шифрування, якщо повідомлення не надсилаються або не "
 #~ "розшифровуються. Наступне повідомлення встановить нове безпечне з’єднання."
+
+#~ msgid "Save Private Key"
+#~ msgstr "Зберегти приватний ключ"
+
+#~ msgid "Select Profile Image"
+#~ msgstr "Вибрати зображення профілю"
+
+#~ msgid "Syncing..."
+#~ msgstr "Синхронізація..."
+
+#~ msgid "Tap to copy"
+#~ msgstr "Натисніть, щоб скопіювати"
 
 #~ msgid ""
 #~ "The passkey setup timed out. You can try again, or continue without Passkey "
@@ -5063,10 +5043,16 @@ msgstr "Мініатюра відео YouTube"
 #~ msgid "Type DELETE to confirm"
 #~ msgstr "Введіть DELETE, щоб підтвердити"
 
+#~ msgid "Unable to copy to clipboard"
+#~ msgstr "Не вдалося скопіювати в буфер обміну"
+
 #~ msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
 #~ msgstr ""
 #~ "Завантажте банер для вашого простору - PNG або JPG - Оптимальне "
 #~ "співвідношення 3:1"
+
+#~ msgid "Use \"Save to Files\" to save your private key"
+#~ msgstr "Використовуйте \"Зберегти в файлах\", щоб зберегти свій приватний ключ"
 
 #~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 #~ msgstr ""
