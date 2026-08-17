@@ -15,6 +15,48 @@ related_docs:
 
 # Every logger call is a no-op in production builds
 
+## Status
+
+**2026-08-17 — partially shipped in PR #349** (`feat: make the logger's
+production escape hatch reachable`), with quorum-shared PR #82.
+
+What landed: `window.quorumLogger` with `enable`/`disable`/`status`, which makes
+the escape hatch the original author designed actually reachable. §4b explains
+why a narrow wrapper rather than exposing `logger`, whose `enable()` would
+re-arm the plaintext-printing `log` tier. Two independent guarantees, each
+mutation-verified with its own test: `minLevel: 'warn'` keeps `log`/`debug`
+dark, and `redact: true` strips engine-echoed plaintext.
+
+`enable()` also refuses to turn on at all if it detects the linked
+quorum-shared build cannot redact — desktop depends on it via
+`link:../quorum-shared`, a filesystem link to a hand-built sibling whose `dist/`
+is gitignored, and a stale one silently ignores `redact` while the message
+still promises "content excluded". It pushes a canary through the real logger
+rather than trusting a version string.
+
+The blocking prerequisite is closed: see
+`.done/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md`.
+
+**Still open — this is why the issue stays here.**
+
+- **Option 2 is the one that matters for real users and is NOT done.** What
+  shipped requires opening devtools and typing a command, so it serves a
+  developer or a screen-share, not the ordinary user whose report you actually
+  want. A "collect diagnostics" toggle with an in-memory buffer and an export is
+  still the only route that produces a report from someone who will never open a
+  console. Note the extra bar it carries: an exported file LEAVES the machine,
+  unlike console output, so the plaintext sites at `MessageService.ts` must be
+  redacted or excluded from the buffer before it ships.
+- **Option 3 (counters in the DB Inspector)** untouched.
+- **No CI backstop on message strings.** Redaction covers `Error` objects at the
+  choke point, so it cannot be forgotten per-call-site — but a future
+  `logger.warn('body: ' + plaintext)` interpolates into the message string,
+  which nothing strips. Not present today (checked), unenforced tomorrow.
+- **Not verified in production:** that an app log line appears at `warn` and not
+  at `log`. Reaching those paths needs a logged-in session. Covered by unit
+  tests and mutation against the same source that is bundled, but not observed
+  in the built artifact.
+
 ## §1. The finding
 
 `quorum-shared/src/utils/logger.ts` decides once, at module load, whether

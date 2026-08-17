@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A failing decrypt leaks the first 10 characters of the plaintext into the error message, which is then logged"
-status: open
+status: done
 priority: medium
 created: 2026-08-17
 updated: 2026-08-17
@@ -14,6 +14,34 @@ related_docs:
 ---
 
 # A failing decrypt leaks 10 characters of plaintext into the error message
+
+## Status
+
+**2026-08-17 — shipped in PR #349** (`feat: make the logger's production escape
+hatch reachable`), with the redaction itself in quorum-shared PR #82.
+
+What landed: redaction moved to `createLogMethod` in quorum-shared, the one
+choke point every log call in every client passes through. Fixing the call
+sites instead would have been a 32-file diff here (89 sites forward an error
+object) that still would not have covered site 90, nor quorum-mobile, which
+consumes the same SDK and has the same leak. `redact` defaults to false, so
+local development keeps full-fidelity errors; only a production route turns it
+on.
+
+Review found the first version still leaked, and all three reviewers reproduced
+it independently: a lazy `/"[^"]*"/` pairs delimiters wrongly when the echoed
+excerpt contains its own quote, so `He "LEAKME" and more` came out as
+`<redacted>LEAKME<redacted>`. Dialogue and scare-quotes are ordinary in real
+messages. The `'leaks nothing regardless of what the plaintext starts with'`
+test varied four openings and used a quote in none of them. Also fixed: the
+walk stopped at depth 1 and bailed **before** walking a container found there,
+so `{ errors: [err] }` leaked in full; `instanceof Error` missed cross-realm
+errors and `DOMException`; stack traces were dropped; and a throwing getter
+propagated out of `logger.error` into the caller's `catch`.
+
+§5's requirement is met: 17 tests on the logger, each fix mutation-verified
+separately, with a control arm asserting single-quoted identifiers survive so
+redaction cannot quietly destroy the diagnostics it exists to protect.
 
 ## §1. The finding
 

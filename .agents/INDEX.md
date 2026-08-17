@@ -271,7 +271,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [The two default user configs disagree on which fields exist](issues/.open/2026-08-07-the-two-default-user-configs-disagree-on-which-fields-exist.md)
 - 🐛 [Generating a public invite link never reaches existing members](issues/.open/2026-08-11-public-invite-link-never-reaches-existing-members.md)
 - 🐛 [The Account Key warning names the smallest loss, not the largest](issues/.open/2026-08-14-security-tab-key-warning-understates-wallet-access.md)
-- 🐛 [A failing decrypt leaks 10 characters of plaintext into the error message](issues/.open/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -402,6 +401,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [Four typography classes have no working colour](issues/.done/2026-08-12-typography-classes-have-no-working-colour.md)
 - 🐛 [Mute/Block/Kick confirmations show no avatar when the profile card was opened from a mention pill](issues/.done/2026-08-16-moderation-confirmations-show-no-avatar-from-a-mention-pill.md)
 - 🐛 [The profile card's Kick button state came from the click payload](issues/.done/2026-08-16-profile-card-entry-point-parity.md)
+- 🐛 [A failing decrypt leaks 10 characters of plaintext into the error message](issues/.done/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -798,4 +798,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-17 12:35:39
+**Last Updated**: 2026-08-17 13:21:26

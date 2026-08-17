@@ -19,7 +19,7 @@ updated: 2026-08-17
 | # | Issue | Why it matters |
 |---|-------|----------------|
 | 1 | [Safari wipes all IndexedDB after 7 idle days](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md) | Permanent loss of DM history and ratchet state for Safari users on the live site. Unverified against a real browser, so the reproduction IS step one. |
-| 2 | [Production builds discard logger.warn and logger.error](issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md) | Every "fail open and log" path produces zero signal in the build users run. Now also the gate on two other items: #346 added a forced-close warning that currently reaches nobody. |
+| 2 | [Production diagnostics reach a developer, not an ordinary user](issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md) | Half done. PR #349 shipped `quorumLogger.enable()`, so warn/error can now be read in a production build — but only by someone willing to open devtools. The remaining piece (Option 2: a diagnostics toggle with an export) is the only route that gets a report from a user who never will. |
 | 3 | [A reconnecting client starves control-message processing](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md) | Sync requests expire unread, so a new joiner is answered by nobody. Already confirmed in the harness with the failing line captured, so it is ready to fix. |
 | 4 | [The config upload has no size guard and fails silently](issues/.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md) | No client measures the payload before sending. A config save can fail with the user believing it succeeded. |
 | 5 | [Config sync space loss race condition](issues/.open/2026-01-09-config-sync-space-loss-race-condition.md) | Spaces can be lost outright. Filed January and never actioned; still reads as a data-loss path. |
@@ -35,7 +35,7 @@ updated: 2026-08-17
 
 ### Blocked
 
-- [A DB call landing mid-close still fails once](issues/.open/2026-08-17-a-db-call-landing-mid-close-still-fails-once.md) — deliberately gated on evidence, not queued. The fix is 104 hand-edits across the storage layer to remove a brief self-healing hiccup; #346 added the log line that can say whether forced closes reach real users at all, once row 2 above lands.
+- [A DB call landing mid-close still fails once](issues/.open/2026-08-17-a-db-call-landing-mid-close-still-fails-once.md) — deliberately gated on evidence, not queued. The fix is 104 hand-edits across the storage layer to remove a brief self-healing hiccup; #346 added the log line that can say whether forced closes reach real users at all. PR #349 made that line readable in a production build, but only via `quorumLogger.enable()` in devtools, so the evidence still has to be collected deliberately rather than arriving on its own.
 - [Security tab key warning understates what the key controls](issues/.open/2026-08-14-security-tab-key-warning-understates-wallet-access.md) — two product decisions: whether desktop should name wallets while the wallet UI is mobile-only, and whether the copy should branch on account origin.
 - [Pre-existing key-handling items for the lead](issues/.open/2026-08-12-pre-existing-key-handling-items-for-the-lead.md) — five findings sharing one owner and one decision.
 - [Privacy level presets](issues/.open/2026-08-10-privacy-level-presets-design.md) — designed and approved, blocked on mobile toggle parity. One prerequisite filed, one not.
