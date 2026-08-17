@@ -155,9 +155,22 @@ Firefox users; it does not rescue the Safari tab case.** Only installing does.
 **The practical consequence of the `allowSync` gate.** The population most
 exposed to this bug is not the one the table originally implied. A sync-off user
 — the default — loses *everything* local to an eviction: DMs **and** Spaces
-**and** profile. Whatever share of Safari web users that is, they are strictly
-worse off than this issue first described, and M2 (steer them to install) matters
-more for them than for anyone else.
+**and** profile. The server is holding nothing for them.
+
+**Their one protection is a `.qmbak` file**, and since PR #324 it is a real one:
+the export reads the `space_keys` and `spaces` stores directly rather than the
+sync-only `user_config.spaceKeys` snapshot, so a sync-off backup carries the
+Space keys — including `owner` — that it previously omitted. See M1 for the
+measured coverage. That makes the ordering here:
+
+1. **M2 (install)** — the only mitigation that stops the wipe happening.
+2. **M4 (prompt for a backup)** — the only thing that helps a user it already
+   happened to, and now unblocked.
+3. Everything else softens the edges.
+
+`allowSync` stays **off** by default (product decision, 2026-08-17). This issue
+should not propose flipping it; it should assume sync-off is the norm and make
+the backup path carry the weight.
 
 The existing [User Data Backup & Restore](../../docs/features/user-data-backup.md)
 doc already names this class of loss: *"scenarios where DM data is permanently
@@ -209,18 +222,41 @@ end to end is part of Verification below.
 
 Ordered by ratio of user protection to effort.
 
-### M1 — Make `.qmbak` able to restore DM sessions → **split out**
+### M1 — ~~Make `.qmbak` able to restore DM sessions~~ → **RESOLVED, and the answer was "no"**
 
-> **Corrected 2026-08-05.** An earlier draft of this issue described this as a
-> small conditional-import fix. That was wrong. The export is missing
-> `inbox_mapping` and `latest_states`, the ratchet blob is opaque so send and
-> receive chains cannot be separated at the app layer, and naively restoring a
-> rewound sending chain risks message-key reuse. It needs SDK input.
+> **Superseded 2026-08-17.** This mitigation is closed. Both of its premises have
+> moved, and the earlier text here — plus its link to a since-archived issue —
+> was sending readers to the wrong conclusion.
 
-Tracked separately as
-[2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md](2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md).
-It is **independent of ITP** — it applies equally to cache clears, device resets
-and new devices — so it should not block or be blocked by the mitigations below.
+**What was decided.** Restoring DM ratchet state is now deliberately **never**
+done, rather than done carefully. Rewinding a sending chain risks message-key
+reuse, and the overhaul chose to remove that hazard instead of managing it
+(slice 4 of [the backup/restore overhaul](2026-08-09-backup-restore-overhaul-design.md),
+which **supersedes** the old split-out issue, now at
+`.agents/issues/.archived/2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md`).
+
+**What shipped instead (PR #324).** The export stopped reading the
+`user_config.spaceKeys` snapshot — empty for a sync-off user — and now reads the
+`spaces` and `space_keys` stores directly. So a backup carries the Space key
+material it always claimed to, **regardless of `allowSync`**.
+
+**Verified 2026-08-17** by running the suites, not by reading them: 36 tests pass
+across `backupSpaceKeyCoverage.test.ts` and `backupSpaceRestore.test.ts`,
+including `restores a Space onto a wiped device`, which throws the database away
+and asserts the `owner` **private key** comes back from the file. A live-relay
+restore is covered by `space-kick.scenario.test.ts`, whose control arm confirms a
+Space does rebuild for a user who was never kicked.
+
+**So, for a sync-off user holding a backup:**
+
+| | Restored from `.qmbak`? |
+|---|---|
+| Spaces, Space keys (incl. `owner`), profile | ✅ |
+| DM message history, conversations | ✅ |
+| DM Double Ratchet sessions | ❌ **by design** — conversations resume on a fresh session |
+
+The residual is no longer a missing capability. It is that **taking a backup is
+manual**, which is M4.
 
 ### M2 — Warn Safari users and steer them to install → **specced separately**
 
@@ -235,7 +271,7 @@ desktop equivalent of Add to Home Screen and grants the same ITP exemption.
 Three things found while speccing it that belong here:
 
 - **Install is gated on an unverified assumption.** Nobody has confirmed that passkey auth (`navigator.credentials.get()` + `largeBlob`) works inside an iOS standalone web app. If it does not, this mitigation collapses and this bug needs a different answer. That check is Phase 0 of the install task and should run before anything else here.
-- **Installing does not carry the user's data across.** An iOS Home Screen web app gets a **separate storage partition** from Safari: no shared IndexedDB, localStorage, cookies or service worker. So telling a Safari-tab user to install means telling them to start with an empty database and leave their DM history behind in the tab. The handoff is export `.qmbak` → import in the installed app, which routes this bug straight through [the backup issue](2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md) and its session-continuity gap. **The two issues are less independent than originally filed.** (Whether macOS Add to Dock partitions the same way is unverified, and desktop users are the ones likeliest to have the most history to lose.)
+- **Installing does not carry the user's data across.** An iOS Home Screen web app gets a **separate storage partition** from Safari: no shared IndexedDB, localStorage, cookies or service worker. So telling a Safari-tab user to install means telling them to start with an empty database and leave their history behind in the tab. The handoff is export `.qmbak` → import in the installed app. **Updated 2026-08-17:** that handoff now works for everything except DM session continuity — Spaces, keys and history all cross over (see M1), and existing conversations resume on a fresh session. So install advice is safe to give provided it is paired with "export a backup first", which is not optional here: without the file, a sync-off user who installs starts from nothing. (Whether macOS Add to Dock partitions the same way is unverified, and desktop users are the ones likeliest to have the most history to lose.)
 - **The install advice is only safe if the origin never changes.** Passkeys are scoped to `app.quorummessenger.com` (the SDK omits `rp.id`, so WebAuthn defaults it to the calling origin's effective domain), and IndexedDB is keyed by origin. The QStorage hosting migration must therefore change only what sits *behind* that hostname. If the URL changes, every passkey stops working and every local database is orphaned at once — and an installed web app is pinned to its origin too, so everyone who followed this advice would be stranded. Full detail in the install task under "Blocking constraints".
 
 ### M3 — Call `navigator.storage.persist()` on startup (code, trivial)
@@ -244,14 +280,28 @@ Genuinely protects Chrome and Firefox users against quota-pressure eviction, and
 succeeds on Safari once the app is installed. Log the result so we can see, in the
 field, how often it is granted.
 
-### M4 — Prompt for a backup on a schedule (UX, medium)
+### M4 — Prompt for a backup on a schedule (UX, medium) → **UNBLOCKED, and now the highest-value unbuilt item**
 
 The `.qmbak` export exists but is manual and buried in Settings → Privacy/Security.
 A periodic nudge (or an automatic export to the Downloads folder in Electron)
-converts it from a feature nobody uses into an actual safety net. **Blocked on
-[the backup issue](2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md)** —
-prompting users to take a backup that cannot fully restore would manufacture
-exactly the false confidence that issue is about.
+converts it from a feature nobody uses into an actual safety net.
+
+> **Unblocked 2026-08-17.** This was previously held back on the grounds that
+> "prompting users to take a backup that cannot fully restore would manufacture
+> false confidence". That reasoning no longer applies: since PR #324 a backup
+> restores Spaces, Space keys and DM history, for sync-off users too (M1). The
+> only thing it does not restore is DM session continuity, and that is a
+> deliberate decision rather than a shortfall, so a prompt is no longer promising
+> something the file cannot deliver.
+
+**With `allowSync` staying off by default, this is the only protection a default
+user has.** The server holds nothing for them: no profile, no Spaces, no keys. A
+`.qmbak` file is the entire safety net, and today it only exists if the user went
+looking for it. The honest framing for any prompt is therefore "this is your only
+copy", not "extra safety".
+
+Copy should not over-promise: a restore brings back history and Spaces, and
+existing DM conversations continue on a new session.
 
 ### M6 — Document the user-level ITP opt-out, but do not recommend it (docs, trivial)
 
@@ -373,10 +423,11 @@ incidental difference between the two accounts.
 - [ ] **Control arm.** Same procedure in Chrome. It must **not** wipe. Only meaningful once the Safari arm above actually runs.
 - [ ] Confirm the installed case is exempt: repeat with the app added to the Dock.
 - [x] ~~After a wipe, confirm what login actually restores (expected: profile, spaces, space keys; not DMs).~~ **Done** — `space-wipe-restore`, see above. The expectation was right *for sync-on users only*; the table above is corrected.
-- [ ] **NEW, opened by that measurement:** decide whether a sync-off user losing their Spaces to an eviction is acceptable. It is the default setting, and this issue was originally written as though Spaces were always safe. Options: default `allowSync` on, warn before eviction-prone conditions, or make M2 (install) the answer and say so explicitly.
+- [x] ~~Decide whether a sync-off user losing their Spaces to an eviction is acceptable.~~ **Decided 2026-08-17: `allowSync` stays OFF by default.** So the answer is not to sync more, it is to make the backup path carry the weight — M2 to prevent the wipe, M4 to make a backup exist when it happens anyway. Do not reopen this as "default sync on".
 - [x] ~~After a wipe, confirm a DM to an existing contact re-initiates via `ForceSenderInit` and both sides can talk again.~~ **Done** — see above.
-- [ ] After M1, confirm a `.qmbak` restore into the wiped profile brings back a *decryptable* existing session — and that restoring into a live account still leaves live states untouched.
-- [ ] Revert M1 and confirm the new test goes red. An assertion that passes either way is worse than no test.
+- [x] ~~After M1, confirm a `.qmbak` restore into the wiped profile brings back a *decryptable* existing session — and that restoring into a live account still leaves live states untouched.~~ **Moot.** M1 was resolved by deciding never to restore DM ratchet state, so there is no restored session to check. The half that does apply — a restore into a live account leaving live state untouched — is covered by the additive property tests in `backupSpaceRestore.test.ts`.
+- [x] ~~Revert M1 and confirm the new test goes red.~~ **Done in the equivalent form**, by the people who shipped it: the sync-off export assertions in `backupSpaceKeyCoverage.test.ts` were mutation-verified (assembling `spaceKeys` outside the `allowSync` branch turns all three arm-A tests red, controls stay green). The two scenarios added by this issue were mutation-verified the same way — see each Measured block above.
+- [ ] **Confirm a `.qmbak` round trip survives a real eviction end to end**, rather than a fixture wipe: same account, database destroyed underneath it, import, then actually use the restored Space. `backupSpaceRestore.test.ts` swaps in a fresh database and `space-kick` restores into a *different* bot identity; neither is quite the returning user. Low priority — the parts are each measured, only the seam is not.
 
 ## Prevention
 
@@ -393,6 +444,7 @@ incidental difference between the two accounts.
 - `src/dev/tests/harness/dm-itp-wipe.scenario.test.ts` — the reproduction of the app-side DM consequence; `yarn harness dm-itp-wipe`
 - `src/dev/tests/harness/space-wipe-restore.scenario.test.ts` — what login restores, sync on vs off; `yarn harness space-wipe-restore`
 - [Make allowSync a per-device setting](2026-08-08-make-allowsync-a-per-device-setting.md) — the `allowSync` gate this issue now depends on
+- [Backup/restore overhaul](2026-08-09-backup-restore-overhaul-design.md) — shipped the Space-key backup (PR #324) that makes `.qmbak` the sync-off user's recovery path. **Supersedes** the old `qmbak-backup-cannot-restore-dm-sessions` issue this file used to link to, now in `.archived/`
 
 ---
 
