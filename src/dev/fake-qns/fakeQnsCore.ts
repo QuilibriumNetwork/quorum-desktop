@@ -40,6 +40,8 @@
  * render. Publishing, the signature payload and the server are not exercised.
  */
 
+import { registerExemptionChecker } from '../../identity/qnsClaimExemption';
+
 const STORAGE_KEY = 'dev.fakeQns.state';
 
 /** The public-profile shape, kept structural so this never has to import from
@@ -273,3 +275,16 @@ export function applyFakeQns(
     signature: actual?.signature ?? '',
   };
 }
+
+// Hand the exemption checker to src/identity/qnsClaimExemption at module load.
+//
+// The dependency points THIS way on purpose. Production code must never name a
+// module under src/dev/: web/vite.config.ts externalises this directory in a
+// release build, and an external import is preserved as a runtime fetch for a
+// file that is not in the output. When qnsClaimExemption imported this module
+// directly, that dangling import 404'd and the whole app failed to mount.
+//
+// Registering here costs nothing: this module only loads in a dev build, and
+// the overlay cannot be enabled without it being loaded, so an unregistered
+// checker and a disabled overlay mean the same thing.
+registerExemptionChecker(isFakeClaimFor);
