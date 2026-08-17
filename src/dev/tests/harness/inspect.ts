@@ -69,8 +69,18 @@ export async function totalSkipped(db: MessageDB): Promise<number> {
 export interface DmCensus {
   messages: number;
   conversations: number;
-  /** encryption_states rows — the Double Ratchet sessions. */
-  sessions: number;
+  /**
+   * `encryption_states` rows — ALL of them, not only DM sessions.
+   *
+   * Named for what it counts rather than what you might hope it counts.
+   * `getAllDMData` reaches this through `getAllEncryptionStates()`, which is
+   * not filtered by conversation type, so a Space's group ratchet lands here
+   * too. Measured in `space-wipe-restore`: an account with one Space and one DM
+   * reads 2, and after a config restore reads 1 — the Space ratchet came back,
+   * the DM ratchet did not. Calling this `sessions` invited exactly the wrong
+   * reading of that number.
+   */
+  encryptionStates: number;
 }
 
 /**
@@ -87,7 +97,7 @@ export async function dmCensus(db: MessageDB, address: string): Promise<DmCensus
   return {
     messages: data.messages.length,
     conversations: data.conversations.length,
-    sessions: data.encryption_states.length,
+    encryptionStates: data.encryption_states.length,
   };
 }
 

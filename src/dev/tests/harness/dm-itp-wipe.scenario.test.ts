@@ -96,7 +96,7 @@ test(
     const seededTexts = await textsOnDisk(bob);
 
     console.log(
-      `[dm-itp-wipe] bob BEFORE  messages=${bobBefore.messages} conversations=${bobBefore.conversations} sessions=${bobBefore.sessions}`
+      `[dm-itp-wipe] bob BEFORE  messages=${bobBefore.messages} conversations=${bobBefore.conversations} sessions=${bobBefore.encryptionStates}`
     );
     console.log(`[dm-itp-wipe] databases BEFORE: ${dbsBefore?.join(', ') ?? '(databases() unsupported)'}`);
 
@@ -104,7 +104,7 @@ test(
     // against an account that never had anything to lose.
     expect(bobBefore.messages).toBeGreaterThan(0);
     expect(bobBefore.conversations).toBeGreaterThan(0);
-    expect(bobBefore.sessions).toBeGreaterThan(0);
+    expect(bobBefore.encryptionStates).toBeGreaterThan(0);
     expect(seededTexts.length).toBeGreaterThan(0);
 
     // ── 2. The eviction ────────────────────────────────────────────────────
@@ -126,7 +126,7 @@ test(
     const dbsAfterReopen = await listDatabaseNames();
 
     console.log(
-      `[dm-itp-wipe] bob AFTER   messages=${bobAfter.messages} conversations=${bobAfter.conversations} sessions=${bobAfter.sessions}`
+      `[dm-itp-wipe] bob AFTER   messages=${bobAfter.messages} conversations=${bobAfter.conversations} sessions=${bobAfter.encryptionStates}`
     );
     console.log(
       `[dm-itp-wipe] databases immediately after wipe: ${dbsRightAfterWipe?.join(', ') ?? '(databases() unsupported)'}`
@@ -138,7 +138,7 @@ test(
     // The loss, measured.
     expect(bobAfter.messages).toBe(0);
     expect(bobAfter.conversations).toBe(0);
-    expect(bobAfter.sessions).toBe(0);
+    expect(bobAfter.encryptionStates).toBe(0);
 
     // CONTROL ARM. Eviction hit one browser. If Alice's numbers move too, the
     // harness is sharing one database between bots (a real regression it has had
