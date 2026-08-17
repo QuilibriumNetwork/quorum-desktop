@@ -111,6 +111,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 ["Delete Space" is Leave with a destructive-sounding label, and the owner must never click it](issues/2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md)
 - 🐛 [The roster pull: what it actually does](issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
+- 🐛 [MessageDB never recovers from an abnormally closed IndexedDB connection](issues/2026-08-06-messagedb-never-recovers-from-an-abnormally-closed-connection.md)
 - 🐛 [Eight name surfaces never reached the resolver](issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md)
 - 🐛 [Notification switches freeze the UI for ~1.8s](issues/2026-08-13-notification-toggle-freeze-is-the-config-encode-chain.md)
 - 🐛 [Desktop has no `.q` broadcast, and trusts a `.q` it never checks](issues/2026-08-16-desktop-has-no-q-broadcast-and-renders-claims-unverified.md)
@@ -268,7 +269,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [The roster diff treats your own row like a stranger's](issues/.open/2026-08-05-roster-sync-has-no-self-exclusion-a-peer-can-overwrite-your-own-row.md)
 - 🐛 [Safari wipes all IndexedDB after 7 idle days — DM ratchet state and history are unrecoverable](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md)
 - 🐛 [Every shared primitive reaches consumers as `any`](issues/.open/2026-08-06-invalid-icon-names-render-nothing-and-no-type-error-catches-them.md)
-- 🐛 [MessageDB never recovers from an abnormally closed IndexedDB connection](issues/.open/2026-08-06-messagedb-never-recovers-from-an-abnormally-closed-connection.md)
 - 🐛 [The two default user configs disagree on which fields exist](issues/.open/2026-08-07-the-two-default-user-configs-disagree-on-which-fields-exist.md)
 - 🐛 [Generating a public invite link never reaches existing members](issues/.open/2026-08-11-public-invite-link-never-reaches-existing-members.md)
 - 🐛 [The Account Key warning names the smallest loss, not the largest](issues/.open/2026-08-14-security-tab-key-warning-understates-wallet-access.md)
@@ -317,6 +317,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Unshipped security branches (local, not pushed)](issues/.open/2026-08-12-unshipped-security-branches.md)
 - 📋 [Move the config-save encode chain to a Web Worker](issues/.open/2026-08-13-config-encode-worker-plan.md)
 - 📋 [Rebuild the sync indicator on a per-space "behind by N" signal](issues/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md)
+- 📋 [A DB call landing mid-close still fails once](issues/.open/2026-08-17-a-db-call-landing-mid-close-still-fails-once.md)
 
 ### Deferred
 
@@ -796,4 +797,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-16 15:59:09
+**Last Updated**: 2026-08-17 10:52:48
