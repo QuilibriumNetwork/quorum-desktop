@@ -12,6 +12,7 @@ import { ThemeProvider } from '../src/components/primitives';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { dynamicActivate, getUserLocale } from '../src/i18n/i18n';
+import { installLogControl } from '../src/utils/productionLogControl';
 
 // DM Doctor's warning counters must start counting at t=0, not whenever the
 // /dev/dm-doctor page happens to be opened — so they install here, at the
@@ -28,6 +29,22 @@ if (process.env.NODE_ENV === 'development') {
   import('../src/dev/dm-doctor/warningCounters').then((m) =>
     m.installDmWarningCounters()
   );
+}
+
+// Deliberately NOT behind a NODE_ENV guard, and deliberately not under src/dev/
+// — unlike everything above, this is meant to ship. The logger disables itself
+// in production builds, so without a reachable switch no real user's session can
+// ever produce a diagnostic. quorum-shared always intended `logger.enable()` to
+// be that switch, but `logger` is module-private inside the bundle, so it has
+// never been callable in a shipped build.
+//
+// What is exposed is a narrow wrapper, never the logger itself: it pins
+// minLevel to 'warn' (so the log tier, which prints decrypted message content,
+// stays dark) and turns redaction on (so plaintext a JS engine echoed into an
+// Error message is stripped). See src/utils/productionLogControl.ts for why
+// exposing `logger.enable()` directly would be actively dangerous.
+if (typeof window !== 'undefined') {
+  installLogControl(window as unknown as Record<string, unknown>);
 }
 
 const queryClient = new QueryClient({
