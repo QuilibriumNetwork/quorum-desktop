@@ -197,12 +197,54 @@ The Data Backup section appears in **User Settings > Security**, below the "Acco
 >
 > Design history: [`.agents/issues/.open/2026-08-09-backup-restore-overhaul-design.md`](../../issues/.open/2026-08-09-backup-restore-overhaul-design.md).
 
-- **No automatic backups** — users must manually export. There is no scheduled or triggered backup.
+- **No automatic backups** — users must manually export. There is no scheduled or triggered backup. **Since 2026-08-17 there is a *reminder***, which is not the same thing: `BackupStatus` on the General settings tab shows a warning when `allowSync` is off and no backup has been taken in 30 days (`utils/lastBackup.ts`). It prompts; it does not export. It also only reaches users who open Settings, which is the population least in need of it — see M4 in [the ITP issue](../../issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md).
 - **No incremental backups** — each export contains all DM data. Acceptable given DM-only scope keeps file sizes manageable.
 - **Space messages not backed up** — they resync from other members. Single-member spaces can lose message history (space definition recovers via API).
 - **No fresh-device restore during onboarding** — users must complete login first, then import from Settings. A dedicated onboarding restore flow is a potential future enhancement.
 - **Import skips encryption states and config** — on an active account, only messages and conversations are restored. An `allowSync=false` user who lost data and then joined new spaces before importing cannot recover their old space list from the backup.
 - **DM session continuity is not restored** — history comes back, sessions do not. See §6 of the overhaul design above (absorbed from [the now-archived DM-sessions issue](../../issues/.archived/2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md)).
+
+### DM session continuity: a decision, not a gap — and deliberately not surfaced in the UI
+
+Worth stating at length because the terse bullet above reads like unfinished work,
+and it is not.
+
+**The decision.** Restoring DM ratchet state is never done, rather than done
+carefully. Rewinding a sending chain risks message-key reuse, so slice 4 of the
+overhaul removed the hazard instead of managing it. A restore therefore gives
+back readable history and Space key material, and each DM conversation resumes on
+a **fresh** session the next time a message is sent.
+
+**Measured** (2026-08-17, `yarn harness dm-itp-wipe`): after a total wipe, a DM to
+an existing contact re-initiates via the force-sender-init path and both sides
+exchange messages again. So "DMs are broken after a restore" is wrong. The
+conversation works.
+
+**Why there is no user-facing copy about it.** Proposed 2026-08-17 and rejected,
+for reasons that will apply again to the next person who proposes it:
+
+- It is not actionable. The conversation heals itself with no user involvement.
+- It is not visible. The one plausible symptom is that messages sent to you around
+  the moment of data loss may never arrive — and **you cannot notice a message you
+  never received**. Copy about it is anxiety with nothing attached.
+- It cannot be said in the user's vocabulary. "Session" is our word. Every other
+  line in `summariseRestore` either explains a visible absence or tells the user
+  what to do; a line about ratchet sessions does neither, and would be the only
+  entry in that list describing an internal mechanism.
+
+This matches the reasoning already recorded on the export confirmation modal in
+`Security.tsx`, which deliberately omits a comparable nuance: *"Rather than state
+something true for one group and misleading for the other, the copy sticks to what
+is true for both."*
+
+**Open, and unmeasured.** Whether any messages are genuinely lost in the gap — sent
+to the old session inbox before the wiped side re-initiates — has NOT been
+measured. Inbound frames for an unknown inbox are retained rather than dropped, so
+they may well be readable once the session is re-established, but nobody has
+watched it. If that measurement ever runs and shows real loss, revisit the
+no-copy decision above; until then, do not write UI copy asserting a symptom
+nobody has observed. The instrument to settle it is `dm-itp-wipe`, extended so the
+peer sends *before* the wiped side re-initiates.
 
 ## Related Documentation
 
@@ -211,4 +253,4 @@ The Data Backup section appears in **User Settings > Security**, below the "Acco
 - [Cryptographic Architecture](../cryptographic-architecture.md) — Ed448 key hierarchy
 - [Task: User Data Backup & Restore](../../issues/.done/user-data-backup-restore-feature.md) — Implementation task with full context
 
-_Last updated: 2026-08-12_
+_Last updated: 2026-08-17_
