@@ -9,6 +9,7 @@ import { SpaceTag } from '../../space/SpaceTag';
 import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
 import type { SelectOption } from '../../primitives';
 import PasskeyStatus from './PasskeyStatus';
+import BackupStatus from './BackupStatus';
 
 interface EligibleSpaceTag {
   spaceId: string;
@@ -46,6 +47,10 @@ interface GeneralProps {
   spaceTagId: string | undefined;
   setSpaceTagId: (id: string | undefined) => void;
   eligibleSpaceTags: EligibleSpaceTag[];
+  /** Sync setting for the backup reminder. `undefined` while config loads. */
+  allowSync: boolean | undefined;
+  /** Switches the modal to the tab holding Data Backup. */
+  onGoToBackup: () => void;
 }
 
 const General: React.FunctionComponent<GeneralProps> = ({
@@ -73,6 +78,8 @@ const General: React.FunctionComponent<GeneralProps> = ({
   spaceTagId,
   setSpaceTagId,
   eligibleSpaceTags,
+  allowSync,
+  onGoToBackup,
 }) => {
   // Determine if there's an image to display (new upload or existing, not marked for deletion)
   const hasImage = (() => {
@@ -150,6 +157,20 @@ const General: React.FunctionComponent<GeneralProps> = ({
         and General is the tab people actually open.
       */}
       <PasskeyStatus className="mt-4 mb-4 px-5 max-md:px-4" />
+      {/*
+        Below the passkey warning, and on General for the same reason it is:
+        this is a standing fact about the account, and General is the tab people
+        actually open. Renders nothing (including its wrapper) unless sync is off
+        AND no recent backup exists, so it costs a sync-on user nothing.
+
+        Order is deliberate. Losing the account key outranks losing the data on
+        it, so the passkey warning stays first when both apply.
+      */}
+      <BackupStatus
+        allowSync={allowSync}
+        onGoToBackup={onGoToBackup}
+        className="mt-4 mb-4 px-5 max-md:px-4"
+      />
       <div className="modal-content-section">
         <Spacer size="md" direction="vertical" borderTop={true} />
         <div className="text-subtitle-2">

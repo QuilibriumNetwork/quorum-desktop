@@ -285,6 +285,12 @@ const UserSettingsModal: React.FunctionComponent<{
                         spaceTagId={spaceTagId}
                         setSpaceTagId={setSpaceTagId}
                         eligibleSpaceTags={eligibleSpaceTags}
+                        // `undefined` until the config has loaded, so the backup
+                        // reminder stays silent rather than flashing at every
+                        // sync-ON user on open. `allowSync` defaults to false
+                        // before load, which would otherwise read as "sync off".
+                        allowSync={isConfigLoaded ? allowSync : undefined}
+                        onGoToBackup={() => setSelectedCategory('security')}
                       />
                     );
                   case 'privacy':

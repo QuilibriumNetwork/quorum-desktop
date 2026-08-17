@@ -17,6 +17,7 @@ import { publicProfileQueryKey } from './useUserPublicProfile';
 import { getDeviceName } from '../../../utils/deviceInfo';
 import { showError } from '../../../utils/toast';
 import { normalizePrivateKeyHex } from '../../../utils/privateKey';
+import { recordLastBackup } from '../../../utils/lastBackup';
 
 export interface UseUserSettingsOptions {
   onSave?: () => void;
@@ -287,6 +288,20 @@ export const useUserSettings = (
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
+
+    // Recorded HERE rather than at the call site, and that placement is the
+    // point: the guard at the top of this function returns silently when there
+    // is no keyset, so a call that produced no file resolves exactly like one
+    // that did. Recording after the download has fired means that path cannot
+    // mark the user as backed up.
+    //
+    // KNOWN LIMIT, deliberately accepted: an anchor-click download reports
+    // nothing back, so a user who cancels the browser's save dialog is recorded
+    // as having a backup. There is no event that distinguishes the two. The
+    // 30-day expiry is what bounds it — that user is reminded again, rather
+    // than never. Fixing it properly needs a real save API (Electron) and is
+    // not worth diverging the two platforms for today.
+    recordLastBackup();
   };
 
   const importBackup = async (file: File): Promise<RestoreReport> => {
