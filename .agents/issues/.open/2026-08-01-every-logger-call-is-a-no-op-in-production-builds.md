@@ -1,15 +1,16 @@
 ---
 type: bug
-title: "Every logger call is a no-op in production builds, so 'fail open and log' produces zero signal from real users"
+title: "Production builds discard logger.warn and logger.error too, so 'fail open and log' produces zero signal from real users"
 status: open
-priority: high
+priority: medium
 created: 2026-08-01
-updated: 2026-08-02
+updated: 2026-08-17
 severity: silent — nothing fails; we simply learn nothing from any user who is not a developer
 area: observability / logging / quorum-shared
 repos: quorum-shared (cause), quorum-desktop + quorum-mobile (affected)
 related_docs:
   - ".agents/issues/transport/README.md"
+  - ".agents/issues/.open/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md"
 ---
 
 # Every logger call is a no-op in production builds
@@ -42,6 +43,76 @@ A repo-wide grep for `logger.configure`, `logger.enable` and `setLogLevel` in
 `quorum-desktop/src` and `quorum-desktop/web` finds **no call sites**, so nothing
 re-enables it at runtime. There is no Sentry or other reporting integration in
 the desktop repo.
+
+**Verified against the shipped artifact, 2026-08-17.** This was re-checked by
+reading `dist/` from a real production build rather than the source. The
+minifier's output confirms both halves:
+
+```js
+// detectEnvironment(), as emitted. `S` is the bundled `process`.
+function eLi(){ return typeof __DEV__<"u" ? __DEV__
+              : S===void 0 ? (typeof window<"u" ? window.location?.hostname==="localhost" : !0)
+              : !1 }
+// shouldLog() — note `enabled` is consulted before the level
+function tLi(e){ return y7.enabled ? LEVELS[e] >= LEVELS[y7.minLevel] : !1 }
+```
+
+The `process` branch was statically folded to `!1` because Vite substitutes
+`NODE_ENV` at build time; the fallback branch fails too, since the deployment is
+not on `localhost`. The log message strings themselves still ship to users as
+dead weight.
+
+## §1b. Was this deliberate? Yes — and the real reason is better than the stated one
+
+Investigated 2026-08-17, because "the lead dev built it this way" deserved an
+answer before anyone changed it. Conclusion up front: **the design is sound and
+must stay for `log`/`debug`. The defect is narrower than §1's framing suggests.**
+
+**Provenance.** `logger.ts` was authored by Cassandra Heart and arrived in
+`quorum-shared`'s squashed `initial commit` (`2e67c1d`, 2025-12-30). It has never
+been modified since, and has no ancestor in `quorum-desktop` or `quorum-mobile`
+history. Desktop adopted it in `8bb6f411c` (2026-01-02), whose message reads
+"Enables environment-aware logging (silent in prod, visible in dev)". Prod
+silence was understood and chosen at both ends, not stumbled into.
+
+**The stated reason** is the file's own header: "In production: no-ops for
+performance." That is the weakest of the available justifications — a disabled
+log call is one boolean check.
+
+**The real reason was never written down.** The `log` tier prints decrypted
+message plaintext:
+
+| call site | what it prints |
+|---|---|
+| `MessageService.ts:4844` | `TripleRatchetDecrypt raw result: ${decryptResult}` — the entire decrypted payload |
+| `MessageService.ts:4847` | `JSON.stringify(decrypted).substring(0, 200)` |
+| `MessageService.ts:4856` | `first 100 chars: ${output.substring(0, 100)}` |
+
+Enabling the `log` tier in production would print conversation content to the
+console of a privacy-focused messenger. **Do not do it, and do not treat §1 as
+an argument for doing it.**
+
+**But that does not justify discarding `warn`/`error`, and the original author
+appears to agree.** `logger.ts:122` documents `error` as "always logs unless
+explicitly disabled". `shouldLog()` consults `config.enabled` before the level,
+and `detectEnvironment()` sets `enabled = false` *automatically* — which is not
+an explicit disable. The implementation contradicts its own docstring. Repairing
+that is not overriding the original design; it is delivering it.
+
+**Audit for Option 1, completed 2026-08-17.** Every `logger.warn` and
+`logger.error` call site in `quorum-desktop/src`, `quorum-desktop/web` and
+`quorum-shared/src` was checked for decrypted content, message bodies and
+untruncated addresses. **Zero leaks.** The three near-misses are benign:
+`ConfigService.ts:360` and `:367` log a static translated string, and
+`BackupService.ts:536` logs counts and booleans only. Addresses already truncate
+(`address.slice(0, 16)`). Option 1 is clear to implement as written.
+
+**Why this dropped from `high` to `medium`.** The title previously implied the
+whole mechanism was a mistake. It is not: three quarters of the behaviour is a
+correct and necessary privacy control. The genuine defect is the narrow one above
+— two severity levels killed against their documented contract — and its fix is
+now de-risked by the audit. It remains a diagnosis-speed multiplier with a
+compounding cost (§2b), which is why it is not `low`.
 
 ## §2. Why this matters more than it looks
 
@@ -95,19 +166,23 @@ matter of changing the sink rather than re-instrumenting the code.
 
 ## §3. What NOT to do
 
-Do **not** simply flip `enabled` to true in production. The reason it is off is
-sound: these logs are chatty, some carry addresses and message ids, and a
-messenger that prints conversation metadata to a shared console is a privacy
-regression. The fix has to be selective.
+Do **not** simply flip `enabled` to true in production. §1b now carries the
+evidence rather than the assumption: the `log` tier prints decrypted message
+plaintext at `MessageService.ts:4844`, `:4847` and `:4856`. This is a concrete
+privacy regression, not a theoretical one. The fix has to be selective by level,
+and `log`/`debug` must stay off.
 
 ## §4. Options
 
 1. **Keep `debug`/`log` off, let `warn`/`error` through.** Smallest change: make
    `shouldLog` consult the level before `config.enabled`, so the two severities
-   that mean "something went wrong" survive a production build. Requires an
-   audit that no `warn`/`error` call site prints message content or a full
-   address — several already truncate (`address.slice(0, 16)`), which suggests
-   the convention is half-established.
+   that mean "something went wrong" survive a production build. This also
+   reconciles the code with `logger.ts:122`, which already claims `error` behaves
+   this way. **The prerequisite audit is done (§1b): zero content leaks at
+   `warn`/`error`.** Note the honest limit of this option — it writes to the
+   browser/Electron console, so it only pays off when someone actually opens
+   devtools. It is cheap and correct, but it is not the option that produces
+   reports from ordinary users; that is option 2.
 2. **A user-facing "collect diagnostics" toggle**, off by default, that enables
    logging for that session and writes to a local buffer the user can export.
    Fits an anonymity-conscious app better than always-on remote reporting, and
@@ -119,6 +194,66 @@ regression. The fix has to be selective.
 
 Option 1 and option 3 are complementary and neither requires a server.
 
+## §4b. The recommended design, after a security review — 2026-08-17
+
+The original author already designed a production escape hatch: `logger.enable()`,
+documented at `logger.ts:88-92` as "useful for debugging production issues". It
+has never worked, because `logger` is not attached to `window` or `globalThis`
+anywhere (MEASURED — grep returns nothing), so it is unreachable in a shipped
+build. Making it reachable is more faithful to the original intent than inventing
+a severity rule, and it preserves off-by-default.
+
+**Do NOT expose the raw `logger` object.** `logger.enable()` sets
+`enabled = true` and leaves `minLevel` at its default of `'log'`. Since
+`LOG_LEVELS.log (1) >= LOG_LEVELS.log (1)`, that re-arms the entire `log` tier,
+including the three plaintext sites in §1b. Exposing `logger.enable()` is
+therefore the exact action §3 forbids, just behind a manual step.
+
+**Expose a narrow wrapper instead**, in `web/main.tsx`:
+
+```ts
+if (typeof window !== 'undefined') {
+  (window as Window & { quorumLogger?: unknown }).quorumLogger = {
+    enable:  () => logger.configure({ enabled: true, minLevel: 'warn' }),
+    disable: () => logger.configure({ enabled: false }),
+  };
+}
+```
+
+`minLevel: 'warn'` makes `log` fail the threshold (`1 >= 3` is false), so the
+plaintext sites stay dark regardless of what anyone types. This needs **no change
+to `logger.ts`** and is structurally safe rather than safe-by-convention.
+
+**Security review outcome** (adversarial review, 2026-08-17). The "an attacker
+who can call this already has stronger primitives" argument was tested and holds
+for OS-level malware, XSS, and malicious extensions: local storage is entirely
+unencrypted at rest (`messages`, `space_keys`, `encryption_states` — only the
+master keyset is AES-GCM protected, per `cryptographic-architecture.md:185-194`),
+and this repo's own `quorum-db-schema.md` publishes console snippets for dumping
+it. Electron posture is sound: `contextIsolation: true`, `nodeIntegration: false`,
+no console persistence to disk, no telemetry or crash reporter.
+
+The risks the review found are not attacker-driven:
+
+- **Sanctioned-workflow social engineering.** Documenting "type this, paste the
+  output" as the official support flow legitimises exactly the behaviour a
+  scammer needs. The narrow wrapper largely defuses this, because the worst
+  output it can produce contains no message content.
+- **The public-tracker foot-gun.** A well-meaning user pasting console output
+  into a public GitHub issue. Same mitigation.
+- **Future drift.** The §1b audit is point-in-time with no enforced invariant.
+  Once a production route exists, a careless `logger.warn(sensitiveThing)` in a
+  future PR becomes reachable. `dbInspectorCoverage.test.ts` is the precedent for
+  a CI-enforced backstop.
+
+**Blocking prerequisite.** A separate defect must be fixed first:
+`2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md`. A
+failing decrypt puts 10 characters of plaintext into `error.message`, and that
+error is forwarded to `logger.error` — the exact tier this design opens.
+`minLevel: 'warn'` does not help, because the leak travels on `error`.
+
+Order of work: sanitiser + its failing test → the wrapper → the CI backstop.
+
 ## §5. How it was found
 
 An error-handling review of the on-connect identity announce
@@ -126,5 +261,9 @@ An error-handling review of the on-connect identity announce
 change relies on "fail open and log" for observability, then checked whether the
 logs actually reach anywhere. They do not.
 
+Re-opened 2026-08-17 to answer "was this deliberate?" before any code changed.
+It was — see §1b. The finding survived, but its scope narrowed and its priority
+dropped accordingly.
+
 ---
-*Last updated: 2026-08-02*
+*Last updated: 2026-08-17*
