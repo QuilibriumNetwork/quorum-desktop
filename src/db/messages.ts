@@ -214,6 +214,18 @@ interface StoredSearchIndex {
 
 export class MessageDB {
   private db: IDBDatabase | null = null;
+  /**
+   * In-flight `indexedDB.open`, shared by concurrent init() callers.
+   *
+   * Without this, every caller that arrives while `db` is still null starts its
+   * own open request, and the last `onsuccess` to land wins the field. The
+   * earlier connections are orphaned: still open, never closed, and still
+   * holding the lifecycle handlers set below. That leaks a connection which can
+   * block a later `onupgradeneeded` indefinitely (the case `onblocked` warns
+   * about). Dozens of React Query fetchers hit the DB in parallel on mount, so
+   * this race is routine at cold start, not exotic.
+   */
+  private initPromise: Promise<void> | null = null;
   private readonly DB_NAME = QUORUM_DB_NAME;
   private readonly DB_VERSION = QUORUM_DB_VERSION;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
@@ -235,8 +247,9 @@ export class MessageDB {
 
   async init() {
     if (this.db) return;
+    if (this.initPromise) return this.initPromise;
 
-    return new Promise<void>((resolve, reject) => {
+    this.initPromise = new Promise<void>((resolve, reject) => {
       const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
 
       request.onerror = () => reject(request.error);
@@ -249,13 +262,18 @@ export class MessageDB {
         );
       };
       request.onsuccess = () => {
-        this.db = request.result;
+        // Bind the handlers below to THIS connection rather than to `this.db`.
+        // A handler that reads the field would, when fired by a connection that
+        // is no longer current, clear the reference to a different and healthy
+        // one. Comparing identity before clearing makes a stale event a no-op.
+        const connection = request.result;
+        this.db = connection;
         // If another tab later requests a higher version, yield: close this
         // connection so its upgrade isn't blocked (prevents a wedged DB across
         // version bumps). The next DB call reopens via init().
-        this.db.onversionchange = () => {
-          this.db?.close();
-          this.db = null;
+        connection.onversionchange = () => {
+          connection.close();
+          if (this.db === connection) this.db = null;
         };
         // The browser can close the connection without us asking: storage
         // eviction, corruption, Safari's ITP wipe, or the user clearing site
@@ -264,8 +282,19 @@ export class MessageDB {
         // early on `if (this.db)` it would never reopen — wedging every read and
         // write for the rest of the tab's session (one MessageDB instance is
         // shared app-wide). Dropping the reference lets the next init() reopen.
-        this.db.onclose = () => {
-          this.db = null;
+        connection.onclose = () => {
+          // Per spec this event fires ONLY on an abnormal close, never on our
+          // own close(). So every occurrence means the browser destroyed or
+          // invalidated the store underneath us, and the reopen below may well
+          // land on an empty database with the user's history gone. Recovering
+          // silently would erase the only evidence that happened.
+          // NOTE: logger is a no-op in production builds, so this currently buys
+          // local diagnosability only — see
+          // .agents/issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md
+          logger.warn(
+            '[MessageDB] connection force-closed by the browser (eviction, corruption, ITP wipe, or cleared site data); reopening on next access — local data may have been lost'
+          );
+          if (this.db === connection) this.db = null;
         };
         resolve();
       };
@@ -459,6 +488,15 @@ export class MessageDB {
         }
       };
     });
+
+    try {
+      await this.initPromise;
+    } finally {
+      // Clear on both paths. On success `db` is set, so the check above
+      // short-circuits anyway; on failure this is what lets the next caller
+      // retry the open instead of re-awaiting a permanently rejected promise.
+      this.initPromise = null;
+    }
   }
 
   async getMessage({

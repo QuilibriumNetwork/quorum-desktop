@@ -84,6 +84,45 @@ Verification (MEASURED, `src/dev/tests/db/messageDbForcedClose.test.ts`):
 - The suite includes a **control arm** (a read with no close at all) that passes
   in both directions, so the red is attributable to the forced close.
 
+### Three further defects found in review, all fixed on the same branch
+
+An independent review pass (correctness, silent-failure and test-coverage
+reviewers, fresh context) found three problems. Two were in the `onclose` fix as
+first written, one was pre-existing in the same method. All are fixed here, each
+with a test verified to fail without its guard.
+
+**1. Handlers bound to the field, not to their own connection.** Found
+independently by two reviewers. `onversionchange` and the new `onclose` both did
+a bare `this.db = null`, with no check that the connection firing the event was
+still the current one. They now capture `const connection = request.result` and
+clear only on identity match. Without this, a stale connection's close event
+wipes the reference to a healthy one.
+
+**2. `init()` had no in-flight guard, so concurrent callers each opened their own
+connection.** The last `onsuccess` won the field and the rest were orphaned:
+still open, never closed, and able to block a later `onupgradeneeded`
+indefinitely — the exact state the neighbouring `onblocked` handler warns about.
+Dozens of React Query fetchers hit the DB in parallel on mount, so this was
+routine at cold start rather than exotic. `init()` now shares one in-flight
+promise, cleared on both settle paths so a failed open can still be retried.
+
+**3. The recovery was completely silent.** A forced close fires *only* on an
+abnormal close (never on our own `close()`), so every occurrence means the
+browser destroyed or invalidated the store. Recovering without a trace meant the
+app would reopen onto a possibly-wiped database, look empty-but-healthy, and
+leave no evidence the user's history had just been lost. This directly concerns
+the unmeasured population in
+`.agents/issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md`.
+Now logged via `logger.warn`, matching the `onblocked` pattern in the same
+method. **Caveat:** `logger` is a no-op in production builds
+(`.agents/issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md`),
+so this buys local diagnosability only. Real field visibility needs that issue
+fixed, or a durable breadcrumb outside IndexedDB.
+
+Final verification: 7/7 in this file, **1483/1483** full suite across 161 files,
+`tsc --noEmit` clean, no new lint. Reverting the guards turns the three new tests
+red for their own specific reasons.
+
 ### Known limit: a call landing mid-close still fails once
 
 Not anticipated in the original write-up, found while fixing. `closeConnection`

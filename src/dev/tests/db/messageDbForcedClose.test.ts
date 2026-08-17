@@ -1,8 +1,17 @@
 import 'fake-indexeddb/auto';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import forceCloseDatabase from 'fake-indexeddb/lib/forceCloseDatabase';
 import { MessageDB } from '../../../db/messages';
+import { logger } from '@quilibrium/quorum-shared';
 import type { ChannelThread } from '@quilibrium/quorum-shared';
+
+/** Read the private connection handle the lifecycle handlers manage. */
+const connectionOf = (db: MessageDB): IDBDatabase | null =>
+  (db as unknown as { db: IDBDatabase | null }).db;
+
+const setConnection = (db: MessageDB, connection: IDBDatabase | null): void => {
+  (db as unknown as { db: IDBDatabase | null }).db = connection;
+};
 
 /**
  * The browser can force-close an IndexedDB connection without the app asking:
@@ -30,7 +39,7 @@ import type { ChannelThread } from '@quilibrium/quorum-shared';
  */
 const waitForConnectionDrop = async (db: MessageDB): Promise<void> => {
   for (let i = 0; i < 100; i++) {
-    if ((db as unknown as { db: IDBDatabase | null }).db === null) return;
+    if (connectionOf(db) === null) return;
     await new Promise((resolve) => setTimeout(resolve, 5));
   }
   throw new Error(
@@ -74,19 +83,21 @@ describe('MessageDB - recovery from a forced connection close', () => {
   it('reopens and serves reads after the browser force-closes the connection', async () => {
     await db.saveChannelThread(thread);
 
-    const rawConnection = (db as unknown as { db: IDBDatabase | null }).db;
+    const rawConnection = connectionOf(db);
     expect(rawConnection).not.toBeNull();
 
     forceCloseDatabase(rawConnection);
     await waitForConnectionDrop(db);
 
+    // Asserting on the saved row, not merely on "a read succeeded", also proves
+    // the reopen landed on the SAME database rather than a fresh empty one.
     await expect(db.getChannelThread(thread.threadId)).resolves.toMatchObject({
       threadId: thread.threadId,
     });
   });
 
   it('serves writes after the browser force-closes the connection', async () => {
-    const rawConnection = (db as unknown as { db: IDBDatabase | null }).db;
+    const rawConnection = connectionOf(db);
     forceCloseDatabase(rawConnection);
     await waitForConnectionDrop(db);
 
@@ -94,5 +105,78 @@ describe('MessageDB - recovery from a forced connection close', () => {
     await expect(db.getChannelThread(thread.threadId)).resolves.toMatchObject({
       threadId: thread.threadId,
     });
+  });
+
+  it('recovers from repeated forced closes, not just the first', async () => {
+    for (let cycle = 0; cycle < 3; cycle++) {
+      forceCloseDatabase(connectionOf(db));
+      await waitForConnectionDrop(db);
+
+      const cycleThread = { ...thread, threadId: `thread-cycle-${cycle}` };
+      await expect(db.saveChannelThread(cycleThread)).resolves.toBeUndefined();
+      await expect(
+        db.getChannelThread(cycleThread.threadId)
+      ).resolves.toMatchObject({ threadId: cycleThread.threadId });
+    }
+  });
+
+  it('logs a warning when the browser force-closes the connection', async () => {
+    const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {});
+
+    forceCloseDatabase(connectionOf(db));
+    await waitForConnectionDrop(db);
+
+    // A forced close only ever happens for reasons that destroy or invalidate
+    // the store, so recovering without a trace would erase the only evidence
+    // the user's local data may have just been wiped.
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining('force-closed by the browser')
+    );
+  });
+});
+
+describe('MessageDB - connection lifecycle guards', () => {
+  beforeEach(async () => {
+    const FDBFactory = (await import('fake-indexeddb/lib/FDBFactory')).default;
+    globalThis.indexedDB = new FDBFactory();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('opens exactly one connection when init() is called concurrently', async () => {
+    const openSpy = vi.spyOn(globalThis.indexedDB, 'open');
+    const db = new MessageDB();
+
+    await Promise.all(Array.from({ length: 8 }, () => db.init()));
+
+    // Without the in-flight guard each caller starts its own open and the last
+    // onsuccess wins the field, orphaning the rest: still open, never closed,
+    // and able to block a later onupgradeneeded forever.
+    expect(openSpy).toHaveBeenCalledTimes(1);
+    expect(connectionOf(db)).not.toBeNull();
+  });
+
+  it('ignores a close event from a connection that is no longer current', async () => {
+    const db = new MessageDB();
+    await db.init();
+    const stale = connectionOf(db);
+    expect(stale).not.toBeNull();
+
+    // Stand in for the losing side of an init() race: another connection has
+    // since become the current one, while `stale` still carries the handlers.
+    const replacement = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = globalThis.indexedDB.open('quorum-db-replacement', 1);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    setConnection(db, replacement);
+
+    forceCloseDatabase(stale);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    // The stale connection's handler must not clear a healthy current one.
+    expect(connectionOf(db)).toBe(replacement);
   });
 });

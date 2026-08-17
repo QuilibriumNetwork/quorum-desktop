@@ -44,7 +44,7 @@ private async tx(stores: string | string[], mode: IDBTransactionMode) {
   try {
     return this.db!.transaction(stores, mode);
   } catch (err) {
-    if ((err as DOMException)?.name !== 'InvalidStateError') throw err;
+    if (!this.isClosedConnectionError(err)) throw err;
     this.db = null;      // the handle is closing or closed
     await this.init();   // reopen, then let this attempt stand or fail honestly
     return this.db!.transaction(stores, mode);
@@ -55,6 +55,33 @@ private async tx(stores: string | string[], mode: IDBTransactionMode) {
 There are **104** `this.db!.transaction(...)` call sites, which is why this wants
 a helper and its own review pass rather than being folded into the `onclose`
 change.
+
+## ⚠️ Do not match on `InvalidStateError` alone
+
+The obvious guard — `if (err.name !== 'InvalidStateError') throw err` — is
+wrong, and this is the main reason the `onclose` fix was kept as a separate,
+independently useful change rather than being replaced by this one.
+
+`IDBDatabase.transaction()` throws `InvalidStateError` for **two unrelated
+reasons**, and the error carries nothing that distinguishes them
+(READ: `node_modules/fake-indexeddb/build/esm/FDBDatabase.js:129-137`, two
+separate throw sites, same error type):
+
+1. the connection is closing or closed — retrying after a reopen is correct;
+2. **a versionchange transaction is currently running** — retrying is actively
+   harmful. The helper would discard a perfectly healthy connection and reopen
+   mid-upgrade, turning a transient wait into a wedged database.
+
+So the retry needs a positive test that the connection is actually gone, not
+just that this error name appeared. Options, in preference order:
+
+- track a flag set by the `onclose` handler (which by spec fires *only* on an
+  abnormal close, never on our own `close()`) and retry only when it is set;
+- track whether an upgrade is in flight and refuse to retry during one.
+
+The first reuses machinery that already exists after the `onclose` change and is
+the reason these two fixes are complementary rather than redundant: `onclose`
+answers "did the connection really die?" precisely, where the error name cannot.
 
 ## Testing notes
 
