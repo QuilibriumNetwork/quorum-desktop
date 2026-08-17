@@ -12,6 +12,7 @@ import { ThemeProvider } from '../src/components/primitives';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { dynamicActivate, getUserLocale } from '../src/i18n/i18n';
+import { installLogControl } from '../src/utils/productionLogControl';
 
 // DM Doctor's warning counters must start counting at t=0, not whenever the
 // /dev/dm-doctor page happens to be opened — so they install here, at the
@@ -28,6 +29,17 @@ if (process.env.NODE_ENV === 'development') {
   import('../src/dev/dm-doctor/warningCounters').then((m) =>
     m.installDmWarningCounters()
   );
+}
+
+// Deliberately NOT behind a NODE_ENV guard, and deliberately not under src/dev/
+// — unlike the block above, this is meant to ship. It is what makes production
+// diagnostics reachable at all.
+//
+// The safety properties, and why a narrow wrapper is exposed rather than the
+// logger itself, are documented once in src/utils/productionLogControl.ts.
+// Do not restate them here; two copies drift.
+if (typeof window !== 'undefined') {
+  installLogControl(window as unknown as Record<string, unknown>);
 }
 
 const queryClient = new QueryClient({

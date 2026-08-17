@@ -4522,6 +4522,12 @@ export class MessageService {
             // long-standing "DM direction goes permanently dead" bug: the sender kept
             // encrypting to a session the receiver had torn down.
             // (https://signal.org/docs/specifications/doubleratchet/)
+            // NOTE: a failing decrypt can carry the first 10 chars of the
+            // PLAINTEXT in its message, echoed there by V8 when JSON.parse runs
+            // on decrypted content. It is safe to pass the raw error here only
+            // because quorum-shared's logger redacts it at the choke point when
+            // logs are exposed in production. Do not "simplify" that away.
+            // .agents/issues/.open/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md
             logger.error('[MessageService] DM decrypt failed (ConfirmDoubleRatchetSenderSession) — skipping frame, keeping session', decryptError);
             this.retainOrDropUndecryptableFrame(
               'Confirm',
@@ -4658,6 +4664,9 @@ export class MessageService {
             // long-standing "DM direction goes permanently dead" bug: the sender kept
             // encrypting to a session the receiver had torn down.
             // (https://signal.org/docs/specifications/doubleratchet/)
+            // See the plaintext-echo note at the sibling
+            // ConfirmDoubleRatchetSenderSession catch above. This is the site
+            // where that leak was actually measured.
             logger.error('[MessageService] DM decrypt failed (DoubleRatchetInboxDecrypt) — skipping frame, keeping session', decryptError);
             this.retainOrDropUndecryptableFrame(
               'InboxDecrypt',

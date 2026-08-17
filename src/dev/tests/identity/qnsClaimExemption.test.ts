@@ -17,17 +17,31 @@
  *
  * ## What is asserted where
  *
- * These assert the RUNTIME gate. The complementary fact — that
- * `fakeQnsCore` is absent from a release bundle entirely, because the folded
- * condition leaves it with no importer — is a build-time property, MEASURED by
- * grepping `dist/` after `yarn build` (0 occurrences of `deriveFakeQName`,
- * `isFakeClaimFor`, `applyFakeQns` or the storage key, across 71 bundle files,
- * on 2026-08-16). A unit test cannot see that, so do not add one that pretends
- * to; re-run the grep if the gate's shape ever changes.
+ * These assert the RUNTIME gate. The complementary fact — that `fakeQnsCore` is
+ * absent from a release bundle — is a build-time property that no unit test can
+ * see, so do not add one that pretends to. It is enforced by two build guards.
+ *
+ * ⚠️ This header used to say the module is absent "because the folded condition
+ * leaves it with no importer", verified by grepping `dist/` for dev identifiers.
+ * Both halves were wrong, and together they hid a bug that shipped a blank app
+ * on 2026-08-17. `web/vite.config.ts` marks `src/dev/` as `external` in a
+ * production build; externalisation is decided at RESOLUTION time, before
+ * tree-shaking, and an external module is preserved as a runtime import. So the
+ * import survived, pointing at a file the same rule had excluded — and the
+ * identifier grep reported a clean 0 precisely BECAUSE the module was external,
+ * so none of its code was inlined. The instrument could not have caught it.
+ *
+ * `src/identity/qnsClaimExemption.ts` no longer imports this module at all; the
+ * overlay registers its checker instead. The guards are:
+ *   - `scripts/check-bundle-globals.mjs`      — dev IDENTIFIERS in the bundle
+ *   - `scripts/check-bundle-dev-imports.mjs`  — dev IMPORTS in the bundle
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { isExemptClaim } from '@/identity/qnsClaimExemption';
+import {
+  isExemptClaim,
+  __resetExemptionCheckerForTests,
+} from '@/identity/qnsClaimExemption';
 import { isFakeClaimFor, deriveFakeQName } from '@/dev/fake-qns/fakeQnsCore';
 
 const STORAGE_KEY = 'dev.fakeQns.state';
@@ -115,5 +129,27 @@ describe('isFakeClaimFor — narrowness', () => {
     expect(isFakeClaimFor('', ADDR)).toBe(false);
     expect(isFakeClaimFor('   ', ADDR)).toBe(false);
     expect(isFakeClaimFor(deriveFakeQName(ADDR), '')).toBe(false);
+  });
+});
+
+describe('isExemptClaim — the registration seam', () => {
+  afterEach(() => {
+    // Re-register, so the reset below cannot leak into later tests in this file.
+    setOverlay({ enabled: false });
+  });
+
+  it('returns false in development when the overlay has never registered', () => {
+    // The state the dependency inversion introduced: production imports nothing
+    // from src/dev/, so `checker` stays null. This must FAIL CLOSED. Before the
+    // inversion this state could not exist, because the import was static.
+    __resetExemptionCheckerForTests();
+    const prev = process.env.NODE_ENV;
+    try {
+      process.env.NODE_ENV = 'development';
+      setOverlay({ enabled: true, giveEveryoneAName: true, entries: {} });
+      expect(isExemptClaim(deriveFakeQName(ADDR), ADDR)).toBe(false);
+    } finally {
+      process.env.NODE_ENV = prev;
+    }
   });
 });

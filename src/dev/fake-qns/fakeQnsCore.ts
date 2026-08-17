@@ -194,17 +194,30 @@ export function deriveFakeQName(address: string): string {
  * instrument exists to observe, so exempting them would hide the regression it
  * was built to catch.
  *
- * ⚠️ There is no production path to this. Its only caller,
- * `identity/qnsClaimExemption.ts`, sits behind a `process.env.NODE_ENV` gate
- * that the bundler folds to a constant, so the call is dead code and this
- * module loses its last importer.
+ * ⚠️ There is no production path to this, and the reason is NOT the one this
+ * comment used to give. It used to say that `identity/qnsClaimExemption.ts`
+ * imports this module behind a `process.env.NODE_ENV` gate, so the call becomes
+ * dead code and the module "loses its last importer" and tree-shakes away.
+ * That reasoning shipped a blank app on 2026-08-17: `web/vite.config.ts` marks
+ * `src/dev/` as `external` in a production build, externalisation is decided at
+ * RESOLUTION time long before tree-shaking, and an external module is preserved
+ * as a runtime import. The import survived pointing at a file the same rule had
+ * excluded, so the browser 404'd it and React never mounted.
  *
- * Both halves are checked, by different means: `qnsClaimExemption.test.ts`
- * asserts the RUNTIME gate refuses outside development, and the build-time half
- * was MEASURED by grepping `dist/` after `yarn build` (2026-08-16 — zero
- * occurrences of `deriveFakeQName`, `isFakeClaimFor`, `applyFakeQns` or the
- * storage key across 71 bundle files). Re-run that grep if the gate changes
- * shape; a unit test cannot see it.
+ * The dependency is now inverted: nothing in production names this module.
+ * This file calls `registerExemptionChecker` at load (see the bottom of this
+ * file), so `isExemptClaim` reaches this function only when the overlay has
+ * actually been loaded — which only happens in a dev build.
+ *
+ * Three independent checks, because no one of them is sufficient:
+ *   - `src/dev/tests/identity/qnsClaimExemption.test.ts` asserts the RUNTIME
+ *     gate refuses outside development.
+ *   - `scripts/check-bundle-globals.mjs` fails the build if dev IDENTIFIERS
+ *     reach the bundle.
+ *   - `scripts/check-bundle-dev-imports.mjs` fails the build if a dev IMPORT
+ *     survives. This is the one that would have caught the blank page; the
+ *     identifier grep could not, because externalisation strips the identifiers
+ *     while leaving the dangling import.
  *
  * Anything that made this reachable in production would be a way to render an
  * unverified `.q`, which is the entire thing verification prevents.
