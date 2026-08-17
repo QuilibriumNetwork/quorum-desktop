@@ -131,6 +131,42 @@ Final verification: 7/7 in this file, **1483/1483** full suite across 161 files,
 `tsc --noEmit` clean, no new lint. Reverting the guards turns the three new tests
 red for their own specific reasons.
 
+### Verified against a real browser, 2026-08-17 (the one gap that was left)
+
+Everything above was measured against `fake-indexeddb`. That proves our handler
+reacts correctly **when a `close` event arrives**; it cannot prove a real browser
+ever fires one. The spec leaves a forced close to the user agent's discretion, so
+that was the single claim in this change resting on reading rather than
+observation. It has now been measured.
+
+Method: a standalone 20-line page (no Quorum, no account needed — the question is
+about the browser, not the app) opens an IndexedDB database, writes a row, and
+registers `db.onclose` exactly as `MessageDB.init()` does. Driven with Playwright,
+the forced close triggered via CDP `Storage.clearDataForOrigin`, which is the path
+DevTools "Clear site data" uses.
+
+MEASURED, Chromium:
+
+| Check | Result |
+|---|---|
+| Control: DB open and write succeeded before the clear | `opened: true, wroteOk: true` |
+| Control: `closeFired` before the clear | `false` |
+| **`close` fires on a real forced close** | **`closeFired: true`** |
+| Connection is genuinely dead afterwards | `transaction()` threw `InvalidStateError` |
+| **Negative control: our own `db.close()` fires it** | **`false` — it does not** |
+
+Two things follow. The event the fix depends on is real, so the chain is complete:
+a real browser fires `close` → our handler clears the handle → the next `init()`
+reopens. And the negative control confirms the claim the logging rests on: this
+event never fires for a close we asked for, so **every** firing in the field is a
+genuine abnormal close, correlated with destroyed or evicted local data.
+
+Not turned into a committed test: it needs a live server, Playwright and a CDP
+session, so it does not belong in the vitest suite, and browser behaviour here is
+not going to drift. The recipe above is enough to rerun it if that assumption ever
+needs rechecking. Not measured on WebKit, which is the engine that matters most
+for the Safari ITP issue.
+
 ### Known limit: a call landing mid-close still fails once
 
 Not anticipated in the original write-up, found while fixing. `closeConnection`
