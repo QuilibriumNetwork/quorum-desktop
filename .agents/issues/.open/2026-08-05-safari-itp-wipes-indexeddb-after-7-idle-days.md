@@ -31,6 +31,7 @@ The issue makes two claims, and they need different instruments:
 |---|---|
 | **A.** WebKit deletes script-writable storage after 7 days of Safari use without interaction | **Still unverified here.** Documented by WebKit and demonstrated by third parties, but nobody on this project has watched it happen. Needs real Safari on Apple hardware; the 7-day counter cannot be advanced from outside. |
 | **B.** Once the database is gone, DM history and sessions do not come back, while the conversation can resume on a fresh session | **VERIFIED 2026-08-17**, headless, by `dm-itp-wipe` (see Verification). |
+| **C.** Login restores profile, Spaces and Space keys | **VERIFIED 2026-08-17** by `space-wipe-restore` — **but only when `allowSync` is on, which is not the default.** With sync off the eviction takes the Spaces as well. The recoverability table below is corrected accordingly. |
 
 Splitting them matters because B is where every mitigation lands, and B is
 **not Safari-specific**: the client cannot tell *why* its database vanished.
@@ -127,17 +128,36 @@ Firefox users; it does not rescue the Safari tab case.** Only installing does.
 
 ### 3. What is actually lost vs recoverable
 
+> **⚠️ Corrected 2026-08-17 after measurement.** An earlier version of this table
+> marked profile, Spaces and Space keys as recoverable without qualification.
+> **That is only true if the user has `allowSync` ON.** It is device-local and
+> **defaults to OFF** ([ConfigService.ts:289](../../../src/services/ConfigService.ts#L289),
+> `storedConfig?.allowSync ?? false`), and both the `spaceKeys` build and the
+> `postUserSettings` call sit inside `if (config.allowSync)`
+> ([:695](../../../src/services/ConfigService.ts#L695),
+> [:864](../../../src/services/ConfigService.ts#L864)). With sync off, **nothing
+> is ever published**, so there is nothing to restore from and the eviction takes
+> the Spaces too. Measured both ways by `space-wipe-restore` — see Verification.
+
 | Data | Store | Recoverable? | How |
 |---|---|---|---|
 | Account identity | passkey `largeBlob` (platform authenticator) | ✅ | Not browser storage; survives |
-| Profile (name, avatar, bio) | encrypted server config | ✅ | Re-fetched on login |
-| Spaces list | encrypted server config | ✅ | Same |
-| Space keys + space ratchet state | encrypted server config (`config.spaceKeys`) | ✅ | [ConfigService.ts:545-561](../../../src/services/ConfigService.ts#L545-L561) backs up `keys` + `encryptionState` per space |
-| Bookmarks, settings | encrypted server config | ✅ | Same parcel |
-| **DM message history** | IndexedDB `messages` | ❌ | No server-side message storage (P2P) |
-| **DM conversation metadata** | IndexedDB `conversations` | ❌ | Same |
-| **DM Double Ratchet states** | IndexedDB `encryption_states` | ❌ | Same |
-| Space message history | IndexedDB `messages` | ⚠️ | Likely re-syncable from peers via the sync manifest protocol — **unverified** |
+| Profile (name, avatar, bio) | encrypted server config | ✅ **only if `allowSync`** | Re-fetched on login. MEASURED: returns with sync on, absent with sync off |
+| Spaces list | encrypted server config | ✅ **only if `allowSync`** | MEASURED: 1 Space restored with sync on, 0 with sync off |
+| Space keys | encrypted server config (`config.spaceKeys`) | ✅ **only if `allowSync`**, minus `signing` | MEASURED: 6 of 7 keys return. `signing` is skipped **by design** ([ConfigService.ts:467](../../../src/services/ConfigService.ts#L467)) so a restored device signs with its own per-device `inbox` key |
+| Space ratchet state | encrypted server config (`config.spaceKeys[].encryptionState`) | ✅ **only if `allowSync`** | MEASURED: the Space group ratchet is the *only* ratchet state that returns |
+| Bookmarks, settings | encrypted server config | ✅ **only if `allowSync`** | Same parcel, same gate |
+| **DM message history** | IndexedDB `messages` | ❌ | No server-side message storage (P2P). MEASURED: 0 restored |
+| **DM conversation metadata** | IndexedDB `conversations` | ❌ | Same. MEASURED: 0 restored |
+| **DM Double Ratchet states** | IndexedDB `encryption_states` | ❌ | Same. MEASURED: not in the config parcel; does not return |
+| Space message history | IndexedDB `messages` | ⚠️ | Likely re-syncable from peers via the sync manifest protocol — **still unverified** |
+
+**The practical consequence of the `allowSync` gate.** The population most
+exposed to this bug is not the one the table originally implied. A sync-off user
+— the default — loses *everything* local to an eviction: DMs **and** Spaces
+**and** profile. Whatever share of Safari web users that is, they are strictly
+worse off than this issue first described, and M2 (steer them to install) matters
+more for them than for anyone else.
 
 The existing [User Data Backup & Restore](../../docs/features/user-data-backup.md)
 doc already names this class of loss: *"scenarios where DM data is permanently
@@ -306,6 +326,45 @@ into any fix:
 `messages=3 conversations=1 sessions=0`. So it genuinely distinguishes a session
 wipe from a storage eviction, which is exactly the difference this issue is about.
 
+### Measured 2026-08-17 — `space-wipe-restore` (headless, Windows)
+
+`src/dev/tests/harness/space-wipe-restore.scenario.test.ts`, run with
+`yarn harness space-wipe-restore`. Answers the "what does login restore"
+question, which `dm-itp-wipe` could not reach: that path runs through
+`ConfigService.getConfig`, and the DM harness is transport-level.
+
+Two accounts, identical shape (one Space, a profile name, a DM each). **One
+variable: `allowSync`.** Both are evicted identically, then both log back in.
+
+```
+sync ON  BEFORE   spaces=1 keys=[…,config,hub,inbox,owner,signing] name=Synced   dmMessages=2 dmConvs=1
+sync ON  WIPED    spaces=0 keys=[]                                  name=(none)  dmMessages=0 dmConvs=0
+sync ON  RESTORED spaces=1 keys=[…,config,hub,inbox,owner]          name=Synced  dmMessages=0 dmConvs=0
+
+sync OFF BEFORE   spaces=1 keys=[…,config,hub,inbox,owner,signing] name=Unsynced dmMessages=2 dmConvs=1
+sync OFF WIPED    spaces=0 keys=[]                                  name=(none)  dmMessages=0 dmConvs=0
+sync OFF RESTORED spaces=0 keys=[]                                  name=(none)  dmMessages=0 dmConvs=0
+```
+
+- **Sync on:** the Space, its keys and the profile name all return. DMs stay at
+  zero — the login that rebuilt an entire Space restores no conversation data,
+  because none of it is in the parcel.
+- **Sync off:** nothing returns. Not the Space, not the keys, not the profile.
+  This is the default setting.
+- **`signing` is the one key that does not come back, deliberately.**
+  `adoptSpaces` skips it ([ConfigService.ts:467](../../../src/services/ConfigService.ts#L467))
+  so a restored device signs with its own per-device `inbox` key rather than
+  adopting the shared slot. The test asserts the exact key set, so removing that
+  `continue` goes red rather than silently regressing the per-device signing design.
+- **Only the Space group ratchet returns.** The restored `encryption_states` row
+  is `<spaceId>/<spaceId>`. The DM ratchet is not in the config and does not come
+  back — which is the same conclusion `dm-itp-wipe` reached from the other side.
+
+**Causation checked, not assumed.** Flipping *only* the sync-off arm to
+`allowSync: true` makes it restore its Space (`spaces=0` → `1`) and turns the
+test red. So the difference between the arms is `allowSync` itself, not some
+incidental difference between the two accounts.
+
 ### Still open
 
 - [ ] **Reproduce claim A.** On a Mac, log into `app.quorummessenger.com` in Safari, seed a space and a DM with history. Use Safari daily for other sites, never returning to Quorum. Check at day 8. Record exactly which IndexedDB databases survive (`quorum_db`, SDK `KeyDB`).
@@ -313,7 +372,8 @@ wipe from a storage eviction, which is exactly the difference this issue is abou
   - The "faster proxy" (Empty Caches / Manage Website Data) is now redundant for the *app-side* question — `dm-itp-wipe` answers it repeatably. The Mac run is only needed to confirm WebKit's **trigger**.
 - [ ] **Control arm.** Same procedure in Chrome. It must **not** wipe. Only meaningful once the Safari arm above actually runs.
 - [ ] Confirm the installed case is exempt: repeat with the app added to the Dock.
-- [ ] After a wipe, confirm what login actually restores (expected: profile, spaces, space keys; not DMs). **Not covered by `dm-itp-wipe`** — that harness is transport-level and never exercises the `ConfigService` login/restore path. This still needs either a browser run or a new harness slice.
+- [x] ~~After a wipe, confirm what login actually restores (expected: profile, spaces, space keys; not DMs).~~ **Done** — `space-wipe-restore`, see above. The expectation was right *for sync-on users only*; the table above is corrected.
+- [ ] **NEW, opened by that measurement:** decide whether a sync-off user losing their Spaces to an eviction is acceptable. It is the default setting, and this issue was originally written as though Spaces were always safe. Options: default `allowSync` on, warn before eviction-prone conditions, or make M2 (install) the answer and say so explicitly.
 - [x] ~~After a wipe, confirm a DM to an existing contact re-initiates via `ForceSenderInit` and both sides can talk again.~~ **Done** — see above.
 - [ ] After M1, confirm a `.qmbak` restore into the wiped profile brings back a *decryptable* existing session — and that restoring into a live account still leaves live states untouched.
 - [ ] Revert M1 and confirm the new test goes red. An assertion that passes either way is worse than no test.
@@ -330,7 +390,9 @@ wipe from a storage eviction, which is exactly the difference this issue is abou
 - [User Data Backup & Restore](../../docs/features/user-data-backup.md) — the `.qmbak` feature and its current limits
 - [Cryptographic Architecture](../../docs/cryptographic-architecture.md) §Key Storage Locations — what lives in IndexedDB
 - [Profile Sync on Returning User Login](../../docs/features/profile-sync-returning-user-login.md) — the recovery path that already exists for identity and profile
-- `src/dev/tests/harness/dm-itp-wipe.scenario.test.ts` — the reproduction of the app-side consequence; `yarn harness dm-itp-wipe`
+- `src/dev/tests/harness/dm-itp-wipe.scenario.test.ts` — the reproduction of the app-side DM consequence; `yarn harness dm-itp-wipe`
+- `src/dev/tests/harness/space-wipe-restore.scenario.test.ts` — what login restores, sync on vs off; `yarn harness space-wipe-restore`
+- [Make allowSync a per-device setting](2026-08-08-make-allowsync-a-per-device-setting.md) — the `allowSync` gate this issue now depends on
 
 ---
 

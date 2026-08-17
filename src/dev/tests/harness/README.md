@@ -137,6 +137,7 @@ Log analyzers stay in `.agents/tools/dm-debug/` (`dr-ablate`, `dr-replay`,
 |---|---|
 | `yarn harness space-create` | S0: a bot creates a real space on production and reads its manifest back through the joiner's own decode path |
 | `yarn harness space-basic` | S1: B joins A's space by invite and must receive **both** A's post and A's member row. `HARNESS_SPACE_WINDOW_MS` / `HARNESS_SPACE_SAMPLE_MS` tune the wait |
+| `yarn harness space-wipe-restore` | what logging back in restores after a storage eviction. Two accounts of identical shape, one variable — `allowSync`. Sync on: Space, keys and profile return, DMs do not. Sync off (the DEFAULT): nothing returns, so the eviction takes the Spaces too. The sync-off arm is also the control — if both restored, something other than the published config would be doing it |
 
 `space-basic` asserts the ROSTER as well as the message, because the roster half
 is the thing under investigation. B writes only its own member row locally, so a
