@@ -205,7 +205,7 @@ export function useVerifiedQnsNames(profiles: ProfileMap): Record<string, string
   // order share one cache entry instead of issuing the same request twice.
   const namesKey = React.useMemo(() => [...names].sort().join('|'), [names]);
 
-  const { data } = useQuery({
+  const { data, status } = useQuery({
     queryKey: ['qns-verify-claims', namesKey],
     // `signal` so a request superseded by a widening set is abandoned rather
     // than left to finish and have its answer discarded — see the note on
@@ -231,9 +231,51 @@ export function useVerifiedQnsNames(profiles: ProfileMap): Record<string, string
     // name that is NEW in the wider set is simply absent from it, and absent
     // means unverified — carrying it forward can only under-show, never promote
     // something unchecked.
-    placeholderData: (previous) => previous,
+    //
+    // BUT only carry it forward from a query that actually SUCCEEDED, which is
+    // what `previousQuery` is checked for. The bare `(previous) => previous`
+    // form has a hole that defeats the status gate below:
+    //
+    //   React Query picks the placeholder source by "last query that had
+    //   defined data", and an ERRORED query still qualifies, because the error
+    //   reducer never clears `data`. It then reports the carried value as
+    //   `status: 'success'`. So after a failed refetch, one new claimant is
+    //   enough to resurrect the stale map through a brand-new query — past the
+    //   gate, with nothing having re-verified anything.
+    //
+    // That is routine, not exotic: scrolling a channel adds claimants one at a
+    // time, and that is exactly what changes `namesKey`. With `retry: false`
+    // the errored query never re-attempts, so the resurrected answer has no
+    // expiry at all.
+    //
+    // MEASURED 2026-08-17 against this hook: name correctly dropped to
+    // unverified after the failure, then came back on the widen.
+    placeholderData: (previous, previousQuery) =>
+      previousQuery?.state.status === 'success' ? previous : undefined,
   });
 
-  const records = data ?? NO_RECORDS;
+  // Gate on `status`, not on `data` alone — this is a security bound, not a
+  // null check.
+  //
+  // React Query does not clear `data` when a query errors: its reducer keeps
+  // the previous state and only flips `status`. So `data ?? NO_RECORDS` kept
+  // serving the last successful record map for as long as refetches kept
+  // failing, which removes the `staleTime` bound entirely. That bound is the
+  // whole point of the hour above — how long a `.q` transferred to somebody
+  // else can still verify for its previous owner — and with `retry: false` and
+  // nothing logged on this path, an install could sit past it indefinitely with
+  // no symptom a user could see.
+  //
+  // MEASURED 2026-08-17, before the fix: after one failed refetch the query
+  // read `status=error` while `data` still held the stale map, and the verified
+  // name kept rendering.
+  //
+  // This gate is only half the fix, and it does NOT stand on its own. A carried
+  // `placeholderData` value is reported as `status: 'success'`, so it passes
+  // here by design — which is correct only because `placeholderData` above now
+  // refuses to carry anything forward from a query that errored. Without that
+  // guard, a widening claim set walks straight through this line with the stale
+  // map. Read the two together; changing either alone reopens the hole.
+  const records = status === 'success' && data ? data : NO_RECORDS;
   return React.useMemo(() => verifiedNamesFrom(profiles, records), [profiles, records]);
 }
