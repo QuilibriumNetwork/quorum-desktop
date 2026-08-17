@@ -125,6 +125,7 @@ Log analyzers stay in `.agents/tools/dm-debug/` (`dr-ablate`, `dr-replay`,
 | `yarn harness dm-basic` | two bots exchange numbered DMs, no browser (HARNESS_ROUNDS) |
 | `yarn harness dm-volume` | concurrent bidirectional load; samples skipped-keys growth |
 | `yarn harness dm-reset-recover` | wipe a session mid-conversation, verify it re-inits and recovers |
+| `yarn harness dm-itp-wipe` | destroy one side's whole database (storage eviction: Safari ITP, cleared site data, new device) and measure the cost — history and sessions go to zero, the conversation resumes on a fresh session, and nothing revives the old messages. The other bot is a control arm. Distinct from `dm-reset-recover`, which wipes only sessions and keeps history |
 | `yarn harness dm-reorder` | **reproduces the production DM failure on demand.** Withholds the head of a sending chain so a stale skipped-keys bucket forms, then delivers the sender's next chain: the frames at colliding indices fail AEAD, and only those |
 | `yarn harness dm-loss` | send-vs-arrive frame loss per direction, joined by ciphertext fingerprint (issue #183 item 2). `HARNESS_LOSS_CANONICAL=1` runs it on the canonical aged multi-device accounts instead of fresh throwaways — the account shape is a variable in its own right, so the two arms answer different questions |
 | `yarn harness dm-stale-bucket` | the reorder cycle at scale, with the client-side mitigation OFF then ON, on fresh accounts per arm |
@@ -136,6 +137,7 @@ Log analyzers stay in `.agents/tools/dm-debug/` (`dr-ablate`, `dr-replay`,
 |---|---|
 | `yarn harness space-create` | S0: a bot creates a real space on production and reads its manifest back through the joiner's own decode path |
 | `yarn harness space-basic` | S1: B joins A's space by invite and must receive **both** A's post and A's member row. `HARNESS_SPACE_WINDOW_MS` / `HARNESS_SPACE_SAMPLE_MS` tune the wait |
+| `yarn harness space-wipe-restore` | what logging back in restores after a storage eviction. Two accounts of identical shape, one variable — `allowSync`. Sync on: Space, keys and profile return, DMs do not. Sync off (the DEFAULT): nothing returns, so the eviction takes the Spaces too. The sync-off arm is also the control — if both restored, something other than the published config would be doing it |
 
 `space-basic` asserts the ROSTER as well as the message, because the roster half
 is the thing under investigation. B writes only its own member row locally, so a

@@ -16,7 +16,7 @@ import { ActionQueueService } from '../../../services/ActionQueueService';
 import { ActionQueueHandlers } from '../../../services/ActionQueueHandlers';
 import type { HandlerDependencies } from '../../../services/ActionQueueHandlers';
 import type { EncryptedMessage, MessageDB } from '../../../db/messages';
-import { makeMessageDB } from './storage';
+import { deleteDatabaseFor, makeMessageDB } from './storage';
 import { makeApiClient, WsTransport } from './transport';
 import { makeDeps, deleteInboxMessages } from './deps';
 import { XpdumpLog } from './xpdump';
@@ -50,6 +50,16 @@ export interface HarnessBot {
   send(toAddress: string, text: string): Promise<void>;
   /** Delete all local DM sessions — simulates a reset/wipe. Returns rows removed. */
   wipeSessions(): Promise<number>;
+  /**
+   * Destroy this bot's ENTIRE database — every store, not just sessions.
+   *
+   * The storage-eviction case: Safari's ITP wipe, "clear site data", a new
+   * device. Distinct from `wipeSessions`, which removes only `encryption_states`
+   * and leaves history readable. Conflating the two is the mistake this exists to
+   * prevent: a session wipe costs you the ability to decrypt on the old session,
+   * a full wipe costs you the messages as well.
+   */
+  wipeAll(): Promise<void>;
   /** Fetch + delete queued frames on the device inbox (clears stale-frame confound). */
   drainInbox(): Promise<number>;
   start(): Promise<void>;
@@ -145,6 +155,15 @@ export async function createBot(
       const rows = await messageDB.getAllEncryptionStates();
       for (const r of rows) await messageDB.deleteEncryptionState(r);
       return rows.length;
+    },
+    wipeAll: async () => {
+      await deleteDatabaseFor(messageDB);
+      // Force the next refreshSubscriptions() to actually re-send `listen`,
+      // mirroring the app reload that follows a real wipe: the browser comes back
+      // with no sessions and subscribes from scratch. The address set normally
+      // shrinks here anyway (session inboxes are gone), so the memo would usually
+      // miss on its own — this just removes the dependence on that.
+      subscribed = '';
     },
     drainInbox: async () => {
       const res = await apiClient.getInbox(identity.inboxAddress);

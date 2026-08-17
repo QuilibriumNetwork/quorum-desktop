@@ -62,6 +62,12 @@ const UserSettingsModal: React.FunctionComponent<{
 
   const [saveError, setSaveError] = React.useState<string>('');
 
+  // Set only by the backup reminder's link, and cleared by Security once it has
+  // scrolled. Reaching Security from the sidebar leaves it false, so the jump
+  // happens for the user who asked for it and nobody else.
+  const [focusBackup, setFocusBackup] = React.useState(false);
+  const handleBackupFocused = React.useCallback(() => setFocusBackup(false), []);
+
   // Use our extracted hooks
   const {
     displayName,
@@ -285,6 +291,15 @@ const UserSettingsModal: React.FunctionComponent<{
                         spaceTagId={spaceTagId}
                         setSpaceTagId={setSpaceTagId}
                         eligibleSpaceTags={eligibleSpaceTags}
+                        // `undefined` until the config has loaded, so the backup
+                        // reminder stays silent rather than flashing at every
+                        // sync-ON user on open. `allowSync` defaults to false
+                        // before load, which would otherwise read as "sync off".
+                        allowSync={isConfigLoaded ? allowSync : undefined}
+                        onGoToBackup={() => {
+                          setSelectedCategory('security');
+                          setFocusBackup(true);
+                        }}
                       />
                     );
                   case 'privacy':
@@ -322,6 +337,8 @@ const UserSettingsModal: React.FunctionComponent<{
                         removedDevices={removedDevices}
                         deviceNames={deviceNames}
                         saveDeviceName={saveDeviceName}
+                        focusBackup={focusBackup}
+                        onBackupFocused={handleBackupFocused}
                       />
                     );
                   case 'notifications':
