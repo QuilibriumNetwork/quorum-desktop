@@ -65,3 +65,46 @@ export async function totalSkipped(db: MessageDB): Promise<number> {
   const stats = await ratchetStats(db);
   return stats.reduce((a, s) => a + s.skipped, 0);
 }
+
+export interface DmCensus {
+  messages: number;
+  conversations: number;
+  /** encryption_states rows — the Double Ratchet sessions. */
+  sessions: number;
+}
+
+/**
+ * How much DM data this bot currently holds, counted through `getAllDMData` —
+ * deliberately the SAME read the `.qmbak` export uses (BackupService).
+ *
+ * Using the export's own lens means a census of 0 is not merely "the stores look
+ * empty", it is "a backup taken right now would capture nothing", which is the
+ * claim the ITP issue actually makes. Counting the raw stores by hand could
+ * disagree with what a backup would really see and would not notice.
+ */
+export async function dmCensus(db: MessageDB, address: string): Promise<DmCensus> {
+  const data = await db.getAllDMData({ address });
+  return {
+    messages: data.messages.length,
+    conversations: data.conversations.length,
+    sessions: data.encryption_states.length,
+  };
+}
+
+/**
+ * Every IndexedDB database that exists right now, by name.
+ *
+ * The ITP issue asks for exactly this ("record exactly which IndexedDB databases
+ * survive: quorum_db, SDK KeyDB"), and it is worth RECORDING rather than
+ * asserting: whether the SDK's `KeyDB` even materialises in a headless run is not
+ * something to assume in either direction.
+ *
+ * Returns null when the runtime has no `databases()` — a caller must not read
+ * that as "no databases exist".
+ */
+export async function listDatabaseNames(): Promise<string[] | null> {
+  const factory = indexedDB as IDBFactory & { databases?: () => Promise<IDBDatabaseInfo[]> };
+  if (typeof factory.databases !== 'function') return null;
+  const infos = await factory.databases();
+  return infos.map((d) => d.name ?? '(unnamed)').sort();
+}
