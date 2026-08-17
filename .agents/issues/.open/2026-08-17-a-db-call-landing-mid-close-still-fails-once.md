@@ -15,8 +15,34 @@ related:
 
 # A DB call landing mid-close still fails once
 
-Found while fixing the `onclose` bug, and deliberately left out of that change to
-keep it reviewable. That fix is a prerequisite for this one.
+Found while fixing the `onclose` bug (shipped in PR #346), and deliberately left
+out of that change to keep it reviewable. That fix is a prerequisite for this one.
+
+## ⛔ Do not start this without evidence first
+
+Recommendation made 2026-08-17, when the sizing was looked at properly rather
+than assumed. **This is not queued work. It needs a reason before it is built.**
+
+The cost is 104 hand-edits restructuring transaction creation across the whole
+storage layer, in a file whose test coverage reaches perhaps a fifth of those
+methods. Most edits would land with nothing watching them.
+
+The benefit is narrow. The window is open only for the few milliseconds a dying
+connection spends aborting its work, during an event (eviction, corruption, ITP
+wipe, cleared site data) that is itself rare. The consequence is bounded and
+self-healing: a handful of operations fail, then it recovers. The permanent
+session-wide wedge, which was the actual problem, is already fixed.
+
+On the standing rule of scaling rigour to blast radius, a large mechanical
+refactor of the storage layer to remove a brief self-healing hiccup is the wrong
+trade.
+
+**The instrument now exists.** PR #346 added a `logger.warn` on every forced
+close. Once
+`.agents/issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md`
+is fixed so that signal escapes production, we can see whether forced closes
+happen to real users at all, and how often. Build this if that data says it
+matters. Do not build it on the reasoning that it is theoretically incomplete.
 
 ## The remaining gap
 

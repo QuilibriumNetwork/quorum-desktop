@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "MessageDB never recovers from an abnormally closed IndexedDB connection, breaking all persistence for the rest of the session"
-status: in-progress
+status: done
 priority: high
 created: 2026-08-06
 updated: 2026-08-17
@@ -66,8 +66,16 @@ may not simulate an abnormal close, so this might need a real-browser check.
 
 ## Status
 
-Fixed on branch `fix/messagedb-recover-from-forced-close` (2026-08-17), exactly
-the `onclose` handler suggested above, in `MessageDB.init()`.
+**2026-08-17 — shipped in PR #346** (`fix(db): recover MessageDB from a
+browser-forced connection close`).
+
+What landed: the `onclose` handler suggested above, in `MessageDB.init()`, plus
+three further defects found in review (below). A forced close no longer wedges
+the session; the connection reopens on next access.
+
+Still open, tracked separately, NOT part of this issue: a call landing inside the
+brief closing window still fails once. See
+`.agents/issues/.open/2026-08-17-a-db-call-landing-mid-close-still-fails-once.md`.
 
 **`fake-indexeddb` CAN simulate an abnormal close** — the doubt recorded above is
 resolved. It ships `forceCloseDatabase()` (exported from the package root and

@@ -111,7 +111,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 ["Delete Space" is Leave with a destructive-sounding label, and the owner must never click it](issues/2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md)
 - 🐛 [The roster pull: what it actually does](issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
-- 🐛 [MessageDB never recovers from an abnormally closed IndexedDB connection](issues/2026-08-06-messagedb-never-recovers-from-an-abnormally-closed-connection.md)
 - 🐛 [Eight name surfaces never reached the resolver](issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md)
 - 🐛 [Notification switches freeze the UI for ~1.8s](issues/2026-08-13-notification-toggle-freeze-is-the-config-encode-chain.md)
 - 🐛 [Desktop has no `.q` broadcast, and trusts a `.q` it never checks](issues/2026-08-16-desktop-has-no-q-broadcast-and-renders-claims-unverified.md)
@@ -391,6 +390,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A channel you have never opened loads exactly one message — its oldest — and reads as empty](issues/.done/2026-08-06-channel-loads-one-old-message-and-reads-as-empty.md)
 - 🐛 [All emoji images break in a git worktree](issues/.done/2026-08-06-emoji-images-break-in-git-worktrees.md)
 - 🐛 [Emoji panel inserts the emoji at the start of the message](issues/.done/2026-08-06-emoji-panel-inserts-at-start-of-message.md)
+- 🐛 [MessageDB never recovers from an abnormally closed IndexedDB connection](issues/.done/2026-08-06-messagedb-never-recovers-from-an-abnormally-closed-connection.md)
 - 🐛 [Messages arriving over sync never reach an open channel, so it stays completely empty until you reload](issues/.done/2026-08-06-synced-messages-never-reach-an-open-channel-so-it-stays-empty.md)
 - 🐛 [A device with sync off still claims a newer timestamp](issues/.done/2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md)
 - 🐛 [An armed sync crashes after a kick](issues/.done/2026-08-09-armed-sync-crashes-after-a-kick.md)
@@ -797,4 +797,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-17 10:52:48
+**Last Updated**: 2026-08-17 11:14:04
