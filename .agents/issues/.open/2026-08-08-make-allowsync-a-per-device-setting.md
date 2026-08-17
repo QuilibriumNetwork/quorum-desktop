@@ -6,7 +6,7 @@ complexity: low
 priority: high
 ai_generated: true
 created: 2026-08-08
-updated: 2026-08-09
+updated: 2026-08-17
 area: config sync / privacy / multi-device
 repos: quorum-desktop + quorum-mobile
 parent: ".agents/issues/.open/2026-08-07-config-sync-overhaul-design.md"
@@ -25,10 +25,16 @@ Fully unblocked. Small. Best done soon after the timestamp-authority fix
 
 ## Status
 
-**2026-08-17 — mobile implemented** on branch `feat/config-sync-slice1-2`, in the
-same branch as Slice 1, per this file's own "prefer one release" guidance. Both
-halves now exist; this issue stays open until the mobile branch merges and the
-two-device runs below are done on real hardware.
+**2026-08-17 — mobile SHIPPED in quorum-mobile PR #252**, in the same PR as
+Slice 1, per this file's own "prefer one release" guidance. Both halves are now
+live.
+
+**Still open for one reason: only the desktop→mobile direction is verified.**
+The cross-client harness (desktop PR #347) runs desktop-publishes /
+mobile-reads. The reverse — mobile publishes, desktop adopts — has never been
+run, and it is a pre-existing criterion in Verification below, not one invented
+here. Two devices publishing concurrently is also unmodelled; the harness models
+a reinstall.
 
 The mobile change is at the `...decryptedConfig` adopt site in
 `services/config/configService.ts`, sourcing `allowSync` from

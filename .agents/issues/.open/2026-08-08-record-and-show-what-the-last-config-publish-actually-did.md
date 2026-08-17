@@ -6,7 +6,7 @@ complexity: medium
 priority: high
 ai_generated: true
 created: 2026-08-08
-updated: 2026-08-09
+updated: 2026-08-17
 area: config sync / observability
 repos: quorum-desktop + quorum-mobile (+ quorum-shared for the shared type)
 parent: ".agents/issues/.open/2026-08-07-config-sync-overhaul-design.md"
@@ -53,7 +53,7 @@ threshold follow once §4.1 is answered or the data explains itself.
 
 ## Status
 
-**2026-08-17 — mobile implemented, unblocked and done.** `@quilibrium/quorum-shared`
+**2026-08-17 — mobile SHIPPED in quorum-mobile PR #252.** `@quilibrium/quorum-shared`
 published past 2.1.0-41 and mobile's pin is now **2.1.0-43**, which carries
 `PublishOutcome` and `LastPublish`. Branch `feat/config-sync-slice1-2`, together
 with Slice 2.
