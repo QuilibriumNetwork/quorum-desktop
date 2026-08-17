@@ -45,7 +45,8 @@
     "test:run": "vitest --run",
     "harness": "vitest --run --config vitest.harness.config.ts",
     "bench": "vitest --run --config vitest.perf.config.ts",
-    "harness:cross": "node src/dev/tests/harness/run-cross.mjs"
+    "harness:cross": "node src/dev/tests/harness/run-cross.mjs",
+    "harness:config-cross": "node src/dev/tests/harness/run-config-cross.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

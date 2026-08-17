@@ -25,9 +25,33 @@ Fully unblocked. Small. Best done soon after the timestamp-authority fix
 
 ## Status
 
+**2026-08-17 — mobile implemented** on branch `feat/config-sync-slice1-2`, in the
+same branch as Slice 1, per this file's own "prefer one release" guidance. Both
+halves now exist; this issue stays open until the mobile branch merges and the
+two-device runs below are done on real hardware.
+
+The mobile change is at the `...decryptedConfig` adopt site in
+`services/config/configService.ts`, sourcing `allowSync` from
+`getLocalUserConfig(address)?.allowSync ?? false` — re-read at the adopt site,
+not taken from the earlier `localConfig` snapshot, per the ⚠️ below.
+
+Four unit tests, including the control arm for the device that had sync **on**.
+The control arm earned its place twice over:
+
+1. As designed — hardcoding `allowSync = false` turns **only** the control arm
+   red, while the other three pass. MEASURED by mutation, not assumed.
+2. Unexpectedly — the first draft of the control arm **passed on the unfixed
+   tree for the wrong reason**. `getConfig` verifies the blob's signature through
+   `await import(...)`, which throws under jest, and the `catch` returns `false`,
+   so the test returned the local config without ever reaching the adopt site. It
+   would have passed against any implementation. Fixed by asserting the path was
+   *entered* (`expect(mockVerifyEd448).toHaveBeenCalled()`) and by repairing the
+   underlying transform — filed as
+   [a mobile issue](../../../../quorum-mobile/.agents/issues/.open/2026-08-17-dynamic-imports-silently-took-their-error-branch-under-jest.md),
+   because 64 call sites share that shape.
+
 **2026-08-09 — desktop shipped in PR #322** (`feat(config): report sync failures,
-and make turning sync off stick`). **Mobile remains**, and this issue stays open
-until it lands.
+and make turning sync off stick`).
 
 What landed: the local `allowSync` is now authoritative at the adopt site in
 `getConfig`, set on the config object itself so the DB row, the React Query cache
@@ -165,11 +189,25 @@ Confirm no other read path resolves `allowSync` from a remote object.
 ## Definition of Done
 
 - [x] Desktop preserves the local `allowSync` on adopt, in DB and cache — PR #322
-- [ ] Mobile preserves it, re-reading the local value at the adopt site
-- [ ] Both verification runs pass, and both go red on revert
+- [x] Mobile preserves it, re-reading the local value at the adopt site —
+      branch `feat/config-sync-slice1-2`, 2026-08-17
+- [x] Unit-level equivalents pass on mobile, and each goes red on revert.
+      Three mutations MEASURED: dropping the line turns 3 red with the control
+      arm still green; hardcoding `false` turns **only** the control arm red;
+      reading the stale pre-verification snapshot turns only the re-read test red
+- [x] **Verified end to end against the real relay** (mobile), 2026-08-17 —
+      `yarn harness:config-sync`, a new headless scenario. A setting published by
+      one device is adopted by another; a fresh device starts OFF whatever the
+      blob says; a blob saying `true` does not switch a switched-off device back
+      on; and the control arm (a device that had sync ON keeps it ON) passes.
+      Reverting the fix turns the scenario red. Real encryption, real POST/GET,
+      real signature verification — not mocks. Also produced the first real
+      payload reading from a mobile publish: **594 bytes** for a 0-Space config.
+- [ ] Two-device runs on real hardware (the harness models a reinstall — same
+      account, empty local store — not two devices publishing concurrently)
 - [ ] Cross-client run done in both directions
-- [ ] **Both clients done** — prefer one release here; a long gap is confusing
+- [x] **Both clients done** — landed in one wave, as this file recommended
 
 ---
 
-*Last updated: 2026-08-09*
+*Last updated: 2026-08-17*
