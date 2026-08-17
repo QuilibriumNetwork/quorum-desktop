@@ -753,7 +753,11 @@ below reads as "what is left", not "what was planned".
    catching that error, and catching it without persisting would be choosing to
    keep losing the edit. The fix comes along.
    **✅ DESKTOP SHIPPED 2026-08-09** in PRs #321 (data-loss half) and #322
-   (recording + UI), plus shared 2.1.0-41. **Mobile blocked on that publish.**
+   (recording + UI), plus shared 2.1.0-41. **✅ MOBILE 2026-08-17** on branch
+   `feat/config-sync-slice1-2`, once shared published and mobile's pin reached
+   2.1.0-43. Mobile needed no control-flow change, as scoped — but it is the only
+   client that can reach `no-keys`, so all six outcomes are live there. Release-build
+   verification still outstanding, which is the one thing this slice was for.
    *Design change made during implementation:* the line is **failures-only**.
    "Last synced N ago" reported the last time the device had something to
    *publish*, not the last time it reached the server, so a healthy device that
@@ -761,8 +765,11 @@ below reads as "what is left", not "what was planned".
    normal use, which is also why §5.3 tiering will not crowd the panel.
 2. **Slice 2 — "Off stays off."** §5.1 device-local `allowSync`. *Observable:*
    turn sync off on device A, use device B, restart A, it is still off.
-   **✅ DESKTOP SHIPPED 2026-08-09** in PR #322. Mobile still to do, and not
-   blocked by anything — it needs no new shared type.
+   **✅ DESKTOP SHIPPED 2026-08-09** in PR #322. **✅ MOBILE 2026-08-17**, in the
+   same branch as slice 1 rather than its own, because a gap here is confusing in
+   a new way (a patched client keeps publishing `allowSync: true` to an unpatched
+   one) and both halves are a handful of lines. Two-device runs on real hardware
+   still outstanding.
 3. **Slice 3 — "Choose what leaves."** §5.3 tiering, with Traps 1-3 resolved.
    *Observable:* switching the keys tier off keeps settings syncing and shrinks
    the blob by ~98%.

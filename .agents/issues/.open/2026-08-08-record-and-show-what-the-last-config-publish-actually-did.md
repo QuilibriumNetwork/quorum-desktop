@@ -53,8 +53,72 @@ threshold follow once §4.1 is answered or the data explains itself.
 
 ## Status
 
-**2026-08-09 — the whole desktop side has shipped. Only mobile remains, and it
-is blocked on a package publish.**
+**2026-08-17 — mobile implemented, unblocked and done.** `@quilibrium/quorum-shared`
+published past 2.1.0-41 and mobile's pin is now **2.1.0-43**, which carries
+`PublishOutcome` and `LastPublish`. Branch `feat/config-sync-slice1-2`, together
+with Slice 2.
+
+What landed on mobile:
+
+- `services/config/lastPublish.ts` — MMKV-backed, same store id as the config
+  (`quorum-config`) so an account reset clears it, key `quorum:sync:lastPublish`
+  matching desktop. `classifyPublishError` is duplicated from desktop
+  **verbatim and deliberately** — see the drift note below.
+- All six outcomes recorded in `saveConfig`. As predicted, no control-flow change
+  was needed: every branch already existed and four already logged.
+- `components/SyncStatusLine.tsx`, failures-only, rendered under "Enable Sync" in
+  `ProfileModal`'s Privacy & Sync section. Copy is **word-for-word identical to
+  desktop's**, minus the lingui `t` macro, since mobile has no i18n library.
+- The record is written **before** each `logger.*` call, so it does not inherit
+  the release-build no-op that made this branch silent on mobile in the first
+  place.
+
+19 tests (8 recording + 11 render). Every one confirmed able to fail: 11
+individual mutations were applied and each turned its specific test red.
+Notably, recording the failure unconditionally in the `catch` — rather than
+guarding on `published` — turns red, which pins the case where the server
+accepted the upload and only the local bookkeeping after it threw.
+
+**Two UI strings deliberately DIVERGE from desktop's, found by review.** Both
+because the same outcome value does not mean the same thing on the two clients.
+Recorded here so a future parity sweep does not "fix" them back:
+
+- **`timeout`.** Desktop says *"It will keep retrying"*, which is true here —
+  the action queue retries transient failures with backoff. **Mobile has no
+  queue and never did**; `saveConfig`'s catch swallows the error and returns, so
+  nothing retries until the user next changes a setting. The line was copied
+  verbatim and was therefore a lie on mobile — the exact false reassurance this
+  slice exists to remove. Mobile now says the change is saved and goes out with
+  the next change.
+- **`rejected`.** Desktop wraps only the POST in its `try`, so `rejected`
+  genuinely means the server refused it. **Mobile's `try` also covers key
+  collection, encryption and signing**, so a local crypto fault lands in the
+  same bucket. Naming the server would send someone debugging a device-local
+  fault to the wrong system, so mobile's line no longer does.
+
+**Follow-up this exposes:** `PublishOutcome` has no member for "failed before
+the request was sent". Mobile compensates by prefixing the record's `detail`
+with `before send:`, which is a workaround, not a fix — the UI still cannot
+tell the two apart. A `local-error` member in shared would close it properly,
+and would let mobile's copy be specific again. **Also worth its own issue:
+mobile does not retry a failed config publish at all**, which is what forced the
+copy change above.
+
+**Drift risk worth naming:** `classifyPublishError` now exists twice, in
+`src/utils/lastPublish.ts` here and `services/config/lastPublish.ts` on mobile.
+If they diverge, the same failure reads as different states on a phone and a
+laptop, which is exactly the confusion this slice exists to remove. §7 of the
+design already lists the publish-outcome work as a shared-declaration candidate;
+the classifier belongs there too — and it classifies on the error MESSAGE, so it
+cannot see where the failure happened, which is the root of the `rejected`
+ambiguity above.
+
+**Still open here:** verification in a mobile **release** build (the whole point
+is that the existing signal compiles out there), and the by-hand runs that force
+each outcome on a device.
+
+**2026-08-09 — the whole desktop side had shipped; mobile was blocked on a
+package publish.**
 
 **PR #322** (`feat(config): report sync failures, and make turning sync off
 stick`) landed the recording and the UI:
@@ -377,22 +441,26 @@ One line of text, no new controls:
 
 ## Definition of Done
 
-- [x] Shared type added (2.1.0-41, shared PR #78) — **publish pending**, lead dev
+- [x] Shared type added (2.1.0-41, shared PR #78) — **published**; mobile pinned
+      to 2.1.0-43, which carries it
 - [x] All outcomes desktop can reach are recorded — PR #322. `no-keys` is
       unreachable here: the action queue throws on a missing keyset before
       `saveConfig` runs
-- [ ] All six outcomes recorded on mobile
+- [x] All six outcomes recorded on mobile — branch `feat/config-sync-slice1-2`,
+      2026-08-17. Mobile **can** reach `no-keys`, so all six are live on one
+      client
 - [x] Desktop failure path persists locally, restores the timestamp, and re-throws
       — PR #321
-- [ ] Status line in both clients' privacy settings — desktop done (PR #322,
-      failures-only), mobile pending
+- [x] Status line in both clients' privacy settings — desktop PR #322, mobile
+      2026-08-17. Both failures-only, identical copy
 - [ ] Verified in a mobile release build
-- [ ] Revert tests confirmed red
-- [ ] **Both clients done** — order is a scheduling call, but mobile is not optional
+- [x] Revert tests confirmed red — 11 mutations on mobile, each turning its own
+      test red, against a baseline verified before mutating
+- [x] **Both clients done**
 
 ---
 
-*Last updated: 2026-08-09*
+*Last updated: 2026-08-17*
 
 ## Updates
 - **2026-08-08 08:32**: Instrument built before the fix: added ConfigService.unit.test.tsx section 8 (4 tests) on branch test/config-publish-failure-persistence. MEASURED — a rejected publish never calls saveUserConfig at all, so the user's edit is discarded. Control arm (accepted publish persists) passes, so the harness is sound. 32 passed / 2 failed; the 2 failures are the acceptance criteria.
