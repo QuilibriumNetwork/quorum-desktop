@@ -8,7 +8,7 @@ ai_generated: true
 created: 2026-08-17
 updated: 2026-08-17
 area: identity resolution / QNS claim verification / observability
-repos: quorum-desktop (confirmed here), quorum-mobile (UNCHECKED — same shape, see below)
+repos: quorum-desktop (confirmed here), quorum-mobile (checked — NOT affected, see below)
 source: found by an independent review of the fail-open fix; this is the cost that fix makes visible
 related:
   - ".agents/issues/.open/2026-08-17-a-failed-refetch-keeps-serving-stale-qns-verifications.md"
@@ -70,6 +70,27 @@ break a render, and subscribable. `useVerifiedQnsNames` has no equivalent signal
 for "the verification query errored and is serving NO_RECORDS". Extend that
 rather than inventing a fourth logging mechanism.
 
+## quorum-mobile does NOT have this gap, and its design is the answer
+
+Checked 2026-08-17 (READ, not measured — code read, not exercised). **Mobile
+recovers and desktop does not, and the difference is one deliberate setting.**
+
+| | desktop | mobile |
+|---|---|---|
+| `refetchOnWindowFocus` | **`false`**, set explicitly in `web/main.tsx` | left at the default (`true`) |
+| focus signal | browser focus (disabled above) | `AppState` → `focusManager`, wired in `services/observability/reactQueryRnBridges.ts` |
+| online signal | browser online/offline | NetInfo → `onlineManager`, same file |
+| bridge installed | n/a | at module scope, `app/_layout.tsx:21` |
+
+So on mobile, an errored claim-verification query refetches the next time the
+user backgrounds the app and returns — a frequent, ordinary action. Focus
+refetch is not blocked by the per-query `retry: false`, because `retry` governs
+attempts *within* one fetch, while focus starts a *new* one.
+
+That makes this **desktop-only**, and it means option 2 below is not a design
+guess: it is what the other client already does, in production, today. Prefer
+matching mobile's shape over inventing a third policy.
+
 ## Options
 
 Not obviously one right answer, which is why this is filed rather than fixed.
@@ -84,7 +105,9 @@ Not obviously one right answer, which is why this is filed rather than fixed.
 3. **Observability only**: record the degraded state via `diagnostics.ts` so it
    is at least discoverable, and treat recovery as a separate decision.
 
-2 and 3 together are probably the honest fix. 3 alone is worth doing regardless.
+2 and 3 together are probably the honest fix, and option 2 now has a working
+precedent rather than being a guess — see the mobile comparison above. 3 alone is
+worth doing regardless.
 
 ## Same shape elsewhere, lower stakes
 
@@ -111,7 +134,7 @@ Same-shape display-only reads: `components/direct/DirectMessage.tsx:342`,
 - [ ] A test proves recovery through a trigger the RUNNING APP actually has —
       not through a direct `refetchQueries` call, which is what the existing test
       uses and is why this gap was invisible
-- [ ] quorum-mobile checked for the same recovery gap
+- [x] quorum-mobile checked for the same recovery gap — not affected; its AppState focus bridge already recovers
 - [ ] Decide on `identityProvider.tsx:279` — gate it or record why not
 
 ---
