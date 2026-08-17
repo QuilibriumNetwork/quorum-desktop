@@ -5,7 +5,7 @@ status: open
 priority: high
 ai_generated: true
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-17
 related_docs:
   - "../../docs/features/user-data-backup.md"
   - "../../docs/cryptographic-architecture.md"
@@ -23,11 +23,23 @@ related_reports:
 
 ## Status
 
-Unverified against a live Safari instance. The mechanism is confirmed from
-WebKit's own documentation and the code paths are confirmed by reading this
-repo, but **no one has yet watched a real Quorum account get wiped**. That
-reproduction is step 1 of any fix (see Verification). Filed as `high` rather
-than `critical` because the affected population is currently unmeasured.
+**The consequence is now measured. The Safari trigger is not.**
+
+The issue makes two claims, and they need different instruments:
+
+| Claim | Status |
+|---|---|
+| **A.** WebKit deletes script-writable storage after 7 days of Safari use without interaction | **Still unverified here.** Documented by WebKit and demonstrated by third parties, but nobody on this project has watched it happen. Needs real Safari on Apple hardware; the 7-day counter cannot be advanced from outside. |
+| **B.** Once the database is gone, DM history and sessions do not come back, while the conversation can resume on a fresh session | **VERIFIED 2026-08-17**, headless, by `dm-itp-wipe` (see Verification). |
+
+Splitting them matters because B is where every mitigation lands, and B is
+**not Safari-specific**: the client cannot tell *why* its database vanished.
+ITP, a "clear site data" click and a brand-new device are the same event to it.
+So B was testable immediately, on Windows, without Apple hardware — which is
+what made the 8-day Mac reproduction stop being a blocker on everything else.
+
+Still `high` rather than `critical`: the affected population remains unmeasured
+(what share of users are on Safari web rather than Electron).
 
 ## Symptoms
 
@@ -243,16 +255,66 @@ knows it is a routine occurrence rather than an edge case.
 
 ## Verification
 
-**Do not close this on reasoning.** The mechanism is documented but the specific
-consequence for a Quorum account has not been observed. Establish the baseline
-first, then re-run after each mitigation.
+**Do not close this on reasoning.**
 
-- [ ] **Reproduce.** On a Mac, log into `app.quorummessenger.com` in Safari, seed a space and a DM with history. Use Safari daily for other sites, never returning to Quorum. Check at day 8. Record exactly which IndexedDB databases survive (`quorum_db`, SDK `KeyDB`).
-  - Faster proxy for iteration: Safari → Develop → Empty Caches, or delete the origin's data in Settings → Privacy → Manage Website Data. Confirm it produces the same end state before trusting it as a substitute.
-- [ ] **Control arm.** Same procedure in Chrome. It must **not** wipe. If both arms wipe, the instrument is measuring something else.
+### Measured 2026-08-17 — `dm-itp-wipe` (headless, Windows)
+
+`src/dev/tests/harness/dm-itp-wipe.scenario.test.ts`, run with
+`yarn harness dm-itp-wipe`. Two bots on the live relay, real `MessageService`,
+real SDK crypto, `fake-indexeddb` for storage. It seeds DM history both ways,
+destroys one side's entire database with `indexedDB.deleteDatabase` (the way the
+browser does it, not row by row), and counts what is left through
+`getAllDMData` — deliberately the same read the `.qmbak` export uses, so a count
+of zero means *a backup taken at that moment would capture nothing*.
+
+```
+bob BEFORE  messages=3 conversations=1 sessions=1
+bob AFTER   messages=0 conversations=0 sessions=0
+seeded=3 revived=0 onDiskNow=[recover-init #1 | after-wipe #1]
+databases immediately after wipe:            quorum_db_itp-alice
+databases after first read (init recreates): quorum_db_itp-alice, quorum_db_itp-bob
+```
+
+What that establishes:
+
+- **The DM loss is total.** Messages, conversations and ratchet states all go to
+  zero together. Nothing in the app restores them.
+- **The conversation still resumes.** With no encryption state present, the send
+  path opens a fresh session (`ForceSenderInit`) and traffic flows both ways
+  again — `recover-init #1` reached the peer, `after-wipe #1` came back.
+- **Resuming does not revive history.** 0 of 3 seeded messages returned. This is
+  the distinction the issue turns on, and it is now pinned by an assertion
+  rather than by argument.
+- **Control arm held.** The eviction hit one side only; the other party's census
+  was byte-identical before and after. If both had moved, the harness would have
+  been sharing one database between bots and every number above would be junk.
+
+Two things it measured that were **not** obvious beforehand, both worth carrying
+into any fix:
+
+- **`quorum_db` existing proves nothing.** The database is recreated, empty, the
+  instant anything reads — `MessageDB.init()` rebuilds the schema. A diagnostic
+  that checks for the database's presence would report "fine" on a wiped account.
+  Sample before the first read or the measurement is worthless.
+- **Counting persistence callbacks overcounts.** One logical message can be saved
+  more than once (un-acked frames are redelivered on `listen`; the receive path
+  also salvages the message embedded in a refused init envelope). A first cut
+  asserted `=== 2` and measured 4. The test asserts on distinct message bodies.
+
+**The test can fail** (checked, not assumed): swapping `wipeAll()` for the older
+`wipeSessions()` — which removes only `encryption_states` — turns it red with
+`messages=3 conversations=1 sessions=0`. So it genuinely distinguishes a session
+wipe from a storage eviction, which is exactly the difference this issue is about.
+
+### Still open
+
+- [ ] **Reproduce claim A.** On a Mac, log into `app.quorummessenger.com` in Safari, seed a space and a DM with history. Use Safari daily for other sites, never returning to Quorum. Check at day 8. Record exactly which IndexedDB databases survive (`quorum_db`, SDK `KeyDB`).
+  - Needs Apple hardware. Cloud Safari services do not help: their sessions last minutes and the counter needs days.
+  - The "faster proxy" (Empty Caches / Manage Website Data) is now redundant for the *app-side* question — `dm-itp-wipe` answers it repeatably. The Mac run is only needed to confirm WebKit's **trigger**.
+- [ ] **Control arm.** Same procedure in Chrome. It must **not** wipe. Only meaningful once the Safari arm above actually runs.
 - [ ] Confirm the installed case is exempt: repeat with the app added to the Dock.
-- [ ] After a wipe, confirm what login actually restores (expected: profile, spaces, space keys; not DMs).
-- [ ] After a wipe, confirm a DM to an existing contact re-initiates via `ForceSenderInit` and both sides can talk again.
+- [ ] After a wipe, confirm what login actually restores (expected: profile, spaces, space keys; not DMs). **Not covered by `dm-itp-wipe`** — that harness is transport-level and never exercises the `ConfigService` login/restore path. This still needs either a browser run or a new harness slice.
+- [x] ~~After a wipe, confirm a DM to an existing contact re-initiates via `ForceSenderInit` and both sides can talk again.~~ **Done** — see above.
 - [ ] After M1, confirm a `.qmbak` restore into the wiped profile brings back a *decryptable* existing session — and that restoring into a live account still leaves live states untouched.
 - [ ] Revert M1 and confirm the new test goes red. An assertion that passes either way is worse than no test.
 
@@ -268,3 +330,8 @@ first, then re-run after each mitigation.
 - [User Data Backup & Restore](../../docs/features/user-data-backup.md) — the `.qmbak` feature and its current limits
 - [Cryptographic Architecture](../../docs/cryptographic-architecture.md) §Key Storage Locations — what lives in IndexedDB
 - [Profile Sync on Returning User Login](../../docs/features/profile-sync-returning-user-login.md) — the recovery path that already exists for identity and profile
+- `src/dev/tests/harness/dm-itp-wipe.scenario.test.ts` — the reproduction of the app-side consequence; `yarn harness dm-itp-wipe`
+
+---
+
+*Last updated: 2026-08-17*
