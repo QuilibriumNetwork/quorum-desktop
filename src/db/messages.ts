@@ -257,6 +257,16 @@ export class MessageDB {
           this.db?.close();
           this.db = null;
         };
+        // The browser can close the connection without us asking: storage
+        // eviction, corruption, Safari's ITP wipe, or the user clearing site
+        // data with the tab open. The handle stays non-null but every
+        // transaction on it throws InvalidStateError, and since init() returns
+        // early on `if (this.db)` it would never reopen — wedging every read and
+        // write for the rest of the tab's session (one MessageDB instance is
+        // shared app-wide). Dropping the reference lets the next init() reopen.
+        this.db.onclose = () => {
+          this.db = null;
+        };
         resolve();
       };
 
