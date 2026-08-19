@@ -762,8 +762,13 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
                   className="mb-4"
                   autoClose={3}
                 >
+                  {/* Names the action the user took, nothing else. It also
+                      refreshes the server-side eval and pushes the record to
+                      existing members, but neither is a thing anyone pressing
+                      this button is thinking about. "Join preview" was internal
+                      vocabulary describing the least useful of the three. */}
                   <span>
-                    <Trans>Join preview updated.</Trans>
+                    <Trans>Invite link republished.</Trans>
                   </span>
                 </Callout>
               )}
@@ -825,7 +830,7 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
                     </Button>
                     <Tooltip
                       id="republish-invite-tooltip"
-                      content={t`If users report that this invite link isn't working, click to republish it. The link URL stays the same.`}
+                      content={t`If someone reports the link isn't working, or a member can't see it, click to republish. The link URL stays the same.`}
                       place="bottom"
                       className="!w-[400px]"
                       maxWidth={400}

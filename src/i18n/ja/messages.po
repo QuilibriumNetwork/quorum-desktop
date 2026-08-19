@@ -30,14 +30,14 @@ msgid "No Role - {count}"
 msgstr "役割なし - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1883
-msgid "Send a message to #{channel_name}"
-msgstr "#{channel_name} にメッセージを送信"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is ready to go."
 msgstr "Quorumへようこそ、{name}！アカウントの準備ができました。"
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1883
+msgid "Send a message to #{channel_name}"
+msgstr "#{channel_name} にメッセージを送信"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:149
@@ -301,7 +301,7 @@ msgstr ""
 "passkeyは、デバイスのセキュリティ機能（Face "
 "ID、指紋、またはPIN）を使用してアカウントを保護します。パスワードよりも安全で、何も覚える必要はありません。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:544
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:551
 msgid ""
 "A reusable link anyone can use to join. Share it on social media or your "
 "website."
@@ -868,7 +868,7 @@ msgstr "近日公開"
 msgid "Config Key"
 msgstr "設定キー"
 
-#: src/services/InvitationService.ts:241
+#: src/services/InvitationService.ts:234
 msgid "Config key not found for this Space."
 msgstr "このスペースのConfigキーが見つかりません。"
 
@@ -927,7 +927,7 @@ msgstr "コピーしました！"
 msgid "Copy"
 msgstr "コピー"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:675
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:682
 msgid "Copy a link"
 msgstr "リンクをコピー"
 
@@ -945,8 +945,8 @@ msgstr "アドレスをコピー"
 msgid "Copy full address"
 msgstr "フルアドレスをコピー"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:439
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:793
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:805
 msgid "Copy invite link to clipboard"
 msgstr "招待リンクをクリップボードにコピー"
 
@@ -1071,8 +1071,8 @@ msgstr "スペースを作成中..."
 msgid "Current"
 msgstr "現在"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:420
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:774
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:427
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:786
 msgid "Current Invite Link"
 msgstr "現在の招待リンク"
 
@@ -1477,23 +1477,23 @@ msgstr "暗号化エラー"
 msgid "Encryption Reset"
 msgstr "暗号化のリセット"
 
-#: src/services/InvitationService.ts:101
+#: src/services/InvitationService.ts:94
 msgid ""
 "Encryption state is missing required template data. Please generate a public"
 " invite link first."
 msgstr "暗号化状態に必要なテンプレートデータがありません。最初に公開招待リンクを生成してください。"
 
-#: src/services/InvitationService.ts:262
+#: src/services/InvitationService.ts:255
 msgid ""
 "Encryption state is missing required template data. The invite pool was not "
 "initialized."
 msgstr "暗号化の状態に必要なテンプレートデータがありません。招待プールは初期化されませんでした。"
 
-#: src/services/InvitationService.ts:269
+#: src/services/InvitationService.ts:262
 msgid "Encryption state is missing state data."
 msgstr "暗号化の状態に状態データがありません。"
 
-#: src/services/InvitationService.ts:116
+#: src/services/InvitationService.ts:109
 msgid ""
 "Encryption state is missing state data. Please generate a public invite link"
 " first."
@@ -1863,7 +1863,7 @@ msgid ""
 msgstr ""
 "プライバシーのため、あなたの所有権は他のクライアントから隠されています。これは意味します：削除権限を持つ者はあなたのメッセージを永久に削除でき、ミュート権限を持つ者はあなたをミュートできます（元に戻せます）。これらは信頼できるユーザーにのみ付与してください。また、あなたが唯一の役割を持っている場合、あなたの行動は所有者としてのあなたを明らかにする可能性があるため、他の信頼できるユーザーと役割を共有することを検討してください。"
 
-#: src/services/SpaceService.ts:243
+#: src/services/SpaceService.ts:222
 msgid "general"
 msgstr "一般"
 
@@ -1872,11 +1872,11 @@ msgstr "一般"
 msgid "General"
 msgstr "一般"
 
-#: src/services/SpaceService.ts:244
+#: src/services/SpaceService.ts:223
 msgid "General Chat"
 msgstr "一般チャット"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:637
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:644
 msgid ""
 "Generate a fresh one-time invite link and copy it to your clipboard. Each "
 "click creates a new link. Paste it wherever you want (email, WhatsApp, "
@@ -1888,7 +1888,7 @@ msgstr ""
 msgid "Generate Link"
 msgstr "リンクを生成"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:886
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:898
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:795
 msgid "Generate Public Invite Link"
 msgstr "公開招待リンクを生成"
@@ -1897,11 +1897,11 @@ msgstr "公開招待リンクを生成"
 msgid "Generate YouTube previews"
 msgstr "YouTubeのプレビューを生成"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:732
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:739
 msgid "Generating public invite link..."
 msgstr "公開招待リンクを生成中..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:672
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:679
 msgid "Generating…"
 msgstr "生成中..."
 
@@ -1975,7 +1975,7 @@ msgstr "ミュートされたチャンネルをサイドバーから非表示に
 msgid "How to add a passkey"
 msgstr "passkey の追加方法"
 
-#: src/services/InvitationService.ts:232
+#: src/services/InvitationService.ts:225
 msgid "Hub key not found for this Space."
 msgstr "このスペースのハブキーが見つかりません。"
 
@@ -1996,11 +1996,12 @@ msgstr "私は新しい！"
 msgid "I've already saved my key"
 msgstr "キーをすでに保存しました"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:821
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:833
 msgid ""
-"If users report that this invite link isn't working, click to republish it. "
-"The link URL stays the same."
-msgstr "この招待リンクが機能しないとユーザーから報告があった場合は、クリックして再公開してください。リンクのURLは変更されません。"
+"If someone reports the link isn't working, or a member can't see it, click "
+"to republish. The link URL stays the same."
+msgstr ""
+"リンクが機能しない、またはメンバーがリンクを見ることができないと報告された場合は、クリックして再公開してください。リンクのURLは変更されません。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:695
 msgid "Import a backup instead"
@@ -2039,8 +2040,8 @@ msgid ""
 "Invalid address format. Addresses must use valid alphanumeric characters."
 msgstr "無効なアドレス形式です。アドレスは有効な英数字を使用する必要があります。"
 
-#: src/services/InvitationService.ts:458 src/services/InvitationService.ts:469
-#: src/services/InvitationService.ts:501 src/services/InvitationService.ts:570
+#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:485
+#: src/services/InvitationService.ts:517 src/services/InvitationService.ts:586
 msgid "invalid link"
 msgstr "無効なリンク"
 
@@ -2050,9 +2051,13 @@ msgid "Invalid message ID"
 msgstr "無効なメッセージID"
 
 #: src/hooks/business/spaces/useInviteValidation.ts:51
-#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:537
+#: src/services/InvitationService.ts:490 src/services/InvitationService.ts:553
 msgid "invalid response"
 msgstr "無効な応答"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:771
+msgid "Invite link republished."
+msgstr "招待リンクが再公開されました。"
 
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:214
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:231
@@ -2063,14 +2068,14 @@ msgstr "メンバーを招待"
 msgid "Invite sent"
 msgstr "招待が送信されました"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:474
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:691
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:845
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:481
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:698
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:857
 msgid "Invite sent. Pick another contact to send another."
 msgstr "招待が送信されました。別の連絡先を選択して、別の招待を送信してください。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:405
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:517
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:412
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:524
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:43
 msgid "Invites"
 msgstr "招待"
@@ -2100,10 +2105,6 @@ msgstr "参加"
 #: src/components/space/SpacesSidebar.tsx:308
 msgid "Join a Space"
 msgstr "スペースに参加"
-
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:759
-msgid "Join preview updated."
-msgstr "参加プレビューが更新されました。"
 
 #: src/components/modals/AddSpaceModal.tsx:257
 #: src/components/modals/JoinSpaceModal.tsx:71
@@ -2220,7 +2221,7 @@ msgstr "A～Zのアルファベットと0～9の数字のみ使用可能です�
 msgid "Light"
 msgstr "ライト"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:601
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:608
 msgid "Link copied. Paste it where you want to share it."
 msgstr "リンクがコピーされました。共有したい場所に貼り付けてください。"
 
@@ -2484,7 +2485,7 @@ msgstr "新しいダイレクトメッセージ"
 msgid "New Folder"
 msgstr "新しいフォルダー"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:568
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:575
 msgid ""
 "New invites can't be issued from this device for this Space. Existing invite"
 " links keep working. This typically affects spaces created on the desktop "
@@ -2492,7 +2493,7 @@ msgid ""
 msgstr ""
 "このデバイスからこのスペースの新しい招待を発行することはできません。既存の招待リンクは引き続き機能します。これは通常、2026年6月より前にデスクトップアプリで作成されたスペースに影響します。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:562
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:569
 msgid ""
 "New invites can't be issued from this device, but the existing public invite"
 " link still works — copy it or send it via DM below."
@@ -2504,7 +2505,7 @@ msgstr ""
 msgid "New message from {0}"
 msgstr "{0}からの新しいメッセージ"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:556
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:563
 msgid ""
 "New one-time invites can't be issued from this device for this Space. The "
 "public invite link still works — switch to <0>Public Link</0> above to copy "
@@ -2556,12 +2557,12 @@ msgstr "まだ会話はありません。"
 msgid "No emoji found"
 msgstr "絵文字が見つかりません"
 
-#: src/services/InvitationService.ts:254
+#: src/services/InvitationService.ts:247
 msgid ""
 "No encryption state found for this Space. Cannot generate public invite."
 msgstr "このスペースの暗号化の状態が見つかりません。公開招待を生成できません。"
 
-#: src/services/InvitationService.ts:95
+#: src/services/InvitationService.ts:88
 msgid ""
 "No encryption state found for this Space. The Space may need to be "
 "initialized or you may need to generate a public invite link first."
@@ -2595,7 +2596,7 @@ msgstr ""
 msgid "No pinned messages yet"
 msgstr "まだピン留めされたメッセージはありません"
 
-#: src/services/InvitationService.ts:176
+#: src/services/InvitationService.ts:169
 msgid "No public invite link exists yet. Generate one before sharing."
 msgstr "公開招待リンクはまだ存在しません。共有する前に生成してください。"
 
@@ -2710,7 +2711,7 @@ msgstr "ワンタイム"
 msgid "Online"
 msgstr "オンライン"
 
-#: src/services/InvitationService.ts:226
+#: src/services/InvitationService.ts:219
 msgid "Only space owners can generate public invite links."
 msgstr "スペースの所有者のみが公開招待リンクを生成できます。"
 
@@ -2905,7 +2906,7 @@ msgstr "画像を処理中... 大きなファイルの場合、少々お待ち�
 msgid "Processing..."
 msgstr "処理中..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:746
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:753
 msgid "Public invite link generated successfully."
 msgstr "公開招待リンクが正常に生成されました。"
 
@@ -3059,7 +3060,7 @@ msgstr "返信"
 msgid "Reply in thread..."
 msgstr "スレッドに返信…"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:831
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:843
 msgid "Republish"
 msgstr "再公開"
 
@@ -3323,7 +3324,7 @@ msgstr "肌色を選択"
 msgid "Send"
 msgstr "送信"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:539
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:546
 msgid ""
 "Send a one-time invite directly to someone. Each link can only be used once."
 msgstr "誰かに直接ワンタイム招待を送信します。各リンクは一度しか使用できません。"
@@ -3332,12 +3333,12 @@ msgstr "誰かに直接ワンタイム招待を送信します。各リンクは
 msgid "Send failed"
 msgstr "送信に失敗しました"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:715
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:722
 msgid "Send Invite"
 msgstr "招待を送信"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:500
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:873
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:507
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:885
 msgid "Send Link"
 msgstr "リンクを送信"
 
@@ -3345,9 +3346,9 @@ msgstr "リンクを送信"
 msgid "Send Message"
 msgstr "メッセージを送信"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:456
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:626
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:810
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:463
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:633
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:822
 msgid "Send via DM"
 msgstr "DMで送信"
 
@@ -3376,7 +3377,7 @@ msgstr "設定"
 msgid "Several people are typing"
 msgstr "複数のユーザーが入力中"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:408
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:415
 msgid "Share this Space's public invite link. Anyone with the link can join."
 msgstr "このスペースの公開招待リンクを共有します。リンクを知っている人なら誰でも参加できます。"
 
@@ -3501,7 +3502,7 @@ msgstr "スペース名は{0}文字以下でなければなりません"
 msgid "Space name must be at least {0} characters"
 msgstr "スペース名は{0}文字以上でなければなりません"
 
-#: src/services/InvitationService.ts:220
+#: src/services/InvitationService.ts:213
 msgid "Space not found"
 msgstr "スペースが見つかりません"
 
@@ -3704,11 +3705,11 @@ msgid ""
 "interact with."
 msgstr "これはあなたの公開アドレスであり、やり取りしたい相手と共有しても安全です。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:778
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:790
 msgid "This link does not expire. Anyone with it can join your Space."
 msgstr "このリンクは期限切れになりません。このリンクを持っている人なら誰でもあなたのスペースに参加できます。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:424
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:431
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "このリンクはスペースの所有者によって生成されました。期限切れになりません。"
 
@@ -3727,7 +3728,7 @@ msgid "This page couldn't be loaded"
 msgstr "このページは読み込めませんでした"
 
 #: src/components/message/InviteLink.tsx:44
-#: src/services/InvitationService.ts:580
+#: src/services/InvitationService.ts:596
 msgid "This public invite link is no longer valid."
 msgstr "この公開招待リンクはもはや無効です。"
 
@@ -3943,7 +3944,7 @@ msgstr "画像を圧縮できません。より小さい画像を使用してく
 msgid "Unable to compress sticker images. Please use smaller images."
 msgstr "ステッカー画像を圧縮できません。より小さい画像を使用してください。"
 
-#: src/services/SpaceService.ts:574
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
 " corrupted."
@@ -4556,12 +4557,6 @@ msgstr "YouTube動画"
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube動画サムネイル"
 
-#~ msgid "Failed to process image"
-#~ msgstr "画像の処理に失敗しました"
-
-#~ msgid "Replying to {user}"
-#~ msgstr "{user} に返信中"
-
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} マーカーがあります"
 
@@ -4603,6 +4598,9 @@ msgstr "YouTube動画サムネイル"
 #~ "lose access to this device."
 #~ msgstr "このデバイスへのアクセスを失った場合に復元できるように、暗号化されたバックアップをエクスポートします。"
 
+#~ msgid "Failed to process image"
+#~ msgstr "画像の処理に失敗しました"
+
 #~ msgid "Hide"
 #~ msgstr "非表示"
 
@@ -4611,6 +4609,14 @@ msgstr "YouTube動画サムネイル"
 
 #~ msgid "I Understand, Show QR"
 #~ msgstr "理解しました、QRを表示"
+
+#~ msgid ""
+#~ "If users report that this invite link isn't working, click to republish it. "
+#~ "The link URL stays the same."
+#~ msgstr "この招待リンクが機能しないとユーザーから報告があった場合は、クリックして再公開してください。リンクのURLは変更されません。"
+
+#~ msgid "Join preview updated."
+#~ msgstr "参加プレビューが更新されました。"
 
 #~ msgid "Key Ready"
 #~ msgstr "キーは準備完了"
@@ -4654,6 +4660,9 @@ msgstr "YouTube動画サムネイル"
 
 #~ msgid "QR code will auto-hide in 60 seconds"
 #~ msgstr "QRコードは60秒後に自動的に非表示になります"
+
+#~ msgid "Replying to {user}"
+#~ msgstr "{user} に返信中"
 
 #~ msgid "Reset Encryption Session"
 #~ msgstr "暗号化セッションをリセット"

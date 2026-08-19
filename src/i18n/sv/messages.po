@@ -30,14 +30,14 @@ msgid "No Role - {count}"
 msgstr "Ingen roll - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1883
-msgid "Send a message to #{channel_name}"
-msgstr "Skicka ett meddelande till #{channel_name}"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is ready to go."
 msgstr "Välkommen till Quorum, {name}! Ditt konto är redo att användas."
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1883
+msgid "Send a message to #{channel_name}"
+msgstr "Skicka ett meddelande till #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:149
@@ -312,7 +312,7 @@ msgstr ""
 "eller PIN-kod) för att skydda ditt konto. Det är säkrare än ett lösenord och"
 " du behöver inte komma ihåg något."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:544
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:551
 msgid ""
 "A reusable link anyone can use to join. Share it on social media or your "
 "website."
@@ -907,7 +907,7 @@ msgstr "Kommer snart"
 msgid "Config Key"
 msgstr "Konfigurationsnyckel"
 
-#: src/services/InvitationService.ts:241
+#: src/services/InvitationService.ts:234
 msgid "Config key not found for this Space."
 msgstr "Konfigurationsnyckel hittades inte för denna Space."
 
@@ -966,7 +966,7 @@ msgstr "Kopierad!"
 msgid "Copy"
 msgstr "Kopiera"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:675
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:682
 msgid "Copy a link"
 msgstr "Kopiera en länk"
 
@@ -984,8 +984,8 @@ msgstr "Kopiera adress"
 msgid "Copy full address"
 msgstr "Kopiera full adress"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:439
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:793
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:805
 msgid "Copy invite link to clipboard"
 msgstr "Kopiera inbjudningslänk till urklipp"
 
@@ -1119,8 +1119,8 @@ msgstr "Skapar Space..."
 msgid "Current"
 msgstr "Aktuell"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:420
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:774
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:427
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:786
 msgid "Current Invite Link"
 msgstr "Nuvarande inbjudningslänk"
 
@@ -1539,7 +1539,7 @@ msgstr "Krypteringsfel"
 msgid "Encryption Reset"
 msgstr "Kryptering återställd"
 
-#: src/services/InvitationService.ts:101
+#: src/services/InvitationService.ts:94
 msgid ""
 "Encryption state is missing required template data. Please generate a public"
 " invite link first."
@@ -1547,7 +1547,7 @@ msgstr ""
 "Krypteringstillståndet saknar nödvändig malldata. Vänligen generera en "
 "offentlig inbjudningslänk först."
 
-#: src/services/InvitationService.ts:262
+#: src/services/InvitationService.ts:255
 msgid ""
 "Encryption state is missing required template data. The invite pool was not "
 "initialized."
@@ -1555,11 +1555,11 @@ msgstr ""
 "Krypteringsstatus saknar nödvändig mallinformation. Inbjudningspoolen "
 "initierades inte."
 
-#: src/services/InvitationService.ts:269
+#: src/services/InvitationService.ts:262
 msgid "Encryption state is missing state data."
 msgstr "Krypteringsstatus saknar tillståndsinformation."
 
-#: src/services/InvitationService.ts:116
+#: src/services/InvitationService.ts:109
 msgid ""
 "Encryption state is missing state data. Please generate a public invite link"
 " first."
@@ -1943,7 +1943,7 @@ msgstr ""
 "med en roll kan dina åtgärder avslöja dig som ägare—överväg att dela roller "
 "med andra betrodda användare."
 
-#: src/services/SpaceService.ts:243
+#: src/services/SpaceService.ts:222
 msgid "general"
 msgstr "allmän"
 
@@ -1952,11 +1952,11 @@ msgstr "allmän"
 msgid "General"
 msgstr "Allmän"
 
-#: src/services/SpaceService.ts:244
+#: src/services/SpaceService.ts:223
 msgid "General Chat"
 msgstr "Allmän chatt"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:637
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:644
 msgid ""
 "Generate a fresh one-time invite link and copy it to your clipboard. Each "
 "click creates a new link. Paste it wherever you want (email, WhatsApp, "
@@ -1970,7 +1970,7 @@ msgstr ""
 msgid "Generate Link"
 msgstr "Generera länk"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:886
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:898
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:795
 msgid "Generate Public Invite Link"
 msgstr "Generera offentlig inbjudningslänk"
@@ -1979,11 +1979,11 @@ msgstr "Generera offentlig inbjudningslänk"
 msgid "Generate YouTube previews"
 msgstr "Generera YouTube-förhandsgranskningar"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:732
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:739
 msgid "Generating public invite link..."
 msgstr "Genererar offentlig inbjudningslänk..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:672
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:679
 msgid "Generating…"
 msgstr "Genererar…"
 
@@ -2058,7 +2058,7 @@ msgstr "Dölj tystade kanaler från sidofältet"
 msgid "How to add a passkey"
 msgstr "Så här lägger du till en passkey"
 
-#: src/services/InvitationService.ts:232
+#: src/services/InvitationService.ts:225
 msgid "Hub key not found for this Space."
 msgstr "Hubbnyckel hittades inte för denna Space."
 
@@ -2079,13 +2079,13 @@ msgstr "Jag är ny!"
 msgid "I've already saved my key"
 msgstr "Jag har redan sparat min nyckel"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:821
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:833
 msgid ""
-"If users report that this invite link isn't working, click to republish it. "
-"The link URL stays the same."
+"If someone reports the link isn't working, or a member can't see it, click "
+"to republish. The link URL stays the same."
 msgstr ""
-"Om användare rapporterar att denna inbjudningslänk inte fungerar, klicka för"
-" att publicera den igen. Länkens URL förblir densamma."
+"Om någon rapporterar att länken inte fungerar, eller en medlem inte kan se "
+"den, klicka för att återpublicera. Länkens URL förblir densamma."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:695
 msgid "Import a backup instead"
@@ -2125,8 +2125,8 @@ msgid ""
 msgstr ""
 "Ogiltigt adressformat. Adresser måste använda giltiga alfanumeriska tecken."
 
-#: src/services/InvitationService.ts:458 src/services/InvitationService.ts:469
-#: src/services/InvitationService.ts:501 src/services/InvitationService.ts:570
+#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:485
+#: src/services/InvitationService.ts:517 src/services/InvitationService.ts:586
 msgid "invalid link"
 msgstr "ogiltig länk"
 
@@ -2136,9 +2136,13 @@ msgid "Invalid message ID"
 msgstr "Ogiltigt meddelande-ID"
 
 #: src/hooks/business/spaces/useInviteValidation.ts:51
-#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:537
+#: src/services/InvitationService.ts:490 src/services/InvitationService.ts:553
 msgid "invalid response"
 msgstr "ogiltigt svar"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:771
+msgid "Invite link republished."
+msgstr "Inbjudningslänk återpublicerad."
 
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:214
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:231
@@ -2149,14 +2153,14 @@ msgstr "Bjud in medlemmar"
 msgid "Invite sent"
 msgstr "Inbjudan skickad"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:474
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:691
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:845
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:481
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:698
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:857
 msgid "Invite sent. Pick another contact to send another."
 msgstr "Inbjudan skickad. Välj en annan kontakt för att skicka en till."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:405
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:517
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:412
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:524
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:43
 msgid "Invites"
 msgstr "Inbjudningar"
@@ -2188,10 +2192,6 @@ msgstr "Gå med"
 #: src/components/space/SpacesSidebar.tsx:308
 msgid "Join a Space"
 msgstr "Gå med i ett Space"
-
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:759
-msgid "Join preview updated."
-msgstr "Förhandsgranskning för att gå med uppdaterad."
 
 #: src/components/modals/AddSpaceModal.tsx:257
 #: src/components/modals/JoinSpaceModal.tsx:71
@@ -2313,7 +2313,7 @@ msgstr "Bara bokstäver A–Z och siffror 0–9. Gå till versaler automatiskt."
 msgid "Light"
 msgstr "Ljus"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:601
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:608
 msgid "Link copied. Paste it where you want to share it."
 msgstr "Länk kopierad. Klistra in den där du vill dela den."
 
@@ -2584,7 +2584,7 @@ msgstr "Nytt direktmeddelande"
 msgid "New Folder"
 msgstr "Ny mapp"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:568
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:575
 msgid ""
 "New invites can't be issued from this device for this Space. Existing invite"
 " links keep working. This typically affects spaces created on the desktop "
@@ -2594,7 +2594,7 @@ msgstr ""
 "Befintliga inbjudningslänkar fortsätter att fungera. Detta påverkar "
 "vanligtvis Spaces som skapats i skrivbordsappen före juni 2026."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:562
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:569
 msgid ""
 "New invites can't be issued from this device, but the existing public invite"
 " link still works — copy it or send it via DM below."
@@ -2608,7 +2608,7 @@ msgstr ""
 msgid "New message from {0}"
 msgstr "Nytt meddelande från {0}"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:556
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:563
 msgid ""
 "New one-time invites can't be issued from this device for this Space. The "
 "public invite link still works — switch to <0>Public Link</0> above to copy "
@@ -2663,14 +2663,14 @@ msgstr "Inga konversationer än."
 msgid "No emoji found"
 msgstr "Inga emoji hittades"
 
-#: src/services/InvitationService.ts:254
+#: src/services/InvitationService.ts:247
 msgid ""
 "No encryption state found for this Space. Cannot generate public invite."
 msgstr ""
 "Ingen krypteringsstatus hittades för denna Space. Kan inte generera "
 "offentlig inbjudan."
 
-#: src/services/InvitationService.ts:95
+#: src/services/InvitationService.ts:88
 msgid ""
 "No encryption state found for this Space. The Space may need to be "
 "initialized or you may need to generate a public invite link first."
@@ -2706,7 +2706,7 @@ msgstr ""
 msgid "No pinned messages yet"
 msgstr "Inga fastsatta meddelanden än"
 
-#: src/services/InvitationService.ts:176
+#: src/services/InvitationService.ts:169
 msgid "No public invite link exists yet. Generate one before sharing."
 msgstr ""
 "Ingen offentlig inbjudningslänk finns ännu. Generera en innan du delar."
@@ -2824,7 +2824,7 @@ msgstr "Engångs"
 msgid "Online"
 msgstr "Online"
 
-#: src/services/InvitationService.ts:226
+#: src/services/InvitationService.ts:219
 msgid "Only space owners can generate public invite links."
 msgstr "Endast Space-ägare kan generera offentliga inbjudningslänkar."
 
@@ -3030,7 +3030,7 @@ msgstr "Bearbetar bild... Detta kan ta en stund för stora filer."
 msgid "Processing..."
 msgstr "Bearbetar..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:746
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:753
 msgid "Public invite link generated successfully."
 msgstr "Offentlig inbjudningslänk genererades framgångsrikt."
 
@@ -3188,7 +3188,7 @@ msgstr "Svara"
 msgid "Reply in thread..."
 msgstr "Svara i tråd..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:831
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:843
 msgid "Republish"
 msgstr "Publicera igen"
 
@@ -3459,7 +3459,7 @@ msgstr "Välj hudton"
 msgid "Send"
 msgstr "Skicka"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:539
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:546
 msgid ""
 "Send a one-time invite directly to someone. Each link can only be used once."
 msgstr ""
@@ -3470,12 +3470,12 @@ msgstr ""
 msgid "Send failed"
 msgstr "Skickning misslyckades"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:715
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:722
 msgid "Send Invite"
 msgstr "Skicka inbjudan"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:500
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:873
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:507
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:885
 msgid "Send Link"
 msgstr "Skicka länk"
 
@@ -3483,9 +3483,9 @@ msgstr "Skicka länk"
 msgid "Send Message"
 msgstr "Skicka meddelande"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:456
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:626
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:810
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:463
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:633
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:822
 msgid "Send via DM"
 msgstr "Skicka via DM"
 
@@ -3516,7 +3516,7 @@ msgstr "Inställningar"
 msgid "Several people are typing"
 msgstr "Flera personer skriver"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:408
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:415
 msgid "Share this Space's public invite link. Anyone with the link can join."
 msgstr ""
 "Dela denna Spaces offentliga inbjudningslänk. Vem som helst med länken kan "
@@ -3648,7 +3648,7 @@ msgstr "Namnet på platsen får inte vara mer än {0} tecken"
 msgid "Space name must be at least {0} characters"
 msgstr "Namnet på platsen måste vara minst {0} tecken"
 
-#: src/services/InvitationService.ts:220
+#: src/services/InvitationService.ts:213
 msgid "Space not found"
 msgstr "Space hittades inte"
 
@@ -3875,11 +3875,11 @@ msgstr ""
 "Detta är din offentliga adress och är säker att dela med vem som helst du "
 "vill interagera med."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:778
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:790
 msgid "This link does not expire. Anyone with it can join your Space."
 msgstr "Denna länk går inte ut. Vem som helst med den kan gå med i din Space."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:424
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:431
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "Denna länk genererades av en Space-ägare. Den går inte ut."
 
@@ -3900,7 +3900,7 @@ msgid "This page couldn't be loaded"
 msgstr "Den här sidan kunde inte laddas"
 
 #: src/components/message/InviteLink.tsx:44
-#: src/services/InvitationService.ts:580
+#: src/services/InvitationService.ts:596
 msgid "This public invite link is no longer valid."
 msgstr "Denna offentliga inbjudningslänk är inte längre giltig."
 
@@ -4135,7 +4135,7 @@ msgid "Unable to compress sticker images. Please use smaller images."
 msgstr ""
 "Kunde inte komprimera klistermärkesbilder. Vänligen använd mindre bilder."
 
-#: src/services/SpaceService.ts:574
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
 " corrupted."
@@ -4827,12 +4827,6 @@ msgstr "YouTube Video"
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube Video Miniatyr"
 
-#~ msgid "Failed to process image"
-#~ msgstr "Misslyckades att bearbeta bilden"
-
-#~ msgid "Replying to {user}"
-#~ msgstr "Svarar {user}"
-
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} marke här"
 
@@ -4880,6 +4874,9 @@ msgstr "YouTube Video Miniatyr"
 #~ "Exportera en krypterad backup av dina direktmeddelanden för att återställa "
 #~ "dem om du förlorar tillgång till den här enheten."
 
+#~ msgid "Failed to process image"
+#~ msgstr "Misslyckades att bearbeta bilden"
+
 #~ msgid "Hide"
 #~ msgstr "Dölj"
 
@@ -4888,6 +4885,16 @@ msgstr "YouTube Video Miniatyr"
 
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Jag förstår, visa QR"
+
+#~ msgid ""
+#~ "If users report that this invite link isn't working, click to republish it. "
+#~ "The link URL stays the same."
+#~ msgstr ""
+#~ "Om användare rapporterar att denna inbjudningslänk inte fungerar, klicka för"
+#~ " att publicera den igen. Länkens URL förblir densamma."
+
+#~ msgid "Join preview updated."
+#~ msgstr "Förhandsgranskning för att gå med uppdaterad."
 
 #~ msgid "Key Ready"
 #~ msgstr "Nyckel redo"
@@ -4937,6 +4944,9 @@ msgstr "YouTube Video Miniatyr"
 
 #~ msgid "QR code will auto-hide in 60 seconds"
 #~ msgstr "QR-koden kommer att döljas automatiskt om 60 sekunder"
+
+#~ msgid "Replying to {user}"
+#~ msgstr "Svarar {user}"
 
 #~ msgid "Reset Encryption Session"
 #~ msgstr "Återställ krypteringssession"

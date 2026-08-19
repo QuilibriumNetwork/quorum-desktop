@@ -30,14 +30,14 @@ msgid "No Role - {count}"
 msgstr "Ei roolia - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1883
-msgid "Send a message to #{channel_name}"
-msgstr "Lähetä viesti #{channel_name}:lle"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is ready to go."
 msgstr "Tervetuloa Quorumiin, {name}! Tilisi on käyttövalmis."
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1883
+msgid "Send a message to #{channel_name}"
+msgstr "Lähetä viesti #{channel_name}:lle"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:149
@@ -312,7 +312,7 @@ msgstr ""
 "sormenjälkikoodi tai PIN) tilin suojaamiseen. Se on turvallisempi kuin "
 "salasana, eikä sinun tarvitse muistaa mitään."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:544
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:551
 msgid ""
 "A reusable link anyone can use to join. Share it on social media or your "
 "website."
@@ -903,7 +903,7 @@ msgstr "Tulossa pian"
 msgid "Config Key"
 msgstr "Konfiguraatioavain"
 
-#: src/services/InvitationService.ts:241
+#: src/services/InvitationService.ts:234
 msgid "Config key not found for this Space."
 msgstr "Tämän Spacen määritysavainta ei löydy."
 
@@ -963,7 +963,7 @@ msgstr "Kopioitu!"
 msgid "Copy"
 msgstr "Kopioi"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:675
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:682
 msgid "Copy a link"
 msgstr "Kopioi linkki"
 
@@ -981,8 +981,8 @@ msgstr "Kopioi osoite"
 msgid "Copy full address"
 msgstr "Kopioi koko osoite"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:439
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:793
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:805
 msgid "Copy invite link to clipboard"
 msgstr "Kopioi kutsulinkki leikepöydälle"
 
@@ -1115,8 +1115,8 @@ msgstr "Luodaan Tila..."
 msgid "Current"
 msgstr "Nykyinen"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:420
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:774
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:427
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:786
 msgid "Current Invite Link"
 msgstr "Nykyinen kutsulinkki"
 
@@ -1535,7 +1535,7 @@ msgstr "Salausvirhe"
 msgid "Encryption Reset"
 msgstr "Salauksen nollaus"
 
-#: src/services/InvitationService.ts:101
+#: src/services/InvitationService.ts:94
 msgid ""
 "Encryption state is missing required template data. Please generate a public"
 " invite link first."
@@ -1543,18 +1543,18 @@ msgstr ""
 "Salaustilasta puuttuu vaaditut mallidata. Generoi ensin julkinen "
 "kutsulinkki."
 
-#: src/services/InvitationService.ts:262
+#: src/services/InvitationService.ts:255
 msgid ""
 "Encryption state is missing required template data. The invite pool was not "
 "initialized."
 msgstr ""
 "Salauksen tilasta puuttuu vaaditut mallitiedot. Kutsuallasta ei alustettu."
 
-#: src/services/InvitationService.ts:269
+#: src/services/InvitationService.ts:262
 msgid "Encryption state is missing state data."
 msgstr "Salauksen tilasta puuttuu tilatiedot."
 
-#: src/services/InvitationService.ts:116
+#: src/services/InvitationService.ts:109
 msgid ""
 "Encryption state is missing state data. Please generate a public invite link"
 " first."
@@ -1931,7 +1931,7 @@ msgstr ""
 "haltija, toimintasi voi paljastaa sinut omistajana—mieti roolien jakamista "
 "muiden luotettavien käyttäjien kanssa."
 
-#: src/services/SpaceService.ts:243
+#: src/services/SpaceService.ts:222
 msgid "general"
 msgstr "yleinen"
 
@@ -1940,11 +1940,11 @@ msgstr "yleinen"
 msgid "General"
 msgstr "Yleinen"
 
-#: src/services/SpaceService.ts:244
+#: src/services/SpaceService.ts:223
 msgid "General Chat"
 msgstr "Yleinen keskustelu"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:637
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:644
 msgid ""
 "Generate a fresh one-time invite link and copy it to your clipboard. Each "
 "click creates a new link. Paste it wherever you want (email, WhatsApp, "
@@ -1958,7 +1958,7 @@ msgstr ""
 msgid "Generate Link"
 msgstr "Luo linkki"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:886
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:898
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:795
 msgid "Generate Public Invite Link"
 msgstr "Luo julkinen kutsulinkki"
@@ -1967,11 +1967,11 @@ msgstr "Luo julkinen kutsulinkki"
 msgid "Generate YouTube previews"
 msgstr "Luo YouTube-esikatselut"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:732
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:739
 msgid "Generating public invite link..."
 msgstr "Luodaan julkista kutsulinkkiä..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:672
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:679
 msgid "Generating…"
 msgstr "Luodaan…"
 
@@ -2047,7 +2047,7 @@ msgstr "Piilota mykistetyt kanavat sivupalkista"
 msgid "How to add a passkey"
 msgstr "Miten passkey lisätään"
 
-#: src/services/InvitationService.ts:232
+#: src/services/InvitationService.ts:225
 msgid "Hub key not found for this Space."
 msgstr "Tämän Spacen hub-avainta ei löydy."
 
@@ -2068,13 +2068,13 @@ msgstr "Olen uusi!"
 msgid "I've already saved my key"
 msgstr "Olen jo tallentanut avaimeni"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:821
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:833
 msgid ""
-"If users report that this invite link isn't working, click to republish it. "
-"The link URL stays the same."
+"If someone reports the link isn't working, or a member can't see it, click "
+"to republish. The link URL stays the same."
 msgstr ""
-"Jos käyttäjät ilmoittavat, että tämä kutsulinkki ei toimi, napsauta "
-"julkaistaksesi sen uudelleen. Linkin URL-osoite pysyy samana."
+"Jos joku ilmoittaa, että linkki ei toimi tai jäsen ei näe sitä, napsauta "
+"julkaistaksesi uudelleen. Linkin URL-osoite pysyy samana."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:695
 msgid "Import a backup instead"
@@ -2115,8 +2115,8 @@ msgstr ""
 "Virheellinen osoitemuoto. Osoitteiden on käytettävä voimassa olevia "
 "alfanumeerisia merkkejä."
 
-#: src/services/InvitationService.ts:458 src/services/InvitationService.ts:469
-#: src/services/InvitationService.ts:501 src/services/InvitationService.ts:570
+#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:485
+#: src/services/InvitationService.ts:517 src/services/InvitationService.ts:586
 msgid "invalid link"
 msgstr "virheellinen linkki"
 
@@ -2126,9 +2126,13 @@ msgid "Invalid message ID"
 msgstr "Virheellinen viestin ID"
 
 #: src/hooks/business/spaces/useInviteValidation.ts:51
-#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:537
+#: src/services/InvitationService.ts:490 src/services/InvitationService.ts:553
 msgid "invalid response"
 msgstr "virheellinen vastaus"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:771
+msgid "Invite link republished."
+msgstr "Kutsulinkki julkaistu uudelleen."
 
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:214
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:231
@@ -2139,14 +2143,14 @@ msgstr "Kutsu jäseniä"
 msgid "Invite sent"
 msgstr "Kutsu lähetetty"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:474
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:691
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:845
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:481
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:698
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:857
 msgid "Invite sent. Pick another contact to send another."
 msgstr "Kutsu lähetetty. Valitse toinen yhteystieto lähettääksesi toisen."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:405
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:517
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:412
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:524
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:43
 msgid "Invites"
 msgstr "Kutsut"
@@ -2178,10 +2182,6 @@ msgstr "Liity"
 #: src/components/space/SpacesSidebar.tsx:308
 msgid "Join a Space"
 msgstr "Liity Tilaan"
-
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:759
-msgid "Join preview updated."
-msgstr "Liittymisen esikatselu päivitetty."
 
 #: src/components/modals/AddSpaceModal.tsx:257
 #: src/components/modals/JoinSpaceModal.tsx:71
@@ -2305,7 +2305,7 @@ msgstr ""
 msgid "Light"
 msgstr "Vaalea"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:601
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:608
 msgid "Link copied. Paste it where you want to share it."
 msgstr "Linkki kopioitu. Liitä se sinne, missä haluat jakaa sen."
 
@@ -2577,7 +2577,7 @@ msgstr "Uusi yksityisviesti"
 msgid "New Folder"
 msgstr "Uusi kansio"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:568
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:575
 msgid ""
 "New invites can't be issued from this device for this Space. Existing invite"
 " links keep working. This typically affects spaces created on the desktop "
@@ -2587,7 +2587,7 @@ msgstr ""
 "olevat kutsulinkit toimivat edelleen. Tämä koskee yleensä Spaceja, jotka on "
 "luotu työpöytäsovelluksella ennen kesäkuuta 2026."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:562
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:569
 msgid ""
 "New invites can't be issued from this device, but the existing public invite"
 " link still works — copy it or send it via DM below."
@@ -2600,7 +2600,7 @@ msgstr ""
 msgid "New message from {0}"
 msgstr "Uusi viesti {0}lta"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:556
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:563
 msgid ""
 "New one-time invites can't be issued from this device for this Space. The "
 "public invite link still works — switch to <0>Public Link</0> above to copy "
@@ -2657,12 +2657,12 @@ msgstr "Ei keskusteluja vielä."
 msgid "No emoji found"
 msgstr "Ei emojiä löytynyt"
 
-#: src/services/InvitationService.ts:254
+#: src/services/InvitationService.ts:247
 msgid ""
 "No encryption state found for this Space. Cannot generate public invite."
 msgstr "Tälle Spacelle ei löydy salaustilaa. Julkista kutsua ei voida luoda."
 
-#: src/services/InvitationService.ts:95
+#: src/services/InvitationService.ts:88
 msgid ""
 "No encryption state found for this Space. The Space may need to be "
 "initialized or you may need to generate a public invite link first."
@@ -2699,7 +2699,7 @@ msgstr ""
 msgid "No pinned messages yet"
 msgstr "Ei vielä kiinnitettyjä viestejä"
 
-#: src/services/InvitationService.ts:176
+#: src/services/InvitationService.ts:169
 msgid "No public invite link exists yet. Generate one before sharing."
 msgstr ""
 "Julkista kutsulinkkiä ei ole vielä olemassa. Luo sellainen ennen jakamista."
@@ -2816,7 +2816,7 @@ msgstr "Kertakäyttöinen"
 msgid "Online"
 msgstr "Online"
 
-#: src/services/InvitationService.ts:226
+#: src/services/InvitationService.ts:219
 msgid "Only space owners can generate public invite links."
 msgstr "Vain Spacen omistajat voivat luoda julkisia kutsulinkkejä."
 
@@ -3023,7 +3023,7 @@ msgstr ""
 msgid "Processing..."
 msgstr "Käsitellään..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:746
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:753
 msgid "Public invite link generated successfully."
 msgstr "Julkinen kutsulinkki luotu onnistuneesti."
 
@@ -3181,7 +3181,7 @@ msgstr "Vastaa"
 msgid "Reply in thread..."
 msgstr "Vastaa ketjussa..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:831
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:843
 msgid "Republish"
 msgstr "Julkaise uudelleen"
 
@@ -3453,7 +3453,7 @@ msgstr "Valitse ihonväri"
 msgid "Send"
 msgstr "Lähetä"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:539
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:546
 msgid ""
 "Send a one-time invite directly to someone. Each link can only be used once."
 msgstr ""
@@ -3464,12 +3464,12 @@ msgstr ""
 msgid "Send failed"
 msgstr "Lähetys epäonnistui"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:715
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:722
 msgid "Send Invite"
 msgstr "Lähetä kutsu"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:500
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:873
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:507
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:885
 msgid "Send Link"
 msgstr "Lähetä linkki"
 
@@ -3477,9 +3477,9 @@ msgstr "Lähetä linkki"
 msgid "Send Message"
 msgstr "Lähetä viesti"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:456
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:626
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:810
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:463
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:633
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:822
 msgid "Send via DM"
 msgstr "Lähetä DM:llä"
 
@@ -3508,7 +3508,7 @@ msgstr "Asetukset"
 msgid "Several people are typing"
 msgstr "Useat henkilöt kirjoittavat"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:408
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:415
 msgid "Share this Space's public invite link. Anyone with the link can join."
 msgstr ""
 "Jaa tämän Spacen julkinen kutsulinkki. Kuka tahansa linkin omaava voi "
@@ -3639,7 +3639,7 @@ msgstr "Nimi on oltava {0} merkkiä lyhyempi"
 msgid "Space name must be at least {0} characters"
 msgstr "Nimi on oltava vähintään {0} merkkiä pitkä"
 
-#: src/services/InvitationService.ts:220
+#: src/services/InvitationService.ts:213
 msgid "Space not found"
 msgstr "Spacea ei löydy"
 
@@ -3865,11 +3865,11 @@ msgstr ""
 "Tämä on julkinen osoitteesi, ja se on turvallista jakaa kenen tahansa "
 "kanssa, jonka kanssa haluat olla vuorovaikutuksessa."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:778
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:790
 msgid "This link does not expire. Anyone with it can join your Space."
 msgstr "Tämä linkki ei vanhene. Kuka tahansa sen omaava voi liittyä Spaceesi."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:424
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:431
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "Tämän linkin on luonut Spacen omistaja. Se ei vanhene."
 
@@ -3890,7 +3890,7 @@ msgid "This page couldn't be loaded"
 msgstr "Tätä sivua ei voitu ladata"
 
 #: src/components/message/InviteLink.tsx:44
-#: src/services/InvitationService.ts:580
+#: src/services/InvitationService.ts:596
 msgid "This public invite link is no longer valid."
 msgstr "Tämä julkinen kutsulinkki ei ole enää voimassa."
 
@@ -4122,7 +4122,7 @@ msgstr "Ei voitu pakata kuvaa. Käytä pienempää kuvaa."
 msgid "Unable to compress sticker images. Please use smaller images."
 msgstr "Ei voitu pakata tarra-kuvia. Käytä pienempiä kuvia."
 
-#: src/services/SpaceService.ts:574
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
 " corrupted."
@@ -4801,12 +4801,6 @@ msgstr "YouTube-video"
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube-videon pikkukuva"
 
-#~ msgid "Failed to process image"
-#~ msgstr "Kuvan käsittely epäonnistui"
-
-#~ msgid "Replying to {user}"
-#~ msgstr "Vastaamassa {user}"
-
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} kirjanmerkki täällä"
 
@@ -4854,6 +4848,9 @@ msgstr "YouTube-videon pikkukuva"
 #~ "Vie salatun varmuuskopion suoraan viestistäsi palauttaaksesi ne, jos menetät"
 #~ " pääsyn tähän laitteeseen."
 
+#~ msgid "Failed to process image"
+#~ msgstr "Kuvan käsittely epäonnistui"
+
 #~ msgid "Hide"
 #~ msgstr "Piilota"
 
@@ -4862,6 +4859,16 @@ msgstr "YouTube-videon pikkukuva"
 
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Ymmärrän, näytä QR"
+
+#~ msgid ""
+#~ "If users report that this invite link isn't working, click to republish it. "
+#~ "The link URL stays the same."
+#~ msgstr ""
+#~ "Jos käyttäjät ilmoittavat, että tämä kutsulinkki ei toimi, napsauta "
+#~ "julkaistaksesi sen uudelleen. Linkin URL-osoite pysyy samana."
+
+#~ msgid "Join preview updated."
+#~ msgstr "Liittymisen esikatselu päivitetty."
 
 #~ msgid "Key Ready"
 #~ msgstr "Avain valmis"
@@ -4912,6 +4919,9 @@ msgstr "YouTube-videon pikkukuva"
 
 #~ msgid "QR code will auto-hide in 60 seconds"
 #~ msgstr "QR-koodi piiloutuu automaattisesti 60 sekunnissa"
+
+#~ msgid "Replying to {user}"
+#~ msgstr "Vastaamassa {user}"
 
 #~ msgid "Reset Encryption Session"
 #~ msgstr "Nollaa salausistunto"

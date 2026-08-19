@@ -30,14 +30,14 @@ msgid "No Role - {count}"
 msgstr "Fără rol - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1883
-msgid "Send a message to #{channel_name}"
-msgstr "Trimite un mesaj către #{channel_name}"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is ready to go."
 msgstr "Bun venit la Quorum, {name}! Contul tău este gata de utilizare."
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1883
+msgid "Send a message to #{channel_name}"
+msgstr "Trimite un mesaj către #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:149
@@ -312,7 +312,7 @@ msgstr ""
 "(ID Față, amprentă digitală sau PIN) pentru a proteja contul tău. Este mai "
 "sigur decât o parolă și nu trebuie să reții nimic."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:544
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:551
 msgid ""
 "A reusable link anyone can use to join. Share it on social media or your "
 "website."
@@ -908,7 +908,7 @@ msgstr "În curând"
 msgid "Config Key"
 msgstr "Cheia de configurare"
 
-#: src/services/InvitationService.ts:241
+#: src/services/InvitationService.ts:234
 msgid "Config key not found for this Space."
 msgstr "Cheia de configurare nu a fost găsită pentru acest Spațiu."
 
@@ -969,7 +969,7 @@ msgstr "Copiat!"
 msgid "Copy"
 msgstr "Copiază"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:675
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:682
 msgid "Copy a link"
 msgstr "Copiază un link"
 
@@ -987,8 +987,8 @@ msgstr "Copiază adresa"
 msgid "Copy full address"
 msgstr "Copiază adresa completă"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:439
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:793
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:805
 msgid "Copy invite link to clipboard"
 msgstr "Copiază linkul de invitație în clipboard"
 
@@ -1124,8 +1124,8 @@ msgstr "Creează Spațiu..."
 msgid "Current"
 msgstr "Curent"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:420
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:774
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:427
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:786
 msgid "Current Invite Link"
 msgstr "Linkul actual de invitație"
 
@@ -1545,7 +1545,7 @@ msgstr "Eroare de criptare"
 msgid "Encryption Reset"
 msgstr "Resetare Criptare"
 
-#: src/services/InvitationService.ts:101
+#: src/services/InvitationService.ts:94
 msgid ""
 "Encryption state is missing required template data. Please generate a public"
 " invite link first."
@@ -1553,7 +1553,7 @@ msgstr ""
 "Starea criptării lipsește datele necesare din șablon. Te rugăm să generezi "
 "mai întâi un link de invitație public."
 
-#: src/services/InvitationService.ts:262
+#: src/services/InvitationService.ts:255
 msgid ""
 "Encryption state is missing required template data. The invite pool was not "
 "initialized."
@@ -1561,11 +1561,11 @@ msgstr ""
 "Starea criptării nu are datele șablonului necesare. Pool-ul de invitații nu "
 "a fost inițializat."
 
-#: src/services/InvitationService.ts:269
+#: src/services/InvitationService.ts:262
 msgid "Encryption state is missing state data."
 msgstr "Starea criptării nu are date de stare."
 
-#: src/services/InvitationService.ts:116
+#: src/services/InvitationService.ts:109
 msgid ""
 "Encryption state is missing state data. Please generate a public invite link"
 " first."
@@ -1954,7 +1954,7 @@ msgstr ""
 " pot dezvălui că ești proprietarul—ia în considerare să împărtășești roluri "
 "cu alți utilizatori de încredere."
 
-#: src/services/SpaceService.ts:243
+#: src/services/SpaceService.ts:222
 msgid "general"
 msgstr "general"
 
@@ -1963,11 +1963,11 @@ msgstr "general"
 msgid "General"
 msgstr "General"
 
-#: src/services/SpaceService.ts:244
+#: src/services/SpaceService.ts:223
 msgid "General Chat"
 msgstr "Chat General"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:637
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:644
 msgid ""
 "Generate a fresh one-time invite link and copy it to your clipboard. Each "
 "click creates a new link. Paste it wherever you want (email, WhatsApp, "
@@ -1980,7 +1980,7 @@ msgstr ""
 msgid "Generate Link"
 msgstr "Generează linkul"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:886
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:898
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:795
 msgid "Generate Public Invite Link"
 msgstr "Generează link de invitație public"
@@ -1989,11 +1989,11 @@ msgstr "Generează link de invitație public"
 msgid "Generate YouTube previews"
 msgstr "Generează previzualizări YouTube"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:732
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:739
 msgid "Generating public invite link..."
 msgstr "Se generează link-ul public de invitație..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:672
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:679
 msgid "Generating…"
 msgstr "Se generează…"
 
@@ -2069,7 +2069,7 @@ msgstr "Ascunde canalele mute din bara laterală"
 msgid "How to add a passkey"
 msgstr "Cum să adaugi un passkey"
 
-#: src/services/InvitationService.ts:232
+#: src/services/InvitationService.ts:225
 msgid "Hub key not found for this Space."
 msgstr "Cheia hub-ului nu a fost găsită pentru acest Spațiu."
 
@@ -2090,13 +2090,13 @@ msgstr "Sunt nou!"
 msgid "I've already saved my key"
 msgstr "Am salvat deja cheia mea"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:821
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:833
 msgid ""
-"If users report that this invite link isn't working, click to republish it. "
-"The link URL stays the same."
+"If someone reports the link isn't working, or a member can't see it, click "
+"to republish. The link URL stays the same."
 msgstr ""
-"Dacă utilizatorii raportează că acest link de invitație nu funcționează, "
-"apasă pentru a-l republica. URL-ul link-ului rămâne același."
+"Dacă cineva raportează că linkul nu funcționează sau un membru nu-l poate "
+"vedea, apasă pentru a republica. URL-ul linkului rămâne același."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:695
 msgid "Import a backup instead"
@@ -2137,8 +2137,8 @@ msgstr ""
 "Formatul adresei este invalid. Adresele trebuie să folosească caractere "
 "alfanumerice valide."
 
-#: src/services/InvitationService.ts:458 src/services/InvitationService.ts:469
-#: src/services/InvitationService.ts:501 src/services/InvitationService.ts:570
+#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:485
+#: src/services/InvitationService.ts:517 src/services/InvitationService.ts:586
 msgid "invalid link"
 msgstr "link invalid"
 
@@ -2148,9 +2148,13 @@ msgid "Invalid message ID"
 msgstr "ID-ul mesajului este invalid"
 
 #: src/hooks/business/spaces/useInviteValidation.ts:51
-#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:537
+#: src/services/InvitationService.ts:490 src/services/InvitationService.ts:553
 msgid "invalid response"
 msgstr "răspuns invalid"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:771
+msgid "Invite link republished."
+msgstr "Linkul de invitație a fost republicat."
 
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:214
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:231
@@ -2161,15 +2165,15 @@ msgstr "Invită Membri"
 msgid "Invite sent"
 msgstr "Invitație trimisă"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:474
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:691
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:845
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:481
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:698
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:857
 msgid "Invite sent. Pick another contact to send another."
 msgstr ""
 "Invitație trimisă. Alege un alt contact pentru a trimite o altă invitație."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:405
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:517
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:412
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:524
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:43
 msgid "Invites"
 msgstr "Invitații"
@@ -2201,10 +2205,6 @@ msgstr "Alătură-te"
 #: src/components/space/SpacesSidebar.tsx:308
 msgid "Join a Space"
 msgstr "Alăturați-vă unui Spațiu"
-
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:759
-msgid "Join preview updated."
-msgstr "Previzualizare alăturare actualizată."
 
 #: src/components/modals/AddSpaceModal.tsx:257
 #: src/components/modals/JoinSpaceModal.tsx:71
@@ -2326,7 +2326,7 @@ msgstr "Doar literele A–Z și cifrele 0–9. Se transformă automat în majusc
 msgid "Light"
 msgstr "Lumină"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:601
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:608
 msgid "Link copied. Paste it where you want to share it."
 msgstr "Link copiat. Lipește-l unde vrei să-l distribui."
 
@@ -2597,7 +2597,7 @@ msgstr "Mesaj Direct Nou"
 msgid "New Folder"
 msgstr "Folder Nou"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:568
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:575
 msgid ""
 "New invites can't be issued from this device for this Space. Existing invite"
 " links keep working. This typically affects spaces created on the desktop "
@@ -2608,7 +2608,7 @@ msgstr ""
 "afectează de obicei spațiile create în aplicația desktop înainte de iunie "
 "2026."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:562
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:569
 msgid ""
 "New invites can't be issued from this device, but the existing public invite"
 " link still works — copy it or send it via DM below."
@@ -2622,7 +2622,7 @@ msgstr ""
 msgid "New message from {0}"
 msgstr "Mesaj nou de la {0}"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:556
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:563
 msgid ""
 "New one-time invites can't be issued from this device for this Space. The "
 "public invite link still works — switch to <0>Public Link</0> above to copy "
@@ -2678,14 +2678,14 @@ msgstr "Nicio conversație încă."
 msgid "No emoji found"
 msgstr "Nu s-a găsit emoji"
 
-#: src/services/InvitationService.ts:254
+#: src/services/InvitationService.ts:247
 msgid ""
 "No encryption state found for this Space. Cannot generate public invite."
 msgstr ""
 "Nicio stare de criptare găsită pentru acest Spațiu. Nu se poate genera "
 "invitație publică."
 
-#: src/services/InvitationService.ts:95
+#: src/services/InvitationService.ts:88
 msgid ""
 "No encryption state found for this Space. The Space may need to be "
 "initialized or you may need to generate a public invite link first."
@@ -2723,7 +2723,7 @@ msgstr ""
 msgid "No pinned messages yet"
 msgstr "Nu sunt încă mesaje fixate"
 
-#: src/services/InvitationService.ts:176
+#: src/services/InvitationService.ts:169
 msgid "No public invite link exists yet. Generate one before sharing."
 msgstr ""
 "Nu există încă un link public de invitație. Generează unul înainte de a-l "
@@ -2844,7 +2844,7 @@ msgstr "O singură dată"
 msgid "Online"
 msgstr "Online"
 
-#: src/services/InvitationService.ts:226
+#: src/services/InvitationService.ts:219
 msgid "Only space owners can generate public invite links."
 msgstr "Doar proprietarii Spațiului pot genera link-uri publice de invitație."
 
@@ -3055,7 +3055,7 @@ msgstr ""
 msgid "Processing..."
 msgstr "Se procesează..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:746
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:753
 msgid "Public invite link generated successfully."
 msgstr "Link-ul public de invitație a fost generat cu succes."
 
@@ -3216,7 +3216,7 @@ msgstr "Răspunde"
 msgid "Reply in thread..."
 msgstr "Răspunde în fir..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:831
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:843
 msgid "Republish"
 msgstr "Republică"
 
@@ -3488,7 +3488,7 @@ msgstr "Selectează tonul pielii"
 msgid "Send"
 msgstr "Trimite"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:539
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:546
 msgid ""
 "Send a one-time invite directly to someone. Each link can only be used once."
 msgstr ""
@@ -3499,12 +3499,12 @@ msgstr ""
 msgid "Send failed"
 msgstr "Trimiterea a eșuat"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:715
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:722
 msgid "Send Invite"
 msgstr "Trimite invitație"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:500
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:873
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:507
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:885
 msgid "Send Link"
 msgstr "Trimite link"
 
@@ -3512,9 +3512,9 @@ msgstr "Trimite link"
 msgid "Send Message"
 msgstr "Trimite mesaj"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:456
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:626
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:810
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:463
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:633
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:822
 msgid "Send via DM"
 msgstr "Trimite prin DM"
 
@@ -3545,7 +3545,7 @@ msgstr "Setări"
 msgid "Several people are typing"
 msgstr "Câțiva oameni scriu"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:408
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:415
 msgid "Share this Space's public invite link. Anyone with the link can join."
 msgstr ""
 "Distribuie link-ul public de invitație al acestui Spațiu. Oricine are link-"
@@ -3677,7 +3677,7 @@ msgstr "Numele Spațiului trebuie să aibă {0} caractere sau mai puțin"
 msgid "Space name must be at least {0} characters"
 msgstr "Numele Spațiului trebuie să aibă cel puțin {0} caractere"
 
-#: src/services/InvitationService.ts:220
+#: src/services/InvitationService.ts:213
 msgid "Space not found"
 msgstr "Spațiul nu a fost găsit"
 
@@ -3905,11 +3905,11 @@ msgstr ""
 "Aceasta este adresa ta publică și este sigură pentru a fi împărtășită cu "
 "oricine dorești să interacționezi."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:778
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:790
 msgid "This link does not expire. Anyone with it can join your Space."
 msgstr "Acest link nu expiră. Oricine îl are se poate alătura Spațiului tău."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:424
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:431
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "Acest link a fost generat de un proprietar de Spațiu. Nu expiră."
 
@@ -3930,7 +3930,7 @@ msgid "This page couldn't be loaded"
 msgstr "Această pagină nu a putut fi încărcată"
 
 #: src/components/message/InviteLink.tsx:44
-#: src/services/InvitationService.ts:580
+#: src/services/InvitationService.ts:596
 msgid "This public invite link is no longer valid."
 msgstr "Acest link public de invitație nu mai este valabil."
 
@@ -4166,7 +4166,7 @@ msgstr ""
 "Imposibil de comprimat imaginile cu autocolante. Te rugăm să folosești "
 "imagini mai mici."
 
-#: src/services/SpaceService.ts:574
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
 " corrupted."
@@ -4863,12 +4863,6 @@ msgstr "Video YouTube"
 msgid "YouTube Video Thumbnail"
 msgstr "Miniatură video YouTube"
 
-#~ msgid "Failed to process image"
-#~ msgstr "Eșec la procesarea imaginii"
-
-#~ msgid "Replying to {user}"
-#~ msgstr "Răspunzând lui {user}"
-
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} marcator aici"
 
@@ -4918,6 +4912,9 @@ msgstr "Miniatură video YouTube"
 #~ "Exportă o copie de siguranță criptată a mesajelor tale private pentru a le "
 #~ "restaura dacă pierzi accesul la acest dispozitiv."
 
+#~ msgid "Failed to process image"
+#~ msgstr "Eșec la procesarea imaginii"
+
 #~ msgid "Hide"
 #~ msgstr "Ascunde"
 
@@ -4926,6 +4923,16 @@ msgstr "Miniatură video YouTube"
 
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Înțeleg, Afișează QR"
+
+#~ msgid ""
+#~ "If users report that this invite link isn't working, click to republish it. "
+#~ "The link URL stays the same."
+#~ msgstr ""
+#~ "Dacă utilizatorii raportează că acest link de invitație nu funcționează, "
+#~ "apasă pentru a-l republica. URL-ul link-ului rămâne același."
+
+#~ msgid "Join preview updated."
+#~ msgstr "Previzualizare alăturare actualizată."
 
 #~ msgid "Key Ready"
 #~ msgstr "Cheia este pregătită"
@@ -4975,6 +4982,9 @@ msgstr "Miniatură video YouTube"
 
 #~ msgid "QR code will auto-hide in 60 seconds"
 #~ msgstr "Codul QR se va ascunde automat în 60 de secunde"
+
+#~ msgid "Replying to {user}"
+#~ msgstr "Răspunzând lui {user}"
 
 #~ msgid "Reset Encryption Session"
 #~ msgstr "Resetează sesiunea de criptare"

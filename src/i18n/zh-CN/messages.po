@@ -30,14 +30,14 @@ msgid "No Role - {count}"
 msgstr "无角色 - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1883
-msgid "Send a message to #{channel_name}"
-msgstr "向 #{channel_name} 发送信息"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is ready to go."
 msgstr "欢迎来到 Quorum，{name}！您的账户已准备就绪。"
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1883
+msgid "Send a message to #{channel_name}"
+msgstr "向 #{channel_name} 发送信息"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:149
@@ -299,7 +299,7 @@ msgid ""
 " have to remember anything."
 msgstr "passkey使用您设备的安全功能（Face ID、指纹或 PIN）来保护您的账户。它比密码更安全，而且您无需记住任何东西。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:544
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:551
 msgid ""
 "A reusable link anyone can use to join. Share it on social media or your "
 "website."
@@ -866,7 +866,7 @@ msgstr "即将推出"
 msgid "Config Key"
 msgstr "配置密钥"
 
-#: src/services/InvitationService.ts:241
+#: src/services/InvitationService.ts:234
 msgid "Config key not found for this Space."
 msgstr "此空间未找到配置密钥。"
 
@@ -925,7 +925,7 @@ msgstr "已复制！"
 msgid "Copy"
 msgstr "复制"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:675
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:682
 msgid "Copy a link"
 msgstr "复制链接"
 
@@ -943,8 +943,8 @@ msgstr "复制地址"
 msgid "Copy full address"
 msgstr "复制完整地址"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:439
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:793
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:805
 msgid "Copy invite link to clipboard"
 msgstr "复制邀请链接到剪贴板"
 
@@ -1069,8 +1069,8 @@ msgstr "正在创建空间..."
 msgid "Current"
 msgstr "当前"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:420
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:774
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:427
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:786
 msgid "Current Invite Link"
 msgstr "当前邀请链接"
 
@@ -1471,23 +1471,23 @@ msgstr "加密错误"
 msgid "Encryption Reset"
 msgstr "加密重置"
 
-#: src/services/InvitationService.ts:101
+#: src/services/InvitationService.ts:94
 msgid ""
 "Encryption state is missing required template data. Please generate a public"
 " invite link first."
 msgstr "加密状态缺少所需的模板数据。请先生成公共邀请链接。"
 
-#: src/services/InvitationService.ts:262
+#: src/services/InvitationService.ts:255
 msgid ""
 "Encryption state is missing required template data. The invite pool was not "
 "initialized."
 msgstr "加密状态缺少所需的模板数据。邀请池未初始化。"
 
-#: src/services/InvitationService.ts:269
+#: src/services/InvitationService.ts:262
 msgid "Encryption state is missing state data."
 msgstr "加密状态缺少状态数据。"
 
-#: src/services/InvitationService.ts:116
+#: src/services/InvitationService.ts:109
 msgid ""
 "Encryption state is missing state data. Please generate a public invite link"
 " first."
@@ -1857,7 +1857,7 @@ msgid ""
 msgstr ""
 "出于隐私原因，您的所有权对其他客户端是隐藏的。这意味着：删除权限持有者可以永久删除您的消息，静音权限持有者可以静音您（可逆）。仅将这些权限授予可信用户。还请注意：如果您是唯一拥有角色的人，您的行为可能会暴露您作为所有者—考虑与其他可信用户共享角色。"
 
-#: src/services/SpaceService.ts:243
+#: src/services/SpaceService.ts:222
 msgid "general"
 msgstr "常规"
 
@@ -1866,11 +1866,11 @@ msgstr "常规"
 msgid "General"
 msgstr "一般情况"
 
-#: src/services/SpaceService.ts:244
+#: src/services/SpaceService.ts:223
 msgid "General Chat"
 msgstr "常规聊天"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:637
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:644
 msgid ""
 "Generate a fresh one-time invite link and copy it to your clipboard. Each "
 "click creates a new link. Paste it wherever you want (email, WhatsApp, "
@@ -1881,7 +1881,7 @@ msgstr "生成一个新的单次邀请链接并复制到您的剪贴板。每次
 msgid "Generate Link"
 msgstr "生成链接"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:886
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:898
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:795
 msgid "Generate Public Invite Link"
 msgstr "生成公共邀请链接"
@@ -1890,11 +1890,11 @@ msgstr "生成公共邀请链接"
 msgid "Generate YouTube previews"
 msgstr "生成 YouTube 预览图"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:732
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:739
 msgid "Generating public invite link..."
 msgstr "正在生成公共邀请链接..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:672
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:679
 msgid "Generating…"
 msgstr "正在生成…"
 
@@ -1968,7 +1968,7 @@ msgstr "从侧边栏隐藏已静音的频道"
 msgid "How to add a passkey"
 msgstr "如何添加 passkey"
 
-#: src/services/InvitationService.ts:232
+#: src/services/InvitationService.ts:225
 msgid "Hub key not found for this Space."
 msgstr "此空间未找到中心密钥。"
 
@@ -1989,11 +1989,11 @@ msgstr "我是新手！"
 msgid "I've already saved my key"
 msgstr "我已经保存了我的密钥"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:821
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:833
 msgid ""
-"If users report that this invite link isn't working, click to republish it. "
-"The link URL stays the same."
-msgstr "如果用户报告此邀请链接无效，请点击重新发布。链接 URL 保持不变。"
+"If someone reports the link isn't working, or a member can't see it, click "
+"to republish. The link URL stays the same."
+msgstr "如果有人报告链接无法使用，或成员无法看到，请点击重新发布。链接 URL 保持不变。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:695
 msgid "Import a backup instead"
@@ -2032,8 +2032,8 @@ msgid ""
 "Invalid address format. Addresses must use valid alphanumeric characters."
 msgstr "地址格式无效。地址必须使用有效的字母数字字符。"
 
-#: src/services/InvitationService.ts:458 src/services/InvitationService.ts:469
-#: src/services/InvitationService.ts:501 src/services/InvitationService.ts:570
+#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:485
+#: src/services/InvitationService.ts:517 src/services/InvitationService.ts:586
 msgid "invalid link"
 msgstr "链接无效"
 
@@ -2043,9 +2043,13 @@ msgid "Invalid message ID"
 msgstr "无效的消息ID"
 
 #: src/hooks/business/spaces/useInviteValidation.ts:51
-#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:537
+#: src/services/InvitationService.ts:490 src/services/InvitationService.ts:553
 msgid "invalid response"
 msgstr "响应无效"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:771
+msgid "Invite link republished."
+msgstr "邀请链接已重新发布。"
 
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:214
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:231
@@ -2056,14 +2060,14 @@ msgstr "邀请成员"
 msgid "Invite sent"
 msgstr "邀请已发送"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:474
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:691
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:845
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:481
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:698
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:857
 msgid "Invite sent. Pick another contact to send another."
 msgstr "邀请已发送。选择其他联系人以发送另一个。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:405
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:517
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:412
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:524
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:43
 msgid "Invites"
 msgstr "邀请函"
@@ -2093,10 +2097,6 @@ msgstr "参加"
 #: src/components/space/SpacesSidebar.tsx:308
 msgid "Join a Space"
 msgstr "加入空间"
-
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:759
-msgid "Join preview updated."
-msgstr "加入预览已更新。"
 
 #: src/components/modals/AddSpaceModal.tsx:257
 #: src/components/modals/JoinSpaceModal.tsx:71
@@ -2214,7 +2214,7 @@ msgstr "仅限字母 A–Z 和数字 0–9。自动大写。"
 msgid "Light"
 msgstr "浅色"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:601
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:608
 msgid "Link copied. Paste it where you want to share it."
 msgstr "链接已复制。粘贴到您想分享的地方。"
 
@@ -2476,14 +2476,14 @@ msgstr "新的直接消息"
 msgid "New Folder"
 msgstr "新文件夹"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:568
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:575
 msgid ""
 "New invites can't be issued from this device for this Space. Existing invite"
 " links keep working. This typically affects spaces created on the desktop "
 "app before June 2026."
 msgstr "此设备无法为此空间发放新邀请。现有邀请链接仍然有效。这通常会影响在 2026 年 6 月之前在桌面应用上创建的空间。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:562
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:569
 msgid ""
 "New invites can't be issued from this device, but the existing public invite"
 " link still works — copy it or send it via DM below."
@@ -2494,7 +2494,7 @@ msgstr "此设备无法发放新邀请，但现有的公共邀请链接仍然有
 msgid "New message from {0}"
 msgstr "来自 {0} 的新消息"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:556
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:563
 msgid ""
 "New one-time invites can't be issued from this device for this Space. The "
 "public invite link still works — switch to <0>Public Link</0> above to copy "
@@ -2545,12 +2545,12 @@ msgstr "暂无对话。"
 msgid "No emoji found"
 msgstr "没有找到表情符号"
 
-#: src/services/InvitationService.ts:254
+#: src/services/InvitationService.ts:247
 msgid ""
 "No encryption state found for this Space. Cannot generate public invite."
 msgstr "此空间未找到加密状态。无法生成公共邀请。"
 
-#: src/services/InvitationService.ts:95
+#: src/services/InvitationService.ts:88
 msgid ""
 "No encryption state found for this Space. The Space may need to be "
 "initialized or you may need to generate a public invite link first."
@@ -2582,7 +2582,7 @@ msgstr "此账户没有 passkey。您的账户密钥存储在此设备上，因�
 msgid "No pinned messages yet"
 msgstr "尚无置顶消息"
 
-#: src/services/InvitationService.ts:176
+#: src/services/InvitationService.ts:169
 msgid "No public invite link exists yet. Generate one before sharing."
 msgstr "尚未存在公共邀请链接。请先生成一个再分享。"
 
@@ -2697,7 +2697,7 @@ msgstr "一次性"
 msgid "Online"
 msgstr "在线"
 
-#: src/services/InvitationService.ts:226
+#: src/services/InvitationService.ts:219
 msgid "Only space owners can generate public invite links."
 msgstr "只有空间所有者才能生成公共邀请链接。"
 
@@ -2891,7 +2891,7 @@ msgstr "正在处理图像... 对于大文件，这可能需要一些时间。"
 msgid "Processing..."
 msgstr "处理中..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:746
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:753
 msgid "Public invite link generated successfully."
 msgstr "公共邀请链接已成功生成。"
 
@@ -3038,7 +3038,7 @@ msgstr "答复"
 msgid "Reply in thread..."
 msgstr "在话题中回复..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:831
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:843
 msgid "Republish"
 msgstr "重新发布"
 
@@ -3301,7 +3301,7 @@ msgstr "选择肤色"
 msgid "Send"
 msgstr "发送"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:539
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:546
 msgid ""
 "Send a one-time invite directly to someone. Each link can only be used once."
 msgstr "直接向某人发送一次性邀请。每个链接只能使用一次。"
@@ -3310,12 +3310,12 @@ msgstr "直接向某人发送一次性邀请。每个链接只能使用一次。
 msgid "Send failed"
 msgstr "发送失败"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:715
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:722
 msgid "Send Invite"
 msgstr "发送邀请"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:500
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:873
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:507
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:885
 msgid "Send Link"
 msgstr "发送链接"
 
@@ -3323,9 +3323,9 @@ msgstr "发送链接"
 msgid "Send Message"
 msgstr "发送消息"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:456
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:626
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:810
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:463
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:633
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:822
 msgid "Send via DM"
 msgstr "通过私信发送"
 
@@ -3354,7 +3354,7 @@ msgstr "设置"
 msgid "Several people are typing"
 msgstr "多人正在输入"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:408
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:415
 msgid "Share this Space's public invite link. Anyone with the link can join."
 msgstr "分享此空间的公共邀请链接。任何拥有此链接的人都可以加入。"
 
@@ -3477,7 +3477,7 @@ msgstr "空间名称必须少于 {0} 个字符"
 msgid "Space name must be at least {0} characters"
 msgstr "空间名称必须至少有 {0} 个字符"
 
-#: src/services/InvitationService.ts:220
+#: src/services/InvitationService.ts:213
 msgid "Space not found"
 msgstr "未找到空间"
 
@@ -3679,11 +3679,11 @@ msgid ""
 "interact with."
 msgstr "这是您的公共地址，可以安全地与您想要互动的任何人分享。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:778
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:790
 msgid "This link does not expire. Anyone with it can join your Space."
 msgstr "此链接永不过期。任何拥有此链接的人都可以加入您的空间。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:424
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:431
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "此链接由空间所有者生成。它永不过期。"
 
@@ -3702,7 +3702,7 @@ msgid "This page couldn't be loaded"
 msgstr "无法加载此页面"
 
 #: src/components/message/InviteLink.tsx:44
-#: src/services/InvitationService.ts:580
+#: src/services/InvitationService.ts:596
 msgid "This public invite link is no longer valid."
 msgstr "此公共邀请链接不再有效。"
 
@@ -3916,7 +3916,7 @@ msgstr "无法压缩图像。请使用更小的图像。"
 msgid "Unable to compress sticker images. Please use smaller images."
 msgstr "无法压缩贴纸图像。请使用更小的图像。"
 
-#: src/services/SpaceService.ts:574
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
 " corrupted."
@@ -4515,12 +4515,6 @@ msgstr "YouTube 视频"
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube 视频缩略图"
 
-#~ msgid "Failed to process image"
-#~ msgstr "无法处理图像"
-
-#~ msgid "Replying to {user}"
-#~ msgstr "回复 {user}"
-
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} 个书签在此"
 
@@ -4561,6 +4555,9 @@ msgstr "YouTube 视频缩略图"
 #~ "lose access to this device."
 #~ msgstr "导出私信的加密备份，以便在您无法访问此设备时恢复它们。"
 
+#~ msgid "Failed to process image"
+#~ msgstr "无法处理图像"
+
 #~ msgid "Hide"
 #~ msgstr "隐藏"
 
@@ -4569,6 +4566,14 @@ msgstr "YouTube 视频缩略图"
 
 #~ msgid "I Understand, Show QR"
 #~ msgstr "我明白，显示二维码"
+
+#~ msgid ""
+#~ "If users report that this invite link isn't working, click to republish it. "
+#~ "The link URL stays the same."
+#~ msgstr "如果用户报告此邀请链接无效，请点击重新发布。链接 URL 保持不变。"
+
+#~ msgid "Join preview updated."
+#~ msgstr "加入预览已更新。"
 
 #~ msgid "Key Ready"
 #~ msgstr "密钥已准备好"
@@ -4610,6 +4615,9 @@ msgstr "YouTube 视频缩略图"
 
 #~ msgid "QR code will auto-hide in 60 seconds"
 #~ msgstr "二维码将在60秒内自动隐藏"
+
+#~ msgid "Replying to {user}"
+#~ msgstr "回复 {user}"
 
 #~ msgid "Reset Encryption Session"
 #~ msgstr "重置加密会话"
