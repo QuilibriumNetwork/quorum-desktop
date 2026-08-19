@@ -3,7 +3,7 @@ type: doc
 title: Quorum Ecosystem Architecture
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-06-11T00:00:00.000Z
+updated: 2026-08-19T00:00:00.000Z
 ---
 
 # Quorum Ecosystem Architecture
@@ -568,14 +568,18 @@ import {
 
 ### Invite Domain Helpers
 
-Environment-aware URL/prefix generation for invite links. Replaces hardcoded `qm.one`/`app.quorummessenger.com` regex literals.
+URL/prefix helpers for invite links. **Generation is canonical, acceptance is
+permissive** (changed in shared #84, 2026-08-19): every generated link carries
+the production host, while the accept-list stays broad so links already in
+circulation keep parsing. Generation was previously environment-derived; see
+`features/invite-system-analysis.md` for why that was dropped.
 
 ```typescript
 import {
-  getInviteBaseDomain,       // env-aware: prod/staging/localhost
-  getInviteUrlBase,          // (isPublicInvite: boolean) => string
-  getInviteDisplayDomain,
-  getValidInvitePrefixes,    // env-aware: prefix list for link detection
+  getInviteBaseDomain,       // ALWAYS app.quorummessenger.com, on every build
+  getInviteUrlBase,          // (isPublicInvite: boolean) => string, always https
+  getInviteDisplayDomain,    // same value, for UI
+  getValidInvitePrefixes,    // still env-aware: broad accept-list for link detection
   parseInviteParams,         // parse an invite URL into structured parts
 } from '@quilibrium/quorum-shared';
 ```
@@ -810,4 +814,4 @@ function MyComponent() {
 
 ---
 
-*Last updated: 2026-06-11*
+*Last updated: 2026-08-19*
