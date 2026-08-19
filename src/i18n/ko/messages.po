@@ -30,14 +30,14 @@ msgid "No Role - {count}"
 msgstr "역할 없음 - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1883
-msgid "Send a message to #{channel_name}"
-msgstr "#{channel_name}에 메시지 보내기"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is ready to go."
 msgstr "Quorum에 오신 것을 환영합니다, {name}님! 당신의 계정이 준비되었습니다."
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1883
+msgid "Send a message to #{channel_name}"
+msgstr "#{channel_name}에 메시지 보내기"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:149
@@ -301,7 +301,7 @@ msgstr ""
 "passkey는 기기의 보안 기능(Face ID, 지문, PIN)을 사용하여 계정을 보호합니다. 비밀번호보다 안전하며 기억할 필요가 "
 "없습니다."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:544
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:551
 msgid ""
 "A reusable link anyone can use to join. Share it on social media or your "
 "website."
@@ -874,7 +874,7 @@ msgstr "곧 출시 예정"
 msgid "Config Key"
 msgstr "구성 키"
 
-#: src/services/InvitationService.ts:241
+#: src/services/InvitationService.ts:234
 msgid "Config key not found for this Space."
 msgstr "이 스페이스에 대한 구성 키를 찾을 수 없습니다."
 
@@ -933,7 +933,7 @@ msgstr "복사됨!"
 msgid "Copy"
 msgstr "복사"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:675
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:682
 msgid "Copy a link"
 msgstr "링크 복사"
 
@@ -951,8 +951,8 @@ msgstr "주소 복사"
 msgid "Copy full address"
 msgstr "주소 전체 복사"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:439
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:793
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:805
 msgid "Copy invite link to clipboard"
 msgstr "초대 링크를 클립보드에 복사"
 
@@ -1079,8 +1079,8 @@ msgstr "스페이스 생성 중..."
 msgid "Current"
 msgstr "현재"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:420
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:774
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:427
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:786
 msgid "Current Invite Link"
 msgstr "현재 초대 링크"
 
@@ -1490,23 +1490,23 @@ msgstr "암호화 오류"
 msgid "Encryption Reset"
 msgstr "암호화 재설정"
 
-#: src/services/InvitationService.ts:101
+#: src/services/InvitationService.ts:94
 msgid ""
 "Encryption state is missing required template data. Please generate a public"
 " invite link first."
 msgstr "암호화 상태에 필요한 템플릿 데이터가 없습니다. 먼저 공개 초대 링크를 생성하세요."
 
-#: src/services/InvitationService.ts:262
+#: src/services/InvitationService.ts:255
 msgid ""
 "Encryption state is missing required template data. The invite pool was not "
 "initialized."
 msgstr "암호화 상태에 필요한 템플릿 데이터가 누락되었습니다. 초대 풀이 초기화되지 않았습니다."
 
-#: src/services/InvitationService.ts:269
+#: src/services/InvitationService.ts:262
 msgid "Encryption state is missing state data."
 msgstr "암호화 상태에 상태 데이터가 누락되었습니다."
 
-#: src/services/InvitationService.ts:116
+#: src/services/InvitationService.ts:109
 msgid ""
 "Encryption state is missing state data. Please generate a public invite link"
 " first."
@@ -1879,7 +1879,7 @@ msgstr ""
 "사용자에게만 부여하십시오. 또한, 당신이 유일한 역할을 가진 경우 당신의 행동이 소유자로 드러날 수 있으므로, 다른 신뢰할 수 있는 "
 "사용자와 역할을 공유하는 것을 고려하십시오."
 
-#: src/services/SpaceService.ts:243
+#: src/services/SpaceService.ts:222
 msgid "general"
 msgstr "일반"
 
@@ -1888,11 +1888,11 @@ msgstr "일반"
 msgid "General"
 msgstr "일반"
 
-#: src/services/SpaceService.ts:244
+#: src/services/SpaceService.ts:223
 msgid "General Chat"
 msgstr "일반 채팅"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:637
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:644
 msgid ""
 "Generate a fresh one-time invite link and copy it to your clipboard. Each "
 "click creates a new link. Paste it wherever you want (email, WhatsApp, "
@@ -1905,7 +1905,7 @@ msgstr ""
 msgid "Generate Link"
 msgstr "링크 생성"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:886
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:898
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:795
 msgid "Generate Public Invite Link"
 msgstr "공개 초대 링크 생성"
@@ -1914,11 +1914,11 @@ msgstr "공개 초대 링크 생성"
 msgid "Generate YouTube previews"
 msgstr "YouTube 미리보기 생성"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:732
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:739
 msgid "Generating public invite link..."
 msgstr "공개 초대 링크 생성 중..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:672
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:679
 msgid "Generating…"
 msgstr "생성 중..."
 
@@ -1992,7 +1992,7 @@ msgstr "음소거된 채널을 사이드바에서 숨기기"
 msgid "How to add a passkey"
 msgstr "passkey 추가 방법"
 
-#: src/services/InvitationService.ts:232
+#: src/services/InvitationService.ts:225
 msgid "Hub key not found for this Space."
 msgstr "이 스페이스에 대한 허브 키를 찾을 수 없습니다."
 
@@ -2013,11 +2013,11 @@ msgstr "새로 왔어요!"
 msgid "I've already saved my key"
 msgstr "키를 이미 저장했습니다"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:821
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:833
 msgid ""
-"If users report that this invite link isn't working, click to republish it. "
-"The link URL stays the same."
-msgstr "사용자들이 이 초대 링크가 작동하지 않는다고 보고하면, 클릭하여 다시 게시하세요. 링크 URL은 동일하게 유지됩니다."
+"If someone reports the link isn't working, or a member can't see it, click "
+"to republish. The link URL stays the same."
+msgstr "누군가 링크가 작동하지 않거나 회원이 볼 수 없다고 보고하면, 다시 게시를 클릭하십시오. 링크 URL은 동일하게 유지됩니다."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:695
 msgid "Import a backup instead"
@@ -2056,8 +2056,8 @@ msgid ""
 "Invalid address format. Addresses must use valid alphanumeric characters."
 msgstr "잘못된 주소 형식입니다. 주소는 유효한 영숫자 문자만 사용해야 합니다."
 
-#: src/services/InvitationService.ts:458 src/services/InvitationService.ts:469
-#: src/services/InvitationService.ts:501 src/services/InvitationService.ts:570
+#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:485
+#: src/services/InvitationService.ts:517 src/services/InvitationService.ts:586
 msgid "invalid link"
 msgstr "잘못된 링크"
 
@@ -2067,9 +2067,13 @@ msgid "Invalid message ID"
 msgstr "유효하지 않은 메시지 ID"
 
 #: src/hooks/business/spaces/useInviteValidation.ts:51
-#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:537
+#: src/services/InvitationService.ts:490 src/services/InvitationService.ts:553
 msgid "invalid response"
 msgstr "잘못된 응답"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:771
+msgid "Invite link republished."
+msgstr "초대 링크가 다시 게시되었습니다."
 
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:214
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:231
@@ -2080,14 +2084,14 @@ msgstr "회원 초대"
 msgid "Invite sent"
 msgstr "초대가 전송되었습니다"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:474
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:691
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:845
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:481
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:698
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:857
 msgid "Invite sent. Pick another contact to send another."
 msgstr "초대가 전송되었습니다. 다른 연락처를 선택하여 다시 보내세요."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:405
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:517
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:412
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:524
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:43
 msgid "Invites"
 msgstr "초대"
@@ -2118,10 +2122,6 @@ msgstr "참여"
 #: src/components/space/SpacesSidebar.tsx:308
 msgid "Join a Space"
 msgstr "공간 참여"
-
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:759
-msgid "Join preview updated."
-msgstr "참여 미리보기가 업데이트되었습니다."
 
 #: src/components/modals/AddSpaceModal.tsx:257
 #: src/components/modals/JoinSpaceModal.tsx:71
@@ -2239,7 +2239,7 @@ msgstr "A–Z의 문자와 0–9의 숫자만 허용됩니다. 자동으로 대�
 msgid "Light"
 msgstr "밝은"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:601
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:608
 msgid "Link copied. Paste it where you want to share it."
 msgstr "링크가 복사되었습니다. 공유하고 싶은 곳에 붙여넣으세요."
 
@@ -2503,7 +2503,7 @@ msgstr "새로운 다이렉트 메시지"
 msgid "New Folder"
 msgstr "새 폴더"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:568
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:575
 msgid ""
 "New invites can't be issued from this device for this Space. Existing invite"
 " links keep working. This typically affects spaces created on the desktop "
@@ -2512,7 +2512,7 @@ msgstr ""
 "이 스페이스에 대해 이 기기에서 새 초대를 발행할 수 없습니다. 기존 초대 링크는 계속 작동합니다. 이는 일반적으로 2026년 6월 "
 "이전에 데스크톱 앱에서 생성된 스페이스에 영향을 미칩니다."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:562
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:569
 msgid ""
 "New invites can't be issued from this device, but the existing public invite"
 " link still works — copy it or send it via DM below."
@@ -2523,7 +2523,7 @@ msgstr "이 기기에서 새 초대를 발행할 수 없지만, 기존 공개 �
 msgid "New message from {0}"
 msgstr "{0}로부터의 새 메시지"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:556
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:563
 msgid ""
 "New one-time invites can't be issued from this device for this Space. The "
 "public invite link still works — switch to <0>Public Link</0> above to copy "
@@ -2576,12 +2576,12 @@ msgstr "아직 대화가 없습니다."
 msgid "No emoji found"
 msgstr "이모티콘을 찾을 수 없습니다"
 
-#: src/services/InvitationService.ts:254
+#: src/services/InvitationService.ts:247
 msgid ""
 "No encryption state found for this Space. Cannot generate public invite."
 msgstr "이 스페이스에 대한 암호화 상태를 찾을 수 없습니다. 공개 초대를 생성할 수 없습니다."
 
-#: src/services/InvitationService.ts:95
+#: src/services/InvitationService.ts:88
 msgid ""
 "No encryption state found for this Space. The Space may need to be "
 "initialized or you may need to generate a public invite link first."
@@ -2615,7 +2615,7 @@ msgstr ""
 msgid "No pinned messages yet"
 msgstr "아직 고정된 메시지가 없습니다"
 
-#: src/services/InvitationService.ts:176
+#: src/services/InvitationService.ts:169
 msgid "No public invite link exists yet. Generate one before sharing."
 msgstr "아직 공개 초대 링크가 없습니다. 공유하기 전에 생성하세요."
 
@@ -2730,7 +2730,7 @@ msgstr "일회성"
 msgid "Online"
 msgstr "온라인"
 
-#: src/services/InvitationService.ts:226
+#: src/services/InvitationService.ts:219
 msgid "Only space owners can generate public invite links."
 msgstr "스페이스 소유자만 공개 초대 링크를 생성할 수 있습니다."
 
@@ -2929,7 +2929,7 @@ msgstr "이미지를 처리하는 중... 큰 파일의 경우 잠시 시간이 �
 msgid "Processing..."
 msgstr "처리 중..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:746
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:753
 msgid "Public invite link generated successfully."
 msgstr "공개 초대 링크가 성공적으로 생성되었습니다."
 
@@ -3084,7 +3084,7 @@ msgstr "답장"
 msgid "Reply in thread..."
 msgstr "스레드에 대화하기..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:831
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:843
 msgid "Republish"
 msgstr "다시 게시"
 
@@ -3349,7 +3349,7 @@ msgstr "스킨 톤 선택"
 msgid "Send"
 msgstr "전송"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:539
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:546
 msgid ""
 "Send a one-time invite directly to someone. Each link can only be used once."
 msgstr "누군가에게 일회성 초대를 직접 보냅니다. 각 링크는 한 번만 사용할 수 있습니다."
@@ -3358,12 +3358,12 @@ msgstr "누군가에게 일회성 초대를 직접 보냅니다. 각 링크는 �
 msgid "Send failed"
 msgstr "전송 실패"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:715
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:722
 msgid "Send Invite"
 msgstr "초대 전송"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:500
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:873
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:507
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:885
 msgid "Send Link"
 msgstr "링크 보내기"
 
@@ -3371,9 +3371,9 @@ msgstr "링크 보내기"
 msgid "Send Message"
 msgstr "메시지 전송"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:456
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:626
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:810
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:463
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:633
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:822
 msgid "Send via DM"
 msgstr "DM을 통해 보내기"
 
@@ -3402,7 +3402,7 @@ msgstr "설정"
 msgid "Several people are typing"
 msgstr "여러 사람이 입력 중입니다"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:408
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:415
 msgid "Share this Space's public invite link. Anyone with the link can join."
 msgstr "이 스페이스의 공개 초대 링크를 공유하세요. 링크를 가진 사람은 누구나 참여할 수 있습니다."
 
@@ -3527,7 +3527,7 @@ msgstr "공간 이름은 {0}자 이하로 설정해야 합니다."
 msgid "Space name must be at least {0} characters"
 msgstr "공간 이름은 최소 {0}자 이상이어야 합니다."
 
-#: src/services/InvitationService.ts:220
+#: src/services/InvitationService.ts:213
 msgid "Space not found"
 msgstr "스페이스를 찾을 수 없습니다"
 
@@ -3734,11 +3734,11 @@ msgid ""
 "interact with."
 msgstr "이것은 당신의 공개 주소이며, 상호작용하고 싶은 누구와도 공유해도 안전합니다."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:778
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:790
 msgid "This link does not expire. Anyone with it can join your Space."
 msgstr "이 링크는 만료되지 않습니다. 링크를 가진 사람은 누구나 당신의 스페이스에 참여할 수 있습니다."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:424
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:431
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "이 링크는 스페이스 소유자가 생성했습니다. 만료되지 않습니다."
 
@@ -3757,7 +3757,7 @@ msgid "This page couldn't be loaded"
 msgstr "이 페이지를 로드할 수 없습니다"
 
 #: src/components/message/InviteLink.tsx:44
-#: src/services/InvitationService.ts:580
+#: src/services/InvitationService.ts:596
 msgid "This public invite link is no longer valid."
 msgstr "이 공개 초대 링크는 더 이상 유효하지 않습니다."
 
@@ -3974,7 +3974,7 @@ msgstr "이미지를 압축할 수 없습니다. 더 작은 이미지를 사용�
 msgid "Unable to compress sticker images. Please use smaller images."
 msgstr "스티커 이미지를 압축할 수 없습니다. 더 작은 이미지를 사용하세요."
 
-#: src/services/SpaceService.ts:574
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
 " corrupted."
@@ -4601,12 +4601,6 @@ msgstr "YouTube 비디오"
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube 비디오 썸네일"
 
-#~ msgid "Failed to process image"
-#~ msgstr "이미지 처리에 실패했습니다"
-
-#~ msgid "Replying to {user}"
-#~ msgstr "{user}에게 답장 중"
-
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} 마커가 여기 있습니다"
 
@@ -4649,6 +4643,9 @@ msgstr "YouTube 비디오 썸네일"
 #~ "lose access to this device."
 #~ msgstr "이 장치에 대한 액세스 권한을 잃은 경우 메시지를 복원할 수 있도록 암호화된 백업을 내보냅니다."
 
+#~ msgid "Failed to process image"
+#~ msgstr "이미지 처리에 실패했습니다"
+
 #~ msgid "Hide"
 #~ msgstr "숨기기"
 
@@ -4657,6 +4654,14 @@ msgstr "YouTube 비디오 썸네일"
 
 #~ msgid "I Understand, Show QR"
 #~ msgstr "이해했습니다, QR 표시"
+
+#~ msgid ""
+#~ "If users report that this invite link isn't working, click to republish it. "
+#~ "The link URL stays the same."
+#~ msgstr "사용자들이 이 초대 링크가 작동하지 않는다고 보고하면, 클릭하여 다시 게시하세요. 링크 URL은 동일하게 유지됩니다."
+
+#~ msgid "Join preview updated."
+#~ msgstr "참여 미리보기가 업데이트되었습니다."
 
 #~ msgid "Key Ready"
 #~ msgstr "키가 준비되었습니다"
@@ -4700,6 +4705,9 @@ msgstr "YouTube 비디오 썸네일"
 
 #~ msgid "QR code will auto-hide in 60 seconds"
 #~ msgstr "QR 코드는 60초 후에 자동으로 숨겨집니다"
+
+#~ msgid "Replying to {user}"
+#~ msgstr "{user}에게 답장 중"
 
 #~ msgid "Reset Encryption Session"
 #~ msgstr "암호화 세션 재설정"

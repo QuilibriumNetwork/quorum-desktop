@@ -30,14 +30,14 @@ msgid "No Role - {count}"
 msgstr "ไม่มีบทบาท - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1883
-msgid "Send a message to #{channel_name}"
-msgstr "ส่งข้อความไปยัง #{channel_name}"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is ready to go."
 msgstr "ยินดีต้อนรับสู่ Quorum, {name}! บัญชีของคุณพร้อมใช้งานแล้ว"
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1883
+msgid "Send a message to #{channel_name}"
+msgstr "ส่งข้อความไปยัง #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:149
@@ -312,7 +312,7 @@ msgstr ""
 "PIN) เพื่อรักษาความปลอดภัยบัญชีของคุณ "
 "มันมีความปลอดภัยมากกว่ารหัสผ่านและคุณไม่ต้องจำอะไรเลย"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:544
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:551
 msgid ""
 "A reusable link anyone can use to join. Share it on social media or your "
 "website."
@@ -902,7 +902,7 @@ msgstr "เร็วๆ นี้"
 msgid "Config Key"
 msgstr "คีย์การกำหนดค่า"
 
-#: src/services/InvitationService.ts:241
+#: src/services/InvitationService.ts:234
 msgid "Config key not found for this Space."
 msgstr "ไม่พบคีย์การกำหนดค่าสำหรับ Space นี้"
 
@@ -963,7 +963,7 @@ msgstr "คัดลอกแล้ว!"
 msgid "Copy"
 msgstr "คัดลอก"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:675
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:682
 msgid "Copy a link"
 msgstr "คัดลอกลิงก์"
 
@@ -981,8 +981,8 @@ msgstr "คัดลอกที่อยู่"
 msgid "Copy full address"
 msgstr "คัดลอกที่อยู่เต็ม"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:439
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:793
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:805
 msgid "Copy invite link to clipboard"
 msgstr "คัดลอกลิงก์เชิญไปยังคลิปบอร์ด"
 
@@ -1115,8 +1115,8 @@ msgstr "กำลังสร้าง Space..."
 msgid "Current"
 msgstr "ปัจจุบัน"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:420
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:774
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:427
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:786
 msgid "Current Invite Link"
 msgstr "ลิงก์เชิญปัจจุบัน"
 
@@ -1530,24 +1530,24 @@ msgstr "ข้อผิดพลาดการเข้ารหัส"
 msgid "Encryption Reset"
 msgstr "รีเซ็ตการเข้ารหัส"
 
-#: src/services/InvitationService.ts:101
+#: src/services/InvitationService.ts:94
 msgid ""
 "Encryption state is missing required template data. Please generate a public"
 " invite link first."
 msgstr ""
 "สถานะการเข้ารหัสขาดข้อมูลเทมเพลตที่จำเป็น กรุณาสร้างลิงก์เชิญสาธารณะก่อน"
 
-#: src/services/InvitationService.ts:262
+#: src/services/InvitationService.ts:255
 msgid ""
 "Encryption state is missing required template data. The invite pool was not "
 "initialized."
 msgstr "สถานะการเข้ารหัสขาดข้อมูลเทมเพลตที่จำเป็น ไม่ได้เริ่มต้นพูลคำเชิญ"
 
-#: src/services/InvitationService.ts:269
+#: src/services/InvitationService.ts:262
 msgid "Encryption state is missing state data."
 msgstr "สถานะการเข้ารหัสขาดข้อมูลสถานะ"
 
-#: src/services/InvitationService.ts:116
+#: src/services/InvitationService.ts:109
 msgid ""
 "Encryption state is missing state data. Please generate a public invite link"
 " first."
@@ -1924,7 +1924,7 @@ msgstr ""
 "หากคุณเป็นคนเดียวที่มีบทบาท การกระทำของคุณอาจเปิดเผยว่าคุณเป็นเจ้าของ - "
 "พิจารณาแบ่งปันบทบาทกับผู้ใช้ที่เชื่อถือได้คนอื่น"
 
-#: src/services/SpaceService.ts:243
+#: src/services/SpaceService.ts:222
 msgid "general"
 msgstr "ทั่วไป"
 
@@ -1933,11 +1933,11 @@ msgstr "ทั่วไป"
 msgid "General"
 msgstr "ทั่วไป"
 
-#: src/services/SpaceService.ts:244
+#: src/services/SpaceService.ts:223
 msgid "General Chat"
 msgstr "แชททั่วไป"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:637
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:644
 msgid ""
 "Generate a fresh one-time invite link and copy it to your clipboard. Each "
 "click creates a new link. Paste it wherever you want (email, WhatsApp, "
@@ -1951,7 +1951,7 @@ msgstr ""
 msgid "Generate Link"
 msgstr "สร้างลิงก์"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:886
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:898
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:795
 msgid "Generate Public Invite Link"
 msgstr "สร้างลิงก์เชิญสาธารณะ"
@@ -1960,11 +1960,11 @@ msgstr "สร้างลิงก์เชิญสาธารณะ"
 msgid "Generate YouTube previews"
 msgstr "สร้างตัวอย่าง YouTube"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:732
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:739
 msgid "Generating public invite link..."
 msgstr "กำลังสร้างลิงก์เชิญสาธารณะ..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:672
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:679
 msgid "Generating…"
 msgstr "กำลังสร้าง..."
 
@@ -2038,7 +2038,7 @@ msgstr "ซ่อนช่องที่ปิดเสียงจากแถ
 msgid "How to add a passkey"
 msgstr "วิธีเพิ่ม passkey"
 
-#: src/services/InvitationService.ts:232
+#: src/services/InvitationService.ts:225
 msgid "Hub key not found for this Space."
 msgstr "ไม่พบคีย์ Hub สำหรับ Space นี้"
 
@@ -2059,13 +2059,13 @@ msgstr "ฉันเป็นผู้ใช้ใหม่!"
 msgid "I've already saved my key"
 msgstr "ฉันบันทึกคีย์ของฉันไว้แล้ว"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:821
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:833
 msgid ""
-"If users report that this invite link isn't working, click to republish it. "
-"The link URL stays the same."
+"If someone reports the link isn't working, or a member can't see it, click "
+"to republish. The link URL stays the same."
 msgstr ""
-"หากผู้ใช้รายงานว่าลิงก์เชิญนี้ไม่ทำงาน ให้คลิกเพื่อเผยแพร่อีกครั้ง URL "
-"ของลิงก์จะยังคงเดิม"
+"หากมีคนรายงานว่าลิงก์ไม่ทำงาน หรือสมาชิกมองไม่เห็น ให้คลิกเพื่อเผยแพร่ซ้ำ "
+"URL ของลิงก์จะยังคงเดิม"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:695
 msgid "Import a backup instead"
@@ -2104,8 +2104,8 @@ msgid ""
 "Invalid address format. Addresses must use valid alphanumeric characters."
 msgstr "รูปแบบที่อยู่ไม่ถูกต้อง ที่อยู่ต้องใช้ตัวอักษรที่ถูกต้องและตัวเลข"
 
-#: src/services/InvitationService.ts:458 src/services/InvitationService.ts:469
-#: src/services/InvitationService.ts:501 src/services/InvitationService.ts:570
+#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:485
+#: src/services/InvitationService.ts:517 src/services/InvitationService.ts:586
 msgid "invalid link"
 msgstr "ลิงก์ไม่ถูกต้อง"
 
@@ -2115,9 +2115,13 @@ msgid "Invalid message ID"
 msgstr "รหัสข้อความไม่ถูกต้อง"
 
 #: src/hooks/business/spaces/useInviteValidation.ts:51
-#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:537
+#: src/services/InvitationService.ts:490 src/services/InvitationService.ts:553
 msgid "invalid response"
 msgstr "การตอบสนองไม่ถูกต้อง"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:771
+msgid "Invite link republished."
+msgstr "เผยแพร่ลิงก์เชิญซ้ำแล้ว"
 
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:214
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:231
@@ -2128,14 +2132,14 @@ msgstr "เชิญสมาชิก"
 msgid "Invite sent"
 msgstr "ส่งคำเชิญแล้ว"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:474
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:691
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:845
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:481
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:698
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:857
 msgid "Invite sent. Pick another contact to send another."
 msgstr "ส่งคำเชิญแล้ว เลือกผู้ติดต่ออื่นเพื่อส่งอีกครั้ง"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:405
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:517
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:412
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:524
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:43
 msgid "Invites"
 msgstr "คำเชิญ"
@@ -2167,10 +2171,6 @@ msgstr "เข้าร่วม"
 #: src/components/space/SpacesSidebar.tsx:308
 msgid "Join a Space"
 msgstr "เข้าร่วมพื้นที่"
-
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:759
-msgid "Join preview updated."
-msgstr "อัปเดตการแสดงตัวอย่างการเข้าร่วมแล้ว"
 
 #: src/components/modals/AddSpaceModal.tsx:257
 #: src/components/modals/JoinSpaceModal.tsx:71
@@ -2294,7 +2294,7 @@ msgstr ""
 msgid "Light"
 msgstr "แสง"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:601
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:608
 msgid "Link copied. Paste it where you want to share it."
 msgstr "คัดลอกลิงก์แล้ว วางที่ที่คุณต้องการแชร์"
 
@@ -2563,7 +2563,7 @@ msgstr "ข้อความตรงใหม่"
 msgid "New Folder"
 msgstr "โฟลเดอร์ใหม่"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:568
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:575
 msgid ""
 "New invites can't be issued from this device for this Space. Existing invite"
 " links keep working. This typically affects spaces created on the desktop "
@@ -2573,7 +2573,7 @@ msgstr ""
 "ลิงก์เชิญที่มีอยู่ยังคงใช้งานได้ ซึ่งโดยทั่วไปจะส่งผลกระทบต่อ Space "
 "ที่สร้างบนแอปเดสก์ท็อปก่อนเดือนมิถุนายน 2026"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:562
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:569
 msgid ""
 "New invites can't be issued from this device, but the existing public invite"
 " link still works — copy it or send it via DM below."
@@ -2586,7 +2586,7 @@ msgstr ""
 msgid "New message from {0}"
 msgstr "ข้อความใหม่จาก {0}"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:556
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:563
 msgid ""
 "New one-time invites can't be issued from this device for this Space. The "
 "public invite link still works — switch to <0>Public Link</0> above to copy "
@@ -2640,12 +2640,12 @@ msgstr "ยังไม่มีการสนทนา"
 msgid "No emoji found"
 msgstr "ไม่พบ Emoji"
 
-#: src/services/InvitationService.ts:254
+#: src/services/InvitationService.ts:247
 msgid ""
 "No encryption state found for this Space. Cannot generate public invite."
 msgstr "ไม่พบสถานะการเข้ารหัสสำหรับ Space นี้ ไม่สามารถสร้างคำเชิญสาธารณะได้"
 
-#: src/services/InvitationService.ts:95
+#: src/services/InvitationService.ts:88
 msgid ""
 "No encryption state found for this Space. The Space may need to be "
 "initialized or you may need to generate a public invite link first."
@@ -2681,7 +2681,7 @@ msgstr ""
 msgid "No pinned messages yet"
 msgstr "ยังไม่มีข้อความที่ถูกปักหมุด"
 
-#: src/services/InvitationService.ts:176
+#: src/services/InvitationService.ts:169
 msgid "No public invite link exists yet. Generate one before sharing."
 msgstr "ยังไม่มีลิงก์เชิญสาธารณะ สร้างก่อนที่จะแชร์"
 
@@ -2798,7 +2798,7 @@ msgstr "ครั้งเดียว"
 msgid "Online"
 msgstr "ออนไลน์"
 
-#: src/services/InvitationService.ts:226
+#: src/services/InvitationService.ts:219
 msgid "Only space owners can generate public invite links."
 msgstr "เฉพาะเจ้าของ Space เท่านั้นที่สามารถสร้างลิงก์เชิญสาธารณะได้"
 
@@ -3004,7 +3004,7 @@ msgstr "กำลังประมวลผลภาพ... อาจใช้�
 msgid "Processing..."
 msgstr "กำลังประมวลผล..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:746
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:753
 msgid "Public invite link generated successfully."
 msgstr "สร้างลิงก์เชิญสาธารณะสำเร็จแล้ว"
 
@@ -3162,7 +3162,7 @@ msgstr "ตอบกลับ"
 msgid "Reply in thread..."
 msgstr "ตอบกลับในกระทู้..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:831
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:843
 msgid "Republish"
 msgstr "เผยแพร่อีกครั้ง"
 
@@ -3428,7 +3428,7 @@ msgstr "เลือกโทนสีผิว"
 msgid "Send"
 msgstr "ส่ง"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:539
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:546
 msgid ""
 "Send a one-time invite directly to someone. Each link can only be used once."
 msgstr ""
@@ -3439,12 +3439,12 @@ msgstr ""
 msgid "Send failed"
 msgstr "การส่งล้มเหลว"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:715
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:722
 msgid "Send Invite"
 msgstr "ส่งคำเชิญ"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:500
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:873
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:507
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:885
 msgid "Send Link"
 msgstr "ส่งลิงก์"
 
@@ -3452,9 +3452,9 @@ msgstr "ส่งลิงก์"
 msgid "Send Message"
 msgstr "ส่งข้อความ"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:456
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:626
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:810
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:463
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:633
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:822
 msgid "Send via DM"
 msgstr "ส่งผ่าน DM"
 
@@ -3483,7 +3483,7 @@ msgstr "การตั้งค่า"
 msgid "Several people are typing"
 msgstr "หลาย ๆ คนกำลังพิมพ์"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:408
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:415
 msgid "Share this Space's public invite link. Anyone with the link can join."
 msgstr "แชร์ลิงก์เชิญสาธารณะของ Space นี้ ใครก็ตามที่มีลิงก์สามารถเข้าร่วมได้"
 
@@ -3610,7 +3610,7 @@ msgstr "ชื่อฟิลด์ต้องมีไม่เกิน {0} �
 msgid "Space name must be at least {0} characters"
 msgstr "ชื่อฟิลด์ต้องมีอย่างน้อย {0} ตัวอักษร"
 
-#: src/services/InvitationService.ts:220
+#: src/services/InvitationService.ts:213
 msgid "Space not found"
 msgstr "ไม่พบ Space"
 
@@ -3833,12 +3833,12 @@ msgid ""
 msgstr ""
 "นี่คือที่อยู่สาธารณะของคุณและปลอดภัยที่จะแชร์กับใครก็ตามที่คุณต้องการติดต่อด้วย"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:778
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:790
 msgid "This link does not expire. Anyone with it can join your Space."
 msgstr ""
 "ลิงก์นี้ไม่มีวันหมดอายุ ใครก็ตามที่มีลิงก์นี้สามารถเข้าร่วม Space ของคุณได้"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:424
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:431
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "ลิงก์นี้สร้างโดยเจ้าของ Space ไม่มีวันหมดอายุ"
 
@@ -3859,7 +3859,7 @@ msgid "This page couldn't be loaded"
 msgstr "ไม่สามารถโหลดหน้านี้ได้"
 
 #: src/components/message/InviteLink.tsx:44
-#: src/services/InvitationService.ts:580
+#: src/services/InvitationService.ts:596
 msgid "This public invite link is no longer valid."
 msgstr "ลิงก์เชิญสาธารณะนี้ไม่ถูกต้องอีกต่อไป"
 
@@ -4087,7 +4087,7 @@ msgstr "ไม่สามารถบีบอัดภาพได้ โป�
 msgid "Unable to compress sticker images. Please use smaller images."
 msgstr "ไม่สามารถบีบอัดภาพสติกเกอร์ได้ โปรดใช้ภาพที่มีขนาดเล็กกว่า"
 
-#: src/services/SpaceService.ts:574
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
 " corrupted."
@@ -4763,12 +4763,6 @@ msgstr "วิดีโอ YouTube"
 msgid "YouTube Video Thumbnail"
 msgstr "ภาพขนาดย่อวิดีโอ YouTube"
 
-#~ msgid "Failed to process image"
-#~ msgstr "ไม่สามารถประมวลผลภาพได้"
-
-#~ msgid "Replying to {user}"
-#~ msgstr "กำลังตอบกลับ {user}"
-
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} บุ๊กมาร์กที่นี่"
 
@@ -4815,6 +4809,9 @@ msgstr "ภาพขนาดย่อวิดีโอ YouTube"
 #~ msgstr ""
 #~ "ส่งออกสำเนาสำรองที่เข้ารหัสของข้อความส่วนตัวของคุณเพื่อคืนค่าหากคุณสูญเสียการเข้าถึงอุปกรณ์นี้"
 
+#~ msgid "Failed to process image"
+#~ msgstr "ไม่สามารถประมวลผลภาพได้"
+
 #~ msgid "Hide"
 #~ msgstr "ซ่อน"
 
@@ -4823,6 +4820,16 @@ msgstr "ภาพขนาดย่อวิดีโอ YouTube"
 
 #~ msgid "I Understand, Show QR"
 #~ msgstr "ฉันเข้าใจ แสดง QR"
+
+#~ msgid ""
+#~ "If users report that this invite link isn't working, click to republish it. "
+#~ "The link URL stays the same."
+#~ msgstr ""
+#~ "หากผู้ใช้รายงานว่าลิงก์เชิญนี้ไม่ทำงาน ให้คลิกเพื่อเผยแพร่อีกครั้ง URL "
+#~ "ของลิงก์จะยังคงเดิม"
+
+#~ msgid "Join preview updated."
+#~ msgstr "อัปเดตการแสดงตัวอย่างการเข้าร่วมแล้ว"
 
 #~ msgid "Key Ready"
 #~ msgstr "คีย์พร้อมใช้งาน"
@@ -4871,6 +4878,9 @@ msgstr "ภาพขนาดย่อวิดีโอ YouTube"
 
 #~ msgid "QR code will auto-hide in 60 seconds"
 #~ msgstr "รหัส QR จะซ่อนอัตโนมัติใน 60 วินาที"
+
+#~ msgid "Replying to {user}"
+#~ msgstr "กำลังตอบกลับ {user}"
 
 #~ msgid "Reset Encryption Session"
 #~ msgstr "รีเซ็ตเซสชันการเข้ารหัส"

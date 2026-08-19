@@ -30,14 +30,14 @@ msgid "No Role - {count}"
 msgstr "Žádná role - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1883
-msgid "Send a message to #{channel_name}"
-msgstr "Odeslat zprávu #{channel_name}"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is ready to go."
 msgstr "Vítejte v Quorum, {name}! Váš účet je připraven k použití."
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1883
+msgid "Send a message to #{channel_name}"
+msgstr "Odeslat zprávu #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:149
@@ -310,7 +310,7 @@ msgstr ""
 "nebo PIN) k ochraně vašeho účtu. Je to bezpečnější než heslo a nemusíte si "
 "nic pamatovat."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:544
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:551
 msgid ""
 "A reusable link anyone can use to join. Share it on social media or your "
 "website."
@@ -899,7 +899,7 @@ msgstr "Brzy bude"
 msgid "Config Key"
 msgstr "Konfigurační klíč"
 
-#: src/services/InvitationService.ts:241
+#: src/services/InvitationService.ts:234
 msgid "Config key not found for this Space."
 msgstr "Konfigurační klíč pro tento Prostor nebyl nalezen."
 
@@ -959,7 +959,7 @@ msgstr "Zkopírováno!"
 msgid "Copy"
 msgstr "Kopírovat"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:675
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:682
 msgid "Copy a link"
 msgstr "Zkopírovat odkaz"
 
@@ -977,8 +977,8 @@ msgstr "Kopírovat adresu"
 msgid "Copy full address"
 msgstr "Zkopírovat celou adresu"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:439
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:793
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:805
 msgid "Copy invite link to clipboard"
 msgstr "Kopírovat pozvánkový odkaz do schránky"
 
@@ -1112,8 +1112,8 @@ msgstr "Vytvářím Prostor..."
 msgid "Current"
 msgstr "Aktuální"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:420
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:774
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:427
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:786
 msgid "Current Invite Link"
 msgstr "Aktuální pozvánkový odkaz"
 
@@ -1531,7 +1531,7 @@ msgstr "Chyba šifrování"
 msgid "Encryption Reset"
 msgstr "Resetování šifrování"
 
-#: src/services/InvitationService.ts:101
+#: src/services/InvitationService.ts:94
 msgid ""
 "Encryption state is missing required template data. Please generate a public"
 " invite link first."
@@ -1539,7 +1539,7 @@ msgstr ""
 "Stav šifrování postrádá požadovaná data šablony. Nejprve prosím vygenerujte "
 "veřejný pozvánkový odkaz."
 
-#: src/services/InvitationService.ts:262
+#: src/services/InvitationService.ts:255
 msgid ""
 "Encryption state is missing required template data. The invite pool was not "
 "initialized."
@@ -1547,11 +1547,11 @@ msgstr ""
 "Stav šifrování postrádá požadovaná data šablony. Fond pozvánek nebyl "
 "inicializován."
 
-#: src/services/InvitationService.ts:269
+#: src/services/InvitationService.ts:262
 msgid "Encryption state is missing state data."
 msgstr "Stav šifrování postrádá data stavu."
 
-#: src/services/InvitationService.ts:116
+#: src/services/InvitationService.ts:109
 msgid ""
 "Encryption state is missing state data. Please generate a public invite link"
 " first."
@@ -1932,7 +1932,7 @@ msgstr ""
 "jediný s rolí, vaše akce vás mohou odhalit jako vlastníka - zvažte sdílení "
 "rolí s jinými důvěryhodnými uživateli."
 
-#: src/services/SpaceService.ts:243
+#: src/services/SpaceService.ts:222
 msgid "general"
 msgstr "obecný"
 
@@ -1941,11 +1941,11 @@ msgstr "obecný"
 msgid "General"
 msgstr "Obecný"
 
-#: src/services/SpaceService.ts:244
+#: src/services/SpaceService.ts:223
 msgid "General Chat"
 msgstr "Obecný chat"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:637
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:644
 msgid ""
 "Generate a fresh one-time invite link and copy it to your clipboard. Each "
 "click creates a new link. Paste it wherever you want (email, WhatsApp, "
@@ -1959,7 +1959,7 @@ msgstr ""
 msgid "Generate Link"
 msgstr "Vygenerovat odkaz"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:886
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:898
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:795
 msgid "Generate Public Invite Link"
 msgstr "Vygenerovat veřejný pozvánkový odkaz"
@@ -1968,11 +1968,11 @@ msgstr "Vygenerovat veřejný pozvánkový odkaz"
 msgid "Generate YouTube previews"
 msgstr "Generovat náhledy z YouTube"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:732
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:739
 msgid "Generating public invite link..."
 msgstr "Generování veřejného odkazu na pozvánku..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:672
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:679
 msgid "Generating…"
 msgstr "Generování…"
 
@@ -2047,7 +2047,7 @@ msgstr "Skrýt ztlumené kanály z postranního panelu"
 msgid "How to add a passkey"
 msgstr "Jak přidat passkey"
 
-#: src/services/InvitationService.ts:232
+#: src/services/InvitationService.ts:225
 msgid "Hub key not found for this Space."
 msgstr "Klíč Hub pro tento Prostor nebyl nalezen."
 
@@ -2068,13 +2068,13 @@ msgstr "Jsem nový!"
 msgid "I've already saved my key"
 msgstr "Už jsem si svůj klíč uložil"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:821
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:833
 msgid ""
-"If users report that this invite link isn't working, click to republish it. "
-"The link URL stays the same."
+"If someone reports the link isn't working, or a member can't see it, click "
+"to republish. The link URL stays the same."
 msgstr ""
-"Pokud uživatelé hlásí, že tento odkaz na pozvánku nefunguje, klikněte pro "
-"jeho opětovné zveřejnění. Adresa URL odkazu zůstává stejná."
+"Pokud někdo nahlásí, že odkaz nefunguje, nebo jej člen nevidí, klikněte pro "
+"opětovné publikování. URL adresa odkazu zůstane stejná."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:695
 msgid "Import a backup instead"
@@ -2114,8 +2114,8 @@ msgid ""
 msgstr ""
 "Neplatný formát adresy. Adresy musí používat platné alfanumerické znaky."
 
-#: src/services/InvitationService.ts:458 src/services/InvitationService.ts:469
-#: src/services/InvitationService.ts:501 src/services/InvitationService.ts:570
+#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:485
+#: src/services/InvitationService.ts:517 src/services/InvitationService.ts:586
 msgid "invalid link"
 msgstr "neplatný odkaz"
 
@@ -2125,9 +2125,13 @@ msgid "Invalid message ID"
 msgstr "Neplatné ID zprávy"
 
 #: src/hooks/business/spaces/useInviteValidation.ts:51
-#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:537
+#: src/services/InvitationService.ts:490 src/services/InvitationService.ts:553
 msgid "invalid response"
 msgstr "neplatná odpověď"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:771
+msgid "Invite link republished."
+msgstr "Odkaz na pozvánku byl znovu publikován."
 
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:214
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:231
@@ -2138,14 +2142,14 @@ msgstr "Pozvat členy"
 msgid "Invite sent"
 msgstr "Pozvánka byla odeslána"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:474
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:691
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:845
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:481
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:698
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:857
 msgid "Invite sent. Pick another contact to send another."
 msgstr "Pozvánka odeslána. Vyberte další kontakt pro odeslání další."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:405
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:517
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:412
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:524
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:43
 msgid "Invites"
 msgstr "Pozvánky"
@@ -2177,10 +2181,6 @@ msgstr "Připojit se"
 #: src/components/space/SpacesSidebar.tsx:308
 msgid "Join a Space"
 msgstr "Připojit se k prostoru"
-
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:759
-msgid "Join preview updated."
-msgstr "Náhled připojení aktualizován."
 
 #: src/components/modals/AddSpaceModal.tsx:257
 #: src/components/modals/JoinSpaceModal.tsx:71
@@ -2303,7 +2303,7 @@ msgstr ""
 msgid "Light"
 msgstr "Světlo"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:601
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:608
 msgid "Link copied. Paste it where you want to share it."
 msgstr "Odkaz zkopírován. Vložte jej tam, kam jej chcete sdílet."
 
@@ -2572,7 +2572,7 @@ msgstr "Nová přímá zpráva"
 msgid "New Folder"
 msgstr "Nová složka"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:568
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:575
 msgid ""
 "New invites can't be issued from this device for this Space. Existing invite"
 " links keep working. This typically affects spaces created on the desktop "
@@ -2582,7 +2582,7 @@ msgstr ""
 "odkazy na pozvánky stále fungují. To se obvykle týká Prostorů vytvořených v "
 "desktopové aplikaci před červnem 2026."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:562
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:569
 msgid ""
 "New invites can't be issued from this device, but the existing public invite"
 " link still works — copy it or send it via DM below."
@@ -2596,7 +2596,7 @@ msgstr ""
 msgid "New message from {0}"
 msgstr "Nová zpráva od {0}"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:556
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:563
 msgid ""
 "New one-time invites can't be issued from this device for this Space. The "
 "public invite link still works — switch to <0>Public Link</0> above to copy "
@@ -2652,14 +2652,14 @@ msgstr "Zatím žádné konverzace."
 msgid "No emoji found"
 msgstr "Žádný emoji nalezen"
 
-#: src/services/InvitationService.ts:254
+#: src/services/InvitationService.ts:247
 msgid ""
 "No encryption state found for this Space. Cannot generate public invite."
 msgstr ""
 "Pro tento Prostor nebyl nalezen žádný stav šifrování. Nelze vygenerovat "
 "veřejnou pozvánku."
 
-#: src/services/InvitationService.ts:95
+#: src/services/InvitationService.ts:88
 msgid ""
 "No encryption state found for this Space. The Space may need to be "
 "initialized or you may need to generate a public invite link first."
@@ -2697,7 +2697,7 @@ msgstr ""
 msgid "No pinned messages yet"
 msgstr "Zatím žádné připnuté zprávy"
 
-#: src/services/InvitationService.ts:176
+#: src/services/InvitationService.ts:169
 msgid "No public invite link exists yet. Generate one before sharing."
 msgstr ""
 "Zatím neexistuje žádný veřejný odkaz na pozvánku. Před sdílením jej "
@@ -2815,7 +2815,7 @@ msgstr "Jednorázové"
 msgid "Online"
 msgstr "Online"
 
-#: src/services/InvitationService.ts:226
+#: src/services/InvitationService.ts:219
 msgid "Only space owners can generate public invite links."
 msgstr "Veřejné odkazy na pozvánky mohou generovat pouze vlastníci Prostoru."
 
@@ -3020,7 +3020,7 @@ msgstr "Zpracovávám obrázek... Může to chvíli trvat u velkých souborů."
 msgid "Processing..."
 msgstr "Zpracovává se..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:746
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:753
 msgid "Public invite link generated successfully."
 msgstr "Veřejný odkaz na pozvánku byl úspěšně vygenerován."
 
@@ -3179,7 +3179,7 @@ msgstr "Odpovědět"
 msgid "Reply in thread..."
 msgstr "Odpovědět ve vlákně..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:831
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:843
 msgid "Republish"
 msgstr "Znovu zveřejnit"
 
@@ -3450,7 +3450,7 @@ msgstr "Vybrat odstín pleti"
 msgid "Send"
 msgstr "Odeslat"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:539
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:546
 msgid ""
 "Send a one-time invite directly to someone. Each link can only be used once."
 msgstr ""
@@ -3461,12 +3461,12 @@ msgstr ""
 msgid "Send failed"
 msgstr "Odeslání se nezdařilo"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:715
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:722
 msgid "Send Invite"
 msgstr "Odeslat pozvánku"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:500
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:873
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:507
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:885
 msgid "Send Link"
 msgstr "Odeslat odkaz"
 
@@ -3474,9 +3474,9 @@ msgstr "Odeslat odkaz"
 msgid "Send Message"
 msgstr "Odeslat zprávu"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:456
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:626
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:810
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:463
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:633
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:822
 msgid "Send via DM"
 msgstr "Odeslat přes DM"
 
@@ -3507,7 +3507,7 @@ msgstr "Nastavení"
 msgid "Several people are typing"
 msgstr "Několik lidí píše"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:408
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:415
 msgid "Share this Space's public invite link. Anyone with the link can join."
 msgstr ""
 "Sdílejte veřejný odkaz na pozvánku tohoto Prostoru. Kdokoli s odkazem se "
@@ -3638,7 +3638,7 @@ msgstr "Název prostoru musí mít {0} znaků nebo méně"
 msgid "Space name must be at least {0} characters"
 msgstr "Název prostoru musí mít alespoň {0} znaků"
 
-#: src/services/InvitationService.ts:220
+#: src/services/InvitationService.ts:213
 msgid "Space not found"
 msgstr "Prostor nenalezen"
 
@@ -3862,12 +3862,12 @@ msgstr ""
 "Toto je vaše veřejná adresa a je bezpečné ji sdílet s kýmkoli, s kým chcete "
 "interagovat."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:778
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:790
 msgid "This link does not expire. Anyone with it can join your Space."
 msgstr ""
 "Tento odkaz nevyprší. Kdokoli s ním se může připojit k vašemu Prostoru."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:424
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:431
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "Tento odkaz byl vygenerován vlastníkem Prostoru. Nevyprší."
 
@@ -3888,7 +3888,7 @@ msgid "This page couldn't be loaded"
 msgstr "Tuto stránku se nepodařilo načíst"
 
 #: src/components/message/InviteLink.tsx:44
-#: src/services/InvitationService.ts:580
+#: src/services/InvitationService.ts:596
 msgid "This public invite link is no longer valid."
 msgstr "Tento veřejný pozvánkový odkaz již není platný."
 
@@ -4117,7 +4117,7 @@ msgstr "Nelze komprimovat obrázek. Použijte menší obrázek."
 msgid "Unable to compress sticker images. Please use smaller images."
 msgstr "Nelze komprimovat obrázky samolepek. Použijte menší obrázky."
 
-#: src/services/SpaceService.ts:574
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
 " corrupted."
@@ -4800,12 +4800,6 @@ msgstr "YouTube Video"
 msgid "YouTube Video Thumbnail"
 msgstr "Miniatura YouTube Videa"
 
-#~ msgid "Failed to process image"
-#~ msgstr "Nepodařilo se zpracovat obrázek"
-
-#~ msgid "Replying to {user}"
-#~ msgstr "Odpovídání {user}"
-
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} záložka zde"
 
@@ -4854,6 +4848,9 @@ msgstr "Miniatura YouTube Videa"
 #~ "Exportuj zašifrovanou zálohu svých soukromých zpráv, abys je mohl obnovit, "
 #~ "pokud ztratíš přístup k tomuto zařízení."
 
+#~ msgid "Failed to process image"
+#~ msgstr "Nepodařilo se zpracovat obrázek"
+
 #~ msgid "Hide"
 #~ msgstr "Skrýt"
 
@@ -4862,6 +4859,16 @@ msgstr "Miniatura YouTube Videa"
 
 #~ msgid "I Understand, Show QR"
 #~ msgstr "Rozumím, zobrazit QR"
+
+#~ msgid ""
+#~ "If users report that this invite link isn't working, click to republish it. "
+#~ "The link URL stays the same."
+#~ msgstr ""
+#~ "Pokud uživatelé hlásí, že tento odkaz na pozvánku nefunguje, klikněte pro "
+#~ "jeho opětovné zveřejnění. Adresa URL odkazu zůstává stejná."
+
+#~ msgid "Join preview updated."
+#~ msgstr "Náhled připojení aktualizován."
 
 #~ msgid "Key Ready"
 #~ msgstr "Klíč připraven"
@@ -4910,6 +4917,9 @@ msgstr "Miniatura YouTube Videa"
 
 #~ msgid "QR code will auto-hide in 60 seconds"
 #~ msgstr "QR kód se automaticky skryje za 60 sekund"
+
+#~ msgid "Replying to {user}"
+#~ msgstr "Odpovídání {user}"
 
 #~ msgid "Reset Encryption Session"
 #~ msgstr "Resetovat šifrovací relaci"

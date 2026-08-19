@@ -30,14 +30,14 @@ msgid "No Role - {count}"
 msgstr "בלי תפקיד - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1883
-msgid "Send a message to #{channel_name}"
-msgstr "שלח הודעה ל-#{channel_name}"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is ready to go."
 msgstr "ברוך הבא ל-Quorum, {name}! החשבון שלך מוכן לשימוש."
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1883
+msgid "Send a message to #{channel_name}"
+msgstr "שלח הודעה ל-#{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:149
@@ -303,7 +303,7 @@ msgstr ""
 "passkey משתמש במאפייני האבטחה של המכשיר שלך (Face ID, טביעת אצבע או PIN) כדי"
 " להגן על החשבון שלך. זה יותר מאובטח מסיסמה ואתה לא צריך לזכור כלום."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:544
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:551
 msgid ""
 "A reusable link anyone can use to join. Share it on social media or your "
 "website."
@@ -891,7 +891,7 @@ msgstr "בקרוב"
 msgid "Config Key"
 msgstr "מפתח קונפיגורציה"
 
-#: src/services/InvitationService.ts:241
+#: src/services/InvitationService.ts:234
 msgid "Config key not found for this Space."
 msgstr "מפתח תצורה לא נמצא עבור Space זה."
 
@@ -950,7 +950,7 @@ msgstr "נשמר!"
 msgid "Copy"
 msgstr "העתק"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:675
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:682
 msgid "Copy a link"
 msgstr "העתק קישור"
 
@@ -968,8 +968,8 @@ msgstr "העתק כתובת"
 msgid "Copy full address"
 msgstr "העתק כתובת מלאה"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:439
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:793
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:805
 msgid "Copy invite link to clipboard"
 msgstr "העתק קישור הזמנה ללוח"
 
@@ -1100,8 +1100,8 @@ msgstr "יוצר מרחב..."
 msgid "Current"
 msgstr "נוכחי"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:420
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:774
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:427
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:786
 msgid "Current Invite Link"
 msgstr "קישור ההזמנה הנוכחי"
 
@@ -1513,23 +1513,23 @@ msgstr "שגיאת הצפנה"
 msgid "Encryption Reset"
 msgstr "איפוס הצפנה"
 
-#: src/services/InvitationService.ts:101
+#: src/services/InvitationService.ts:94
 msgid ""
 "Encryption state is missing required template data. Please generate a public"
 " invite link first."
 msgstr "מצב ההצפנה חסר נתוני תבנית נדרשים. אנא צור קישור הזמנה ציבורי קודם."
 
-#: src/services/InvitationService.ts:262
+#: src/services/InvitationService.ts:255
 msgid ""
 "Encryption state is missing required template data. The invite pool was not "
 "initialized."
 msgstr "מצב הצפנה חסר נתוני תבנית נדרשים. מאגר ההזמנות לא אותחל."
 
-#: src/services/InvitationService.ts:269
+#: src/services/InvitationService.ts:262
 msgid "Encryption state is missing state data."
 msgstr "מצב הצפנה חסר נתוני מצב."
 
-#: src/services/InvitationService.ts:116
+#: src/services/InvitationService.ts:109
 msgid ""
 "Encryption state is missing state data. Please generate a public invite link"
 " first."
@@ -1905,7 +1905,7 @@ msgstr ""
 "עם תפקיד, הפעולות שלך עשויות לחשוף אותך כבעלים—שקול לשתף תפקידים עם משתמשים "
 "מהימנים אחרים."
 
-#: src/services/SpaceService.ts:243
+#: src/services/SpaceService.ts:222
 msgid "general"
 msgstr "כללי"
 
@@ -1914,11 +1914,11 @@ msgstr "כללי"
 msgid "General"
 msgstr "כללי"
 
-#: src/services/SpaceService.ts:244
+#: src/services/SpaceService.ts:223
 msgid "General Chat"
 msgstr "שיחת צ'אט כללית"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:637
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:644
 msgid ""
 "Generate a fresh one-time invite link and copy it to your clipboard. Each "
 "click creates a new link. Paste it wherever you want (email, WhatsApp, "
@@ -1931,7 +1931,7 @@ msgstr ""
 msgid "Generate Link"
 msgstr "צור קישור"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:886
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:898
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:795
 msgid "Generate Public Invite Link"
 msgstr "ייצר קישור הזמנה ציבורי"
@@ -1940,11 +1940,11 @@ msgstr "ייצר קישור הזמנה ציבורי"
 msgid "Generate YouTube previews"
 msgstr "הצג תצוגות מקדימה של YouTube"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:732
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:739
 msgid "Generating public invite link..."
 msgstr "יוצר קישור הזמנה ציבורי..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:672
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:679
 msgid "Generating…"
 msgstr "יוצר..."
 
@@ -2019,7 +2019,7 @@ msgstr "הסתר ערוצים מושתקים מסרגל הצד"
 msgid "How to add a passkey"
 msgstr "כיצד להוסיף passkey"
 
-#: src/services/InvitationService.ts:232
+#: src/services/InvitationService.ts:225
 msgid "Hub key not found for this Space."
 msgstr "מפתח Hub לא נמצא עבור Space זה."
 
@@ -2040,13 +2040,13 @@ msgstr "אני חדש!"
 msgid "I've already saved my key"
 msgstr "כבר שמתי את המפתח שלי"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:821
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:833
 msgid ""
-"If users report that this invite link isn't working, click to republish it. "
-"The link URL stays the same."
+"If someone reports the link isn't working, or a member can't see it, click "
+"to republish. The link URL stays the same."
 msgstr ""
-"אם משתמשים מדווחים שקישור ההזמנה הזה לא עובד, לחץ כדי לפרסם אותו מחדש. כתובת"
-" ה-URL של הקישור נשארת זהה."
+"אם מישהו מדווח שהקישור לא עובד, או שחבר לא יכול לראות אותו, לחץ כדי לפרסם "
+"מחדש. כתובת ה-URL של הקישור נשארת זהה."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:695
 msgid "Import a backup instead"
@@ -2085,8 +2085,8 @@ msgid ""
 "Invalid address format. Addresses must use valid alphanumeric characters."
 msgstr "פורמט כתובת לא חוקי. כתובות חייבות להשתמש בתווים אלפאנומריים חוקיים."
 
-#: src/services/InvitationService.ts:458 src/services/InvitationService.ts:469
-#: src/services/InvitationService.ts:501 src/services/InvitationService.ts:570
+#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:485
+#: src/services/InvitationService.ts:517 src/services/InvitationService.ts:586
 msgid "invalid link"
 msgstr "קישור לא חוקי"
 
@@ -2096,9 +2096,13 @@ msgid "Invalid message ID"
 msgstr "מזהה הודעה לא תקין"
 
 #: src/hooks/business/spaces/useInviteValidation.ts:51
-#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:537
+#: src/services/InvitationService.ts:490 src/services/InvitationService.ts:553
 msgid "invalid response"
 msgstr "תשובה לא חוקית"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:771
+msgid "Invite link republished."
+msgstr "קישור ההזמנה פורסם מחדש."
 
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:214
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:231
@@ -2109,14 +2113,14 @@ msgstr "הזמן חברים"
 msgid "Invite sent"
 msgstr "הזמנה נשלחה"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:474
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:691
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:845
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:481
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:698
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:857
 msgid "Invite sent. Pick another contact to send another."
 msgstr "ההזמנה נשלחה. בחר איש קשר אחר כדי לשלוח הזמנה נוספת."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:405
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:517
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:412
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:524
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:43
 msgid "Invites"
 msgstr "הזמנות"
@@ -2148,10 +2152,6 @@ msgstr "הצטרף"
 #: src/components/space/SpacesSidebar.tsx:308
 msgid "Join a Space"
 msgstr "הצטרף למרחב"
-
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:759
-msgid "Join preview updated."
-msgstr "תצוגה מקדימה של הצטרפות עודכנה."
 
 #: src/components/modals/AddSpaceModal.tsx:257
 #: src/components/modals/JoinSpaceModal.tsx:71
@@ -2273,7 +2273,7 @@ msgstr "רק אותיות A–Z ומספרים 0–9. מומר אוטומטית 
 msgid "Light"
 msgstr "אור"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:601
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:608
 msgid "Link copied. Paste it where you want to share it."
 msgstr "הקישור הועתק. הדבק אותו היכן שתרצה לשתף אותו."
 
@@ -2539,7 +2539,7 @@ msgstr "הודעה ישירה חדשה"
 msgid "New Folder"
 msgstr "תיקייה חדשה"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:568
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:575
 msgid ""
 "New invites can't be issued from this device for this Space. Existing invite"
 " links keep working. This typically affects spaces created on the desktop "
@@ -2549,7 +2549,7 @@ msgstr ""
 "ממשיכים לעבוד. זה בדרך כלל משפיע על Spaces שנוצרו באפליקציית שולחן העבודה "
 "לפני יוני 2026."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:562
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:569
 msgid ""
 "New invites can't be issued from this device, but the existing public invite"
 " link still works — copy it or send it via DM below."
@@ -2562,7 +2562,7 @@ msgstr ""
 msgid "New message from {0}"
 msgstr "הודעה חדשה מ{0}"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:556
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:563
 msgid ""
 "New one-time invites can't be issued from this device for this Space. The "
 "public invite link still works — switch to <0>Public Link</0> above to copy "
@@ -2616,12 +2616,12 @@ msgstr "אין שיחות עדיין."
 msgid "No emoji found"
 msgstr "לא נמצא אימוגי"
 
-#: src/services/InvitationService.ts:254
+#: src/services/InvitationService.ts:247
 msgid ""
 "No encryption state found for this Space. Cannot generate public invite."
 msgstr "לא נמצא מצב הצפנה עבור Space זה. לא ניתן ליצור הזמנה ציבורית."
 
-#: src/services/InvitationService.ts:95
+#: src/services/InvitationService.ts:88
 msgid ""
 "No encryption state found for this Space. The Space may need to be "
 "initialized or you may need to generate a public invite link first."
@@ -2657,7 +2657,7 @@ msgstr ""
 msgid "No pinned messages yet"
 msgstr "אין הודעות מוצמדות עדיין"
 
-#: src/services/InvitationService.ts:176
+#: src/services/InvitationService.ts:169
 msgid "No public invite link exists yet. Generate one before sharing."
 msgstr "עדיין לא קיים קישור הזמנה ציבורי. צור אחד לפני השיתוף."
 
@@ -2772,7 +2772,7 @@ msgstr "חד פעמי"
 msgid "Online"
 msgstr "באינטרנט"
 
-#: src/services/InvitationService.ts:226
+#: src/services/InvitationService.ts:219
 msgid "Only space owners can generate public invite links."
 msgstr "רק בעלי Space יכולים ליצור קישורי הזמנה ציבוריים."
 
@@ -2977,7 +2977,7 @@ msgstr "מעבד תמונה... זה עשוי לקחת רגע עבור קבצים
 msgid "Processing..."
 msgstr "מעבד..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:746
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:753
 msgid "Public invite link generated successfully."
 msgstr "קישור הזמנה ציבורי נוצר בהצלחה."
 
@@ -3134,7 +3134,7 @@ msgstr "ענה"
 msgid "Reply in thread..."
 msgstr "תגובה בשרשור..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:831
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:843
 msgid "Republish"
 msgstr "פרסם מחדש"
 
@@ -3402,7 +3402,7 @@ msgstr "בחר צבע עור"
 msgid "Send"
 msgstr "שלח"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:539
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:546
 msgid ""
 "Send a one-time invite directly to someone. Each link can only be used once."
 msgstr "שלח הזמנה חד פעמית ישירות למישהו. כל קישור יכול לשמש פעם אחת בלבד."
@@ -3411,12 +3411,12 @@ msgstr "שלח הזמנה חד פעמית ישירות למישהו. כל קיש
 msgid "Send failed"
 msgstr "שליחה נכשלה"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:715
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:722
 msgid "Send Invite"
 msgstr "שלח הזמנה"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:500
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:873
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:507
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:885
 msgid "Send Link"
 msgstr "שלח קישור"
 
@@ -3424,9 +3424,9 @@ msgstr "שלח קישור"
 msgid "Send Message"
 msgstr "שלח הודעה"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:456
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:626
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:810
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:463
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:633
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:822
 msgid "Send via DM"
 msgstr "שלח באמצעות הודעה פרטית"
 
@@ -3455,7 +3455,7 @@ msgstr "הגדרות"
 msgid "Several people are typing"
 msgstr "veral people are typing"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:408
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:415
 msgid "Share this Space's public invite link. Anyone with the link can join."
 msgstr ""
 "שתף את קישור ההזמנה הציבורי של Space זה. כל מי שיש לו את הקישור יכול להצטרף."
@@ -3581,7 +3581,7 @@ msgstr "שם המרחב חייב להיות {0} תווים או פחות"
 msgid "Space name must be at least {0} characters"
 msgstr "שם המרחב חייב להיות לפחות {0} תווים"
 
-#: src/services/InvitationService.ts:220
+#: src/services/InvitationService.ts:213
 msgid "Space not found"
 msgstr "Space לא נמצא"
 
@@ -3797,11 +3797,11 @@ msgid ""
 msgstr ""
 "זו הכתובת הציבורית שלך והיא בטוחה לשיתוף עם כל מי שאתה רוצה לתקשר איתו."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:778
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:790
 msgid "This link does not expire. Anyone with it can join your Space."
 msgstr "קישור זה אינו פג תוקף. כל מי שיש לו אותו יכול להצטרף ל-Space שלך."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:424
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:431
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "קישור זה נוצר על ידי בעל Space. הוא אינו פג תוקף."
 
@@ -3822,7 +3822,7 @@ msgid "This page couldn't be loaded"
 msgstr "לא ניתן היה לטעון את הדף הזה"
 
 #: src/components/message/InviteLink.tsx:44
-#: src/services/InvitationService.ts:580
+#: src/services/InvitationService.ts:596
 msgid "This public invite link is no longer valid."
 msgstr "קישור ההזמנה הציבורי הזה אינו תקף יותר."
 
@@ -4047,7 +4047,7 @@ msgstr "לא ניתן לדחוס תמונה. אנא השתמש בתמונה קט
 msgid "Unable to compress sticker images. Please use smaller images."
 msgstr "לא ניתן לדחוס תמונות מדבקות. אנא השתמש בתמונות קטנות יותר."
 
-#: src/services/SpaceService.ts:574
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
 " corrupted."
@@ -4700,12 +4700,6 @@ msgstr "וידאו של YouTube"
 msgid "YouTube Video Thumbnail"
 msgstr "תמונה ממוזערת של וידאו של YouTube"
 
-#~ msgid "Failed to process image"
-#~ msgstr "לא הצלחנו לעבד את התמונה"
-
-#~ msgid "Replying to {user}"
-#~ msgstr "עונה ל-{user}"
-
 #~ msgid "{contextCount} bookmark here"
 #~ msgstr "{contextCount} מרקז כאן"
 
@@ -4751,6 +4745,9 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 #~ msgstr ""
 #~ "ייצא גיבוי מוצפן של הודעותיך הדדיות כדי לשחזר אותן אם אבדת גישה למכשיר הזה."
 
+#~ msgid "Failed to process image"
+#~ msgstr "לא הצלחנו לעבד את התמונה"
+
 #~ msgid "Hide"
 #~ msgstr "הסתר"
 
@@ -4759,6 +4756,16 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 
 #~ msgid "I Understand, Show QR"
 #~ msgstr "אני מבין, הצג QR"
+
+#~ msgid ""
+#~ "If users report that this invite link isn't working, click to republish it. "
+#~ "The link URL stays the same."
+#~ msgstr ""
+#~ "אם משתמשים מדווחים שקישור ההזמנה הזה לא עובד, לחץ כדי לפרסם אותו מחדש. כתובת"
+#~ " ה-URL של הקישור נשארת זהה."
+
+#~ msgid "Join preview updated."
+#~ msgstr "תצוגה מקדימה של הצטרפות עודכנה."
 
 #~ msgid "Key Ready"
 #~ msgstr "המפתח מוכן"
@@ -4804,6 +4811,9 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 
 #~ msgid "QR code will auto-hide in 60 seconds"
 #~ msgstr "קוד QR יוסתר אוטומטית תוך 60 שניות"
+
+#~ msgid "Replying to {user}"
+#~ msgstr "עונה ל-{user}"
 
 #~ msgid "Reset Encryption Session"
 #~ msgstr "איפוס סשן הצפנה"
