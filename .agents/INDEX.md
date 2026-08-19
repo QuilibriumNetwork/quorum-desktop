@@ -112,7 +112,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [The roster pull: what it actually does](issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
 - 🐛 [Eight name surfaces never reached the resolver](issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md)
-- 🐛 [Generating a public invite link never reaches existing members](issues/2026-08-11-public-invite-link-never-reaches-existing-members.md)
 - 🐛 [Notification switches freeze the UI for ~1.8s](issues/2026-08-13-notification-toggle-freeze-is-the-config-encode-chain.md)
 - 🐛 [Desktop has no `.q` broadcast, and trusts a `.q` it never checks](issues/2026-08-16-desktop-has-no-q-broadcast-and-renders-claims-unverified.md)
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
@@ -272,6 +271,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [The two default user configs disagree on which fields exist](issues/.open/2026-08-07-the-two-default-user-configs-disagree-on-which-fields-exist.md)
 - 🐛 [The Account Key warning names the smallest loss, not the largest](issues/.open/2026-08-14-security-tab-key-warning-understates-wallet-access.md)
 - 🐛 [A failed QNS verification can stay failed for the whole session](issues/.open/2026-08-17-a-failed-qns-verification-can-stay-failed-for-the-whole-session.md)
+- 🐛 [A just-joined member permanently misses a space-manifest broadcast](issues/.open/2026-08-19-a-just-joined-member-permanently-misses-a-space-manifest.md)
 - 🐛 [Desktop applies any signed space-manifest, with no staleness guard](issues/.open/2026-08-19-desktop-applies-any-space-manifest-with-no-staleness-guard.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
@@ -396,6 +396,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A device with sync off still claims a newer timestamp](issues/.done/2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md)
 - 🐛 [An armed sync crashes after a kick](issues/.done/2026-08-09-armed-sync-crashes-after-a-kick.md)
 - 🐛 [The profile card opened from a mention pill shows a stale bio and no avatar](issues/.done/2026-08-11-profile-card-from-a-mention-pill-shows-a-stale-bio-and-no-avatar.md)
+- 🐛 [Generating a public invite link never reaches existing members](issues/.done/2026-08-11-public-invite-link-never-reaches-existing-members.md)
 - 🐛 [The auto-clear message is stated as a guarantee it cannot give](issues/.done/2026-08-12-clipboard-auto-clear-promise-ignores-clipboard-managers.md)
 - 🐛 ["Download file" has no confirmation](issues/.done/2026-08-12-download-key-button-has-no-confirmation.md)
 - 🐛 [`hover:text-*` utilities generate no CSS — REFUTED](issues/.done/2026-08-12-hover-text-utilities-generate-no-css.md)
@@ -801,4 +802,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-19 10:34:38
+**Last Updated**: 2026-08-19 14:44:26

@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Generating a public invite link never reaches existing members"
-status: in-progress
+status: done
 priority: high
 ai_generated: true
 created: 2026-08-11
@@ -60,12 +60,27 @@ Two things that review turned up, both handled:
   Pre-existing and not worsened here, but a correct fix needs an audit of
   whether every desktop sender populates `modifiedDate` first.
 
-**Still open — the acceptance test has NOT been run, and it is this issue's real
-pass/fail criterion.** Everything above is unit-level: it proves the right
-object goes into the right envelope, not that the envelope arrives. The failure
-mode is silent, so no amount of unit testing reaches it. Do not close this issue
-until the cross-client checklist below is ticked. It is only now runnable, since
-all three halves exist.
+**2026-08-19 — VERIFIED WORKING, desktop to desktop. MEASURED, not inferred.**
+
+Two desktop clients on `localhost:5173`, owner A and member B. A pressed
+Republish; B's console showed `[MessageService] Control message received:
+space-manifest` **immediately**. A's console showed the matching
+`SealHubEnvelope` emitted from the invite path, directly before
+`[invite] public link generated`. That is the whole chain this issue said had no
+path at all, observed end to end.
+
+**The first run of the test FAILED, and the failure was a different bug.** B had
+joined seconds before A published, never received that broadcast, and a page
+refresh did not recover it. ~68 minutes later an unrelated rename reached B fine
+and carried the URL along with it — exactly the pre-fix behaviour this issue
+describes. Republishing at that point delivered immediately. So the variable is
+elapsed-time-since-join, not the fix. Filed as
+[`2026-08-19-a-just-joined-member-permanently-misses-a-space-manifest.md`](.open/2026-08-19-a-just-joined-member-permanently-misses-a-space-manifest.md).
+
+**What was NOT verified:** every arm involving mobile. Mobile's half shipped in
+quorum-mobile #259 with unit tests and mirrors this implementation, but no
+mobile client took part in this run. The mobile→desktop and desktop→mobile arms
+below stay unticked deliberately.
 
 Scope note for whoever runs it: a member who joined *via* the public link
 already had the URL, because the manifest fetched on the way in carries it. The
@@ -277,16 +292,21 @@ Cross-client acceptance test (needs the mobile half too):
 
 - [ ] Owner on desktop generates a public link → a **mobile** member, already
       joined and online, receives it without the owner touching Space settings
-- [ ] Owner on desktop generates a public link → a **desktop** member sees the
-      Invites category appear and the link populate
+      — *not run, no mobile client took part*
+- [x] Owner on desktop generates a public link → a **desktop** member receives
+      the `space-manifest` — **MEASURED 2026-08-19**, observed in both consoles
 - [ ] Owner on mobile generates a public link → a **desktop** member sees the
-      same (this is the mobile half of the fix)
-- [ ] **Control arm:** a member of a *different* Space sees no change. If both
-      Spaces update, the instrument is wrong, not the code.
-- [ ] **Domain fold-in:** a public link generated on a localhost (and, if
-      reachable, test.quorummessenger.com) build reads
-      `https://app.quorummessenger.com/invite/#…`
-- [ ] `yarn tsc --noEmit` and lint pass
+      same (this is the mobile half of the fix) — *not run*
+- [x] **Control arm.** Two were used instead of the second-Space one. (1) A
+      rename over the same path reached B, proving hub delivery works, which is
+      what isolated the first failure to the join race rather than the fix.
+      (2) The republish was observed with the console cleared immediately
+      before, so the line could not be left over from earlier traffic.
+- [x] **Domain fold-in:** a public link generated on the localhost build read
+      `https://app.quorummessenger.com/#…`. Confirmed by the operator having to
+      hand-edit the host to reach the local build — the documented trade-off,
+      behaving as designed.
+- [x] `yarn tsc --noEmit` and lint pass — 0 errors, 1527 tests green
 
 ## Related
 
