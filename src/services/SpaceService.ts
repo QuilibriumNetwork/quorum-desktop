@@ -12,6 +12,7 @@ import { t } from '@lingui/core/macro';
 import { QuorumApiClient } from '../api/baseTypes';
 import type { Ref } from '../types/ref';
 import type { SpaceInfoMap } from '../types/spaceRefs';
+import { broadcastSpaceManifest } from './spaceManifestBroadcast';
 
 // Type definitions for the service
 export interface SpaceServiceDependencies {
@@ -81,44 +82,22 @@ export class SpaceService {
 
   /**
    * Submits space manifest update via hub.
+   *
+   * Thin wrapper over `broadcastSpaceManifest` so InvitationService, which has
+   * no SpaceService reference, can send an identical envelope.
    */
   async submitUpdateSpace(manifest: secureChannel.SpaceManifest) {
+    // The swallow is preserved from the original rather than tidied away. It
+    // only ever covered a synchronous throw from enqueueOutbound (the sealing
+    // below runs later, inside the queue), so it is almost certainly dead — but
+    // this method is on the rename, icon and role paths, and changing when
+    // those surface an error is not this change's business. New callers use
+    // broadcastSpaceManifest directly and get the un-swallowed behaviour.
     try {
-      this.enqueueOutbound(async () => {
-        const hubKey = await this.messageDB.getSpaceKey(
-          manifest.space_address,
-          'hub'
-        );
-        const configKey = await this.messageDB.getSpaceKey(
-          manifest.space_address,
-          'config'
-        );
-        const envelope = await secureChannel.SealHubEnvelope(
-          hubKey.address!,
-          {
-            type: 'ed448',
-            private_key: [
-              ...hexToSpreadArray(hubKey.privateKey),
-            ],
-            public_key: [
-              ...hexToSpreadArray(hubKey.publicKey),
-            ],
-          },
-          JSON.stringify({
-            type: 'control',
-            message: {
-              type: 'space-manifest',
-              manifest: manifest,
-            },
-          }),
-          configKey ? {
-            type: 'x448',
-            public_key: [...hexToSpreadArray(configKey.publicKey)],
-            private_key: [...hexToSpreadArray(configKey.privateKey)],
-          } : undefined
-        );
-        return [JSON.stringify({ type: 'group', ...envelope })];
-      });
+      broadcastSpaceManifest(
+        { messageDB: this.messageDB, enqueueOutbound: this.enqueueOutbound },
+        manifest
+      );
     } catch { /* ignore */ }
   }
 

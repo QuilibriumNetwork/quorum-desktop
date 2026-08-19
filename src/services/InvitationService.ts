@@ -13,14 +13,7 @@ import type { Space } from '@quilibrium/quorum-shared';
 import { isQuorumApiError } from '../api/baseTypes';
 import type { Ref } from '../types/ref';
 import type { SpaceInfoMap } from '../types/spaceRefs';
-
-// Mobile generates invite URLs with the long prod domain (app.quorummessenger.com).
-// Shared's getInviteUrlBase still emits qm.one for the prod browser case; override
-// here so desktop matches mobile until shared is updated in a separate cross-repo PR.
-// Acceptance of qm.one links keeps working via getValidInvitePrefixes().
-function buildInviteBase(isPublic: boolean): string {
-  return getInviteUrlBase(isPublic).replace('://qm.one/', '://app.quorummessenger.com/');
-}
+import { broadcastSpaceManifest } from './spaceManifestBroadcast';
 
 const MAX_PUBLIC_EVALS = 1;
 
@@ -130,7 +123,7 @@ export class InvitationService {
       { ...response[0], state: JSON.stringify(sets[0]) },
       true
     );
-    const link = `${buildInviteBase(false)}#spaceId=${spaceId}&configKey=${config_key.privateKey}&template=${template}&secret=${secret}&hubKey=${hub_key.privateKey}`;
+    const link = `${getInviteUrlBase(false)}#spaceId=${spaceId}&configKey=${config_key.privateKey}&template=${template}&secret=${secret}&hubKey=${hub_key.privateKey}`;
     return link;
   }
 
@@ -359,8 +352,17 @@ export class InvitationService {
       // Build the new public invite URL using the EXISTING config private key.
       // The URL string is therefore deterministic per space — regenerating
       // produces the same URL, only the server-side eval and manifest change.
-      const inviteLink = `${buildInviteBase(true)}#spaceId=${spaceId}&configKey=${configKey.privateKey}`;
+      const inviteLink = `${getInviteUrlBase(true)}#spaceId=${spaceId}&configKey=${configKey.privateKey}`;
+
+      // Both fields are set BEFORE the manifest is encrypted below, so the
+      // published snapshot carries them. modifiedDate matters as much as the
+      // URL: the receiving client applies a manifest whose timestamp is newer
+      // than its stored modifiedDate and then writes the record wholesale, so
+      // broadcasting a fresh timestamp alongside a stale modifiedDate would
+      // write the receiver's replay watermark BACKWARDS.
+      const ts = Date.now();
       space.inviteUrl = inviteLink;
+      space.modifiedDate = ts;
 
       // Re-publish the manifest encrypted with the existing config key. This
       // is what gives new joiners a current snapshot (name, members, channels)
@@ -375,7 +377,6 @@ export class InvitationService {
         } as secureChannel.SealedInboxMessageEncryptRequest)
       );
 
-      const ts = Date.now();
       const manifestSignaturePayloadBase64 = Buffer.from(
         new Uint8Array([
           ...new Uint8Array(Buffer.from(manifestCiphertext, 'utf-8')),
@@ -407,7 +408,7 @@ export class InvitationService {
       });
 
       // Re-publish the manifest.
-      await this.apiClient.postSpaceManifest(spaceId, {
+      const manifest: secureChannel.SpaceManifest = {
         space_address: spaceId,
         space_manifest: manifestCiphertext,
         ephemeral_public_key: ephemeralPublicKeyHex,
@@ -417,7 +418,22 @@ export class InvitationService {
           manifestSignatureBase64,
           'base64'
         ).toString('hex'),
-      });
+      };
+      await this.apiClient.postSpaceManifest(spaceId, manifest);
+
+      // Tell EXISTING members. The POST above serves joiners and device
+      // restores only — nothing refetches the manifest for someone already in
+      // the Space — so without this the new inviteUrl stayed on the owner's
+      // device until they happened to edit the Space for an unrelated reason.
+      //
+      // The SAME manifest object goes out, deliberately. Rebuilding one, or
+      // routing this through a helper that mints its own ephemeral key, would
+      // break the alignment between the eval's ephemeral key and the
+      // manifest's.
+      broadcastSpaceManifest(
+        { messageDB: this.messageDB, enqueueOutbound: this.enqueueOutbound },
+        manifest
+      );
 
       // Persist the new inviteUrl locally.
       await this.messageDB.saveSpace(space);

@@ -381,11 +381,18 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
     invite(address, sendArgs.mode);
   };
 
-  // Non-owners see a stripped-down read-only view: the public invite URL
-  // (replicated to every member's local Space record via the encrypted
-  // manifest) + Copy + Send via DM. The Send path uses mode='public' which
+  // Non-owners see a stripped-down read-only view: the public invite URL +
+  // Copy + Send via DM. The Send path uses mode='public' which
   // forwards space.inviteUrl as-is without consuming the eval pool. See
   // #29 in port-from-mobile/candidates.md for the capability investigation.
+  //
+  // How the URL gets here: the owner's client sends a `space-manifest` control
+  // message on the hub when it generates the link. NOT the manifest POSTed to
+  // the server — that one is only ever read by joiners and device restores, so
+  // it never reaches somebody already in the Space. This comment previously
+  // claimed the opposite, which was the visible symptom of that gap: members
+  // who were in the Space before the link existed saw no Invites section at
+  // all, because the field they read was never populated.
   if (!isSpaceOwner) {
     const sendDisabled =
       sendingInvite || !(selectedUser || resolvedUser);
