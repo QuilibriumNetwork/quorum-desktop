@@ -9,7 +9,16 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { InvitationService } from '@/services/InvitationService';
+import { broadcastSpaceManifest } from '@/services/spaceManifestBroadcast';
+import { channel_raw as chRaw } from '@quilibrium/quilibrium-js-sdk-channels';
 import { QueryClient } from '@tanstack/react-query';
+
+// Stubbed so a test can read the manifest OBJECT handed to the broadcast.
+// Sealing it for real would only let us assert on ciphertext, and the property
+// that matters here is object identity with what was POSTed.
+vi.mock('@/services/spaceManifestBroadcast', () => ({
+  broadcastSpaceManifest: vi.fn(),
+}));
 
 // Mock multiformats sha256 so Buffer-based digest works in jsdom — under this
 // environment `Buffer instanceof Uint8Array` is false and multiformats' coerce()
@@ -770,13 +779,22 @@ describe('InvitationService - Unit Tests', () => {
       expect(mockDeps.messageDB.getSpaceMembers).not.toHaveBeenCalled();
     });
 
-    it('should NOT enqueue outbound sync envelopes (no member rekey messages)', async () => {
+    it('should send exactly one envelope, not one per member (no rekey loop)', async () => {
       const spaceId = 'space-no-outbounds';
       setupForPublicGen(spaceId);
 
       await invitationService.generateNewInviteLink(spaceId, {} as any, {} as any, {} as any);
 
-      expect(mockDeps.enqueueOutbound).not.toHaveBeenCalled();
+      // This asserted `enqueueOutbound` was NEVER called. That became false the
+      // moment the manifest broadcast was added, and the assertion kept passing
+      // only because broadcastSpaceManifest is mocked in this file — so it was
+      // describing the mock, not the code.
+      //
+      // The invariant it was actually guarding is that the pre-consolidation
+      // rekey loop is gone: one broadcast goes out regardless of member count,
+      // and the member list is never read.
+      expect(broadcastSpaceManifest).toHaveBeenCalledTimes(1);
+      expect(mockDeps.messageDB.getSpaceMembers).not.toHaveBeenCalled();
     });
 
     it('should call postSpaceManifest to refresh the on-server snapshot', async () => {
@@ -868,14 +886,18 @@ describe('InvitationService - Unit Tests', () => {
     });
   });
 
-  describe('8. URL host override (qm.one -> app.quorummessenger.com)', () => {
-    // The buildInviteBase helper substitutes qm.one with app.quorummessenger.com
-    // to match mobile's generation host. We assert against the public-gen URL
-    // because the test env runs under jsdom (localhost), so the prod qm.one
-    // branch in shared's getInviteUrlBase isn't hit at runtime — but the
-    // .replace() in buildInviteBase is a deterministic string op so any URL
-    // emitted from prod-shaped paths will be cleaned.
-    it('should never emit qm.one in any generated invite URL', async () => {
+  describe('8. Generated invite URLs always carry the production host', () => {
+    // This used to assert only the ABSENCE of qm.one, which the test
+    // environment made free: jsdom serves from localhost, so the old
+    // environment-derived getInviteUrlBase returned a localhost base and the
+    // qm.one branch was never reached. The assertion could not have failed.
+    //
+    // It now asserts the host positively, which is the property that actually
+    // matters: a link generated on ANY build — localhost included, as here —
+    // must be one a recipient can open. Links are persisted into
+    // space.inviteUrl and replicated to every member, so a dev-host URL reaches
+    // real users as something they cannot use.
+    it('should emit app.quorummessenger.com even though the test env is localhost', async () => {
       const spaceId = 'space-host-override';
 
       // Private path
@@ -896,6 +918,8 @@ describe('InvitationService - Unit Tests', () => {
 
       const privateLink = await invitationService.constructInviteLink(spaceId);
       expect(privateLink).not.toContain('qm.one');
+      expect(privateLink).not.toContain('localhost');
+      expect(privateLink.startsWith('https://app.quorummessenger.com/')).toBe(true);
 
       // Public path
       mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({ spaceId, inviteUrl: null });
@@ -920,6 +944,107 @@ describe('InvitationService - Unit Tests', () => {
 
       const publicSaved = mockDeps.messageDB.saveSpace.mock.calls[0][0];
       expect(publicSaved.inviteUrl).not.toContain('qm.one');
+      expect(publicSaved.inviteUrl).not.toContain('localhost');
+      expect(
+        publicSaved.inviteUrl.startsWith('https://app.quorummessenger.com/invite/')
+      ).toBe(true);
+    });
+  });
+
+  describe('9. Generating a public link tells existing members', () => {
+    // The POST to the server is read by joiners and device restores only.
+    // Nothing refetches a manifest for someone already in the Space, so the
+    // hub control message is the ONLY way an existing member ever learns the
+    // link exists. Before this, the URL stayed on the owner's device until
+    // they happened to rename the Space or change its icon.
+    //
+    // This failure is silent — no error, the link simply never appears —
+    // which is why it needs pinning here rather than being left to notice.
+    const setUpOwnerWithEvals = (spaceId: string) => {
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({ spaceId, inviteUrl: null });
+      mockDeps.messageDB.getSpaceKey = vi.fn().mockImplementation((_id: string, keyId: string) => {
+        if (keyId === 'owner') return Promise.resolve({ keyId: 'owner', address: 'owner-addr', publicKey: 'op', privateKey: 'opriv' });
+        if (keyId === 'hub') return Promise.resolve({ keyId: 'hub', address: 'hub-addr', publicKey: 'hp', privateKey: 'hpriv' });
+        if (keyId === 'config') return Promise.resolve({ keyId: 'config', address: 'cfg-addr', publicKey: 'cp', privateKey: 'cpriv' });
+        return Promise.resolve({ keyId, publicKey: 'p', privateKey: 'p' });
+      });
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([
+        {
+          state: JSON.stringify({
+            state: JSON.stringify({ root_key: 'rk', id_peer_map: {}, peer_id_map: {} }),
+            template: { dkg_ratchet: JSON.stringify({ id: 1 }), root_key: 'rk' },
+            evals: [[1, 2]],
+          }),
+          conversationId: spaceId + '/' + spaceId,
+        },
+      ]);
+    };
+
+    it('broadcasts, rather than only POSTing to the server', async () => {
+      const spaceId = 'space-broadcasts';
+      setUpOwnerWithEvals(spaceId);
+
+      await invitationService.generateNewInviteLink(spaceId, {} as any, {} as any, {} as any);
+
+      expect(mockDeps.apiClient.postSpaceManifest).toHaveBeenCalledTimes(1);
+      expect(broadcastSpaceManifest).toHaveBeenCalledTimes(1);
+    });
+
+    it('broadcasts the SAME manifest object it POSTed, not a rebuilt one', async () => {
+      // The invite path encrypts its manifest with the same ephemeral X448 key
+      // as the invite eval. A second manifest built here would carry a
+      // different ephemeral key and break that pairing — the defect class
+      // behind months of "expired or invalid invite link" reports.
+      //
+      // Reference equality is the assertion precisely because a structurally
+      // identical copy is NOT good enough: toEqual would pass for a rebuild
+      // that happened to look the same, which is the bug.
+      const spaceId = 'space-same-manifest';
+      setUpOwnerWithEvals(spaceId);
+
+      await invitationService.generateNewInviteLink(spaceId, {} as any, {} as any, {} as any);
+
+      const posted = (mockDeps.apiClient.postSpaceManifest as any).mock.calls[0][1];
+      const broadcast = (broadcastSpaceManifest as any).mock.calls[0][1];
+
+      expect(broadcast).toBe(posted);
+    });
+
+    it('publishes a manifest that actually carries the new invite URL', async () => {
+      // The snapshot a joiner fetches is built from the `space` object. If the
+      // URL were assigned after encryption, the published manifest would
+      // describe a Space with no invite link — which is the bug the mobile
+      // client had.
+      const spaceId = 'space-manifest-carries-url';
+      setUpOwnerWithEvals(spaceId);
+
+      await invitationService.generateNewInviteLink(spaceId, {} as any, {} as any, {} as any);
+
+      const encryptArg = JSON.parse(
+        (chRaw.js_encrypt_inbox_message as any).mock.calls.at(-1)[0]
+      );
+      const publishedSpace = JSON.parse(
+        Buffer.from(new Uint8Array(encryptArg.plaintext)).toString('utf-8')
+      );
+
+      expect(publishedSpace.inviteUrl).toContain('app.quorummessenger.com');
+      expect(publishedSpace.modifiedDate).toBeGreaterThan(0);
+    });
+
+    it('bumps modifiedDate to the manifest timestamp, so the record stays monotonic', async () => {
+      // The receiver applies a manifest whose timestamp beats its stored
+      // modifiedDate, then writes the record wholesale. Broadcasting a fresh
+      // timestamp next to a stale modifiedDate would push the receiver's
+      // replay watermark BACKWARDS.
+      const spaceId = 'space-monotonic';
+      setUpOwnerWithEvals(spaceId);
+
+      await invitationService.generateNewInviteLink(spaceId, {} as any, {} as any, {} as any);
+
+      const posted = (mockDeps.apiClient.postSpaceManifest as any).mock.calls[0][1];
+      const saved = mockDeps.messageDB.saveSpace.mock.calls[0][0];
+
+      expect(saved.modifiedDate).toBe(posted.timestamp);
     });
   });
 

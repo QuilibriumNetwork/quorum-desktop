@@ -4,7 +4,7 @@ title: Invite System Documentation
 status: done
 ai_generated: true
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-06-08T00:00:00.000Z
+updated: 2026-08-19T00:00:00.000Z
 ---
 
 # Invite System Documentation
@@ -308,40 +308,67 @@ These are cryptographic validation failures, not time-based expirations. Common 
 
 ---
 
-## Environment-Specific Invite System (September 2025 Update)
+## Invite Domains
 
-### Dynamic Domain Resolution
+> **⚠️ SUPERSEDED 2026-08-19 by quorum-shared #84.** The environment-derived
+> generation described below is gone. It is kept here because the reasoning was
+> sound and knowing why it was dropped matters more than the fact that it was.
 
-The invite system now dynamically detects the environment and uses appropriate domains:
+### Current behaviour: generation canonical, acceptance permissive
 
 **Implementation:** `@quilibrium/quorum-shared` — `src/utils/inviteDomain.ts`
 
-1. **Production Environment** (`app.quorummessenger.com`):
-   - Generates invite links with `qm.one` (short domain)
-   - Accepts both `qm.one` and `app.quorummessenger.com` links
-   - Maintains backward compatibility with all existing invites
+- **Generation** — `getInviteBaseDomain()` returns `app.quorummessenger.com`
+  unconditionally, on every build. `getInviteUrlBase()` is therefore always
+  `https://app.quorummessenger.com/` (one-time) or `.../invite/` (public).
+- **Acceptance** — `getValidInvitePrefixes()` is unchanged and stays broad:
+  production, the legacy `qm.one` form, staging, and localhost ports. Links
+  already in circulation keep parsing.
+- **Mobile** does not import these helpers; its own generator was already
+  hardcoded to the production host. This change is what lets the two converge.
 
-2. **Staging Environment** (`test.quorummessenger.com`):
-   - Generates invite links with `test.quorummessenger.com`
-   - Only accepts staging domain links (isolation from production)
-   - Prevents cross-environment invite confusion
+Cost: on a non-production build, a generated link no longer deep-links back into
+that build. Pasting one into the join field still works, because the entire join
+payload lives in the hash fragment and the host is never contacted. Only
+click-through needs the domain edited by hand.
 
-3. **Local Development** (`localhost:port`):
-   - Generates invite links with `http://localhost:port`
-   - Accepts all domains for comprehensive testing
-   - Supports common development ports (3000, 5173, etc.)
+### Why the environment-derived design was dropped
 
-### Key Benefits:
-- **No hardcoded domains**: Automatically adapts to deployment environment
-- **Staging isolation**: Test environment works independently
-- **Local testing**: Developers can test invite flows without deployment
-- **Production safety**: No changes to existing production behavior
+The original design (September 2025) generated `test.quorummessenger.com` on
+staging and `localhost:port` in development, for **staging isolation** — so a
+test invite could not be mistaken for a production one. That was deliberate and
+it worked, *for as long as a Space's `inviteUrl` stayed on the device that
+generated it*.
 
-### Files Modified:
-- `@quilibrium/quorum-shared` `src/utils/inviteDomain.ts` - Utility for dynamic domain resolution
-- `src/components/context/MessageDB.tsx` - Provides access to `InvitationService` which uses dynamic domain for invite generation
-- `src/components/modals/JoinSpaceModal.tsx` - Uses dynamic domain for display
-- `src/hooks/business/spaces/useInviteValidation.ts` - Dynamic validation prefixes
+It does not stay there. The URL is persisted into `space.inviteUrl` and
+replicated to every member on every client, and receivers additionally
+reconstruct it locally from an incoming envelope using **their own** environment
+(`src/services/MessageService.ts:5511-5514`). So the environment of whoever last
+touched a link leaks to every member, and a link minted on a developer's machine
+reaches real users as a URL they cannot open. Worse on mobile, whose accept-list
+never included the staging host: such a link fails `isPublicInvite()` and hides
+the member-facing share affordance entirely.
+
+The isolation the original design bought is still there, and does not depend on
+the domain: a staging link carries staging keys and a staging Space id, so it
+cannot open a production Space whatever host it names.
+
+Note that **message deep-links were not changed and remain environment-derived**:
+`src/hooks/business/messages/useMessageActions.ts:288` builds them from
+`window.location.origin + pathname`. That is fine for the same reason it was not
+fine for invites — a message link is copied to the clipboard for immediate use,
+never persisted into a Space record and replicated to other people's devices.
+(Acceptance-side parsing for message links lives in shared's
+`src/utils/messageLinkUtils.ts`; there is no such file in this repo.)
+
+Only invite generation was made canonical.
+
+### Files involved:
+- `@quilibrium/quorum-shared` `src/utils/inviteDomain.ts` - canonical generation, permissive acceptance
+- `src/services/InvitationService.ts` - generates both link kinds
+- `src/services/SpaceService.ts`, `src/services/MessageService.ts` - also build invite URLs
+- `src/components/modals/JoinSpaceModal.tsx` - display only
+- `src/hooks/business/spaces/useInviteValidation.ts` - validation prefixes
 
 ## Duplicate Prevention (Fixed)
 
@@ -359,4 +386,4 @@ The invite system now dynamically detects the environment and uses appropriate d
 
 _Covers: SpaceSettingsModal/Invites.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, InvitationService.ts, MessageDB Context, InviteLink.tsx, inviteDomain.ts_
 
-_Last updated: 2026-06-08_
+_Last updated: 2026-08-19_
