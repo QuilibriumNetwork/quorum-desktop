@@ -353,9 +353,15 @@ The isolation the original design bought is still there, and does not depend on
 the domain: a staging link carries staging keys and a staging Space id, so it
 cannot open a production Space whatever host it names.
 
-Note that message deep-links (`src/utils/messageLinkUtils.ts` via
-`environmentDomains.ts`) remain environment-aware. Only invite generation was
-made canonical.
+Note that **message deep-links were not changed and remain environment-derived**:
+`src/hooks/business/messages/useMessageActions.ts:288` builds them from
+`window.location.origin + pathname`. That is fine for the same reason it was not
+fine for invites — a message link is copied to the clipboard for immediate use,
+never persisted into a Space record and replicated to other people's devices.
+(Acceptance-side parsing for message links lives in shared's
+`src/utils/messageLinkUtils.ts`; there is no such file in this repo.)
+
+Only invite generation was made canonical.
 
 ### Files involved:
 - `@quilibrium/quorum-shared` `src/utils/inviteDomain.ts` - canonical generation, permissive acceptance

@@ -779,13 +779,22 @@ describe('InvitationService - Unit Tests', () => {
       expect(mockDeps.messageDB.getSpaceMembers).not.toHaveBeenCalled();
     });
 
-    it('should NOT enqueue outbound sync envelopes (no member rekey messages)', async () => {
+    it('should send exactly one envelope, not one per member (no rekey loop)', async () => {
       const spaceId = 'space-no-outbounds';
       setupForPublicGen(spaceId);
 
       await invitationService.generateNewInviteLink(spaceId, {} as any, {} as any, {} as any);
 
-      expect(mockDeps.enqueueOutbound).not.toHaveBeenCalled();
+      // This asserted `enqueueOutbound` was NEVER called. That became false the
+      // moment the manifest broadcast was added, and the assertion kept passing
+      // only because broadcastSpaceManifest is mocked in this file — so it was
+      // describing the mock, not the code.
+      //
+      // The invariant it was actually guarding is that the pre-consolidation
+      // rekey loop is gone: one broadcast goes out regardless of member count,
+      // and the member list is never read.
+      expect(broadcastSpaceManifest).toHaveBeenCalledTimes(1);
+      expect(mockDeps.messageDB.getSpaceMembers).not.toHaveBeenCalled();
     });
 
     it('should call postSpaceManifest to refresh the on-server snapshot', async () => {
