@@ -1,16 +1,16 @@
 ---
 type: recap
 title: "Quorum Desktop — Project State"
-updated: 2026-08-17
+updated: 2026-08-19
 ---
 
 # Quorum Desktop — Project State
 
-> Last updated: 2026-08-17
+> Last updated: 2026-08-19
 
 ## Dashboard
 
-> Updated: 2026-08-17 · 92 live · 75 startable · 7 nearly done · 10 blocked
+> Updated: 2026-08-19 · 93 live · 76 startable · 8 nearly done · 10 blocked
 
 **Next step:** Finish production diagnostics (Option 2: a diagnostics toggle with an export) — it is the only route that gets a failure report from a user who will never open devtools, and **four** separate issues are now waiting on evidence it would collect.
 
@@ -28,6 +28,7 @@ updated: 2026-08-17
 
 ### Nearly done — needs a check
 
+- **[A public invite link now reaches existing members](issues/2026-08-11-public-invite-link-never-reaches-existing-members.md) — all three repos shipped, and the test that proves it is now runnable.** Desktop #355, mobile #259, shared #84. Everything verified so far is unit-level: it shows the right object goes into the right envelope, not that the envelope arrives, and the failure is silent. The remaining step is genuinely cross-client — an owner generates a public link on one client, a member who was in the Space **before** the link existed watches it appear on the other without the owner touching settings, with a member of a different Space as the control arm. Nothing else on this list is blocked by it, but it is the only outstanding item whose evidence cannot be gathered any other way.
 - **Config sync slice 1 — one thing left, and it needs eyes.** [Record what the last publish did](issues/.open/2026-08-08-record-and-show-what-the-last-config-publish-actually-did.md). Slice 2 closed (below). The release-build criterion turned out to be reachable cold: mobile #254/#255 prove the record is written under the real shipping log configuration, and `yarn check:release-bundle` asserts every failure string survives into the production bundle. What remains is watching the line render on a device, plus three untouched desktop-side items (queue classification, Rule 1 on the failure path, the `payloadBytes` cross-check).
 - [Six name surfaces never reached the resolver](issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md) — shipped in PR #325, suite green with every rule shown red on revert. Held open deliberately; confirm in the running app and close.
 - [Desktop shows a stale display name except in User Settings](issues/.open/2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md) — shipped in PR #313 and device-verified. Held open on purpose; decide whether anything still remains.

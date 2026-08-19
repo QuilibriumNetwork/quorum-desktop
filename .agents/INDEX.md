@@ -112,6 +112,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [The roster pull: what it actually does](issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
 - 🐛 [Eight name surfaces never reached the resolver](issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md)
+- 🐛 [Generating a public invite link never reaches existing members](issues/2026-08-11-public-invite-link-never-reaches-existing-members.md)
 - 🐛 [Notification switches freeze the UI for ~1.8s](issues/2026-08-13-notification-toggle-freeze-is-the-config-encode-chain.md)
 - 🐛 [Desktop has no `.q` broadcast, and trusts a `.q` it never checks](issues/2026-08-16-desktop-has-no-q-broadcast-and-renders-claims-unverified.md)
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
@@ -269,9 +270,9 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [Safari wipes all IndexedDB after 7 idle days — DM ratchet state and history are unrecoverable](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md)
 - 🐛 [Every shared primitive reaches consumers as `any`](issues/.open/2026-08-06-invalid-icon-names-render-nothing-and-no-type-error-catches-them.md)
 - 🐛 [The two default user configs disagree on which fields exist](issues/.open/2026-08-07-the-two-default-user-configs-disagree-on-which-fields-exist.md)
-- 🐛 [Generating a public invite link never reaches existing members](issues/.open/2026-08-11-public-invite-link-never-reaches-existing-members.md)
 - 🐛 [The Account Key warning names the smallest loss, not the largest](issues/.open/2026-08-14-security-tab-key-warning-understates-wallet-access.md)
 - 🐛 [A failed QNS verification can stay failed for the whole session](issues/.open/2026-08-17-a-failed-qns-verification-can-stay-failed-for-the-whole-session.md)
+- 🐛 [Desktop applies any signed space-manifest, with no staleness guard](issues/.open/2026-08-19-desktop-applies-any-space-manifest-with-no-staleness-guard.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -800,4 +801,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-17 17:54:24
+**Last Updated**: 2026-08-19 10:34:38
