@@ -123,10 +123,15 @@ new argument is required rather than optional. Making it required is what
 surfaced three sites where the pre-existing optional `currentUserAddress` would
 have silently rebound onto the new security field with no type error at all.
 
-**Ordering constraint this creates:** quorum-mobile pins a published
-`@quilibrium/quorum-shared` (`2.1.0-43`) rather than a local link, so its fix
-does not compile until shared publishes. Desktop links locally and is unaffected.
-Ship order is therefore shared → publish → desktop → mobile.
+**Publish ordering, and why it does NOT gate mobile.** quorum-mobile pins a
+published `@quilibrium/quorum-shared` (`2.1.0-43`) rather than a local link, so
+the new field was initially invisible there and the branch did not typecheck.
+Blocking on a release was rejected: a branch that does not compile is not
+shippable, and the shared publish is not imminent. Mobile therefore declares the
+field locally (`services/dm/storedMessage.ts`) and compiles, tests and ships
+against the currently published package, with a note to collapse the local type
+once a release carries the field. Desktop links the local checkout and was never
+affected. **All three branches are independently shippable in any order.**
 
 Three further real findings, fixed in `b38cc948d`:
 
