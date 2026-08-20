@@ -563,6 +563,37 @@ export function MessageEditTextarea({
     // Update IndexedDB and send asynchronously
     (async () => {
       try {
+        // ⚠️ PRESERVE THE AUTHORSHIP MARKER ACROSS AN EDIT.
+        //
+        // The two saves below call the LOW-LEVEL `messageDB.saveMessage`, not
+        // `MessageService.saveMessage` — so nothing re-stamps
+        // `authenticatedSenderId`, and the IndexedDB write is a whole-record
+        // `put`, not a merge. Whatever is missing from the object is erased.
+        //
+        // It cannot simply be carried from `message`: that prop comes from the
+        // React Query cache, and the cache copy is the PRE-stamp object
+        // (MessageService stamps an internal spread copy, then pushes the
+        // original into the cache). So editing your own DM in the same session
+        // it was sent would silently drop the marker.
+        //
+        // Read it back from storage instead, which is the only copy that has
+        // it. Absent stays absent — the ledger fails closed on that, so the
+        // worst case is a partner waiting for one more deliberate send, never
+        // a false reveal.
+        let preservedAuthenticatedSenderId: string | undefined;
+        try {
+          const storedRow = await messageDB.getMessage({
+            spaceId: currentSpaceId,
+            channelId: currentChannelId,
+            messageId: message.messageId,
+          });
+          preservedAuthenticatedSenderId = (
+            storedRow as (MessageType & { authenticatedSenderId?: string }) | undefined
+          )?.authenticatedSenderId;
+        } catch (error) {
+          // Fail closed: no marker rather than a wrong one.
+          console.error('Failed to read stored authorship marker before edit:', error);
+        }
 
         // Check if saveEditHistory is enabled
         let saveEditHistoryEnabled = false;
@@ -601,6 +632,11 @@ export function MessageEditTextarea({
           const correctedMessage: MessageType = {
             ...updatedMessage,
             edits: [],
+            // Carried explicitly — the low-level put below replaces the whole
+            // record, so anything absent here is erased.
+            ...(preservedAuthenticatedSenderId === undefined
+              ? {}
+              : { authenticatedSenderId: preservedAuthenticatedSenderId }),
           };
 
           // Update IndexedDB with corrected edits array
@@ -664,7 +700,13 @@ export function MessageEditTextarea({
 
         // Update IndexedDB
         await messageDB.saveMessage(
-          updatedMessage,
+          {
+            ...updatedMessage,
+            // Carried explicitly — see the note at the top of this block.
+            ...(preservedAuthenticatedSenderId === undefined
+              ? {}
+              : { authenticatedSenderId: preservedAuthenticatedSenderId }),
+          },
           message.createdDate,
           currentSpaceId,
           isDM ? 'direct' : 'group',

@@ -19,7 +19,7 @@
  *   3. ABSENT      — a space save writes no marker, so nothing can read one.
  */
 import { describe, it, expect, vi } from 'vitest';
-import { MessageService } from '@/services/MessageService';
+import { MessageService, stripNonTransmissibleFields } from '@/services/MessageService';
 import type { Message } from '@quilibrium/quorum-shared';
 
 vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
@@ -69,6 +69,52 @@ const post = (extra: Record<string, unknown> = {}): Message =>
 /** The row the DB layer actually received. */
 const savedRow = (saveMessage: ReturnType<typeof vi.fn>) =>
   saveMessage.mock.calls[0][0] as Message & { authenticatedSenderId?: string };
+
+describe('stripNonTransmissibleFields — the marker never reaches the wire', () => {
+  // The shared type states "PERSISTED, and NEVER TRANSMITTED" as an absolute.
+  // It briefly was not: three send sites hand-listed `{ sendStatus, sendError }`
+  // and none learned about the new field, so retrying a failed DM re-serialized
+  // a STORED row and put the marker on the wire. Not exploitable (the receiver
+  // overwrites it after the spread, and the value was the sender's own known
+  // address) — but the invariant has to be true, not nearly true.
+  it('removes every local-only field', () => {
+    const stored = {
+      ...post({ authenticatedSenderId: SELF }),
+      sendStatus: 'failed',
+      sendError: 'boom',
+    } as Message;
+
+    const wire = stripNonTransmissibleFields(stored) as Record<string, unknown>;
+
+    expect(wire.authenticatedSenderId).toBeUndefined();
+    expect('authenticatedSenderId' in wire).toBe(false);
+    expect('sendStatus' in wire).toBe(false);
+    expect('sendError' in wire).toBe(false);
+  });
+
+  it('keeps everything a receiver actually needs', () => {
+    // Control arm. A strip that removed too much would also pass the test
+    // above, and would silently break message delivery instead of privacy.
+    const stored = { ...post({ authenticatedSenderId: SELF }) } as Message;
+    const wire = stripNonTransmissibleFields(stored);
+
+    expect(wire.messageId).toBe('m-1');
+    expect(wire.content).toEqual(stored.content);
+    expect(wire.nonce).toBe(stored.nonce);
+    expect(wire.createdDate).toBe(stored.createdDate);
+    expect(wire.channelId).toBe(PARTNER);
+  });
+
+  it('does not mutate the stored row it was given', () => {
+    // The caller still saves that row afterwards; stripping in place would
+    // erase the marker from storage as a side effect of sending.
+    const stored = { ...post({ authenticatedSenderId: SELF }) } as Message & {
+      authenticatedSenderId?: string;
+    };
+    stripNonTransmissibleFields(stored);
+    expect(stored.authenticatedSenderId).toBe(SELF);
+  });
+});
 
 describe('saveMessage stamps the authenticated sender', () => {
   it('writes the crypto layer’s answer onto the stored row', async () => {

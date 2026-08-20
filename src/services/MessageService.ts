@@ -258,6 +258,31 @@ export interface MessageServiceDependencies {
  * `saveSpaceMember` merges and drops `undefined`s — see that method's doc and
  * 2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md under .agents/issues/
  */
+/**
+ * Strip every field that belongs to a STORED row but must never reach the wire.
+ *
+ * ⚠️ USE THIS INSTEAD OF HAND-LISTING FIELDS AT EACH SEND SITE. Three separate
+ * places used to destructure `{ sendStatus, sendError, ...rest }` inline, and
+ * when `authenticatedSenderId` was added none of them learned about it — so a
+ * retried DM re-serialized a stored row and put the marker on the wire. Not
+ * exploitable (the receiver overwrites it after the spread, and the value was
+ * the sender's own already-known address), but the shared type states
+ * "PERSISTED, and NEVER TRANSMITTED" as an absolute, and a future field added
+ * to this list would have leaked for real.
+ *
+ * The rule: a send site should not have to know WHICH fields are local-only.
+ * Add new local-only fields here, once.
+ */
+export function stripNonTransmissibleFields(message: Message): Message {
+  const {
+    sendStatus: _sendStatus,
+    sendError: _sendError,
+    authenticatedSenderId: _authenticatedSenderId,
+    ...transmissible
+  } = message as Message & { authenticatedSenderId?: string };
+  return transmissible as Message;
+}
+
 export function resolveInboundSpaceTag(
   inbound: BroadcastSpaceTag | null | undefined
 ): {
@@ -1762,9 +1787,9 @@ export class MessageService {
       saveStateAfterSend?: boolean;
     } = {}
   ): Promise<string> {
-    // Strip ephemeral fields if requested (for retries)
+    // Strip local-only fields if requested (for retries)
     const messageToSend = options.stripEphemeralFields
-      ? (({ sendStatus: _sendStatus, sendError: _sendError, ...rest }) => rest)(message as any)
+      ? stripNonTransmissibleFields(message)
       : message;
 
     const outbound = await this.sendHubMessage(
@@ -8045,9 +8070,15 @@ export class MessageService {
         const conversation = await this.messageDB.getConversation({
           conversationId,
         });
-        // Strip ephemeral fields before encrypting (declared outside the
-        // lock — also used by saveMessage after it)
-        const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = failedMessage;
+        // Strip local-only fields before encrypting (declared outside the
+        // lock — also used by saveMessage after it).
+        //
+        // `authenticatedSenderId` is stripped here too: `failedMessage` is a
+        // PERSISTED row, so it carries the marker, and re-serializing it whole
+        // would put a field the shared type calls "NEVER TRANSMITTED" on the
+        // wire. The receiver overwrites it anyway, so this was not a live leak
+        // — it is the invariant being kept true rather than nearly true.
+        const messageToEncrypt = stripNonTransmissibleFields(failedMessage);
         // Ratchet critical section: read state → encrypt → save. Serialized per
         // conversation to prevent concurrent state forks (see dmRatchetMutex).
         await dmRatchetMutex.runExclusive(conversationId, async () => {
