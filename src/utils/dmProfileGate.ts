@@ -158,3 +158,16 @@ export const recordDmProfileSend = (
   signature: string,
   now: number = Date.now()
 ): void => gate.record(selfAddress, partnerAddress, signature, now);
+
+/**
+ * Forget this partner's gate record.
+ *
+ * Called when a partner shows up with a genuinely NEW session (a reinstall, a
+ * second device). The stored record describes sessions that no longer exist, so
+ * an exhausted cap would gag the one announce the new device actually needs.
+ * See `ProfileSendGate.clear` for why this is not a general escape hatch.
+ */
+export const clearDmProfileSendState = (
+  selfAddress: string,
+  partnerAddress: string
+): void => gate.clear(selfAddress, partnerAddress);

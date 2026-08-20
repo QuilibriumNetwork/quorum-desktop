@@ -1101,7 +1101,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     spaceId: string,
     channelId: string,
     conversationType: string,
-    updatedUserProfile: { user_icon?: string; display_name?: string }
+    updatedUserProfile: { user_icon?: string; display_name?: string },
+    // Forwarded, not defaulted. A default here would silently answer the
+    // provenance question on behalf of every caller of this context helper,
+    // which is the one thing the required parameter downstream exists to stop.
+    authenticatedSenderId: string | null
   ) => {
     const result = await messageService.saveMessage(
       decryptedContent,
@@ -1109,7 +1113,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       spaceId,
       channelId,
       conversationType,
-      updatedUserProfile
+      updatedUserProfile,
+      authenticatedSenderId,
+      undefined
     );
 
     // Update sync cache for O(1) incremental hash updates
@@ -1142,7 +1148,12 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       selfAddress,
       keyset,
       spaceInfo,
-      saveMessage,
+      // SpaceService saves space messages only, so it is handed a view of
+      // saveMessage with the provenance argument already answered `null`.
+      // Adapting here rather than widening SpaceService's signature keeps it
+      // structurally incapable of stamping a DM authorship marker.
+      saveMessage: (message, db, spaceId, channelId, type, metadata) =>
+        saveMessage(message, db, spaceId, channelId, type, metadata, null),
       addMessage,
     });
   }, [messageDB, apiClient, enqueueOutbound, saveConfig, selfAddress, keyset, spaceInfo, saveMessage, addMessage]);
