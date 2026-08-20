@@ -208,28 +208,37 @@ export function clearReveal(selfAddress: string, partnerAddress?: string): void 
 /**
  * Pure: does this page of a DM's history contain a message WE PROVABLY authored?
  *
- * ⚠️ `content.senderId` ALONE IS NOT EVIDENCE. It is plaintext the sending
- * client wrote, and desktop's receive path persists it verbatim, so a stranger
- * can put YOUR address on a message they sent you. MEASURED 2026-08-20
- * (`yarn harness dm-reveal-forgery`): one such message made this function
- * return true, which flipped the ledger and leaked the victim's real name to
- * the attacker on the next sweep.
+ * ⚠️ `content.senderId` IS NOT EVIDENCE AND IS NOT READ HERE. It is plaintext
+ * the sending client writes, and both clients persist it verbatim, so a
+ * stranger can put YOUR address on a message they sent you. MEASURED 2026-08-20
+ * (`yarn harness dm-reveal-forgery`): one such message flipped the ledger and
+ * leaked the victim's real name to the attacker on the next sweep.
  *
- * So `isProvablySelfAuthored` is REQUIRED, not optional. Making it optional
- * would mean a caller that forgets it silently gets the vulnerable behaviour
- * back — the senderId check below is kept only as a cheap pre-filter, and is
- * never sufficient on its own. See utils/selfAuthorship.ts.
+ * The only field consulted is `authenticatedSenderId`, stamped at persist time
+ * from what the crypto layer authenticated and never taken off the wire (see
+ * `Message.authenticatedSenderId` in quorum-shared, and MessageService's
+ * `saveMessage`, which overwrites it AFTER the spread so a forged payload value
+ * cannot survive).
+ *
+ * ⚠️ WHY NOT ALSO ACCEPT AN ED448 SIGNATURE, which an earlier revision of this
+ * branch used. Because "marker OR signature" is only as strong as its weakest
+ * branch, and the signature branch is replayable: a DM messageId is
+ * SHA-256(nonce + 'post' + senderAddress + text) and does not commit to the
+ * conversation, so a message we signed elsewhere (a space co-member can see
+ * those) verifies fine when replanted into a stranger's conversation. Adding it
+ * back as an alternative reopens exactly the hole this replaced.
+ *
+ * ⚠️ ABSENT MEANS UNKNOWN. Rows written before the marker existed carry
+ * nothing, so they cannot prove authorship. That is fail-safe by design: the
+ * cost is a partner waiting for one more deliberate send from this device, and
+ * the alternative is trusting a field an attacker controls.
  */
 export function messagesContainSelfAuthored(
-  messages: readonly { content?: { senderId?: string } }[] | undefined,
-  selfAddress: string,
-  isProvablySelfAuthored: (message: unknown) => boolean
+  messages: readonly { authenticatedSenderId?: string }[] | undefined,
+  selfAddress: string
 ): boolean {
   if (!isUsableIdentifier(selfAddress) || !Array.isArray(messages)) return false;
-  if (typeof isProvablySelfAuthored !== 'function') return false;
-  return messages.some(
-    (m) => m?.content?.senderId === selfAddress && isProvablySelfAuthored(m)
-  );
+  return messages.some((m) => m?.authenticatedSenderId === selfAddress);
 }
 
 /**
@@ -246,9 +255,11 @@ const BOOTSTRAP_SCAN_LIMIT = 200;
  * DM messages are stored under (spaceId = partner, channelId = partner).
  *
  * ⚠️ This is also what makes the ledger correct PER DEVICE. A message sent
- * from device A syncs to device B and is stored there with our own senderId,
- * but nothing on B records a reveal — scanning local history is what lets B
- * answer correctly. Do not shortcut it.
+ * from device A syncs to device B, and scanning local history is what lets B
+ * answer correctly. Note the limit of the marker here: our own message arriving
+ * on B through the partner-keyed session is stamped with the PARTNER, not us,
+ * so it does not prove authorship on B. B then waits for its own first
+ * deliberate send — the documented per-device posture, and fail-safe.
  *
  * A positive is cached. A NEGATIVE IS NEVER PERSISTED, so a later deliberate
  * send still flips the answer through `recordReveal`.
@@ -260,8 +271,7 @@ export async function ensureRevealBootstrap(
     spaceId: string;
     channelId: string;
     limit?: number;
-  }) => Promise<{ messages: { content?: { senderId?: string } }[] }>,
-  isProvablySelfAuthored: (message: unknown) => boolean
+  }) => Promise<{ messages: { authenticatedSenderId?: string }[] }>
 ): Promise<boolean> {
   if (hasRevealedTo(selfAddress, partnerAddress)) return true;
   if (!isUsableIdentifier(selfAddress) || !isUsableIdentifier(partnerAddress)) return false;
@@ -271,7 +281,7 @@ export async function ensureRevealBootstrap(
       channelId: partnerAddress,
       limit: BOOTSTRAP_SCAN_LIMIT,
     });
-    if (messagesContainSelfAuthored(messages, selfAddress, isProvablySelfAuthored)) {
+    if (messagesContainSelfAuthored(messages, selfAddress)) {
       recordReveal(selfAddress, partnerAddress, Date.now());
       return true;
     }

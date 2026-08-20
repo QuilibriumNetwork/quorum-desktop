@@ -430,6 +430,7 @@ export class ActionQueueHandlers {
           display_name:
             conversation?.conversation?.displayName ?? 'Unknown User',
         },
+        null, // space message — the DM reveal ledger does not read these
         senderAddress
       );
 
@@ -808,6 +809,10 @@ export class ActionQueueHandlers {
           display_name:
             conversation?.conversation?.displayName ?? 'Unknown User',
         },
+        // Our own send, queued while offline and flushed here. We are the
+        // author, so this row can prove consent to the reveal ledger — the
+        // same as an online send through submitMessage.
+        selfUserAddress,
         selfUserAddress // Pass current user address to update lastReadTimestamp
       );
 

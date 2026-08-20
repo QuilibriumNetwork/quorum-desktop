@@ -100,7 +100,6 @@ import {
   hasRevealedTo,
   recordReveal,
 } from '../utils/dmRevealLedger';
-import { createSelfAuthorshipVerifier } from '../utils/selfAuthorship';
 import {
   claimSpaceProfileAnnounce,
   recordSpaceProfileAnnounce,
@@ -723,7 +722,7 @@ export class MessageService {
       // Privacy gate. Independent of the dedup gate below and both are wanted:
       // this one asks "may we tell them at all", the dedup gate asks "have we
       // already told them this exact thing". Fails CLOSED.
-      const revealed = await this.isRevealedTo(selfUserAddress, partnerAddress, keyset);
+      const revealed = await this.isRevealedTo(selfUserAddress, partnerAddress);
       if (!revealed) {
         skippedUnrevealed += 1;
         continue;
@@ -826,27 +825,21 @@ export class MessageService {
 
   /**
    * "Have I deliberately messaged this partner?", with the one-time derivation
-   * from local history — and with that derivation made forgery-resistant.
+   * from local history.
    *
    * Every reveal decision in this service goes through here rather than calling
-   * `ensureRevealBootstrap` directly, so the signature verifier can never be
-   * forgotten at a call site. It is the verifier, not `content.senderId`, that
-   * makes the history scan trustworthy: see utils/selfAuthorship.ts for what
-   * that proves and what it does not.
+   * `ensureRevealBootstrap` directly, so there is one place to audit.
+   *
+   * What makes the history scan trustworthy is `Message.authenticatedSenderId`,
+   * stamped by `saveMessage` from the crypto layer's answer and never read off
+   * the wire. Deliberately NOT `content.senderId`, which any sender can write.
    */
   private async isRevealedTo(
     selfAddress: string,
-    partnerAddress: string,
-    keyset: { userKeyset: secureChannel.UserKeyset },
+    partnerAddress: string
   ): Promise<boolean> {
-    const publicKeyHex = keyset?.userKeyset?.user_key?.public_key
-      ? Buffer.from(new Uint8Array(keyset.userKeyset.user_key.public_key)).toString('hex')
-      : '';
-    return ensureRevealBootstrap(
-      selfAddress,
-      partnerAddress,
-      (p) => this.messageDB.getMessages(p),
-      createSelfAuthorshipVerifier(publicKeyHex)
+    return ensureRevealBootstrap(selfAddress, partnerAddress, (p) =>
+      this.messageDB.getMessages(p)
     );
   }
 
@@ -892,7 +885,7 @@ export class MessageService {
         const last = this.autoRevealLastFired.get(partnerAddress) ?? 0;
         if (now - last < MessageService.AUTO_REVEAL_DEBOUNCE_MS) return;
 
-        const revealed = await this.isRevealedTo(selfAddress, partnerAddress, keyset);
+        const revealed = await this.isRevealedTo(selfAddress, partnerAddress);
         if (!revealed) return;
 
         const config = await this.messageDB.getUserConfig({ address: selfAddress });
@@ -1849,7 +1842,7 @@ export class MessageService {
     // and the `dm-update-profile` senders (whose identity rides the PAYLOAD,
     // already ledger-gated by their own callers) pay nothing.
     if (senderDisplayName || senderUserIcon) {
-      const revealed = await this.isRevealedTo(selfUserAddress, address, keyset);
+      const revealed = await this.isRevealedTo(selfUserAddress, address);
       if (!revealed) {
         senderDisplayName = undefined;
         senderUserIcon = undefined;
@@ -2339,6 +2332,20 @@ export class MessageService {
    * Saves message to DB and updates query cache.
    * @param currentUserAddress - Pass current user's address when sending messages to update lastReadTimestamp
    */
+  /**
+   * @param authenticatedSenderId Who the CRYPTO LAYER says sent this, stamped
+   *   onto the stored row as `Message.authenticatedSenderId`. REQUIRED, and
+   *   deliberately not optional: every call site must answer, because a site
+   *   that silently omitted it would store a row with no provenance and the
+   *   reveal ledger would read that as "not authored by me" forever.
+   *
+   *   - DM receive → the session's authenticated address, captured BEFORE the
+   *     self-echo reassignment overwrites it.
+   *   - DM send    → our own address. We are provably the author.
+   *   - Space      → `null`. Space membership is a different trust model and
+   *     nothing reads this field there; `null` is the explicit "not applicable"
+   *     answer rather than an accidental omission.
+   */
   async saveMessage(
     decryptedContent: Message,
     messageDB: MessageDB,
@@ -2346,7 +2353,13 @@ export class MessageService {
     channelId: string,
     conversationType: string,
     updatedUserProfile: { user_icon?: string; display_name?: string },
-    currentUserAddress?: string
+    authenticatedSenderId: string | null,
+    // Deliberately required-but-nullable rather than optional. `authenticatedSenderId`
+    // sits immediately before it and is also string-ish, so leaving this optional
+    // meant an existing 7-argument call kept compiling with its `currentUserAddress`
+    // silently rebound to the new parameter — a security field taking whatever
+    // value happened to be in that position, with no type error anywhere.
+    currentUserAddress: string | undefined
   ) {
     if (decryptedContent.content.type === 'reaction') {
       const reaction = decryptedContent.content as ReactionMessage;
@@ -2843,7 +2856,19 @@ export class MessageService {
       });
 
       await messageDB.saveMessage(
-        { ...decryptedContent, channelId: channelId, spaceId: spaceId },
+        {
+          ...decryptedContent,
+          channelId: channelId,
+          spaceId: spaceId,
+          // ⚠️ AFTER the spread, and it must stay that way. `decryptedContent`
+          // is attacker-authored JSON: a peer can put `authenticatedSenderId`
+          // in their payload, and spreading it last would let them name
+          // themselves as anyone. Written here it is always overwritten by the
+          // crypto layer's answer, so the wire value can never survive.
+          // `undefined` (the space case) is the correct absent value — readers
+          // fail closed on it.
+          authenticatedSenderId: authenticatedSenderId ?? undefined,
+        },
         0,
         spaceId,
         conversationType,
@@ -3728,7 +3753,7 @@ export class MessageService {
     }
     const mayRevealIdentity =
       isRevealingAct ||
-      (await this.isRevealedTo(currentPasskeyInfo.address, address, keyset));
+      (await this.isRevealedTo(currentPasskeyInfo.address, address));
     // Read these, never `currentPasskeyInfo.displayName`, at every
     // session-creating call below. `undefined` is what the crypto layer already
     // receives from any caller that has no passkey display name, so this is a
@@ -4057,6 +4082,10 @@ export class MessageService {
             display_name:
               conversation?.conversation?.displayName ?? t`Unknown User`,
           },
+          // Our own send: we are provably the author, no crypto layer needed
+          // to tell us so. This is the stamp the reveal ledger reads back as
+          // "I deliberately messaged this person".
+          currentPasskeyInfo.address,
           currentPasskeyInfo.address // Update lastReadTimestamp for own messages
         );
         await this.addMessage(queryClient, address, address, message);
@@ -4252,6 +4281,8 @@ export class MessageService {
           display_name:
             conversation?.conversation?.displayName ?? t`Unknown User`,
         },
+        // Our own send — see the sibling call above.
+        currentPasskeyInfo.address,
         currentPasskeyInfo.address // Update lastReadTimestamp for own messages
       );
       await this.addMessage(queryClient, address, address, message);
@@ -4335,6 +4366,11 @@ export class MessageService {
         // that needs to know "was this really us?" must read this boolean, never
         // a field from inside the decrypted payload.
         const authenticatedSenderIsSelf = session.user_address === self_address;
+        // Same value, kept as the address rather than a boolean: it is what
+        // gets stamped onto every row saved from this frame. For a partner's
+        // message this is the partner; for our own message echoed from another
+        // device it is us, which is correct — we did author that one.
+        const authenticatedDmSender = session.user_address;
 
         let updatedUserProfile: secureChannel.UserProfile | undefined;
         decryptedContent = parseDecryptedMessage(session.message, 'InitEnvelope');
@@ -4551,7 +4587,9 @@ export class MessageService {
               session.user_address,
               session.user_address,
               'direct',
-              senderProfile
+              senderProfile,
+              authenticatedDmSender,
+              self_address
             );
             await this.addMessage(
               queryClient,
@@ -4662,7 +4700,9 @@ export class MessageService {
               session.user_address,
               session.user_address,
               'direct',
-              senderProfile
+              senderProfile,
+              authenticatedDmSender,
+              self_address
             );
           } catch (saveError) {
             // The save is the critical step — retry once; a second failure
@@ -4681,7 +4721,9 @@ export class MessageService {
               session.user_address,
               session.user_address,
               'direct',
-              senderProfile
+              senderProfile,
+              authenticatedDmSender,
+              self_address
             );
           }
 
@@ -5535,7 +5577,9 @@ export class MessageService {
                     conversationId.split('/')[0],
                     space.defaultChannelId,
                     'group',
-                    {}
+                    {},
+                    null, // space message — the DM reveal ledger does not read these
+                    undefined
                   );
                   await this.addMessage(
                     queryClient,
@@ -5841,7 +5885,9 @@ export class MessageService {
                       conversationId.split('/')[0],
                       space.defaultChannelId,
                       'group',
-                      {}
+                      {},
+                      null, // space message — the DM reveal ledger does not read these
+                      undefined
                     );
                     await this.addMessage(
                       queryClient,
@@ -5949,7 +5995,9 @@ export class MessageService {
                     conversationId.split('/')[0],
                     space.defaultChannelId,
                     'group',
-                    {}
+                    {},
+                    null, // space message — the DM reveal ledger does not read these
+                    undefined
                   );
                   await this.addMessage(
                     queryClient,
@@ -6503,7 +6551,9 @@ export class MessageService {
                     conversationId.split('/')[0],
                     message.channelId,
                     'group',
-                    {}
+                    {},
+                    null, // space message — the DM reveal ledger does not read these
+                    undefined
                   );
                 }
                 const channelIds = envelope.message.messages
@@ -6572,7 +6622,9 @@ export class MessageService {
                   spaceId,
                   channelId,
                   'group',
-                  {}
+                  {},
+                  null, // space message — the DM reveal ledger does not read these
+                  undefined
                 );
                 if (channelId) {
                   channelIdsToRefetch.add(channelId);
@@ -6587,7 +6639,9 @@ export class MessageService {
                   spaceId,
                   channelId,
                   'group',
-                  {}
+                  {},
+                  null, // space message — the DM reveal ledger does not read these
+                  undefined
                 );
                 if (channelId) {
                   channelIdsToRefetch.add(channelId);
@@ -6853,7 +6907,19 @@ export class MessageService {
           conversationId.split('/')[0],
           conversationId.split('/')[0],
           keys.sending_inbox ? 'direct' : 'group',
-          profileToUse
+          profileToUse,
+          // `conversationId` is `found.conversationId` — the encryption state
+          // this frame actually decrypted with, so the counterparty here is
+          // crypto-established, not payload-supplied. Unlike the init path
+          // there is no self-echo reassignment to guard against (it is `const`).
+          //
+          // Our OWN message, fanned out to this device from another one, lands
+          // on the partner-keyed session and so gets stamped with the partner.
+          // That costs this device authorship credit for that row; it never
+          // grants it falsely, and it matches the ledger's existing per-device
+          // rule that a device waits for its own first deliberate send.
+          senderAddress,
+          self_address
         );
 
         // Notify for DM posts from other users only (skip muted conversations)
@@ -6889,6 +6955,10 @@ export class MessageService {
           this.messageDB,
           conversationId.split('/')[0],
           decryptedContent.channelId,
+          // Unreachable with `sending_inbox` set — this is the `else` of the
+          // DM branch, so the ternary always yields 'group' here. Left as-is
+          // to stay diff-minimal; the `null` below is the honest answer either
+          // way, since nothing outside a DM reads the marker.
           keys.sending_inbox ? 'direct' : 'group',
           // Merge, not replace — see the sibling branch above.
           {
@@ -6900,7 +6970,9 @@ export class MessageService {
               updatedUserProfile?.display_name,
               conversation.conversation?.displayName
             ),
-          }
+          },
+          null, // space message — the DM reveal ledger does not read these
+          self_address
         );
 
         // Check if this space message should trigger a desktop notification
@@ -7439,6 +7511,7 @@ export class MessageService {
             display_name:
               conversation.conversation?.displayName ?? t`Unknown User`,
           },
+          null, // space message — the DM reveal ledger does not read these
           currentPasskeyInfo.address // Update lastReadTimestamp for own messages
         );
         await this.addMessage(queryClient, spaceId, channelId, message);
@@ -7555,6 +7628,7 @@ export class MessageService {
             display_name:
               conversation.conversation?.displayName ?? t`Unknown User`,
           },
+          null, // space message — the DM reveal ledger does not read these
           currentPasskeyInfo.address // Update lastReadTimestamp for own messages
         );
         await this.addMessage(queryClient, spaceId, channelId, message);
@@ -7862,6 +7936,7 @@ export class MessageService {
             display_name:
               conversation.conversation?.displayName ?? t`Unknown User`,
           },
+          null, // space message — the DM reveal ledger does not read these
           failedMessage.content?.senderId // Update lastReadTimestamp for own messages
         );
 
@@ -8084,6 +8159,11 @@ export class MessageService {
             display_name:
               conversation?.conversation?.displayName ?? t`Unknown User`,
           },
+          // Retrying our OWN failed send, so we are provably the author.
+          // Deliberately NOT `failedMessage.content.senderId` (which the
+          // argument below still uses): that is payload, and payload is
+          // precisely what this field exists to stop trusting.
+          currentPasskeyInfo.address,
           failedMessage.content?.senderId // Update lastReadTimestamp for own messages
         );
 
