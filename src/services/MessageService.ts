@@ -16,7 +16,7 @@ import {
   SimpleRateLimiter,
   RATE_LIMITS,
   buildMessageFingerprint,
-  resolveVerifiedSender,
+  verifyAndResolveSender,
   authorizeControlMessage,
   isControlMessageType,
   shouldSignEdit,
@@ -28,6 +28,7 @@ import {
   applyEdit,
   getConversationSetting,
   type ControlMessageContent,
+  type VerifiedSenderResult,
   type DeviceKeyStatement,
   type AnnounceKeysStatement,
   type RevokeDeviceStatement,
@@ -1987,9 +1988,9 @@ export class MessageService {
    * fail closed) — never the spoofable payload senderId — and returns the
    * shared allow/drop verdict. Must be applied identically in both the DB
    * (saveMessage) and cache (addMessage) handlers so they can't disagree.
-   * `decryptedContent.publicKey` is non-null only after signature verification
-   * (see the verify blocks); unsigned/invalid control messages resolve to a
-   * null sender and are dropped (except the unsigned-edit-of-unsigned case).
+   * The signature is verified HERE (see verifySpaceSender) rather than assumed
+   * from the receive-path gate, so unsigned/invalid control messages resolve to
+   * a null sender and are dropped (except the unsigned-edit-of-unsigned case).
    */
   /**
    * Ed448 verifier in the shape shared's verifyDeviceKeyStatement expects,
@@ -2001,23 +2002,46 @@ export class MessageService {
   };
 
   /**
-   * Resolve a verified signer against BOTH the join-bound member table and the
-   * per-device signing keys admitted via master-signed statements. Every
-   * control/read-only/update-profile auth path funnels through here so the
-   * two lookup paths stay consistent.
+   * Verify a space message's ed448 signature AND resolve its signer, against
+   * both the join-bound member table and the per-device signing keys admitted
+   * via master-signed statements. Every control/read-only/update-profile/
+   * @everyone auth path funnels through here.
+   *
+   * Replaces the previous raw-publicKey resolver. That form took a key and
+   * returned an identity without checking anything, which was only safe while a
+   * distant gate in the receive path happened to have verified this message's
+   * type — a precondition carried by a comment, invisible to the type system,
+   * and silently absent for any type not on that gate's list. Verification is
+   * local now, so a new message type cannot inherit a false guarantee.
+   *
+   * `result.sender` is non-null only when `result.signatureValid`; callers that
+   * need proof of authorship must not read one without the other.
    */
-  private async resolveSpaceSender(
-    publicKey: string,
+  private async verifySpaceSender(
+    message: Message,
     messageDB: MessageDB,
-    spaceId: string,
-    members: SpaceMemberRow[]
-  ) {
-    const deviceKeys = await messageDB.getSpaceMemberDevices(spaceId);
-    return resolveVerifiedSender(
-      publicKey,
-      members as unknown as Parameters<typeof resolveVerifiedSender>[1],
-      deviceKeys as unknown as Parameters<typeof resolveVerifiedSender>[2]
-    );
+    lookupSpaceId: string,
+    members?: SpaceMemberRow[]
+  ): Promise<VerifiedSenderResult> {
+    const [resolvedMembers, deviceKeys] = await Promise.all([
+      members ?? messageDB.getSpaceMembers(lookupSpaceId),
+      messageDB.getSpaceMemberDevices(lookupSpaceId),
+    ]);
+    type Params = Parameters<typeof verifyAndResolveSender>[0];
+    return verifyAndResolveSender({
+      message,
+      // SCOPE: the WIRE spaceId/channelId, which is exactly what the receive
+      // path's verify blocks have always bound, so this stays a pure security
+      // change. Mobile deliberately binds the CONTEXT scope instead (see
+      // services/space/spaceMessageAuth.ts) so a signature can never attest one
+      // scope while the action lands in another. Aligning desktop is a real
+      // behaviour change and is tracked separately — do not switch it silently.
+      scopeSpaceId: message.spaceId,
+      scopeChannelId: message.channelId,
+      members: resolvedMembers as unknown as Params['members'],
+      deviceKeys: deviceKeys as unknown as Params['deviceKeys'],
+      provider: this.signingProvider,
+    });
   }
 
   /**
@@ -2099,14 +2123,12 @@ export class MessageService {
       ?.find((g) => g.channels.find((c) => c.channelId === channelId))
       ?.channels.find((c) => c.channelId === channelId);
     const members = await messageDB.getSpaceMembers(spaceId);
-    const verifiedSender = decryptedContent.publicKey
-      ? await this.resolveSpaceSender(
-          decryptedContent.publicKey,
-          messageDB,
-          spaceId,
-          members
-        )
-      : null;
+    const { sender: verifiedSender } = await this.verifySpaceSender(
+      decryptedContent,
+      messageDB,
+      spaceId,
+      members
+    );
     return authorizeControlMessage({
       content: decryptedContent.content as ControlMessageContent,
       verifiedSender,
@@ -2284,20 +2306,25 @@ export class MessageService {
     messageDB: MessageDB,
     spaceId: string
   ): Promise<boolean> {
-    if (!decryptedContent.publicKey || !decryptedContent.signature) {
-      return false;
-    }
     const members = await messageDB.getSpaceMembers(spaceId);
-    const verifiedSender = await this.resolveSpaceSender(
-      decryptedContent.publicKey,
+    const { signatureValid, sender } = await this.verifySpaceSender(
+      decryptedContent,
       messageDB,
       spaceId,
       members
     );
-    return (
-      verifiedSender === null ||
-      verifiedSender === decryptedContent.content.senderId
-    );
+    // An unchecked signature proves nothing, so it must not buy the bootstrap
+    // exemption below. This path used to resolve the key WITHOUT verifying:
+    // `update-profile` is not a control type, so in a repudiable space the
+    // receive-path gate never ran and a forged signature over a real member's
+    // (public) key resolved to that member.
+    if (!signatureValid) return false;
+    // A key already registered to a member may speak only for THAT member. A
+    // key registered to nobody is accepted as a rotation/bootstrap announcement
+    // so a member whose join broadcast never arrived can still surface a
+    // display name — the residual accepted in #243, bounded because the handler
+    // never writes the announced key onto the row.
+    return sender === null || sender === decryptedContent.content.senderId;
   }
 
   /**
@@ -2315,41 +2342,14 @@ export class MessageService {
     channel: Channel,
     members: SpaceMemberRow[]
   ): Promise<boolean> {
-    if (!decryptedContent.publicKey || !decryptedContent.signature) {
-      return false;
-    }
-    const messageId = await crypto.subtle.digest(
-      'SHA-256',
-      Buffer.from(
-        buildMessageFingerprint({
-          nonce: decryptedContent.nonce,
-          content: decryptedContent.content as any,
-          senderId: decryptedContent.content.senderId,
-          spaceId: decryptedContent.spaceId,
-          channelId: decryptedContent.channelId,
-        }),
-        'utf-8'
-      )
-    );
-    if (
-      decryptedContent.messageId !== Buffer.from(messageId).toString('hex') ||
-      ch.js_verify_ed448(
-        Buffer.from(decryptedContent.publicKey, 'hex').toString('base64'),
-        Buffer.from(messageId).toString('base64'),
-        Buffer.from(decryptedContent.signature, 'hex').toString('base64')
-      ) !== 'true'
-    ) {
-      return false;
-    }
-    const verifiedSender = await this.resolveSpaceSender(
-      decryptedContent.publicKey,
+    const { sender } = await this.verifySpaceSender(
+      decryptedContent,
       this.messageDB,
       space.spaceId,
       members
     );
     return (
-      !!verifiedSender &&
-      canManageReadOnlyChannel(verifiedSender, false, space, channel)
+      !!sender && canManageReadOnlyChannel(sender, false, space, channel)
     );
   }
 
@@ -7024,20 +7024,18 @@ export class MessageService {
               ?.map(role => role.roleId) ?? [];
 
             // @everyone gate: honor it only if the VERIFIED signer (not the
-            // spoofable payload senderId) held mention:everyone. The verify
-            // block above always verifies @everyone-bearing posts, so a present
-            // publicKey here is proven. We drop `space` from
+            // spoofable payload senderId) held mention:everyone. Verification
+            // happens here rather than being inherited from the receive-path
+            // gate, so this holds even if that gate stops covering @everyone
+            // posts. We drop `space` from
             // isMentionedWithSettings (disabling its payload-based @everyone
             // check) and do the @everyone check ourselves against the verified
             // signer; user/@role checks are unaffected (they don't use space).
-            const everyoneSender = decryptedContent.publicKey
-              ? await this.resolveSpaceSender(
-                  decryptedContent.publicKey,
-                  this.messageDB,
-                  spaceId,
-                  await this.messageDB.getSpaceMembers(spaceId)
-                )
-              : null;
+            const { sender: everyoneSender } = await this.verifySpaceSender(
+              decryptedContent,
+              this.messageDB,
+              spaceId
+            );
             const isMentioned =
               isMentionedWithSettings(decryptedContent, {
                 userAddress: self_address,
