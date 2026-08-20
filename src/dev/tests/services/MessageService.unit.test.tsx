@@ -50,7 +50,14 @@ vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
   },
   channel_raw: {
     js_sign_ed448: vi.fn().mockReturnValue(JSON.stringify('mock-signature')),
-    js_verify_ed448: vi.fn().mockReturnValue(true),
+    // The WASM primitive returns the STRING 'true'/'false', and production
+    // compares `=== 'true'`. A boolean here silently fails EVERY signature
+    // check, which turns "the signer was verified" tests into "rejected for an
+    // unrelated reason" tests that still pass — and leaves the ones that need a
+    // valid signature depending on a `mockReturnValue('true')` leaking out of
+    // some earlier sibling, since `clearAllMocks` clears calls but not
+    // implementations. Default to valid; override to 'false' to reject.
+    js_verify_ed448: vi.fn().mockReturnValue('true'),
   },
 }));
 
@@ -452,13 +459,19 @@ describe('MessageService - Unit Tests', () => {
       expect(mockDeps.messageDB.deleteMessage).not.toHaveBeenCalled();
     });
 
-    it('DROPS a SIGNED space delete when the signer is not the author and has no role', async () => {
+    it('DROPS a SIGNED space delete whose signer claims to be someone else', async () => {
       // Signer resolves to 'mallory' (a real member) but claims senderId=original-sender.
+      //
+      // Mallory is deliberately given message:delete here. Without it the
+      // permission check denies this on its own and the test passes without
+      // ever reaching the senderId binding it exists to pin — which is what it
+      // used to do. With the role, the ONLY thing that can stop it is the
+      // verified-signer-vs-claimed-sender comparison.
       const publicKey = 'ffeeddccbbaa99887766554433221100';
       mockDeps.messageDB.getMessage = vi.fn().mockResolvedValue(spaceTarget);
       mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
         spaceId: 'space',
-        roles: [],
+        roles: [{ roleId: 'r', members: ['mallory'], permissions: ['message:delete'] }],
         groups: [],
       });
       mockDeps.messageDB.getSpaceMembers = vi.fn().mockResolvedValue([
@@ -695,9 +708,19 @@ describe('MessageService - Unit Tests', () => {
       expect(mockDeps.messageDB.muteUser).not.toHaveBeenCalled();
     });
 
-    it('DROPS a SIGNED mute whose signer is not the claimed moderator', async () => {
+    it('DROPS a SIGNED mute whose signer claims to be the moderator', async () => {
       const publicKey = 'ff00ff00ff00ff00ff00ff00ff00ff00';
-      // Key belongs to 'mallory' (no mute role); payload claims 'mod'.
+      // Key belongs to 'mallory'; payload claims 'mod'. Mallory is given
+      // user:mute deliberately — without it the permission check denies this
+      // by itself and the test never reaches the senderId binding it names.
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
+        spaceId: 'space',
+        roles: [
+          { members: ['mod'], permissions: ['user:mute'] },
+          { members: ['mallory'], permissions: ['user:mute'] },
+        ],
+        groups: [],
+      });
       mockDeps.messageDB.getSpaceMembers = vi
         .fn()
         .mockResolvedValue([{ address: 'mallory', inbox_address: deriveInboxAddress(publicKey) }]);

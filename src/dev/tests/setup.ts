@@ -39,6 +39,15 @@ beforeAll(() => {
         importKey: vi.fn(),
         encrypt: vi.fn(),
         decrypt: vi.fn(),
+        // ⚠️ Returns 32 ZERO BYTES for EVERY input, so any code that hashes
+        // here produces the same digest for all content. Every "recompute the
+        // fingerprint and compare the messageId" check thus compares a constant
+        // to a constant and cannot fail. That silently made nine signature-auth
+        // tests pass while verifying nothing (2026-08-20), and the inline
+        // verify blocks in MessageService.handleNewMessage still hash this way,
+        // so they remain untestable through this setup. If you are testing
+        // anything signature-related, either drive code that uses the shared
+        // primitive (noble SHA-256, not stubbed) or replace this stub locally.
         digest: vi.fn().mockResolvedValue(new ArrayBuffer(32)),
       },
     },

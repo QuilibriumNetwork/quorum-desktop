@@ -2020,14 +2020,24 @@ export class MessageService {
   private async verifySpaceSender(
     message: Message,
     messageDB: MessageDB,
-    // SCOPE — the space/channel the action will actually APPLY in, never the
-    // one the message claims. Control-type fingerprints bind these, so checking
-    // the claimed scope would be self-defeating: an attacker picks both the
-    // claim and the signature, so the two always agree, and the signature ends
-    // up attesting one place while the delete/pin/mute lands in another.
-    // Matches mobile, which binds the context scope for this reason
+    // SCOPE — the space/channel the action will actually APPLY in. Control-type
+    // fingerprints bind these, so verifying against the scope the message
+    // CLAIMS is self-defeating: the attacker picks the claim and the signature
+    // together, so they always agree, and the signature ends up attesting one
+    // place while the delete/pin/mute lands in another. Matches mobile
     // (services/space/spaceMessageAuth.ts). Inert for non-control types, whose
     // fingerprints carry no scope at all.
+    //
+    // HONEST LIMIT, worth knowing before relying on this: only the SPACE half
+    // is independently sourced. `spaceId` comes from the delivering session
+    // (`conversationId.split('/')[0]`), which an attacker cannot choose without
+    // actually being in that space. `channelId` has no such independent source
+    // — a space is one group-encryption scope and the channel is a plaintext
+    // label inside it, so the context channel IS the wire channel. It is safe
+    // today only because the same variable also drives every target lookup
+    // (`getMessage({spaceId, channelId, messageId})`), so verification and
+    // effect cannot be pointed at different channels. If channels ever gain
+    // their own keys or an independent source, re-check this.
     scopeSpaceId: string,
     scopeChannelId: string,
     members?: SpaceMemberRow[]
@@ -2135,7 +2145,10 @@ export class MessageService {
     );
     return authorizeControlMessage({
       content: decryptedContent.content as ControlMessageContent,
-      verifiedSender,
+      // `?? null` is the union collapsing, not a shortcut: an unverified result
+      // carries NO sender field at all, and both that and a verified-but-
+      // unresolvable key mean the same thing downstream — nobody proven.
+      verifiedSender: verifiedSender ?? null,
       space: space ?? undefined,
       channel,
       targetMessage,
@@ -5406,6 +5419,16 @@ export class MessageService {
             // Verify signatures for non-repudiable spaces (all types) AND for
             // control messages in ANY space — control auth must not depend on
             // repudiability, or a repudiable space would skip the gate.
+            //
+            // ⚠️ VESTIGIAL as an AUTHORIZATION gate. No auth decision depends on
+            // this block any more: every one re-verifies at its own call site
+            // via `verifySpaceSender`, which fails closed independently. What
+            // this still does is strip an unverifiable signature off the stored
+            // row (and drop update-profile below), which the display layer
+            // reads. Note it fingerprints the WIRE scope, the pattern the auth
+            // paths deliberately moved away from — harmless here because
+            // nothing authorizes on the result, but do not copy it, and do not
+            // assume auth is relying on it.
             if (
               space &&
               decryptedContent.publicKey &&
@@ -6508,6 +6531,12 @@ export class MessageService {
                 for (const message of envelope.message.messages) {
                   // Verify non-repudiable (all types) + control messages (any
                   // space) — control auth must not depend on repudiability.
+                  //
+                  // ⚠️ VESTIGIAL as an AUTHORIZATION gate — same as the live
+                  // path's block: auth re-verifies at its own call site via
+                  // `verifySpaceSender`. This only strips unverifiable
+                  // signatures off stored rows, and it fingerprints the WIRE
+                  // scope, which the auth paths deliberately no longer do.
                   if (
                     space &&
                     message.publicKey &&
