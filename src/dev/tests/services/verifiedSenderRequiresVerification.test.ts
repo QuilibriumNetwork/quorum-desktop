@@ -24,6 +24,8 @@
  * before trusting either result.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 /** Controllable ed448 verdict. The WASM primitive returns the STRING 'true'. */
 const verifyEd448 = vi.fn<(...args: string[]) => string>();
@@ -191,5 +193,46 @@ describe('a sender identity is never derived from an unverified key', () => {
       verifyEd448,
       'no ed448 verification ran, so any sender this path resolved is unproven'
     ).toHaveBeenCalled();
+  });
+});
+
+/**
+ * SOURCE GUARD. The behavioural tests above cover the paths a fixture can
+ * reach; this covers the ones it cannot, and it is the cheaper half of the
+ * defence. It matches text, so a reformat defeats it — what it can do is make
+ * reintroducing the unsafe shape loud instead of silent.
+ */
+describe('the unverified resolver cannot come back', () => {
+  const SOURCE = readFileSync(
+    resolve(process.cwd(), 'src/services/MessageService.ts'),
+    'utf8'
+  );
+
+  it('MessageService neither imports nor calls the raw reverse lookup', () => {
+    // `resolveVerifiedSender` runs no cryptography. Reaching it directly means
+    // some path can obtain an identity without a signature check — the defect
+    // the fused primitive exists to make unrepresentable.
+    //
+    // Matches an import entry or a call, NOT the name in prose: several
+    // comments legitimately explain what the reverse lookup is and why it must
+    // be fed a verified key, and those should stay.
+    expect(
+      /^\s*resolveVerifiedSender,\s*$/m.test(SOURCE),
+      'MessageService imported the no-crypto reverse lookup again; use verifySpaceSender'
+    ).toBe(false);
+    expect(
+      /\bresolveVerifiedSender\s*\(/.test(SOURCE),
+      'MessageService called the no-crypto reverse lookup again; use verifySpaceSender'
+    ).toBe(false);
+  });
+
+  it('every sender resolution goes through verifySpaceSender', () => {
+    // One definition, and at least the four auth paths consuming it: control
+    // messages, update-profile, read-only posts, and the @everyone gate.
+    const uses = SOURCE.match(/\bverifySpaceSender\b/g) ?? [];
+    expect(
+      uses.length,
+      'a sender-resolution call site was added or removed — re-check that each one verifies'
+    ).toBeGreaterThanOrEqual(5);
   });
 });
