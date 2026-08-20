@@ -89,7 +89,17 @@ import {
   recordDmProfileSend,
   claimDmProfileSend,
   releaseDmProfileSend,
+  clearDmProfileSendState,
 } from '../utils/dmProfileGate';
+import {
+  parseDmProfileUpdate,
+  type DmProfileUpdatePayload,
+} from '../utils/dmProfileWire';
+import {
+  ensureRevealBootstrap,
+  hasRevealedTo,
+  recordReveal,
+} from '../utils/dmRevealLedger';
 import {
   claimSpaceProfileAnnounce,
   recordSpaceProfileAnnounce,
@@ -670,10 +680,19 @@ export class MessageService {
     }
   }
 
-  // Broadcasts the sender's current profile to every DM partner over their
-  // existing session, so receivers can refresh their stored displayName /
-  // icon / bio. Per-partner failures (no established session yet, etc.) are
-  // logged and skipped — never block the user-facing profile save.
+  // Broadcasts the sender's current profile to every DM partner THIS USER HAS
+  // DELIBERATELY MESSAGED, over their existing session, so receivers can
+  // refresh their stored displayName / icon / bio. Per-partner failures (no
+  // established session yet, etc.) are logged and skipped — never block the
+  // user-facing profile save.
+  //
+  // ⚠️ The reveal-ledger filter below is a PRIVACY boundary, not an
+  // optimisation. A conversation row is created by a STRANGER'S INBOUND
+  // MESSAGE, so having a row is not consent. Without the filter, changing your
+  // display name announces you to everyone who has ever messaged you — and
+  // `rebroadcastProfileToAllDMsOnConnect` fires this on every reconnect with no
+  // user action behind it, so a spammer would learn your identity by doing
+  // nothing but waiting. See utils/dmRevealLedger.ts.
   async broadcastProfileToAllDMs(
     displayName: string,
     userIcon: string,
@@ -693,9 +712,25 @@ export class MessageService {
       return;
     }
 
+    let sent = 0;
+    let skippedUnrevealed = 0;
+
     for (const conv of conversations) {
       const partnerAddress = conv.address;
       if (!partnerAddress || partnerAddress === selfUserAddress) continue;
+
+      // Privacy gate. Independent of the dedup gate below and both are wanted:
+      // this one asks "may we tell them at all", the dedup gate asks "have we
+      // already told them this exact thing". Fails CLOSED.
+      const revealed = await ensureRevealBootstrap(
+        selfUserAddress,
+        partnerAddress,
+        (p) => this.messageDB.getMessages(p)
+      );
+      if (!revealed) {
+        skippedUnrevealed += 1;
+        continue;
+      }
 
       const msg: DMUpdateProfileMessage = {
         type: 'dm-update-profile',
@@ -726,6 +761,7 @@ export class MessageService {
           keyset,
         );
         recordDmProfileSend(selfUserAddress, partnerAddress, signature);
+        sent += 1;
       } catch (err) {
         // A contact row with no established session is the normal case for a
         // never-messaged contact, not a fault: there is no session to encrypt
@@ -748,6 +784,217 @@ export class MessageService {
         // wedged shut for the rest of the session.
         releaseDmProfileSend(selfUserAddress, partnerAddress, signature);
       }
+    }
+
+    // The only externally visible evidence this ran, and the only way to tell
+    // "sent to nobody because everyone was deduped" from "sent to nobody
+    // because everyone is a stranger" from "never called at all" — three very
+    // different causes. `skipped` is what makes the privacy guard observable in
+    // a harness run: the leak reads `broadcast to 1/1`, the fix reads
+    // `broadcast to 0/1 … 1 unrevealed`.
+    logger.log(
+      `[DMProfile] broadcast to ${sent}/${conversations.length} partner(s)` +
+        (skippedUnrevealed > 0 ? ` — ${skippedUnrevealed} unrevealed (skipped)` : '') +
+        (sent === 0 && skippedUnrevealed === 0 ? ' — all deduped or unreachable' : '')
+    );
+  }
+
+  /**
+   * One auto-reveal per partner per hour, process-local.
+   *
+   * An init envelope can be REDELIVERED (the receive path bounds replays but
+   * does not eliminate them), and every redelivery looks like "a new session
+   * appeared" — without this, one flapping inbox turns a single new device into
+   * a push storm.
+   *
+   * Keyed on the PARTNER alone, which is narrower than the reveal ledger's
+   * (self, partner) pair. A desktop process serves one account at a time, so
+   * the extra dimension would only add a way for the two keys to disagree.
+   */
+  private static readonly AUTO_REVEAL_DEBOUNCE_MS = 60 * 60 * 1000;
+  private autoRevealLastFired = new Map<string, number>();
+
+  /**
+   * A DM partner has appeared with a NEW SESSION carrying their identity — a
+   * reinstall, a second device, a reset. If we have already deliberately
+   * messaged them, push our identity once so their fresh device shows our name
+   * without waiting for our next rename or reply.
+   *
+   * Consent belongs to the RELATIONSHIP, not the session (see
+   * utils/dmRevealLedger.ts), which is the whole reason this is allowed to fire
+   * without a user action behind it. If the ledger says stranger: total
+   * silence. That silence is the feature — a spammer's client establishing a
+   * session with us must learn nothing.
+   *
+   * ⚠️ Fire-and-forget by construction. This runs from the receive path, where
+   * a throw would abort processing of a frame that holds a real message. Every
+   * failure inside is swallowed; the on-connect sweep and the next deliberate
+   * send are independent backstops that do not depend on this at all.
+   *
+   * @param partnerAddress MUST be the AUTHENTICATED session address, never the
+   *   self-declared `user_profile.user_address` from inside the envelope.
+   */
+  private maybeAutoRevealToPartner(
+    selfAddress: string,
+    partnerAddress: string,
+    keyset: {
+      deviceKeyset: secureChannel.DeviceKeyset;
+      userKeyset: secureChannel.UserKeyset;
+    },
+  ): void {
+    void (async () => {
+      try {
+        if (!selfAddress || !partnerAddress) return;
+        if (partnerAddress === selfAddress) return; // our own other device
+
+        const now = Date.now();
+        const last = this.autoRevealLastFired.get(partnerAddress) ?? 0;
+        if (now - last < MessageService.AUTO_REVEAL_DEBOUNCE_MS) return;
+
+        const revealed = await ensureRevealBootstrap(
+          selfAddress,
+          partnerAddress,
+          (p) => this.messageDB.getMessages(p)
+        );
+        if (!revealed) return;
+
+        const config = await this.messageDB.getUserConfig({ address: selfAddress });
+        const displayName = config?.name || '';
+        const userIcon = config?.profile_image || '';
+        // Nothing to advertise yet — a wire no-op the receiver would ignore.
+        // Checked BEFORE the debounce stamp so a fresh account that has not
+        // finished syncing its config does not burn its hour on a no-op.
+        if (!displayName && !userIcon) return;
+
+        // Stamped BEFORE the send, deliberately. A transient failure below
+        // costs a legitimate reveal for up to an hour, because the next
+        // redelivery of the same envelope is debounced away too. The
+        // alternative — stamping only after a confirmed send — lets a
+        // redelivery storm re-attempt on every envelope while the failure
+        // persists, which is the exact storm this exists to prevent. Fails SAFE
+        // either way: a missed reveal, never a leak.
+        this.autoRevealLastFired.set(partnerAddress, now);
+
+        await this.pushIdentityToPartner(
+          selfAddress,
+          partnerAddress,
+          keyset,
+          displayName,
+          userIcon,
+          'new session'
+        );
+      } catch (err) {
+        logger.debug('[DMProfile] auto-reveal skipped', { err });
+      }
+    })();
+  }
+
+  /**
+   * The user has just deliberately messaged this partner for the first time.
+   * That act IS the consent, so record it and push our identity once.
+   *
+   * Why the push and not just the record: replying to someone who messaged us
+   * FIRST happens on a session THEY established, so our reply is an ordinary
+   * established-session frame and carries no `user_profile`. Without this, a
+   * reply would grant consent that nothing acts on until our next rename or
+   * reconnect sweep — the partner would sit on a placeholder for hours after we
+   * had already answered them.
+   *
+   * On a genuine first contact (we initiate) there is no session yet, so the
+   * push below throws "No established sessions available" and is swallowed:
+   * correct, because that outbound's own INIT envelope already carries our
+   * identity. So this fires usefully exactly in the reply case.
+   *
+   * ⚠️ Fire-and-forget. An identity push must never surface as a failed message
+   * send. `recordReveal` is called SYNCHRONOUSLY before the async part, so the
+   * caller's `mayRevealIdentity` and any concurrent sweep see the new state
+   * immediately.
+   */
+  private recordRevealAndAnnounce(
+    selfAddress: string,
+    partnerAddress: string,
+    keyset: {
+      deviceKeyset: secureChannel.DeviceKeyset;
+      userKeyset: secureChannel.UserKeyset;
+    },
+  ): void {
+    if (!selfAddress || !partnerAddress || partnerAddress === selfAddress) return;
+    const alreadyRevealed = hasRevealedTo(selfAddress, partnerAddress);
+    recordReveal(selfAddress, partnerAddress, Date.now());
+    // Already revealed: the ledger says so and the ordinary gate/sweep already
+    // cover this partner. Returning here is what keeps this off the hot path of
+    // every subsequent message in an established conversation.
+    if (alreadyRevealed) return;
+
+    void (async () => {
+      try {
+        const config = await this.messageDB.getUserConfig({ address: selfAddress });
+        const displayName = config?.name || '';
+        const userIcon = config?.profile_image || '';
+        if (!displayName && !userIcon) return;
+        await this.pushIdentityToPartner(
+          selfAddress,
+          partnerAddress,
+          keyset,
+          displayName,
+          userIcon,
+          'first deliberate send'
+        );
+      } catch (err) {
+        logger.debug('[DMProfile] reveal-on-send push skipped', { err });
+      }
+    })();
+  }
+
+  /**
+   * Send one `dm-update-profile` to one partner, through the shared dedup gate.
+   *
+   * ⚠️ PRECONDITION, enforced by the CALLER and not here: the caller must
+   * already know it is safe to reveal identity to this partner — either the
+   * ledger says so, or the caller IS the act that establishes consent. This
+   * function performs NO reveal check of its own, deliberately, so there is
+   * exactly ONE place that owns the consent decision per call site. Do not add
+   * a second check here; two copies of a decision are how the two copies drift.
+   */
+  private async pushIdentityToPartner(
+    selfAddress: string,
+    partnerAddress: string,
+    keyset: {
+      deviceKeyset: secureChannel.DeviceKeyset;
+      userKeyset: secureChannel.UserKeyset;
+    },
+    displayName: string,
+    userIcon: string,
+    reason: string,
+  ): Promise<void> {
+    // The gate may hold "already announced 3x" from a period when this partner
+    // could not receive it (an old session, or the era when cross-client pushes
+    // were silently eaten). That record must not gag the one reveal the trigger
+    // just earned.
+    clearDmProfileSendState(selfAddress, partnerAddress);
+
+    const msg: DMUpdateProfileMessage = {
+      type: 'dm-update-profile',
+      senderId: selfAddress,
+      displayName,
+      userIcon,
+    };
+    const signature = dmProfileSignature(msg);
+    if (!shouldSendDmProfile(selfAddress, partnerAddress, signature)) return;
+    claimDmProfileSend(selfAddress, partnerAddress, signature);
+    try {
+      await this.encryptAndSendDm(
+        partnerAddress,
+        msg as unknown as Record<string, unknown>,
+        selfAddress,
+        keyset,
+      );
+      recordDmProfileSend(selfAddress, partnerAddress, signature);
+      logger.log(`[DMProfile] identity revealed to partner (${reason})`, {
+        partner: partnerAddress.slice(0, 16),
+      });
+    } finally {
+      releaseDmProfileSend(selfAddress, partnerAddress, signature);
     }
   }
 
@@ -904,18 +1151,27 @@ export class MessageService {
     // change their global profile. Upsert the conversation row so the next
     // render shows the new identity. senderId must match the envelope's
     // sender address (anti-spoofing); mismatched messages are dropped.
-    if (raw.type === 'dm-update-profile') {
-      const profileMsg = raw as DMUpdateProfileMessage;
-      if (profileMsg.senderId === senderAddress) {
-        this.handleDMProfileUpdate(senderAddress, profileMsg, queryClient).catch((err) => {
+    //
+    // TWO DIALECTS, both live: our own FLAT `{ type, senderId, … }` and
+    // mobile's WRAPPED `{ messageId, content: { type, … } }`. This used to
+    // test `raw.type` alone, so a mobile rename matched nothing and the frame
+    // fell through to saveMessage below — persisted as a ghost message in the
+    // conversation. See utils/dmProfileWire.ts.
+    const profilePayload = parseDmProfileUpdate(raw);
+    if (profilePayload) {
+      if (profilePayload.senderId === senderAddress) {
+        this.handleDMProfileUpdate(senderAddress, profilePayload, queryClient).catch((err) => {
           logger.warn('[DMProfile] handleDMProfileUpdate failed', { err, sender: senderAddress.slice(0, 16) });
         });
       } else {
         logger.warn('[DMProfile] Rejected dm-update-profile with mismatched senderId', {
           envelopeSender: senderAddress.slice(0, 16),
-          claimedSender: profileMsg.senderId?.slice(0, 16),
+          claimedSender: profilePayload.senderId?.slice(0, 16),
         });
       }
+      // Consumed either way. A spoofed frame must be DROPPED, not rendered:
+      // returning false here would put an attacker-authored payload through
+      // saveMessage, which is the ghost row again with worse provenance.
       return true;
     }
 
@@ -956,7 +1212,7 @@ export class MessageService {
   // Bio accepts empty string as "clear" to match space update-profile.
   private async handleDMProfileUpdate(
     senderAddress: string,
-    profileMsg: DMUpdateProfileMessage,
+    profileMsg: DmProfileUpdatePayload,
     queryClient?: QueryClient,
   ): Promise<void> {
     const conversationId = senderAddress + '/' + senderAddress;
@@ -968,6 +1224,13 @@ export class MessageService {
       ...(profileMsg.displayName ? { displayName: profileMsg.displayName } : {}),
       ...(profileMsg.userIcon ? { icon: profileMsg.userIcon } : {}),
       ...(profileMsg.bio !== undefined ? { bio: profileMsg.bio } : {}),
+      // CLAIMED, never verified. The sender asserts this `.q` name; nothing in
+      // this frame proves the claim, so it goes in a claimed-only slot and the
+      // verified name resolution path must not read it. Presence-exact ('' is
+      // a deliberate un-election), matching mobile's `claimed_primary_username`.
+      ...(profileMsg.primaryUsername !== undefined
+        ? { claimedPrimaryUsername: profileMsg.primaryUsername }
+        : {}),
     };
 
     await this.messageDB.saveConversation(merged);
@@ -3336,6 +3599,44 @@ export class MessageService {
         !isRemoveMessage &&
         (pendingMessage as any).type !== 'remove-message');
 
+    // ── DM reveal rule ──────────────────────────────────────────────────────
+    //
+    // Identity rides an INIT-CARRYING frame: every session-creating call below
+    // takes `displayName` / `pfpUrl` and the crypto layer puts them in the
+    // envelope's `user_profile`. So whether we reveal ourselves is decided
+    // HERE, by what kind of act this is.
+    //
+    // Every act reaching this method is deliberate EXCEPT the two delete
+    // variants. Deleting a conversation is not a reply — a spammer messages
+    // you, you delete the thread, and desktop sends them a reset signal. If
+    // that signal carries identity, "I want nothing to do with you" is the
+    // frame that unmasks you, and it can be the FIRST frame they ever get from
+    // you. This is not hypothetical: it is exactly the path mobile found on its
+    // own side, which nobody predicted from the send path alone.
+    //
+    // A delete to someone we HAVE already revealed to keeps its identity: the
+    // ledger already reflects that consent, and stripping it would only degrade
+    // an existing partner's row for no privacy gain.
+    const isRevealingAct = !isDeleteConversation;
+    if (isRevealingAct) {
+      // Records synchronously; the identity push it may trigger is
+      // fire-and-forget and can never fail this send.
+      this.recordRevealAndAnnounce(currentPasskeyInfo.address, address, keyset);
+    }
+    const mayRevealIdentity =
+      isRevealingAct ||
+      (await ensureRevealBootstrap(currentPasskeyInfo.address, address, (p) =>
+        this.messageDB.getMessages(p)
+      ));
+    // Read these, never `currentPasskeyInfo.displayName`, at every
+    // session-creating call below. `undefined` is what the crypto layer already
+    // receives from any caller that has no passkey display name, so this is a
+    // supported value on that boundary, not a new one.
+    const outgoingDisplayName = mayRevealIdentity
+      ? currentPasskeyInfo.displayName
+      : undefined;
+    const outgoingUserIcon = mayRevealIdentity ? currentPasskeyInfo.pfpUrl : undefined;
+
     // Pre-built message for optimistic display (set inside isPostMessage block,
     // reused by legacy enqueueOutbound path to ensure same messageId)
     let preBuiltMessage: Message | null = null;
@@ -3432,8 +3733,12 @@ export class MessageService {
             signedMessage: message,
             messageId: messageIdHex,
             selfUserAddress: self.user_address,
-            senderDisplayName: currentPasskeyInfo.displayName,
-            senderUserIcon: currentPasskeyInfo.pfpUrl,
+            // Reveal-gated, like every other identity emission on this path.
+            // Always populated in practice (a queued post is a deliberate act,
+            // so `mayRevealIdentity` is true) — read from the gated values
+            // anyway, so a future non-post caller cannot quietly leak here.
+            senderDisplayName: outgoingDisplayName,
+            senderUserIcon: outgoingUserIcon,
           },
           `send-dm:${address}:${messageIdHex}`
         );
@@ -3579,8 +3884,8 @@ export class MessageService {
                     [set],
                     JSON.stringify(message),
                     self,
-                    currentPasskeyInfo!.displayName,
-                    currentPasskeyInfo?.pfpUrl
+                    outgoingDisplayName,
+                    outgoingUserIcon
                   ),
                 ];
               } else {
@@ -3591,8 +3896,8 @@ export class MessageService {
                     [set],
                     JSON.stringify(message),
                     self,
-                    currentPasskeyInfo!.displayName,
-                    currentPasskeyInfo?.pfpUrl
+                    outgoingDisplayName,
+                    outgoingUserIcon
                   ),
                 ];
               }
@@ -3606,8 +3911,8 @@ export class MessageService {
                     .concat(counterparty.device_registrations)
                     .find((d) => d.inbox_registration.inbox_address === inbox)!,
                   JSON.stringify(message),
-                  currentPasskeyInfo!.displayName,
-                  currentPasskeyInfo?.pfpUrl
+                  outgoingDisplayName,
+                  outgoingUserIcon
                 )),
               ];
             }
@@ -3763,8 +4068,8 @@ export class MessageService {
                   [set],
                   JSON.stringify(message),
                   self,
-                  currentPasskeyInfo!.displayName,
-                  currentPasskeyInfo?.pfpUrl
+                  outgoingDisplayName,
+                  outgoingUserIcon
                 ),
               ];
             } else {
@@ -3775,8 +4080,8 @@ export class MessageService {
                   [set],
                   JSON.stringify(message),
                   self,
-                  currentPasskeyInfo!.displayName,
-                  currentPasskeyInfo?.pfpUrl
+                  outgoingDisplayName,
+                  outgoingUserIcon
                 ),
               ];
             }
@@ -3790,8 +4095,8 @@ export class MessageService {
                   .concat(counterparty.device_registrations)
                   .find((d) => d.inbox_registration.inbox_address === inbox)!,
                 JSON.stringify(message),
-                currentPasskeyInfo!.displayName,
-                currentPasskeyInfo?.pfpUrl
+                outgoingDisplayName,
+                outgoingUserIcon
               )),
             ];
           }
@@ -4150,6 +4455,12 @@ export class MessageService {
             display_name: envelope.display_name,
           };
         }
+        // A brand-new session from this partner just landed on our device
+        // inbox — the reinstall / second-device case. Answer with our identity
+        // IF the ledger already says we consented to this relationship.
+        // `session.user_address` is the address the crypto layer authenticated,
+        // not the `envelope.user_address` field the sender wrote themselves.
+        this.maybeAutoRevealToPartner(self_address, session.user_address, keyset);
         this.enqueueOutbound(async () => {
           return [
             JSON.stringify({
@@ -4683,6 +4994,19 @@ export class MessageService {
       decryptedContent = dm.content;
       sentAccept = dm.sentAccept;
       updatedUserProfile = dm.updatedUserProfile;
+      // `updatedUserProfile` is set only on the INIT-CARRYING variant of the
+      // decrypt union (both branches guard on `user_profile`), so its presence
+      // here IS "a new session from this partner appeared". The partner comes
+      // from `conversationId`, which is the stored session's own binding — an
+      // authenticated identifier, unlike the profile's self-declared
+      // `user_address`.
+      if (updatedUserProfile) {
+        this.maybeAutoRevealToPartner(
+          self_address,
+          conversationId.split('/')[0],
+          keyset
+        );
+      }
       // State already persisted inside the locked section — `newState` stays
       // null so the deferred tail save (space path) does not run for DMs.
     } else {
@@ -7470,6 +7794,17 @@ export class MessageService {
       return;
     }
 
+    // Pressing retry is a deliberate act, and only a PERSISTED message can
+    // reach here — the delete-conversation control frames are never saved (see
+    // submitMessage: "do not save delete-conversation (control) messages"), so
+    // this can never be a retry of one. Record consent for the same reason the
+    // original send did, and read the gated values at the session-creating
+    // calls below rather than `currentPasskeyInfo` directly, so this path reads
+    // identically to submitMessage's. See the reveal-rule block there.
+    this.recordRevealAndAnnounce(currentPasskeyInfo.address, address, keyset);
+    const outgoingDisplayName = currentPasskeyInfo.displayName;
+    const outgoingUserIcon = currentPasskeyInfo.pfpUrl;
+
     // Update status to 'sending' (optimistic)
     queryClient.setQueriesData(
       { queryKey: buildMessagesKeyPrefix({ spaceId: address, channelId: address }) },
@@ -7540,8 +7875,8 @@ export class MessageService {
                     [set],
                     JSON.stringify(messageToEncrypt),
                     self,
-                    currentPasskeyInfo!.displayName,
-                    currentPasskeyInfo?.pfpUrl
+                    outgoingDisplayName,
+                    outgoingUserIcon
                   ),
                 ];
               } else {
@@ -7552,8 +7887,8 @@ export class MessageService {
                     [set],
                     JSON.stringify(messageToEncrypt),
                     self,
-                    currentPasskeyInfo!.displayName,
-                    currentPasskeyInfo?.pfpUrl
+                    outgoingDisplayName,
+                    outgoingUserIcon
                   ),
                 ];
               }
@@ -7567,8 +7902,8 @@ export class MessageService {
                     .concat(counterparty.device_registrations)
                     .find((d) => d.inbox_registration.inbox_address === inbox)!,
                   JSON.stringify(messageToEncrypt),
-                  currentPasskeyInfo!.displayName,
-                  currentPasskeyInfo?.pfpUrl
+                  outgoingDisplayName,
+                  outgoingUserIcon
                 )),
               ];
             }

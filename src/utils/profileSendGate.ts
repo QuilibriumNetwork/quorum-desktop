@@ -125,6 +125,21 @@ export interface ProfileSendGate {
     signature: string,
     now?: number
   ): void;
+  /**
+   * Forget everything this gate knows about one peer, so the next `shouldSend`
+   * starts from "never sent".
+   *
+   * For the case the cap cannot see: the gate's record is about the sessions
+   * that existed when it was written. When a peer appears with a BRAND-NEW
+   * session (a reinstall, a second device), an exhausted record is stale
+   * evidence — it says "they already heard this three times", which was true of
+   * a device that no longer exists. Without a clear, the new device would never
+   * learn our identity at all.
+   *
+   * Not a general escape hatch: a caller that clears on every send has simply
+   * deleted the gate. Use it only where a genuinely new session is the trigger.
+   */
+  clear(selfAddress: string, peerKey: string): void;
 }
 
 export const createProfileSendGate = (
@@ -280,6 +295,17 @@ export const createProfileSendGate = (
       const attempts =
         previous && previous.sig === signature ? previous.attempts + 1 : 1;
       writeRecord(selfAddress, peerKey, { sig: signature, at: now, attempts });
+    },
+
+    clear(selfAddress, peerKey) {
+      try {
+        localStorage.removeItem(gateKey(selfAddress, peerKey));
+      } catch (err) {
+        // Same fail-OPEN posture as the read: a gate we could not clear stays
+        // as it was, which at worst skips one announce. Never throws into the
+        // receive path that calls this.
+        logger.warn(`${logPrefix} gate clear failed — record left as-is`, { err });
+      }
     },
   };
 };
