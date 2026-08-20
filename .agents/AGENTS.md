@@ -152,9 +152,20 @@ recalled.
 - The authoritative cross-repo tracker is the private repo
   `QuilibriumNetwork/quorum-app-prod` (issue #1 for the control-message-auth
   cluster). Link there, not to `.secret/` paths.
-- **Releasing a file** once its fix has shipped to users: move it out of
-  `.secret/` into `.done/`, add its `INDEX.md` row, and say in the commit that the
-  fix is live. A deliberate act, never a side effect of tidying.
+- **Closing and releasing are two separate moves, usually far apart.** Merging a
+  fix does not make its write-up publishable.
+  1. **Merged** → `issues/.secret/.done/`. The issue is finished and should stop
+     reading as open work, but a merged fix is not a released one: until a build
+     ships, the file still describes a mechanism against code users are running.
+     Set `status: done`, record the PR numbers, move it there. Still gitignored,
+     still absent from `INDEX.md`.
+  2. **Actually reached users** → the public `.done/`. Only now does it leave
+     `.secret/`, gain its `INDEX.md` row, and get a commit saying the fix is live.
+     A deliberate act, never a side effect of tidying.
+
+  Do not collapse the two. Treating step 1 as step 2 publishes early; refusing
+  step 1 because it looks like step 2 leaves finished issues cluttering
+  `.secret/` root, which is what happened before this was written down.
 
 ## 🔑 Key material
 
