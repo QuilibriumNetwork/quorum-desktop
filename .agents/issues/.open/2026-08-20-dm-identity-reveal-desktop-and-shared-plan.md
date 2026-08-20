@@ -99,8 +99,34 @@ it was a harness run, not a reading.
 **Two exploitable vulnerabilities were found and measured on the production
 relay, both rooted in the same untrusted field.** They are written up in
 `.agents/issues/.secret/` (gitignored — this repo is public) rather than here.
-One is fixed outright; the other is mitigated with a documented residue that
-needs a lead-dev decision. Read that file before treating this plan as closed.
+Both are now fixed outright. Read that file before treating this plan as closed.
+
+### The scope grew again: quorum-mobile, and a deeper fix in both clients
+
+The first round of fixes closed the measured attacks but left a residue, and had
+not looked at the sibling client. Both were followed up:
+
+- **quorum-mobile was checked and carried BOTH vulnerabilities.** Its reveal
+  ledger was desktop's pre-fix function verbatim, and both of its
+  `delete-conversation-self` gates were payload-only. Fixed on branch
+  `fix/dm-trust-the-authenticated-sender`, with its own red-on-revert proofs.
+- **The mitigation was replaced by a cure.** The ed448 self-authorship check was
+  removed in favour of `Message.authenticatedSenderId` — a marker stamped at
+  persist time from what the crypto layer authenticated, never read off the
+  wire. The signature approach was replayable (a DM messageId does not commit to
+  the conversation, and a space co-member can see messages we signed there), and
+  keeping it beside the marker would have meant "marker OR signature", which is
+  only as strong as its weakest branch. Deleted rather than kept.
+
+That change touched all 20 of desktop's `saveMessage` call sites, because the
+new argument is required rather than optional. Making it required is what
+surfaced three sites where the pre-existing optional `currentUserAddress` would
+have silently rebound onto the new security field with no type error at all.
+
+**Ordering constraint this creates:** quorum-mobile pins a published
+`@quilibrium/quorum-shared` (`2.1.0-43`) rather than a local link, so its fix
+does not compile until shared publishes. Desktop links locally and is unaffected.
+Ship order is therefore shared → publish → desktop → mobile.
 
 Three further real findings, fixed in `b38cc948d`:
 
