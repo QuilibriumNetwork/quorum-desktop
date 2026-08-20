@@ -2020,24 +2020,27 @@ export class MessageService {
   private async verifySpaceSender(
     message: Message,
     messageDB: MessageDB,
-    lookupSpaceId: string,
+    // SCOPE — the space/channel the action will actually APPLY in, never the
+    // one the message claims. Control-type fingerprints bind these, so checking
+    // the claimed scope would be self-defeating: an attacker picks both the
+    // claim and the signature, so the two always agree, and the signature ends
+    // up attesting one place while the delete/pin/mute lands in another.
+    // Matches mobile, which binds the context scope for this reason
+    // (services/space/spaceMessageAuth.ts). Inert for non-control types, whose
+    // fingerprints carry no scope at all.
+    scopeSpaceId: string,
+    scopeChannelId: string,
     members?: SpaceMemberRow[]
   ): Promise<VerifiedSenderResult> {
     const [resolvedMembers, deviceKeys] = await Promise.all([
-      members ?? messageDB.getSpaceMembers(lookupSpaceId),
-      messageDB.getSpaceMemberDevices(lookupSpaceId),
+      members ?? messageDB.getSpaceMembers(scopeSpaceId),
+      messageDB.getSpaceMemberDevices(scopeSpaceId),
     ]);
     type Params = Parameters<typeof verifyAndResolveSender>[0];
     return verifyAndResolveSender({
       message,
-      // SCOPE: the WIRE spaceId/channelId, which is exactly what the receive
-      // path's verify blocks have always bound, so this stays a pure security
-      // change. Mobile deliberately binds the CONTEXT scope instead (see
-      // services/space/spaceMessageAuth.ts) so a signature can never attest one
-      // scope while the action lands in another. Aligning desktop is a real
-      // behaviour change and is tracked separately — do not switch it silently.
-      scopeSpaceId: message.spaceId,
-      scopeChannelId: message.channelId,
+      scopeSpaceId,
+      scopeChannelId,
       members: resolvedMembers as unknown as Params['members'],
       deviceKeys: deviceKeys as unknown as Params['deviceKeys'],
       provider: this.signingProvider,
@@ -2127,6 +2130,7 @@ export class MessageService {
       decryptedContent,
       messageDB,
       spaceId,
+      channelId,
       members
     );
     return authorizeControlMessage({
@@ -2304,13 +2308,15 @@ export class MessageService {
   private async isUpdateProfileAuthorized(
     decryptedContent: Message,
     messageDB: MessageDB,
-    spaceId: string
+    spaceId: string,
+    channelId: string
   ): Promise<boolean> {
     const members = await messageDB.getSpaceMembers(spaceId);
     const { signatureValid, sender } = await this.verifySpaceSender(
       decryptedContent,
       messageDB,
       spaceId,
+      channelId,
       members
     );
     // An unchecked signature proves nothing, so it must not buy the bootstrap
@@ -2346,6 +2352,7 @@ export class MessageService {
       decryptedContent,
       this.messageDB,
       space.spaceId,
+      channel.channelId,
       members
     );
     return (
@@ -2804,7 +2811,8 @@ export class MessageService {
         !(await this.isUpdateProfileAuthorized(
           decryptedContent,
           messageDB,
-          spaceId
+          spaceId,
+          channelId
         ))
       ) {
         return;
@@ -3360,7 +3368,8 @@ export class MessageService {
         !(await this.isUpdateProfileAuthorized(
           decryptedContent,
           this.messageDB,
-          spaceId
+          spaceId,
+          channelId
         ))
       ) {
         return;
@@ -7034,7 +7043,8 @@ export class MessageService {
             const { sender: everyoneSender } = await this.verifySpaceSender(
               decryptedContent,
               this.messageDB,
-              spaceId
+              spaceId,
+              channelId
             );
             const isMentioned =
               isMentionedWithSettings(decryptedContent, {

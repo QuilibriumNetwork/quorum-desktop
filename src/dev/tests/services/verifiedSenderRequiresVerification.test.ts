@@ -194,6 +194,98 @@ describe('a sender identity is never derived from an unverified key', () => {
       'no ed448 verification ran, so any sender this path resolved is unproven'
     ).toHaveBeenCalled();
   });
+
+  /**
+   * SCOPE BINDING. A control-message signature covers the space and channel it
+   * was signed for. The question is which scope the receiver checks against:
+   * the one the message CLAIMS (attacker-controlled) or the one the action will
+   * actually land in.
+   *
+   * Checking the claimed scope is self-defeating: the attacker picks both the
+   * claim and the signature, so they always agree, and the signature ends up
+   * attesting one place while the delete/pin/mute happens somewhere else.
+   * Mobile binds the context scope on purpose (`spaceMessageAuth.ts:70-73`);
+   * these tests hold desktop to the same rule.
+   */
+  describe('a control message acts only in the scope its signature names', () => {
+    const CHANNEL = 'chan-1';
+    const OTHER_SPACE = 'space-2';
+    const OTHER_CHANNEL = 'chan-2';
+
+    /** A remove-message genuinely signed for `spaceId`/`channelId`. */
+    const controlSignedFor = (spaceId: string, channelId: string) => {
+      const nonce = 'nonce-scope';
+      const content = {
+        type: 'remove-message' as const,
+        senderId: VICTIM,
+        removeMessageId: 'target-1',
+      };
+      return {
+        spaceId,
+        channelId,
+        nonce,
+        messageId: computeMessageIdHex(
+          buildMessageFingerprint({
+            nonce,
+            content: content as never,
+            senderId: VICTIM,
+            spaceId,
+            channelId,
+          })
+        ),
+        digestAlgorithm: 'SHA-256' as const,
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        lastModifiedHash: '',
+        content,
+        publicKey: VICTIM_PUB,
+        signature: 'ab'.repeat(114),
+      };
+    };
+
+    /** Their own message, so permissions never enter into the verdict. */
+    const target = { content: { senderId: VICTIM, type: 'post' } };
+
+    /** Always delivered into SPACE / CHANNEL, whatever the message claims. */
+    const authorizeHere = (msg: unknown) =>
+      (
+        messageService as unknown as {
+          isSpaceControlAuthorized: (
+            ...a: unknown[]
+          ) => Promise<boolean>;
+        }
+      ).isSpaceControlAuthorized(
+        msg,
+        mockDeps.messageDB,
+        SPACE,
+        CHANNEL,
+        target
+      );
+
+    it('CONTROL ARM: signed for THIS scope, and honoured', async () => {
+      verifyEd448.mockReturnValue('true');
+      expect(
+        await authorizeHere(controlSignedFor(SPACE, CHANNEL)),
+        'a correctly scoped control message stopped working'
+      ).toBe(true);
+    });
+
+    it('signed for ANOTHER space, so it must not act here', async () => {
+      verifyEd448.mockReturnValue('true');
+      expect(
+        await authorizeHere(controlSignedFor(OTHER_SPACE, CHANNEL)),
+        'a signature naming a different space authorized an action in this one'
+      ).toBe(false);
+    });
+
+    it('signed for ANOTHER channel, so it must not act here', async () => {
+      verifyEd448.mockReturnValue('true');
+      expect(
+        await authorizeHere(controlSignedFor(SPACE, OTHER_CHANNEL)),
+        'a signature naming a different channel authorized an action in this one'
+      ).toBe(false);
+    });
+  });
 });
 
 /**
