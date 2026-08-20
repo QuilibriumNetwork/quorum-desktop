@@ -90,6 +90,36 @@ So the rule IS fully enforceable at desktop's app layer, and it now is — this
 is what made the delete-conversation fix a local edit rather than a
 crypto-layer conversation. No sign-off needed on this point.
 
+### The review pass changed the shipping story
+
+A six-reviewer pass (review-router) ran after the four tasks were committed. Two
+reviewers returned "clean to merge". They were wrong, and the thing that showed
+it was a harness run, not a reading.
+
+**Two exploitable vulnerabilities were found and measured on the production
+relay, both rooted in the same untrusted field.** They are written up in
+`.agents/issues/.secret/` (gitignored — this repo is public) rather than here.
+One is fixed outright; the other is mitigated with a documented residue that
+needs a lead-dev decision. Read that file before treating this plan as closed.
+
+Three further real findings, fixed in `b38cc948d`:
+
+- **The reveal gate was enforced per caller, and the audit missed three.** The
+  offline action-queue handlers (`reaction-dm`, `delete-dm`, `edit-dm`) passed
+  the user's real name and avatar straight to the wire. Reacting to a stranger's
+  first message while offline was enough to unmask you. The gate now lives in
+  `encryptAndSendDm`, the chokepoint every DM identity emission passes through.
+- **Auto-reveal had a debounce race** — the stamp is set after two awaits, so
+  two new-session frames could both pass the check. It now claims the partner
+  synchronously first.
+- **Identity-push failures were all logged at `debug`**, which production
+  diagnostics never show. Real failures now log at `warn`; only the expected
+  "no session yet, this is first contact" case stays at debug.
+
+Plus: a shared-type field was renamed to `claimed_primary_username` before
+publish, because mobile already uses that exact key in 23 files and the
+camelCase spelling would have described a field no mobile row carries.
+
 ### Left out, and why
 
 **The `dm-reveal-cross` scenario (Task 1's cross-client verification).** It
