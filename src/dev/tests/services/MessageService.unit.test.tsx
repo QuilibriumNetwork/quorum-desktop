@@ -26,7 +26,12 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MessageService, MessageServiceDependencies } from '@/services/MessageService';
-import { deriveInboxAddress, buildDeviceKeyStatementBytes } from '@quilibrium/quorum-shared';
+import {
+  deriveInboxAddress,
+  buildDeviceKeyStatementBytes,
+  buildMessageFingerprint,
+  computeMessageIdHex,
+} from '@quilibrium/quorum-shared';
 import { channel_raw } from '@quilibrium/quilibrium-js-sdk-channels';
 import { QueryClient } from '@tanstack/react-query';
 
@@ -45,9 +50,49 @@ vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
   },
   channel_raw: {
     js_sign_ed448: vi.fn().mockReturnValue(JSON.stringify('mock-signature')),
-    js_verify_ed448: vi.fn().mockReturnValue(true),
+    // The WASM primitive returns the STRING 'true'/'false', and production
+    // compares `=== 'true'`. A boolean here silently fails EVERY signature
+    // check, which turns "the signer was verified" tests into "rejected for an
+    // unrelated reason" tests that still pass — and leaves the ones that need a
+    // valid signature depending on a `mockReturnValue('true')` leaking out of
+    // some earlier sibling, since `clearAllMocks` clears calls but not
+    // implementations. Default to valid; override to 'false' to reject.
+    js_verify_ed448: vi.fn().mockReturnValue('true'),
   },
 }));
+
+/**
+ * Stamp the messageId a real client would produce: the hash of the message's
+ * own fingerprint. Auth paths recompute it and reject a mismatch, so a fixture
+ * carrying an arbitrary id is refused before any signature is looked at.
+ *
+ * These ids used to be arbitrary strings (or 64 zeros) and still passed,
+ * because `setup.ts` stubs `crypto.subtle.digest` to return 32 zero bytes for
+ * EVERY input — which made the recompute inert and let any id match. Sender
+ * verification now runs real SHA-256, so fixtures have to be well-formed to
+ * stand in for genuine traffic.
+ */
+const withRealMessageId = <
+  T extends {
+    nonce: string;
+    spaceId: string;
+    channelId: string;
+    content: { senderId: string };
+  },
+>(
+  msg: T
+): T => ({
+  ...msg,
+  messageId: computeMessageIdHex(
+    buildMessageFingerprint({
+      nonce: msg.nonce,
+      content: msg.content as never,
+      senderId: msg.content.senderId,
+      spaceId: msg.spaceId,
+      channelId: msg.channelId,
+    })
+  ),
+});
 
 describe('MessageService - Unit Tests', () => {
   let messageService: MessageService;
@@ -348,28 +393,30 @@ describe('MessageService - Unit Tests', () => {
       lastModifiedHash: 'hash',
       content: { senderId: 'original-sender', type: 'post', text: 'Message' },
     };
-    const spaceRemove = (over: Record<string, unknown> = {}) => ({
-      messageId: 'remove-123',
-      spaceId: 'space',
-      channelId: 'channel',
-      createdDate: Date.now(),
-      modifiedDate: Date.now(),
-      digestAlgorithm: 'sha256' as const,
-      nonce: 'nonce',
-      lastModifiedHash: 'hash',
-      content: {
-        senderId: 'original-sender',
-        type: 'remove-message',
-        removeMessageId: 'msg-to-remove',
-      },
-      ...over,
-    });
+    const spaceRemove = (over: Record<string, unknown> = {}) =>
+      withRealMessageId({
+        messageId: 'remove-123',
+        spaceId: 'space',
+        channelId: 'channel',
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        digestAlgorithm: 'sha256' as const,
+        nonce: 'nonce',
+        lastModifiedHash: 'hash',
+        content: {
+          senderId: 'original-sender',
+          type: 'remove-message',
+          removeMessageId: 'msg-to-remove',
+        },
+        ...over,
+      });
 
     it('honors a SIGNED space delete when the verified signer authored the target', async () => {
       // The verified sender is derived from the signing key, not the payload.
       // Register a member whose inbox_address matches this public key so the
       // reverse lookup resolves to 'original-sender'.
       const publicKey = 'aabbccddeeff00112233445566778899';
+      vi.mocked(channel_raw.js_verify_ed448).mockReturnValue('true');
       mockDeps.messageDB.getMessage = vi.fn().mockResolvedValue(spaceTarget);
       mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
         spaceId: 'space',
@@ -412,13 +459,19 @@ describe('MessageService - Unit Tests', () => {
       expect(mockDeps.messageDB.deleteMessage).not.toHaveBeenCalled();
     });
 
-    it('DROPS a SIGNED space delete when the signer is not the author and has no role', async () => {
+    it('DROPS a SIGNED space delete whose signer claims to be someone else', async () => {
       // Signer resolves to 'mallory' (a real member) but claims senderId=original-sender.
+      //
+      // Mallory is deliberately given message:delete here. Without it the
+      // permission check denies this on its own and the test passes without
+      // ever reaching the senderId binding it exists to pin — which is what it
+      // used to do. With the role, the ONLY thing that can stop it is the
+      // verified-signer-vs-claimed-sender comparison.
       const publicKey = 'ffeeddccbbaa99887766554433221100';
       mockDeps.messageDB.getMessage = vi.fn().mockResolvedValue(spaceTarget);
       mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
         spaceId: 'space',
-        roles: [],
+        roles: [{ roleId: 'r', members: ['mallory'], permissions: ['message:delete'] }],
         groups: [],
       });
       mockDeps.messageDB.getSpaceMembers = vi.fn().mockResolvedValue([
@@ -603,7 +656,7 @@ describe('MessageService - Unit Tests', () => {
   // the spoofable payload senderId (same class as remove/edit).
   describe('3d. addMessage() - Space mute authorization (anti-spoofing)', () => {
     const muteMsg = (over: Record<string, unknown> = {}) =>
-      ({
+      withRealMessageId({
         messageId: 'mute-1',
         spaceId: 'space',
         channelId: 'channel',
@@ -629,6 +682,7 @@ describe('MessageService - Unit Tests', () => {
 
     it('honors a SIGNED mute from the verified user:mute role holder', async () => {
       const publicKey = '11223344556677889900aabbccddeeff';
+      vi.mocked(channel_raw.js_verify_ed448).mockReturnValue('true');
       mockDeps.messageDB.getSpaceMembers = vi
         .fn()
         .mockResolvedValue([{ address: 'mod', inbox_address: deriveInboxAddress(publicKey) }]);
@@ -654,9 +708,19 @@ describe('MessageService - Unit Tests', () => {
       expect(mockDeps.messageDB.muteUser).not.toHaveBeenCalled();
     });
 
-    it('DROPS a SIGNED mute whose signer is not the claimed moderator', async () => {
+    it('DROPS a SIGNED mute whose signer claims to be the moderator', async () => {
       const publicKey = 'ff00ff00ff00ff00ff00ff00ff00ff00';
-      // Key belongs to 'mallory' (no mute role); payload claims 'mod'.
+      // Key belongs to 'mallory'; payload claims 'mod'. Mallory is given
+      // user:mute deliberately — without it the permission check denies this
+      // by itself and the test never reaches the senderId binding it names.
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
+        spaceId: 'space',
+        roles: [
+          { members: ['mod'], permissions: ['user:mute'] },
+          { members: ['mallory'], permissions: ['user:mute'] },
+        ],
+        groups: [],
+      });
       mockDeps.messageDB.getSpaceMembers = vi
         .fn()
         .mockResolvedValue([{ address: 'mallory', inbox_address: deriveInboxAddress(publicKey) }]);
@@ -702,11 +766,8 @@ describe('MessageService - Unit Tests', () => {
         content: { senderId: 'manager', type: 'post', text: 'announce' },
         ...over,
       }) as any;
-    // The test harness mocks crypto.subtle.digest to return 32 zero bytes, so
-    // the signed-post's messageId must match that (64 hex zeros) to pass the
-    // fingerprint recompute in isReadOnlyPostAuthorized.
     const signedManagerPost = () =>
-      roPost({ messageId: '0'.repeat(64), publicKey: mgrPub, signature: 'sig' });
+      withRealMessageId(roPost({ publicKey: mgrPub, signature: 'sig' }));
 
     beforeEach(() => {
       mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue(roSpace);
@@ -777,12 +838,13 @@ describe('MessageService - Unit Tests', () => {
         queryClient,
         'space',
         RO,
-        roPost({
-          messageId: '0'.repeat(64),
-          publicKey: mgrPub,
-          signature: 'sig',
-          content: { senderId: 'manager', type: 'embed', imageUrl: 'x' },
-        })
+        withRealMessageId(
+          roPost({
+            publicKey: mgrPub,
+            signature: 'sig',
+            content: { senderId: 'manager', type: 'embed', imageUrl: 'x' },
+          })
+        )
       );
       expect(spy).toHaveBeenCalled();
     });
@@ -823,7 +885,9 @@ describe('MessageService - Unit Tests', () => {
         ...over,
       }) as any;
     const signedManagerPost = (over: Record<string, unknown> = {}) =>
-      roPost({ messageId: '0'.repeat(64), publicKey: mgrPub, signature: 'sig', ...over });
+      withRealMessageId(
+        roPost({ publicKey: mgrPub, signature: 'sig', ...over })
+      );
 
     const save = (msg: any) =>
       messageService.saveMessage(
@@ -907,7 +971,7 @@ describe('MessageService - Unit Tests', () => {
     const victimInbox = deriveInboxAddress(victimPub);
 
     const upMsg = (over: Record<string, unknown> = {}) =>
-      ({
+      withRealMessageId({
         messageId: 'up-1',
         spaceId: 'space',
         channelId: 'space',
@@ -933,6 +997,10 @@ describe('MessageService - Unit Tests', () => {
       );
 
     beforeEach(() => {
+      // The signature must actually check out for these cases to say anything
+      // about authorization: an invalid one is now rejected before the
+      // key->member lookup, which is what makes the lookup's answer meaningful.
+      vi.mocked(channel_raw.js_verify_ed448).mockReturnValue('true');
       mockDeps.messageDB.saveSpaceMember = vi.fn().mockResolvedValue(undefined);
       mockDeps.messageDB.getSpaceMember = vi.fn().mockResolvedValue(null);
       mockDeps.messageDB.getSpaceMembers = vi.fn().mockResolvedValue([]);
@@ -1546,11 +1614,15 @@ describe('MessageService - Unit Tests', () => {
       revoked: false,
     };
     // remove-message of Alice's own message, signed by her SECOND device key.
-    const removeOwn = {
+    const removeOwn = withRealMessageId({
+      messageId: '',
+      spaceId: SPACE,
+      channelId: CHANNEL,
+      nonce: 'n-pdk',
       publicKey: DEVICE_KEY_PUB,
       signature: 'sig',
       content: { type: 'remove-message', senderId: ALICE, removeMessageId: 'm1' },
-    } as any;
+    }) as any;
     const targetByAlice = { content: { senderId: ALICE, type: 'post' } } as any;
 
     beforeEach(() => {
