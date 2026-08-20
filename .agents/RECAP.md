@@ -1,12 +1,12 @@
 ---
 type: recap
 title: "Quorum Desktop — Project State"
-updated: 2026-08-19
+updated: 2026-08-20
 ---
 
 # Quorum Desktop — Project State
 
-> Last updated: 2026-08-19
+> Last updated: 2026-08-20
 
 ## Dashboard
 
@@ -20,7 +20,7 @@ updated: 2026-08-19
 |---|-------|----------------|
 | 1 | [Production diagnostics reach a developer, not an ordinary user](issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md) | Half done. PR #349 shipped `quorumLogger.enable()`, so warn/error can now be read in a production build — but only by someone willing to open devtools. The remaining piece (Option 2: a diagnostics toggle with an export) is the only route that gets a report from a user who never will, and it is now the shared gate on the forced-close evidence, on measuring whether storage eviction reaches real users at all, and (new, 2026-08-17) on noticing when QNS verification has silently stopped for a whole session. |
 | 2 | [Safari wipes all IndexedDB after 7 idle days](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md) | **Reframed 2026-08-17 by PR #350.** The app-side consequence is now measured headlessly, and the correction matters: with `allowSync` off (the default) an eviction takes Spaces and profile too, not just DMs. M4 shipped — a backup reminder for sync-off users. What is left is either **Mac-gated** (WebKit's 7-day trigger, the installed-app exemption, M2's passkey Phase 0) or small and unbuilt (M3 `persist()`, M5, M6). Do the small ones here; the reproduction waits on Apple hardware. |
-| 3 | Thread control-message authorization hardening | **New 2026-08-20.** Route `thread` actions through the same verified-signer primitive the other four control types already use, instead of the parallel check they use today. Detail deliberately held privately — see the security folder, not this file. Not a one-liner: it changes how thread message IDs are scoped, so it needs a cross-client compatibility plan before any code moves. |
+| 3 | Thread control-message authorization hardening | **New 2026-08-20, and now unblocked.** Route `thread` actions through the same verified-signer primitive the other four control types already use, instead of the parallel check they use today. Its structural prerequisite shipped the same day (shared #86 + desktop #358): the primitive now verifies and resolves in one step, so routing a new type through it can no longer hand back an identity nothing checked — which is exactly the trap the naive version of this fix would have sprung. Detail deliberately held privately — see the security folder, not this file. Still not a one-liner: it changes how thread message IDs are scoped, so it needs a cross-client compatibility plan before any code moves. |
 | 4 | [A reconnecting client starves control-message processing](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md) | Sync requests expire unread, so a new joiner is answered by nobody. Already confirmed in the harness with the failing line captured, so it is ready to fix. |
 | 5 | [The config upload has no size guard and fails silently](issues/.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md) | No client measures the payload before sending. A config save can fail with the user believing it succeeded. |
 | 6 | [Config sync space loss race condition](issues/.open/2026-01-09-config-sync-space-loss-race-condition.md) | Spaces can be lost outright. Filed January and never actioned; still reads as a data-loss path. |
@@ -31,7 +31,7 @@ updated: 2026-08-19
 - **Config sync slice 1 — one thing left, and it needs eyes.** [Record what the last publish did](issues/.open/2026-08-08-record-and-show-what-the-last-config-publish-actually-did.md). Slice 2 closed (below). The release-build criterion turned out to be reachable cold: mobile #254/#255 prove the record is written under the real shipping log configuration, and `yarn check:release-bundle` asserts every failure string survives into the production bundle. What remains is watching the line render on a device, plus three untouched desktop-side items (queue classification, Rule 1 on the failure path, the `payloadBytes` cross-check).
 - [Six name surfaces never reached the resolver](issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md) — shipped in PR #325, suite green with every rule shown red on revert. Held open deliberately; confirm in the running app and close.
 - [Desktop shows a stale display name except in User Settings](issues/.open/2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md) — shipped in PR #313 and device-verified. Held open on purpose; decide whether anything still remains.
-- [MASTER RECAP: control-message authorization](issues/.open/2026-06-25-MASTER-RECAP-control-message-auth.md) — every row of its own table reads DONE on both clients. Only release-timing coordination remains, which the file calls outside our control.
+- [MASTER RECAP: control-message authorization](issues/.open/2026-06-25-MASTER-RECAP-control-message-auth.md) — **no longer only release timing.** The desktop space fix is now measured as shipped (`prod-2026-07-31`), but the mobile half is unverifiable from the repo (no git tags), and the table has since gained rows: two open follow-ups held privately, and one DONE for the 2026-08-20 verify/resolve work. Closing it needs someone with mobile release visibility.
 - [78 Dependabot alerts triaged, react-router bumped](issues/.open/2026-08-12-dependabot-78-alerts-triage-react-router-bump.md) — shipped in PR #337 with 1428 tests green. Nobody has driven the running app against the new router version.
 
 ### Blocked

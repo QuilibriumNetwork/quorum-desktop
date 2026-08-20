@@ -45,6 +45,29 @@ else (the other task files) is detail under one of the boxes below.
 > going live. Deferred, non-blocking: the edited-message
 > "signed" badge across devices — `.agents/issues/.open/2026-07-19-edited-message-signature-badge-cross-device.md`.
 > Read the sections below with this update in mind.
+>
+> **UPDATE 2026-08-20 — the "neither in prod" statement above is now STALE.
+> MEASURED, not assumed.** The desktop space fix HAS shipped:
+>
+> ```
+> git merge-base --is-ancestor d6d20a6a2 prod-2026-07-31   # exit 0 → contained
+> git merge-base --is-ancestor d6d20a6a2 prod-2026-08-05   # exit 0 → contained
+> git merge-base --is-ancestor d6d20a6a2 prod-2026-07-17   # non-zero → NOT contained
+> ```
+>
+> So desktop crossed over with the **`prod-2026-07-31`** release; `v2.1.4`,
+> `v2.1.0-1` and `v2.1.0-2` all contain it too. The last release WITHOUT the fix
+> was `prod-2026-07-17` (v2.1.3), which matches what this recap recorded at the
+> time.
+>
+> Mobile's side could not be measured the same way — `quorum-mobile` carries **no
+> git tags at all**, so its production state is not derivable from the repo.
+> `#160` (`d3c6113`) and `#162` (`c77adff`) are merged. Someone with release
+> visibility needs to confirm the mobile ship date before this recap closes.
+>
+> Status left as `open` deliberately: the desktop half is verified shipped, the
+> mobile half is unverified, and closing on half a measurement is how a stale
+> fact like the one above gets created in the first place.
 
 ## The bug, in one paragraph
 
@@ -213,6 +236,9 @@ you what is OPEN vs DONE so nothing gets lost.
 | **REFERENCE** | `2026-06-25-control-message-auth-audit-senderid-spoofing.md` (mobile, gitignored) | The full per-handler audit matrix (DM + space + reactions). Detailed reference; THIS recap is the live tracker. |
 | **DONE** | quorum-mobile PR #217 + #218 (merged 2026-08-02) | Receive-side parity: mobile now performs the owner-signature check on space control messages that desktop already performed, and authenticates `leave` the same way desktop does. #218 tightened the failure handling and added per-space caching of the registration lookup. Mobile-side only, no wire change, desktop needed nothing. Task detail in mobile's gitignored `.agents/`. |
 | **OPEN** | **PRIVATE:** quorum-mobile gitignored `.agents/` (`2026-08-02-desktop-side-followups-from-the-control-auth-review.md`) | Two desktop-side items surfaced while reviewing the above: one control handler that is not gated the way its siblings are, and a main-thread/batching precondition for extending verification to ordinary messages. Detail kept OUT of this public repo per the standing rule below. Needs a Lead Dev decision on ownership. |
+| **OPEN** | **PRIVATE:** desktop `.agents/issues/.secret/` (`2026-08-20-...-authorized-on-a-payload-field.md`) | A further control-message type that was never enrolled in the verified-signer path, found 2026-08-20 by a review pass on an unrelated branch. Same shape as the row above. Desktop-only — the sibling client does not implement the feature, so no coordinated cut-over is needed. Detail kept OUT of this public repo. |
+| **DONE** | quorum-shared **#86** + quorum-desktop **#358** (merged 2026-08-20) | **The structural correction the design's first slice called for.** Signature verification and sender resolution were separate steps joined by convention; they are now one shared primitive, and every desktop authorization path calls it, so a sender identity cannot be produced without the ed448 check having run. Control-signature scope binding also now matches the sibling client. No wire change; nothing legitimate is newly rejected. Verified: 1609 desktop + 705 shared tests, 8/8 live-relay harness scenarios, and each added check confirmed to fail when removed. Unblocks the first OPEN row above. |
+| **OPEN** | **PRIVATE:** desktop `.agents/issues/.secret/` (`2026-08-20-sender-authentication-is-opt-in-mechanism-level-fix-design.md`) | **The mechanism-level design this recap called for at lines 108-115, now written up.** Diagnoses why per-type hardening keeps leaving gaps (the type list is opt-IN, so a new feature inherits nothing and nothing fails), and proposes compiler-enforced classification in `quorum-shared` plus one structural correction that is a prerequisite for the row above. 7 slices, each with its own rollout-safety note. **Needs a named owner for slices 3-7** — see §7 of that file, which argues this proposal has now been made twice and shelved once. |
 
 ### Adjacent work (related topic, NOT the spoofing fix — don't confuse)
 
