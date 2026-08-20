@@ -1,12 +1,12 @@
 ---
 type: task
 title: "DM identity: teach desktop the other wire dialect, then give it the same reveal ledger mobile has"
-status: in-progress
+status: done
 priority: high
 created: 2026-08-20
 updated: 2026-08-20
 area: DM identity / privacy / cross-client parity
-repos: quorum-desktop (Tasks 1-3), quorum-shared (Task 4 — additive type change, needs a publish)
+repos: quorum-desktop (#357), quorum-shared (#85), quorum-mobile (#264)
 related:
   - "quorum-mobile/.agents/issues/2026-08-18-dm-identity-reveal-ledger-plan.md (the mobile half, shipped; §D and §S there are the source of this plan)"
   - "issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md (the established-session measurement both plans build on)"
@@ -17,12 +17,30 @@ related:
 
 ## Status
 
-Implemented 2026-08-20 on branch `feat/dm-identity-reveal-ledger`
-(quorum-desktop) and `feat/dm-profile-primary-username` (quorum-shared).
-Not yet merged, not yet reviewed by the lead dev.
+**2026-08-20 — shipped in PR #357** (`fix(dm): reveal your identity only to
+people you deliberately messaged`), with quorum-shared PR #85 and quorum-mobile
+PR #38.
 
-**Tasks 1-4 are all done.** One verification item could not be built in this
-repo (§Left out, below).
+What landed: all four tasks, plus a great deal more than the plan scoped. The
+wire-dialect parser and ghost-message fix, the fail-closed reveal ledger and
+broadcast filter, auto-reveal to a known partner's new device, and the shared
+type additions. On top of that, two exploitable vulnerabilities found during
+review were fixed on BOTH clients via `Message.authenticatedSenderId`, a marker
+stamped at persist time from what the crypto layer authenticated — see
+`.agents/issues/.secret/` for the detail, which deliberately does not live here.
+
+Verified before merge: desktop 172 files / 1601 tests, mobile 125 / 1187, both
+lint-clean; every guard broken deliberately and confirmed red before restoring;
+and five end-to-end scenarios re-run against the production relay AFTER the
+implementation changed, because the earlier measurements had been taken against
+a different mechanism and would otherwise have been stale evidence.
+
+Still open, tracked elsewhere, NOT part of this issue:
+
+- The cross-client `dm-reveal-cross` scenario (§Left out below) still needs a
+  mobile-side counterpart; it was out of scope by this plan's own header.
+- A pre-existing HIGH-severity authorization bypass found by the security sweep
+  in code this branch does not touch, filed in `.agents/issues/.secret/`.
 
 ### What shipped
 
@@ -31,7 +49,7 @@ repo (§Left out, below).
 | 1 | `src/utils/dmProfileWire.ts`, intercept in `MessageService.ts` | Both dialects parse; wrapped wins; spoofed frames consumed, not rendered. |
 | 2 | `src/utils/dmRevealLedger.ts`, sweep filter, `recordRevealAndAnnounce` | Fail-closed ledger; sweep gated per partner; consent recorded on deliberate sends. |
 | 3 | `maybeAutoRevealToPartner`, `automaticFrameIdentityAudit.test.ts` | 1h debounce; audit covers payload AND envelope identity args. |
-| 4 | `quorum-shared` `DMUpdateProfileMessage.primaryUsername`, `Conversation.claimedPrimaryUsername` | Envelope ambiguity documented on the type. Published: NOT yet (see below). |
+| 4 | `quorum-shared` `DMUpdateProfileMessage.primaryUsername`, `Conversation.claimed_primary_username` | Envelope ambiguity documented on the type. Merged in shared #85; snake_case to match the key 23 mobile files already use. A version bump/publish is still a separate release step. |
 
 ### MEASURED, production relay, 2026-08-20
 

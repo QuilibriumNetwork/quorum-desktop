@@ -10,7 +10,7 @@ updated: 2026-08-19
 
 ## Dashboard
 
-> Updated: 2026-08-19 · 93 live · 77 startable · 7 nearly done · 10 blocked
+> Updated: 2026-08-20 · 92 live · 76 startable · 7 nearly done · 10 blocked
 
 **Next step:** Finish production diagnostics (Option 2: a diagnostics toggle with an export) — it is the only route that gets a failure report from a user who will never open devtools, and **four** separate issues are now waiting on evidence it would collect.
 
@@ -20,11 +20,11 @@ updated: 2026-08-19
 |---|-------|----------------|
 | 1 | [Production diagnostics reach a developer, not an ordinary user](issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md) | Half done. PR #349 shipped `quorumLogger.enable()`, so warn/error can now be read in a production build — but only by someone willing to open devtools. The remaining piece (Option 2: a diagnostics toggle with an export) is the only route that gets a report from a user who never will, and it is now the shared gate on the forced-close evidence, on measuring whether storage eviction reaches real users at all, and (new, 2026-08-17) on noticing when QNS verification has silently stopped for a whole session. |
 | 2 | [Safari wipes all IndexedDB after 7 idle days](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md) | **Reframed 2026-08-17 by PR #350.** The app-side consequence is now measured headlessly, and the correction matters: with `allowSync` off (the default) an eviction takes Spaces and profile too, not just DMs. M4 shipped — a backup reminder for sync-off users. What is left is either **Mac-gated** (WebKit's 7-day trigger, the installed-app exemption, M2's passkey Phase 0) or small and unbuilt (M3 `persist()`, M5, M6). Do the small ones here; the reproduction waits on Apple hardware. |
-| 3 | [A reconnecting client starves control-message processing](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md) | Sync requests expire unread, so a new joiner is answered by nobody. Already confirmed in the harness with the failing line captured, so it is ready to fix. |
-| 4 | [The config upload has no size guard and fails silently](issues/.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md) | No client measures the payload before sending. A config save can fail with the user believing it succeeded. |
-| 5 | [Config sync space loss race condition](issues/.open/2026-01-09-config-sync-space-loss-race-condition.md) | Spaces can be lost outright. Filed January and never actioned; still reads as a data-loss path. |
-| 6 | [Make the Spaces list identical on every device](issues/.open/2026-07-31-spaces-list-cross-device-sync.md) | The umbrella for cross-device Spaces sync, carrying the verified per-pair state matrix. Start here rather than at its children. |
-| 7 | [A failed QNS verification can stay failed for the whole session](issues/.open/2026-08-17-a-failed-qns-verification-can-stay-failed-for-the-whole-session.md) | **New 2026-08-17, and partly a cost of PR #352.** Nothing in the running app reliably retries that query — `retry: false`, `refetchOnWindowFocus: false`, and the root provider never unmounts — so one failure can silently drop every `.q` for the rest of the session. Fail-closed, so not an impersonation risk, which is why it sits below the data-loss rows. Ranked here rather than higher because the fix is a judgement call (retry policy vs. a recovery trigger) and half of it wants row 1 first. |
+| 3 | Thread control-message authorization hardening | **New 2026-08-20.** Route `thread` actions through the same verified-signer primitive the other four control types already use, instead of the parallel check they use today. Detail deliberately held privately — see the security folder, not this file. Not a one-liner: it changes how thread message IDs are scoped, so it needs a cross-client compatibility plan before any code moves. |
+| 4 | [A reconnecting client starves control-message processing](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md) | Sync requests expire unread, so a new joiner is answered by nobody. Already confirmed in the harness with the failing line captured, so it is ready to fix. |
+| 5 | [The config upload has no size guard and fails silently](issues/.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md) | No client measures the payload before sending. A config save can fail with the user believing it succeeded. |
+| 6 | [Config sync space loss race condition](issues/.open/2026-01-09-config-sync-space-loss-race-condition.md) | Spaces can be lost outright. Filed January and never actioned; still reads as a data-loss path. |
+| 7 | [Make the Spaces list identical on every device](issues/.open/2026-07-31-spaces-list-cross-device-sync.md) | The umbrella for cross-device Spaces sync, carrying the verified per-pair state matrix. Start here rather than at its children. |
 
 ### Nearly done — needs a check
 
