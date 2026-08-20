@@ -206,17 +206,30 @@ export function clearReveal(selfAddress: string, partnerAddress?: string): void 
 }
 
 /**
- * Pure: does this page of a DM's history contain a message WE authored?
+ * Pure: does this page of a DM's history contain a message WE PROVABLY authored?
  *
- * Split out so the history rule is unit-testable without a database, and so
- * the one definition of "self-authored" lives in a single place.
+ * ⚠️ `content.senderId` ALONE IS NOT EVIDENCE. It is plaintext the sending
+ * client wrote, and desktop's receive path persists it verbatim, so a stranger
+ * can put YOUR address on a message they sent you. MEASURED 2026-08-20
+ * (`yarn harness dm-reveal-forgery`): one such message made this function
+ * return true, which flipped the ledger and leaked the victim's real name to
+ * the attacker on the next sweep.
+ *
+ * So `isProvablySelfAuthored` is REQUIRED, not optional. Making it optional
+ * would mean a caller that forgets it silently gets the vulnerable behaviour
+ * back — the senderId check below is kept only as a cheap pre-filter, and is
+ * never sufficient on its own. See utils/selfAuthorship.ts.
  */
 export function messagesContainSelfAuthored(
   messages: readonly { content?: { senderId?: string } }[] | undefined,
-  selfAddress: string
+  selfAddress: string,
+  isProvablySelfAuthored: (message: unknown) => boolean
 ): boolean {
   if (!isUsableIdentifier(selfAddress) || !Array.isArray(messages)) return false;
-  return messages.some((m) => m?.content?.senderId === selfAddress);
+  if (typeof isProvablySelfAuthored !== 'function') return false;
+  return messages.some(
+    (m) => m?.content?.senderId === selfAddress && isProvablySelfAuthored(m)
+  );
 }
 
 /**
@@ -247,7 +260,8 @@ export async function ensureRevealBootstrap(
     spaceId: string;
     channelId: string;
     limit?: number;
-  }) => Promise<{ messages: { content?: { senderId?: string } }[] }>
+  }) => Promise<{ messages: { content?: { senderId?: string } }[] }>,
+  isProvablySelfAuthored: (message: unknown) => boolean
 ): Promise<boolean> {
   if (hasRevealedTo(selfAddress, partnerAddress)) return true;
   if (!isUsableIdentifier(selfAddress) || !isUsableIdentifier(partnerAddress)) return false;
@@ -257,7 +271,7 @@ export async function ensureRevealBootstrap(
       channelId: partnerAddress,
       limit: BOOTSTRAP_SCAN_LIMIT,
     });
-    if (messagesContainSelfAuthored(messages, selfAddress)) {
+    if (messagesContainSelfAuthored(messages, selfAddress, isProvablySelfAuthored)) {
       recordReveal(selfAddress, partnerAddress, Date.now());
       return true;
     }

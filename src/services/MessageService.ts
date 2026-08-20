@@ -100,6 +100,7 @@ import {
   hasRevealedTo,
   recordReveal,
 } from '../utils/dmRevealLedger';
+import { createSelfAuthorshipVerifier } from '../utils/selfAuthorship';
 import {
   claimSpaceProfileAnnounce,
   recordSpaceProfileAnnounce,
@@ -722,11 +723,7 @@ export class MessageService {
       // Privacy gate. Independent of the dedup gate below and both are wanted:
       // this one asks "may we tell them at all", the dedup gate asks "have we
       // already told them this exact thing". Fails CLOSED.
-      const revealed = await ensureRevealBootstrap(
-        selfUserAddress,
-        partnerAddress,
-        (p) => this.messageDB.getMessages(p)
-      );
+      const revealed = await this.isRevealedTo(selfUserAddress, partnerAddress, keyset);
       if (!revealed) {
         skippedUnrevealed += 1;
         continue;
@@ -815,6 +812,45 @@ export class MessageService {
   private autoRevealLastFired = new Map<string, number>();
 
   /**
+   * Partners with an auto-reveal already running.
+   *
+   * The debounce timestamp alone is not enough: it is stamped after two awaits
+   * (the ledger check and the config read), so two "new session" frames
+   * arriving close together can BOTH pass the timestamp check before either
+   * stamps it, and both push. Claiming the partner synchronously — before any
+   * await — closes that window, the same way `dmProfileGate`'s in-flight claim
+   * does for the sweep. Not persisted: a reload legitimately means nothing is
+   * in flight.
+   */
+  private autoRevealInFlight = new Set<string>();
+
+  /**
+   * "Have I deliberately messaged this partner?", with the one-time derivation
+   * from local history — and with that derivation made forgery-resistant.
+   *
+   * Every reveal decision in this service goes through here rather than calling
+   * `ensureRevealBootstrap` directly, so the signature verifier can never be
+   * forgotten at a call site. It is the verifier, not `content.senderId`, that
+   * makes the history scan trustworthy: see utils/selfAuthorship.ts for what
+   * that proves and what it does not.
+   */
+  private async isRevealedTo(
+    selfAddress: string,
+    partnerAddress: string,
+    keyset: { userKeyset: secureChannel.UserKeyset },
+  ): Promise<boolean> {
+    const publicKeyHex = keyset?.userKeyset?.user_key?.public_key
+      ? Buffer.from(new Uint8Array(keyset.userKeyset.user_key.public_key)).toString('hex')
+      : '';
+    return ensureRevealBootstrap(
+      selfAddress,
+      partnerAddress,
+      (p) => this.messageDB.getMessages(p),
+      createSelfAuthorshipVerifier(publicKeyHex)
+    );
+  }
+
+  /**
    * A DM partner has appeared with a NEW SESSION carrying their identity — a
    * reinstall, a second device, a reset. If we have already deliberately
    * messaged them, push our identity once so their fresh device shows our name
@@ -842,20 +878,21 @@ export class MessageService {
       userKeyset: secureChannel.UserKeyset;
     },
   ): void {
+    if (!selfAddress || !partnerAddress) return;
+    if (partnerAddress === selfAddress) return; // our own other device
+
+    // Claimed SYNCHRONOUSLY, before the first await below — see
+    // `autoRevealInFlight`. Released in the `finally` at the bottom.
+    if (this.autoRevealInFlight.has(partnerAddress)) return;
+    this.autoRevealInFlight.add(partnerAddress);
+
     void (async () => {
       try {
-        if (!selfAddress || !partnerAddress) return;
-        if (partnerAddress === selfAddress) return; // our own other device
-
         const now = Date.now();
         const last = this.autoRevealLastFired.get(partnerAddress) ?? 0;
         if (now - last < MessageService.AUTO_REVEAL_DEBOUNCE_MS) return;
 
-        const revealed = await ensureRevealBootstrap(
-          selfAddress,
-          partnerAddress,
-          (p) => this.messageDB.getMessages(p)
-        );
+        const revealed = await this.isRevealedTo(selfAddress, partnerAddress, keyset);
         if (!revealed) return;
 
         const config = await this.messageDB.getUserConfig({ address: selfAddress });
@@ -884,9 +921,42 @@ export class MessageService {
           'new session'
         );
       } catch (err) {
-        logger.debug('[DMProfile] auto-reveal skipped', { err });
+        this.logIdentityPushFailure('auto-reveal', partnerAddress, err);
+      } finally {
+        this.autoRevealInFlight.delete(partnerAddress);
       }
     })();
+  }
+
+  /**
+   * Log an identity-push failure at the level it deserves.
+   *
+   * "No established sessions available" is the ONE expected outcome — it means
+   * first contact, where the outbound's own init envelope already carries our
+   * identity, so there was nothing for the push to do. Everything else is a
+   * real failure and must not hide behind it.
+   *
+   * The level matters more than it looks: production logging is raised to
+   * `warn` when diagnostics are enabled, so anything logged at `debug` is
+   * invisible even to a deliberate support session. "My name never reached my
+   * friend" would otherwise produce no signal anywhere.
+   */
+  private logIdentityPushFailure(
+    what: string,
+    partnerAddress: string,
+    err: unknown
+  ): void {
+    const message = (err as Error)?.message ?? '';
+    if (message.includes('No established sessions available')) {
+      logger.debug(`[DMProfile] ${what} skipped — no session with partner yet`, {
+        partner: partnerAddress.slice(0, 16),
+      });
+      return;
+    }
+    logger.warn(`[DMProfile] ${what} failed`, {
+      err,
+      partner: partnerAddress.slice(0, 16),
+    });
   }
 
   /**
@@ -941,7 +1011,7 @@ export class MessageService {
           'first deliberate send'
         );
       } catch (err) {
-        logger.debug('[DMProfile] reveal-on-send push skipped', { err });
+        this.logIdentityPushFailure('reveal-on-send push', partnerAddress, err);
       }
     })();
   }
@@ -1009,7 +1079,10 @@ export class MessageService {
    * one that works for a partner with no published public profile.
    *
    * Mirrors mobile, which already rebroadcasts to all DM partners on reconnect
-   * (quorum-mobile context/WebSocketContext.tsx ~6270). Cheap by construction:
+   * (quorum-mobile WebSocketContext.tsx, the on-connect effect that calls
+   * `dmProfileService.broadcastProfileToAllDMs` — named rather than pinned to a
+   * line, because the line this cited had drifted ~490 lines into unrelated
+   * read-ack code by 2026-08-20). Cheap by construction:
    * the per-partner gate above makes an unchanged identity a no-op on the wire.
    */
   async rebroadcastProfileToAllDMsOnConnect(
@@ -1227,9 +1300,12 @@ export class MessageService {
       // CLAIMED, never verified. The sender asserts this `.q` name; nothing in
       // this frame proves the claim, so it goes in a claimed-only slot and the
       // verified name resolution path must not read it. Presence-exact ('' is
-      // a deliberate un-election), matching mobile's `claimed_primary_username`.
+      // a deliberate un-election). The key is snake_case to match the one
+      // mobile already reads and writes in 23 files — see the field's doc on
+      // the shared `Conversation` type for why desktop conforms rather than
+      // introducing a second spelling of the same fact.
       ...(profileMsg.primaryUsername !== undefined
-        ? { claimedPrimaryUsername: profileMsg.primaryUsername }
+        ? { claimed_primary_username: profileMsg.primaryUsername }
         : {}),
     };
 
@@ -1752,6 +1828,33 @@ export class MessageService {
     senderUserIcon?: string
   ): Promise<void> {
     const conversationId = address + '/' + address;
+
+    // ── The DM reveal gate, CENTRALISED HERE ON PURPOSE ────────────────────
+    //
+    // These two optional arguments are the only way identity leaves this client
+    // on a DM envelope: the crypto layer turns them into the sealed frame's
+    // `user_profile`. Every caller that supplies them is emitting identity,
+    // whether or not it thinks of itself that way.
+    //
+    // This gate used to live in each caller. That was wrong, and provably so:
+    // an audit of `submitMessage` and `retryDirectMessage` looked complete and
+    // MISSED THREE — the offline action-queue handlers for `reaction-dm`,
+    // `delete-dm` and `edit-dm` (ActionQueueHandlers.ts), which pass the user's
+    // real name and avatar straight through. Reacting to a stranger's first
+    // message while offline was enough to unmask you. Per-caller enforcement
+    // means the next caller leaks too; one gate on the chokepoint means new
+    // callers inherit it.
+    //
+    // Skipped entirely when no identity was supplied, so the typing forwarder
+    // and the `dm-update-profile` senders (whose identity rides the PAYLOAD,
+    // already ledger-gated by their own callers) pay nothing.
+    if (senderDisplayName || senderUserIcon) {
+      const revealed = await this.isRevealedTo(selfUserAddress, address, keyset);
+      if (!revealed) {
+        senderDisplayName = undefined;
+        senderUserIcon = undefined;
+      }
+    }
 
     // The read-state → encrypt → save-state sequence below is a Double
     // Ratchet critical section: two concurrent callers reading the same
@@ -3625,9 +3728,7 @@ export class MessageService {
     }
     const mayRevealIdentity =
       isRevealingAct ||
-      (await ensureRevealBootstrap(currentPasskeyInfo.address, address, (p) =>
-        this.messageDB.getMessages(p)
-      ));
+      (await this.isRevealedTo(currentPasskeyInfo.address, address, keyset));
     // Read these, never `currentPasskeyInfo.displayName`, at every
     // session-creating call below. `undefined` is what the crypto layer already
     // receives from any caller that has no passkey display name, so this is a
@@ -4225,6 +4326,16 @@ export class MessageService {
 
         let conversationId = session.user_address + '/' + session.user_address;
 
+        // ⚠️ CAPTURED BEFORE THE REASSIGNMENT BELOW, and load-bearing.
+        //
+        // `session.user_address` is the sender the CRYPTO LAYER authenticated —
+        // the only trustworthy statement of who sent this frame. Ten lines down
+        // it is deliberately overwritten with the conversation partner for the
+        // self-echo case, after which the true sender is unrecoverable. Anything
+        // that needs to know "was this really us?" must read this boolean, never
+        // a field from inside the decrypted payload.
+        const authenticatedSenderIsSelf = session.user_address === self_address;
+
         let updatedUserProfile: secureChannel.UserProfile | undefined;
         decryptedContent = parseDecryptedMessage(session.message, 'InitEnvelope');
 
@@ -4279,9 +4390,24 @@ export class MessageService {
         // Delete the whole conversation here too. Gated to self — the
         // counterparty also receives the fan-out but must never delete our copy.
         // (Self-sync messages only arrive on this init-envelope branch.)
+        //
+        // ⚠️ BOTH CONDITIONS ARE REQUIRED, and the authenticated one is what
+        // makes this safe. `content.senderId` is PLAINTEXT the sender chose: a
+        // stranger can simply write your address into it. On its own it is not
+        // a gate, it is a suggestion — and this handler DESTROYS a conversation
+        // and every message in it, at an address the same untrusted payload
+        // names. MEASURED 2026-08-20 before this line existed
+        // (`yarn harness dm-selfdelete-forgery`): a bot that had never been
+        // messaged deleted a victim's entire conversation with an unrelated
+        // third party, 2 messages to 0.
+        //
+        // `authenticatedSenderIsSelf` comes from the crypto layer and cannot be
+        // written by a sender. Keep the plaintext check too — it is what
+        // distinguishes a self-sync frame from our own ordinary self-echo.
         if (
           decryptedContent?.content?.type === 'delete-conversation-self' &&
-          decryptedContent.content.senderId === self_address
+          decryptedContent.content.senderId === self_address &&
+          authenticatedSenderIsSelf
         ) {
           const target = decryptedContent.content.conversationAddress;
           logger.warn(
@@ -4957,7 +5083,8 @@ export class MessageService {
               // be learned during session setup: once established, no amount of
               // traffic refreshed it, so a partner with no public profile stayed
               // on the placeholder forever. Mobile applies it on this same path
-              // (quorum-mobile WebSocketContext.tsx ~4739).
+              // (quorum-mobile WebSocketContext.tsx, the same user_profile-carrying
+              // branch that drives its `autoRevealOnInboundSession` call).
               // Self-address guard mirrors the Confirm branch: on a multi-device
               // self-echo the profile is OURS, and must not overwrite the
               // partner's conversation row.
@@ -7798,9 +7925,18 @@ export class MessageService {
     // reach here — the delete-conversation control frames are never saved (see
     // submitMessage: "do not save delete-conversation (control) messages"), so
     // this can never be a retry of one. Record consent for the same reason the
-    // original send did, and read the gated values at the session-creating
-    // calls below rather than `currentPasskeyInfo` directly, so this path reads
-    // identically to submitMessage's. See the reveal-rule block there.
+    // original send did.
+    //
+    // ⚠️ These two are UNCONDITIONAL aliases, NOT a gate — unlike the
+    // identically-named values in submitMessage, which are conditional on
+    // `mayRevealIdentity`. That is safe only because of the invariant stated
+    // above (a delete frame can never be retried here), which makes the gate's
+    // answer always "true" on this path. They exist as separate names purely so
+    // the session-creating calls below read the same as submitMessage's. If
+    // that invariant ever breaks, THIS PATH HAS NO GATE to catch it.
+    //
+    // The `encryptAndSendDm` chokepoint gate does not cover this path either:
+    // these values go to `NewDoubleRatchetSenderSession` and friends directly.
     this.recordRevealAndAnnounce(currentPasskeyInfo.address, address, keyset);
     const outgoingDisplayName = currentPasskeyInfo.displayName;
     const outgoingUserIcon = currentPasskeyInfo.pfpUrl;

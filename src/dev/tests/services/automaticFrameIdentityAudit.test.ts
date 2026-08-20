@@ -202,6 +202,16 @@ describe('vector 3 — source sweep over the automatic-frame senders', () => {
     '%s is constructed with no identity field',
     (frame, file, marker) => {
       const source = readFileSync(resolve(REPO_ROOT, file), 'utf8');
+      // The marker must be UNIQUE. `literalAround` uses indexOf, so a second
+      // occurrence appearing earlier (a doc comment, a type enumeration, a
+      // second handler) would silently retarget the sweep at a region that
+      // happens to contain no identity words — a vacuous pass that reads
+      // exactly like a real one.
+      expect(
+        source.indexOf(marker),
+        `"${marker}" occurs more than once in ${file}; the sweep would target the wrong one`
+      ).toBe(source.lastIndexOf(marker));
+
       const literal = literalAround(source, marker);
       // If this is empty the marker moved and the sweep is silently testing
       // nothing — fail loudly rather than pass vacuously.

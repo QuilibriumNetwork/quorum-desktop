@@ -36,7 +36,22 @@ afterEach(() => {
   __resetRevealMemoForTests();
 });
 
-const post = (senderId: string) => ({ content: { type: 'post', senderId } });
+/**
+ * A stored message. `signed: false` models a FORGERY — a message an attacker
+ * sent whose `content.senderId` names us. It must never count as ours.
+ * (It also models a repudiable/unsigned DM, which likewise cannot be proved.)
+ */
+const post = (senderId: string, signed = true) => ({
+  content: { type: 'post', senderId },
+  signed,
+});
+
+/**
+ * Stands in for the real ed448 check in utils/selfAuthorship.ts. The point of
+ * threading a verifier at all is that `content.senderId` is attacker-writable;
+ * these tests must never treat it as sufficient on its own.
+ */
+const verifier = (m: unknown) => (m as { signed?: boolean })?.signed === true;
 
 describe('the basic contract', () => {
   it('is unset by default and set after recordReveal', () => {
@@ -184,31 +199,56 @@ describe('storage failures fail CLOSED — the branch is reached, not merely wri
 });
 
 describe('messagesContainSelfAuthored', () => {
-  it('is true only when a message we authored is present', () => {
-    expect(messagesContainSelfAuthored([post(PARTNER), post(PARTNER)], SELF)).toBe(false);
-    expect(messagesContainSelfAuthored([post(PARTNER), post(SELF)], SELF)).toBe(true);
+  it('is true only when a message we PROVABLY authored is present', () => {
+    expect(messagesContainSelfAuthored([post(PARTNER), post(PARTNER)], SELF, verifier)).toBe(false);
+    expect(messagesContainSelfAuthored([post(PARTNER), post(SELF)], SELF, verifier)).toBe(true);
+  });
+
+  it('REJECTS a forged message that merely claims our senderId', () => {
+    // The measured exploit, as a unit test: an attacker sends an ordinary post
+    // with `content.senderId` set to the victim's address. It is stored, and
+    // before the verifier existed this returned true — which flipped the ledger
+    // and leaked the victim's real name on the next sweep.
+    // MEASURED live 2026-08-20 via `yarn harness dm-reveal-forgery`.
+    expect(messagesContainSelfAuthored([post(SELF, false)], SELF, verifier)).toBe(false);
+    // And a forgery sitting beside real partner traffic is still rejected.
+    expect(
+      messagesContainSelfAuthored([post(PARTNER), post(SELF, false)], SELF, verifier)
+    ).toBe(false);
+  });
+
+  it('fails CLOSED when no verifier is supplied', () => {
+    // Belt and braces: the parameter is required by the type, but a JS caller
+    // (or a bad cast) must not fall back to trusting senderId.
+    expect(
+      messagesContainSelfAuthored(
+        [post(SELF)],
+        SELF,
+        undefined as unknown as (m: unknown) => boolean
+      )
+    ).toBe(false);
   });
 
   it('is false for empty, missing and malformed input', () => {
-    expect(messagesContainSelfAuthored([], SELF)).toBe(false);
-    expect(messagesContainSelfAuthored(undefined, SELF)).toBe(false);
-    expect(messagesContainSelfAuthored([{}, { content: {} }], SELF)).toBe(false);
-    expect(messagesContainSelfAuthored([post(SELF)], '')).toBe(false);
+    expect(messagesContainSelfAuthored([], SELF, verifier)).toBe(false);
+    expect(messagesContainSelfAuthored(undefined, SELF, verifier)).toBe(false);
+    expect(messagesContainSelfAuthored([{}, { content: {} }], SELF, verifier)).toBe(false);
+    expect(messagesContainSelfAuthored([post(SELF)], '', verifier)).toBe(false);
   });
 });
 
 describe('ensureRevealBootstrap — derive once from history, never persist a negative', () => {
   it('derives true from a self-authored message and caches it', async () => {
     const getMessages = vi.fn().mockResolvedValue({ messages: [post(PARTNER), post(SELF)] });
-    expect(await ensureRevealBootstrap(SELF, PARTNER, getMessages)).toBe(true);
-    expect(await ensureRevealBootstrap(SELF, PARTNER, getMessages)).toBe(true);
+    expect(await ensureRevealBootstrap(SELF, PARTNER, getMessages, verifier)).toBe(true);
+    expect(await ensureRevealBootstrap(SELF, PARTNER, getMessages, verifier)).toBe(true);
     // Cached: the second call short-circuits on the ledger, no second scan.
     expect(getMessages).toHaveBeenCalledTimes(1);
   });
 
   it('scans the DM under (spaceId = partner, channelId = partner)', async () => {
     const getMessages = vi.fn().mockResolvedValue({ messages: [] });
-    await ensureRevealBootstrap(SELF, PARTNER, getMessages);
+    await ensureRevealBootstrap(SELF, PARTNER, getMessages, verifier);
     expect(getMessages).toHaveBeenCalledWith(
       expect.objectContaining({ spaceId: PARTNER, channelId: PARTNER })
     );
@@ -216,32 +256,32 @@ describe('ensureRevealBootstrap — derive once from history, never persist a ne
 
   it('an inbound-only stranger row stays false, and re-scans every time', async () => {
     const getMessages = vi.fn().mockResolvedValue({ messages: [post(PARTNER)] });
-    expect(await ensureRevealBootstrap(SELF, PARTNER, getMessages)).toBe(false);
-    expect(await ensureRevealBootstrap(SELF, PARTNER, getMessages)).toBe(false);
+    expect(await ensureRevealBootstrap(SELF, PARTNER, getMessages, verifier)).toBe(false);
+    expect(await ensureRevealBootstrap(SELF, PARTNER, getMessages, verifier)).toBe(false);
     // A negative was NOT persisted — that is what lets a later reply flip it.
     expect(getMessages).toHaveBeenCalledTimes(2);
     recordReveal(SELF, PARTNER, 2_000);
-    expect(await ensureRevealBootstrap(SELF, PARTNER, getMessages)).toBe(true);
+    expect(await ensureRevealBootstrap(SELF, PARTNER, getMessages, verifier)).toBe(true);
   });
 
   it('fails CLOSED when the history read rejects', async () => {
     const getMessages = vi.fn().mockRejectedValue(new Error('db closed'));
-    expect(await ensureRevealBootstrap(SELF, PARTNER, getMessages)).toBe(false);
+    expect(await ensureRevealBootstrap(SELF, PARTNER, getMessages, verifier)).toBe(false);
   });
 
   it('fails CLOSED when the history read resolves to garbage', async () => {
     expect(
-      await ensureRevealBootstrap(SELF, PARTNER, vi.fn().mockResolvedValue({}))
+      await ensureRevealBootstrap(SELF, PARTNER, vi.fn().mockResolvedValue({}), verifier)
     ).toBe(false);
     expect(
-      await ensureRevealBootstrap(SELF, PARTNER, vi.fn().mockResolvedValue(null as never))
+      await ensureRevealBootstrap(SELF, PARTNER, vi.fn().mockResolvedValue(null as never), verifier)
     ).toBe(false);
   });
 
   it('never scans history for a degenerate identifier', async () => {
     const getMessages = vi.fn().mockResolvedValue({ messages: [post(SELF)] });
-    expect(await ensureRevealBootstrap('', PARTNER, getMessages)).toBe(false);
-    expect(await ensureRevealBootstrap(SELF, '', getMessages)).toBe(false);
+    expect(await ensureRevealBootstrap('', PARTNER, getMessages, verifier)).toBe(false);
+    expect(await ensureRevealBootstrap(SELF, '', getMessages, verifier)).toBe(false);
     expect(getMessages).not.toHaveBeenCalled();
   });
 });
