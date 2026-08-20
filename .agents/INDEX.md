@@ -318,6 +318,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Move the config-save encode chain to a Web Worker](issues/.open/2026-08-13-config-encode-worker-plan.md)
 - 📋 [Rebuild the sync indicator on a per-space "behind by N" signal](issues/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md)
 - 📋 [A DB call landing mid-close still fails once](issues/.open/2026-08-17-a-db-call-landing-mid-close-still-fails-once.md)
+- 📋 [DM identity on desktop: the dialect fix, then the privacy rule](issues/.open/2026-08-20-dm-identity-reveal-desktop-and-shared-plan.md)
 
 ### Deferred
 
@@ -802,4 +803,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-19 14:44:26
+**Last Updated**: 2026-08-20 14:27:49
