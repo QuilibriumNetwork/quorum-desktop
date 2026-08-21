@@ -19,7 +19,7 @@ import {
   verifyAndResolveSender,
   authorizeControlMessage,
   isControlMessageType,
-  requiresVerifiedSignature,
+  shouldSignOutbound,
   shouldSignEdit,
   canManageReadOnlyChannel,
   verifyDeviceKeyStatement,
@@ -7305,27 +7305,17 @@ export class MessageService {
       const nonce = crypto.randomUUID();
       const space = await this.messageDB.getSpace(spaceId);
 
-      // Read-only posts must always be signed (receive-side drops unsigned ones,
-      // including a manager's own), so force-sign regardless of the repudiable
-      // "send unsigned" toggle.
       const targetChannel = space
         ? this.findChannelInSpace(space, channelId)
         : undefined;
-      // Same reasoning, one class wider: every type on
-      // SIGNATURE_REQUIRED_MESSAGE_TYPES is refused unsigned by receivers, so
-      // honoring "send unsigned" for one would produce an action that appears
-      // to succeed locally and is silently discarded by everyone else.
-      //
-      // This does NOT touch deniability. That is a property of ordinary posts,
-      // which are absent from the list and still send unsigned at the user's
-      // choice. What is excluded is the small set of frames that moderate or
-      // destroy OTHER people's content, where "who did this" has to be provable
-      // for the receiver to act on it at all.
-      const signatureRequired = requiresVerifiedSignature(
-        (pendingMessage as { type?: string })?.type ?? ''
-      );
-      const effectiveSkipSigning =
-        targetChannel?.isReadOnly || signatureRequired ? false : skipSigning;
+      // Shared decision, so send-side and receive-side cannot drift. See
+      // shouldSignOutbound: deniability still applies to ordinary posts.
+      const effectiveSkipSigning = !shouldSignOutbound({
+        contentType: (pendingMessage as { type?: string })?.type ?? 'post',
+        isRepudiable: !!space?.isRepudiable,
+        isReadOnlyChannel: !!targetChannel?.isReadOnly,
+        skipSigning: !!skipSigning,
+      });
 
       // Calculate messageId (SHA-256 of the canonical fingerprint). Uses the
       // shared builder so the real content.type is hashed (control messages
@@ -7694,8 +7684,20 @@ export class MessageService {
           conversationId,
         });
 
-        // Enforce non-repudiability
-        if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
+        // Enforce non-repudiability. 'pin' is refused unsigned by receivers
+        // (authorizeControlMessage denies a null sender), so honoring the
+        // "send unsigned" toggle here would pin the message locally and
+        // nowhere else, with nothing reporting the disagreement.
+        if (
+          shouldSignOutbound({
+            contentType: 'pin',
+            isRepudiable: !!space?.isRepudiable,
+            isReadOnlyChannel: !!(
+              space && this.findChannelInSpace(space, channelId)?.isReadOnly
+            ),
+            skipSigning: !!skipSigning,
+          })
+        ) {
           const inboxKey = await this.getSigningKey(spaceId);
           message.publicKey = inboxKey.publicKey;
           message.signature = Buffer.from(
@@ -7775,8 +7777,21 @@ export class MessageService {
           } as ThreadMessage,
         } as Message;
 
-        // Sign (same pattern as pin messages)
-        if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
+        // Thread frames are refused unsigned by every receiver
+        // (authorizeThreadAction denies a null sender outright), so the
+        // "send unsigned" toggle must not reach this branch: an unsigned
+        // 'remove' would delete the thread on this device and nowhere else,
+        // which reads as a successful deletion and is not one.
+        if (
+          shouldSignOutbound({
+            contentType: 'thread',
+            isRepudiable: !!space?.isRepudiable,
+            isReadOnlyChannel: !!(
+              space && this.findChannelInSpace(space, channelId)?.isReadOnly
+            ),
+            skipSigning: !!skipSigning,
+          })
+        ) {
           const inboxKey = await this.getSigningKey(spaceId);
           message.publicKey = inboxKey.publicKey;
           message.signature = Buffer.from(

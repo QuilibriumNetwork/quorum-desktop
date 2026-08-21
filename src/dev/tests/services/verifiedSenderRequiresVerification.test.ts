@@ -328,3 +328,168 @@ describe('the unverified resolver cannot come back', () => {
     ).toBeGreaterThanOrEqual(5);
   });
 });
+
+/**
+ * THE WIRING, not the rule.
+ *
+ * `ThreadService` decides correctly when handed a verified signer, and its own
+ * tests prove that. What they cannot see is whether MessageService actually
+ * hands it one — the two call sites that resolve the signer and pass it in.
+ *
+ * That gap was MEASURED, not hypothesised: reverting those two call sites to
+ * the forgeable `threadMsg.senderId` left all 506 service tests green. Every
+ * test was checking the rule; none was checking that the rule was wired up.
+ *
+ * So this drives a thread frame through `MessageService.saveMessage` end to
+ * end. The frame claims to be from the victim and is signed by a key belonging
+ * to someone else — the whole attack in one message.
+ */
+describe('a thread frame is authorized on its signer, end to end', () => {
+  const CHANNEL = 'chan-1';
+  const ATTACKER = 'attacker-address';
+  const ATTACKER_PUB =
+    '3333333333333333333333333333333333333333333333333333333333333333';
+  const ATTACKER_INBOX = deriveInboxAddress(ATTACKER_PUB);
+  const ROOT_ID = 'root-msg-1';
+
+  /**
+   * A `thread`/`remove` naming the VICTIM as sender, signed with the ATTACKER's
+   * key. The messageId is computed over the CLAIMED senderId, exactly as a real
+   * sender would — so nothing here is malformed; only the key betrays it.
+   */
+  const forgedThreadRemove = (signingKey: string) => {
+    const nonce = 'nonce-thread';
+    const content = {
+      type: 'thread' as const,
+      senderId: VICTIM,
+      targetMessageId: ROOT_ID,
+      action: 'remove' as const,
+      threadMeta: { threadId: 'thread-1', createdBy: VICTIM },
+    };
+    return {
+      spaceId: SPACE,
+      channelId: CHANNEL,
+      nonce,
+      messageId: computeMessageIdHex(
+        buildMessageFingerprint({
+          nonce,
+          content: content as never,
+          senderId: VICTIM,
+          spaceId: SPACE,
+          channelId: CHANNEL,
+        })
+      ),
+      digestAlgorithm: 'SHA-256' as const,
+      createdDate: Date.now(),
+      modifiedDate: Date.now(),
+      lastModifiedHash: '',
+      content,
+      publicKey: signingKey,
+      signature: 'ab'.repeat(114),
+    };
+  };
+
+  let messageService: MessageService;
+  let deps: MessageServiceDependencies;
+
+  beforeEach(() => {
+    verifyEd448.mockReset();
+    verifyEd448.mockReturnValue('true'); // the signature itself is genuine
+    deps = {
+      messageDB: {
+        // The victim's post, carrying a thread the victim opened.
+        getMessage: vi.fn().mockResolvedValue({
+          messageId: ROOT_ID,
+          content: { type: 'post', senderId: VICTIM, text: 'keep me' },
+          threadMeta: { threadId: 'thread-1', createdBy: VICTIM },
+        }),
+        getSpace: vi.fn().mockResolvedValue({
+          spaceId: SPACE,
+          isRepudiable: true,
+          groups: [{ channels: [{ channelId: CHANNEL }] }],
+          roles: [], // attacker holds no moderation role
+        }),
+        getChannelThread: vi.fn().mockResolvedValue(null),
+        getChannelThreads: vi.fn().mockResolvedValue([]),
+        getThreadMessages: vi
+          .fn()
+          .mockResolvedValue({ messages: [], replyCount: 0 }),
+        getSpaceMembers: vi.fn().mockResolvedValue([
+          { user_address: VICTIM, address: VICTIM, inbox_address: VICTIM_INBOX },
+          {
+            user_address: ATTACKER,
+            address: ATTACKER,
+            inbox_address: ATTACKER_INBOX,
+          },
+        ]),
+        getSpaceMemberDevices: vi.fn().mockResolvedValue([]),
+        getSpaceMember: vi.fn().mockResolvedValue(null),
+        saveMessage: vi.fn().mockResolvedValue(undefined),
+        saveChannelThread: vi.fn().mockResolvedValue(undefined),
+        deleteMessage: vi.fn().mockResolvedValue(undefined),
+        deleteChannelThread: vi.fn().mockResolvedValue(undefined),
+        isMessageDeleted: vi.fn().mockResolvedValue(false),
+        updateMessage: vi.fn().mockResolvedValue(undefined),
+        saveSpaceMember: vi.fn().mockResolvedValue(undefined),
+        getConversation: vi.fn().mockResolvedValue({ conversation: null }),
+      } as unknown as MessageServiceDependencies['messageDB'],
+      enqueueOutbound: vi.fn(),
+      addOrUpdateConversation: vi.fn(),
+      apiClient: {} as never,
+      deleteEncryptionStates: vi.fn().mockResolvedValue(undefined),
+      deleteInboxMessages: vi.fn().mockResolvedValue(undefined),
+      navigate: vi.fn(),
+      spaceInfo: { current: {} } as never,
+      syncInfo: { current: {} } as never,
+      synchronizeAll: vi.fn().mockResolvedValue(undefined),
+      informSyncData: vi.fn().mockResolvedValue(undefined),
+      initiateSync: vi.fn().mockResolvedValue(undefined),
+      requestSync: vi.fn().mockResolvedValue(undefined),
+      directSync: vi.fn().mockResolvedValue(undefined),
+      saveConfig: vi.fn().mockResolvedValue(undefined),
+      sendHubMessage: vi.fn().mockResolvedValue('message-id'),
+    } as unknown as MessageServiceDependencies;
+
+    messageService = new MessageService(deps);
+  });
+
+  const receive = (msg: unknown) =>
+    messageService.saveMessage(
+      msg as never,
+      deps.messageDB,
+      SPACE,
+      CHANNEL,
+      'group',
+      {},
+      null,
+      undefined
+    );
+
+  it('ATTACK ARM: signed by someone else, so the victim\'s message survives', async () => {
+    await receive(forgedThreadRemove(ATTACKER_PUB));
+
+    expect(
+      deps.messageDB.deleteMessage,
+      "the verified signer never reached ThreadService: a thread frame claiming " +
+        "the victim's address deleted the victim's message"
+    ).not.toHaveBeenCalled();
+  });
+
+  it('CONTROL ARM: signed by the thread creator, and still honoured', async () => {
+    await receive(forgedThreadRemove(VICTIM_PUB));
+
+    expect(
+      deps.messageDB.deleteMessage,
+      'the fix over-rejected: the real creator can no longer remove their own thread'
+    ).toHaveBeenCalledWith(ROOT_ID);
+  });
+
+  it('the ed448 verifier is consulted before any thread action', async () => {
+    await receive(forgedThreadRemove(ATTACKER_PUB));
+
+    expect(
+      verifyEd448,
+      'no signature check ran on the thread path, so its sender is unproven'
+    ).toHaveBeenCalled();
+  });
+});

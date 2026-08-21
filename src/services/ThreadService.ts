@@ -7,7 +7,7 @@ import type {
   ChannelThread,
   VerifiedSender,
 } from '@quilibrium/quorum-shared';
-import { authorizeThreadAction } from '@quilibrium/quorum-shared';
+import { authorizeThreadAction, logger } from '@quilibrium/quorum-shared';
 import {
   buildChannelThreadFromCreate,
   updateChannelThreadOnReply,
@@ -85,13 +85,30 @@ export class ThreadService {
       this.resolveThreadCreator(threadMsg, targetMessage),
     ]);
 
-    return authorizeThreadAction({
+    const verdict = authorizeThreadAction({
       action: threadMsg.action,
       verifiedSender,
       threadCreatedBy,
       space: space ?? undefined,
       channel,
-    }).allowed;
+    });
+
+    // A denial here is indistinguishable from "nothing happened" for the user,
+    // and several BENIGN causes land on this path: a join broadcast that has
+    // not arrived yet, a device key not yet admitted, a rotation in flight. The
+    // verdict already knows which case it is, so record it rather than
+    // discarding the one piece of information that makes this diagnosable.
+    // The reason names no key or address and tells an attacker nothing they
+    // did not already supply.
+    if (!verdict.allowed) {
+      logger.warn('thread action denied', {
+        action: threadMsg.action,
+        reason: verdict.reason,
+        threadId: threadMsg.threadMeta.threadId,
+      });
+    }
+
+    return verdict.allowed;
   }
 
   /**
@@ -145,7 +162,7 @@ export class ThreadService {
       return false;
     }
     // Past the gate, so a sender was proven; safe to treat as the actor.
-    const actor = verifiedSender as string;
+    const actor = verifiedSender as VerifiedSender;
 
     // --- Action routing ---
 
@@ -233,7 +250,7 @@ export class ThreadService {
     spaceId: string;
     channelId: string;
     /** Already authorized by the caller's gate; the proven signer. */
-    actor: string;
+    actor: VerifiedSender;
     currentUserAddress: string;
     conversationType: string;
     updatedUserProfile: { user_icon: string; display_name: string };
@@ -358,7 +375,7 @@ export class ThreadService {
     ) {
       return false;
     }
-    const actor = verifiedSender as string;
+    const actor = verifiedSender as VerifiedSender;
 
     if (threadMsg.action === 'remove') {
       return this.handleThreadRemoveCache({
@@ -377,7 +394,19 @@ export class ThreadService {
             ...page,
             messages: page.messages.map((m: Message) =>
               m.messageId === threadMsg.targetMessageId
-                ? { ...m, threadMeta: { ...m.threadMeta, ...threadMsg.threadMeta } }
+                ? {
+                    ...m,
+                    threadMeta: {
+                      ...m.threadMeta,
+                      ...threadMsg.threadMeta,
+                      // Same pin as the DB path. Authorization always re-reads
+                      // ownership from storage, so an unpinned value here could
+                      // not escalate — but it would still display the attacker's
+                      // chosen name as the thread's creator, and a rule the two
+                      // paths apply differently is the defect being fixed.
+                      createdBy: m.threadMeta?.createdBy ?? actor,
+                    },
+                  }
                 : m
             ),
           })),
@@ -402,7 +431,7 @@ export class ThreadService {
     spaceId: string;
     channelId: string;
     /** Already authorized by the caller's gate; the proven signer. */
-    actor: string;
+    actor: VerifiedSender;
     queryClient: QueryClient;
   }): Promise<boolean> {
     const { threadMsg, targetMessage, spaceId, channelId, actor, queryClient } = params;

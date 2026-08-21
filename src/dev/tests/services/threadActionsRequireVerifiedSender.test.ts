@@ -13,6 +13,8 @@
  * `verifyAndResolveSender` tests and by MessageService.unit.test.tsx.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { QueryClient } from '@tanstack/react-query';
 import { ThreadService } from '@/services/ThreadService';
 import type { MessageDB } from '@/db/messages';
@@ -306,6 +308,46 @@ describe('thread actions are authorized against the verified signer', () => {
       expect(honored).toBe(false);
     });
 
+    it('ATTACK: a close frame cannot rewrite createdBy in the live cache', async () => {
+      // The DB path pins ownership; if the cache path does not, the attacker's
+      // chosen name is what every participant SEES as the thread creator, even
+      // though authorization keeps re-reading the correct value from storage.
+      (mockDB.getMessage as any).mockResolvedValue(aliceRootWithThread());
+      (mockDB.getSpace as any).mockResolvedValue({
+        roles: [{ members: [MODERATOR], permissions: ['message:delete'] }],
+      });
+      const queryClient = new QueryClient();
+      // Must match buildMessagesKeyPrefix (['Messages', spaceId, channelId])
+      // plus the variant segment, or setQueriesData writes nothing and this
+      // test passes while exercising none of the code it names.
+      const CACHE_KEY = ['Messages', 'space-1', 'channel-1', 'with-threads'];
+      queryClient.setQueryData(CACHE_KEY, {
+        pageParams: [undefined],
+        pages: [{ messages: [aliceRootWithThread()] }],
+      });
+
+      await threadService.handleThreadCache({
+        threadMsg: threadFrame({
+          senderId: MODERATOR,
+          action: 'close',
+          threadMeta: {
+            threadId: 'thread-1',
+            createdBy: MODERATOR,
+            isClosed: true,
+          },
+        }),
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        queryClient,
+        verifiedSender: MODERATOR,
+      });
+
+      const cached: any = queryClient.getQueryData(CACHE_KEY);
+      const root = cached.pages[0].messages[0];
+      expect(root.threadMeta.isClosed).toBe(true); // the action DID apply
+      expect(root.threadMeta.createdBy).toBe(ALICE); // ownership did NOT move
+    });
+
     it('CONTROL: the real creator still removes it from the cache', async () => {
       (mockDB.getMessage as any).mockResolvedValue(aliceRootWithThread());
 
@@ -319,5 +361,51 @@ describe('thread actions are authorized against the verified signer', () => {
 
       expect(honored).toBe(true);
     });
+  });
+});
+
+/**
+ * SOURCE GUARD — catches a failure the behavioural tests above structurally
+ * cannot see.
+ *
+ * The receive side refuses thread frames without a valid signature. The send
+ * side must therefore never honor the "send unsigned" toggle for one. The first
+ * attempt at that fix was placed in a branch thread messages never enter
+ * (`if (isPostMessage)`, which explicitly excludes them), so it compiled,
+ * type-checked, passed every test, and did nothing.
+ *
+ * Nothing above could have caught it: those tests inject `verifiedSender`
+ * directly and never exercise the send path's signing decision. The failure
+ * mode it leaves behind is the worst kind here — the sender's own client
+ * applies a thread deletion, every other client discards the frame, and no
+ * error is raised on either side.
+ *
+ * So this asserts the shape instead: no send branch may decide signing from the
+ * raw toggle. They must all route through the shared `shouldSignOutbound`,
+ * which derives the answer from the same list the receive side enforces.
+ */
+describe('the send path cannot silently emit an unsignable control frame', () => {
+  const source = readFileSync(
+    resolve(__dirname, '../../../services/MessageService.ts'),
+    'utf-8'
+  );
+
+  it('decides outbound signing only through the shared helper', () => {
+    // The pre-fix shape, verified present at HEAD~ before this guard existed.
+    expect(source).not.toMatch(/isRepudiable\s*&&\s*!skipSigning/);
+  });
+
+  it('routes the thread and pin send branches through it', () => {
+    const calls = source.match(/shouldSignOutbound\(\{/g) ?? [];
+    expect(calls.length).toBeGreaterThanOrEqual(3);
+    expect(source).toMatch(/contentType: 'thread'/);
+    expect(source).toMatch(/contentType: 'pin'/);
+  });
+
+  it('leaves edits on the inherit rule, which must NOT force-sign', () => {
+    // An edit of a deliberately-unsigned message must stay unsigned, or
+    // deniability is destroyed by the act of editing.
+    expect(source).toMatch(/shouldSignEdit\(originalMessage\)/);
+    expect(source).not.toMatch(/contentType: 'edit-message'/);
   });
 });
