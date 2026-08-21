@@ -73,6 +73,46 @@ export interface HarnessSpaceBot {
   /** Post a text message to a channel via the real submitChannelMessage path. */
   post(spaceId: string, channelId: string, text: string): Promise<void>;
   /**
+   * Send a structured control payload (thread / pin / edit-message / …) through
+   * the same real `submitChannelMessage` path `post` uses.
+   *
+   * Separate from `post` only because `post` takes a string and the string
+   * branch builds a `PostMessage` around it. Everything downstream — signing,
+   * sealing, the drain discipline — is identical, which is the point: an
+   * honestly-sent control frame in a scenario must not travel a shortcut its
+   * production counterpart does not.
+   */
+  sendControl(
+    spaceId: string,
+    channelId: string,
+    payload: object
+  ): Promise<void>;
+  /**
+   * Seal and broadcast a `Message` this bot built itself, bypassing
+   * `submitChannelMessage`.
+   *
+   * ⚠️ This exists to express frames a well-behaved client CANNOT produce.
+   * `submitChannelMessage` overwrites `content.senderId` with the sender's own
+   * address, so no honest path can claim someone else's authorship — but an
+   * attacker is not running our client. This is the same move
+   * `dm-selfdelete-forgery` makes for DMs: build the exact bytes, then hand them
+   * to the REAL sealing call (`encryptAndSendToSpace`) so everything from the
+   * wire onward is production code.
+   *
+   * Only the send side is synthetic. The receiver's path is untouched.
+   */
+  forgeSend(spaceId: string, message: Message): Promise<void>;
+  /** Read one message straight off this bot's disk, or undefined if gone. */
+  getMessage(
+    spaceId: string,
+    channelId: string,
+    messageId: string
+  ): Promise<Message | undefined>;
+  /** The per-space key this bot signs with — `signing`, falling back to `inbox`. */
+  signingKey(
+    spaceId: string
+  ): Promise<{ publicKey: string; privateKey: string } | undefined>;
+  /**
    * Post `count` messages, draining ONCE at the end rather than per message.
    *
    * Same real path as `post`; only the waiting differs. Used to build a relay
@@ -329,6 +369,41 @@ export async function createSpaceBot(
       await mustDrain(drainActionQueue(), 'post action queue');
       await mustDrain(graph.outbound.flush(), 'post outbound');
     },
+
+    sendControl: async (
+      spaceId: string,
+      channelId: string,
+      payload: object
+    ) => {
+      await graph.messageService.submitChannelMessage(
+        spaceId,
+        channelId,
+        payload,
+        queryClient,
+        passkeyInfo
+      );
+      // Same two-stage drain as `post`, and for the same reason: the call
+      // returning means "queued", not "sent".
+      await mustDrain(drainActionQueue(), 'sendControl action queue');
+      await mustDrain(graph.outbound.flush(), 'sendControl outbound');
+    },
+
+    forgeSend: async (spaceId: string, message: Message) => {
+      await graph.messageService.encryptAndSendToSpace(spaceId, message);
+      await mustDrain(graph.outbound.flush(), 'forgeSend outbound');
+    },
+
+    getMessage: (spaceId: string, channelId: string, messageId: string) =>
+      messageDB
+        .getMessage({ spaceId, channelId, messageId })
+        .then((m) => m ?? undefined)
+        .catch(() => undefined),
+
+    signingKey: async (spaceId: string) =>
+      ((await messageDB.getSpaceKey(spaceId, 'signing')) ??
+        (await messageDB.getSpaceKey(spaceId, 'inbox'))) as
+        | { publicKey: string; privateKey: string }
+        | undefined,
 
     postMany: async (
       spaceId: string,
