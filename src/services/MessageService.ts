@@ -19,6 +19,7 @@ import {
   verifyAndResolveSender,
   authorizeControlMessage,
   isControlMessageType,
+  requiresVerifiedSignature,
   shouldSignEdit,
   canManageReadOnlyChannel,
   verifyDeviceKeyStatement,
@@ -2804,10 +2805,20 @@ export class MessageService {
       );
     } else if (decryptedContent.content.type === 'thread') {
       const threadMsg = decryptedContent.content as ThreadMessage;
+      // SECURITY: thread frames carry a second deletion primitive ('remove'
+      // hard-deletes the root and every reply). Authorize on the VERIFIED
+      // signer; the payload's senderId is a claim, not proof.
+      const { sender: threadSender } = await this.verifySpaceSender(
+        decryptedContent,
+        messageDB,
+        spaceId,
+        channelId
+      );
       await this.threadService.handleThreadReceive({
         threadMsg,
         spaceId,
         channelId,
+        verifiedSender: threadSender ?? null,
         currentUserAddress: currentUserAddress ?? '',
         conversationType,
         updatedUserProfile: {
@@ -3366,10 +3377,19 @@ export class MessageService {
       });
     } else if (decryptedContent.content.type === 'thread') {
       const threadMsg = decryptedContent.content as ThreadMessage;
+      // Same verdict inputs as the DB path above, or the cache and the store
+      // disagree about whether a thread action happened.
+      const { sender: threadSender } = await this.verifySpaceSender(
+        decryptedContent,
+        this.messageDB,
+        spaceId,
+        channelId
+      );
       await this.threadService.handleThreadCache({
         threadMsg,
         spaceId,
         channelId,
+        verifiedSender: threadSender ?? null,
         queryClient,
       });
     } else if (decryptedContent.content.type === 'update-profile') {
@@ -7291,9 +7311,21 @@ export class MessageService {
       const targetChannel = space
         ? this.findChannelInSpace(space, channelId)
         : undefined;
-      const effectiveSkipSigning = targetChannel?.isReadOnly
-        ? false
-        : skipSigning;
+      // Same reasoning, one class wider: every type on
+      // SIGNATURE_REQUIRED_MESSAGE_TYPES is refused unsigned by receivers, so
+      // honoring "send unsigned" for one would produce an action that appears
+      // to succeed locally and is silently discarded by everyone else.
+      //
+      // This does NOT touch deniability. That is a property of ordinary posts,
+      // which are absent from the list and still send unsigned at the user's
+      // choice. What is excluded is the small set of frames that moderate or
+      // destroy OTHER people's content, where "who did this" has to be provable
+      // for the receiver to act on it at all.
+      const signatureRequired = requiresVerifiedSignature(
+        (pendingMessage as { type?: string })?.type ?? ''
+      );
+      const effectiveSkipSigning =
+        targetChannel?.isReadOnly || signatureRequired ? false : skipSigning;
 
       // Calculate messageId (SHA-256 of the canonical fingerprint). Uses the
       // shared builder so the real content.type is hashed (control messages

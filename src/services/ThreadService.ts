@@ -1,38 +1,97 @@
 import type { QueryClient, InfiniteData } from '@tanstack/react-query';
 import type { MessageDB } from '../db/messages';
 import type {
+  Channel,
   Message,
   ThreadMessage,
   ChannelThread,
+  VerifiedSender,
 } from '@quilibrium/quorum-shared';
+import { authorizeThreadAction } from '@quilibrium/quorum-shared';
 import {
   buildChannelThreadFromCreate,
   updateChannelThreadOnReply,
 } from './channelThreadHelpers';
 import { buildMessagesKeyPrefix } from '../hooks/queries/messages/buildMessagesKey';
 
+/**
+ * Thread control frames (`create` / `close` / `reopen` / `updateSettings` /
+ * `updateTitle` / `remove`) reach across to other users' content — `remove`
+ * hard-deletes the root message and every reply.
+ *
+ * Every authorization input here is therefore the VERIFIED signer, resolved by
+ * the receive path before it calls in. `threadMsg.senderId` is a plaintext field
+ * the sending client writes, and it is never consulted for a decision; it stayed
+ * usable as a display value only.
+ */
 export class ThreadService {
   constructor(private messageDB: MessageDB) {}
 
-  /**
-   * Unified thread authorization: thread creator OR message:delete permission.
-   * Replaces 6 duplicate auth checks across MessageService's three code paths.
-   */
-  async isThreadAuthorized(params: {
-    senderId: string;
-    createdBy: string | undefined;
-    spaceId: string;
-  }): Promise<boolean> {
-    if (params.senderId === params.createdBy) return true;
+  /** The channel row, needed so read-only channels keep their isolated rules. */
+  private async resolveChannel(
+    spaceId: string,
+    channelId: string
+  ): Promise<{ space: Awaited<ReturnType<MessageDB['getSpace']>>; channel: Channel | undefined }> {
+    const space = await this.messageDB.getSpace(spaceId);
+    const channel = space?.groups
+      ?.find((g: { channels: Channel[] }) =>
+        g.channels.find((c: Channel) => c.channelId === channelId)
+      )
+      ?.channels.find((c: Channel) => c.channelId === channelId);
+    return { space, channel };
+  }
 
-    const space = await this.messageDB.getSpace(params.spaceId);
-    return (
-      space?.roles?.some(
-        (role: { members: string[]; permissions: string[] }) =>
-          role.members.includes(params.senderId) &&
-          role.permissions.includes('message:delete')
-      ) ?? false
+  /**
+   * Who owns this thread, per STORED state — the root's `threadMeta`, or the
+   * registry when the root is already gone (a `remove` following a delete).
+   *
+   * Never the incoming frame. That value is only trustworthy because `create`
+   * pins it to the verified creator; reading it off the wire here would undo
+   * that in one line.
+   */
+  private async resolveThreadCreator(
+    threadMsg: ThreadMessage,
+    targetMessage: Message | undefined
+  ): Promise<string | undefined> {
+    if (targetMessage?.threadMeta?.createdBy) {
+      return targetMessage.threadMeta.createdBy;
+    }
+    if (threadMsg.action === 'create') return undefined;
+    const record = await this.messageDB.getChannelThread(
+      threadMsg.threadMeta.threadId
     );
+    return record?.createdBy;
+  }
+
+  /**
+   * The single authorization gate for an incoming thread frame. Both the DB and
+   * the cache path funnel through it so they cannot reach different verdicts
+   * about the same frame.
+   */
+  private async isThreadFrameAuthorized(params: {
+    threadMsg: ThreadMessage;
+    targetMessage: Message | undefined;
+    spaceId: string;
+    channelId: string;
+    verifiedSender: VerifiedSender | null;
+  }): Promise<boolean> {
+    const { threadMsg, targetMessage, spaceId, channelId, verifiedSender } =
+      params;
+    // Cheap denial first: an unverifiable frame needs no space lookup at all.
+    if (!verifiedSender) return false;
+
+    const [{ space, channel }, threadCreatedBy] = await Promise.all([
+      this.resolveChannel(spaceId, channelId),
+      this.resolveThreadCreator(threadMsg, targetMessage),
+    ]);
+
+    return authorizeThreadAction({
+      action: threadMsg.action,
+      verifiedSender,
+      threadCreatedBy,
+      space: space ?? undefined,
+      channel,
+    }).allowed;
   }
 
   /**
@@ -45,11 +104,13 @@ export class ThreadService {
     threadMsg: ThreadMessage;
     spaceId: string;
     channelId: string;
+    /** The ed448-proven signer, or null when nothing could be proven. */
+    verifiedSender: VerifiedSender | null;
     currentUserAddress: string;
     conversationType: string;
     updatedUserProfile: { user_icon: string; display_name: string };
   }): Promise<boolean> {
-    const { threadMsg, spaceId, channelId, currentUserAddress, conversationType, updatedUserProfile } = params;
+    const { threadMsg, spaceId, channelId, verifiedSender, currentUserAddress, conversationType, updatedUserProfile } = params;
 
     // Reject DMs
     if (spaceId === channelId) return false;
@@ -63,42 +124,54 @@ export class ThreadService {
     // For 'remove' action, allow proceeding even if root was already deleted
     if (!targetMessage && threadMsg.action !== 'remove') return false;
 
+    // Idempotency sits AHEAD of authorization on purpose: a duplicate create is
+    // a no-op we already applied, not an access decision to re-litigate.
+    if (
+      threadMsg.action === 'create' &&
+      targetMessage!.threadMeta?.threadId === threadMsg.threadMeta.threadId
+    ) {
+      return false;
+    }
+
+    if (
+      !(await this.isThreadFrameAuthorized({
+        threadMsg,
+        targetMessage,
+        spaceId,
+        channelId,
+        verifiedSender,
+      }))
+    ) {
+      return false;
+    }
+    // Past the gate, so a sender was proven; safe to treat as the actor.
+    const actor = verifiedSender as string;
+
     // --- Action routing ---
 
     if (threadMsg.action === 'create') {
-      // Idempotent — skip if threadId already set
-      if (targetMessage!.threadMeta?.threadId === threadMsg.threadMeta.threadId) return false;
-
       const rootText = (targetMessage!.content as { text?: string })?.text ?? '';
       const newThread = buildChannelThreadFromCreate({
         spaceId,
         channelId,
         rootMessageId: threadMsg.targetMessageId,
-        threadMeta: threadMsg.threadMeta,
+        // createdBy comes from the signature, not the payload. Pre-fix the wire
+        // value was copied verbatim and then became the anchor every later
+        // authorization check compared against — so naming a victim here was
+        // enough to hand them the blame and yourself the access.
+        threadMeta: { ...threadMsg.threadMeta, createdBy: actor },
         rootMessageText: typeof rootText === 'string' ? rootText : '',
         currentUserAddress: currentUserAddress ?? '',
         now: Date.now(),
       });
       await this.messageDB.saveChannelThread(newThread);
-    } else if (threadMsg.action === 'updateTitle') {
-      if (threadMsg.senderId !== targetMessage!.threadMeta?.createdBy) return false;
-    } else if (
-      threadMsg.action === 'close' ||
-      threadMsg.action === 'reopen' ||
-      threadMsg.action === 'updateSettings'
-    ) {
-      const authorized = await this.isThreadAuthorized({
-        senderId: threadMsg.senderId,
-        createdBy: targetMessage!.threadMeta?.createdBy,
-        spaceId,
-      });
-      if (!authorized) return false;
     } else if (threadMsg.action === 'remove') {
       return this.handleThreadRemoveReceive({
         threadMsg,
         targetMessage,
         spaceId,
         channelId,
+        actor,
         currentUserAddress,
         conversationType,
         updatedUserProfile,
@@ -111,7 +184,14 @@ export class ThreadService {
     // Merge threadMeta and save
     const updatedMessage: Message = {
       ...targetMessage,
-      threadMeta: { ...targetMessage.threadMeta, ...threadMsg.threadMeta },
+      threadMeta: {
+        ...targetMessage.threadMeta,
+        ...threadMsg.threadMeta,
+        // Ownership is set once, at create, and is not a field later frames may
+        // carry. Without this pin, anyone authorized to close a thread could
+        // also seize it by attaching a new createdBy to that same frame.
+        createdBy: targetMessage.threadMeta?.createdBy ?? actor,
+      },
     };
     await this.messageDB.saveMessage(
       updatedMessage, 0, spaceId, conversationType,
@@ -152,28 +232,20 @@ export class ThreadService {
     targetMessage: Message | undefined;
     spaceId: string;
     channelId: string;
+    /** Already authorized by the caller's gate; the proven signer. */
+    actor: string;
     currentUserAddress: string;
     conversationType: string;
     updatedUserProfile: { user_icon: string; display_name: string };
   }): Promise<boolean> {
-    const { threadMsg, targetMessage, spaceId, channelId, currentUserAddress, conversationType, updatedUserProfile } = params;
-
-    // Auth: fall back to channel_threads registry if root was already deleted
-    const threadRecord = !targetMessage
-      ? await this.messageDB.getChannelThread(threadMsg.threadMeta.threadId)
-      : undefined;
-    const createdBy = targetMessage?.threadMeta?.createdBy ?? threadRecord?.createdBy;
-
-    const authorized = await this.isThreadAuthorized({
-      senderId: threadMsg.senderId,
-      createdBy,
-      spaceId,
-    });
-    if (!authorized) return false;
+    const { threadMsg, targetMessage, spaceId, channelId, actor, currentUserAddress, conversationType, updatedUserProfile } = params;
 
     // Handle root message
     if (targetMessage) {
-      const isRootSender = threadMsg.senderId === targetMessage.content.senderId;
+      // Deciding hard-delete vs strip, so it must be the proven signer: this is
+      // the branch that destroys someone else's message outright, and pre-fix
+      // both sides of the comparison were attacker-writable.
+      const isRootSender = actor === targetMessage.content.senderId;
       const rootText = (targetMessage.content as { text?: string })?.text;
       const isSoftDeleted = !rootText || (Array.isArray(rootText) && (rootText as string[]).every(s => !s));
 
@@ -256,9 +328,11 @@ export class ThreadService {
     threadMsg: ThreadMessage;
     spaceId: string;
     channelId: string;
+    /** The ed448-proven signer, or null when nothing could be proven. */
+    verifiedSender: VerifiedSender | null;
     queryClient: QueryClient;
   }): Promise<boolean> {
-    const { threadMsg, spaceId, channelId, queryClient } = params;
+    const { threadMsg, spaceId, channelId, verifiedSender, queryClient } = params;
 
     if (spaceId === channelId) return false;
 
@@ -266,24 +340,29 @@ export class ThreadService {
       spaceId, channelId, messageId: threadMsg.targetMessageId,
     });
 
-    // Auth checks per action
-    if (threadMsg.action === 'updateTitle') {
-      if (!targetMessage || threadMsg.senderId !== targetMessage.threadMeta?.createdBy) return false;
-    }
+    // Every action except 'remove' needs the root present to act on. The DB
+    // path has always required this; the cache path did not, so a 'create'
+    // could update the view where the store refused it. Matching them is the
+    // point — a decision that differs between the two is the bug class here.
+    if (!targetMessage && threadMsg.action !== 'remove') return false;
 
-    if (threadMsg.action === 'close' || threadMsg.action === 'reopen' || threadMsg.action === 'updateSettings') {
-      if (!targetMessage) return false;
-      const authorized = await this.isThreadAuthorized({
-        senderId: threadMsg.senderId,
-        createdBy: targetMessage.threadMeta?.createdBy,
+    // Same gate as the DB path — one verdict, so the two views cannot diverge.
+    if (
+      !(await this.isThreadFrameAuthorized({
+        threadMsg,
+        targetMessage,
         spaceId,
-      });
-      if (!authorized) return false;
+        channelId,
+        verifiedSender,
+      }))
+    ) {
+      return false;
     }
+    const actor = verifiedSender as string;
 
     if (threadMsg.action === 'remove') {
       return this.handleThreadRemoveCache({
-        threadMsg, targetMessage, spaceId, channelId, queryClient,
+        threadMsg, targetMessage, spaceId, channelId, actor, queryClient,
       });
     }
 
@@ -322,23 +401,17 @@ export class ThreadService {
     targetMessage: Message | undefined;
     spaceId: string;
     channelId: string;
+    /** Already authorized by the caller's gate; the proven signer. */
+    actor: string;
     queryClient: QueryClient;
   }): Promise<boolean> {
-    const { threadMsg, targetMessage, spaceId, channelId, queryClient } = params;
+    const { threadMsg, targetMessage, spaceId, channelId, actor, queryClient } = params;
     const threadId = threadMsg.threadMeta.threadId;
 
-    // Auth
-    const threadRecord = !targetMessage
-      ? await this.messageDB.getChannelThread(threadId)
-      : undefined;
-    const createdBy = targetMessage?.threadMeta?.createdBy ?? threadRecord?.createdBy;
-    const authorized = await this.isThreadAuthorized({
-      senderId: threadMsg.senderId, createdBy, spaceId,
-    });
-    if (!authorized) return false;
-
+    // Mirrors handleThreadRemoveReceive: the proven signer decides whether the
+    // root disappears or merely loses its threadMeta.
     const isRootSender = targetMessage
-      ? threadMsg.senderId === targetMessage.content.senderId
+      ? actor === targetMessage.content.senderId
       : false;
 
     // Update main feed cache
@@ -468,7 +541,7 @@ export class ThreadService {
     queryClient: QueryClient;
     currentUserAddress: string;
   }): Promise<{ shouldProceed: boolean; targetMessage?: Message }> {
-    const { threadMsg, spaceId, channelId } = params;
+    const { threadMsg, spaceId, channelId, currentUserAddress } = params;
 
     if (spaceId === channelId) return { shouldProceed: false };
 
@@ -482,8 +555,10 @@ export class ThreadService {
       return { shouldProceed: false };
     }
 
-    // updateTitle: only creator
-    if (threadMsg.action === 'updateTitle' && threadMsg.senderId !== targetMessage.threadMeta?.createdBy) {
+    // updateTitle: only creator. Send-side, so the actor is simply us — reading
+    // it off the outgoing payload would be checking our own claim about
+    // ourselves, which proves nothing and drifts from the receive-side rule.
+    if (threadMsg.action === 'updateTitle' && currentUserAddress !== targetMessage.threadMeta?.createdBy) {
       return { shouldProceed: false };
     }
 
@@ -513,7 +588,8 @@ export class ThreadService {
 
     // Remove action: full cleanup
     if (threadMsg.action === 'remove') {
-      const isRootSender = threadMsg.senderId === targetMessage.content.senderId;
+      // Send-side: the actor is the local user, not whatever the payload says.
+      const isRootSender = currentUserAddress === targetMessage.content.senderId;
       const rootText = (targetMessage.content as { text?: string })?.text;
       const isSoftDeleted = !rootText || (Array.isArray(rootText) && (rootText as string[]).every(s => !s));
 
