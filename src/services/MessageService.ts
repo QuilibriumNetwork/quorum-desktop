@@ -19,6 +19,7 @@ import {
   verifyAndResolveSender,
   authorizeControlMessage,
   isControlMessageType,
+  shouldSignOutbound,
   shouldSignEdit,
   canManageReadOnlyChannel,
   verifyDeviceKeyStatement,
@@ -2804,10 +2805,20 @@ export class MessageService {
       );
     } else if (decryptedContent.content.type === 'thread') {
       const threadMsg = decryptedContent.content as ThreadMessage;
+      // SECURITY: thread frames carry a second deletion primitive ('remove'
+      // hard-deletes the root and every reply). Authorize on the VERIFIED
+      // signer; the payload's senderId is a claim, not proof.
+      const { sender: threadSender } = await this.verifySpaceSender(
+        decryptedContent,
+        messageDB,
+        spaceId,
+        channelId
+      );
       await this.threadService.handleThreadReceive({
         threadMsg,
         spaceId,
         channelId,
+        verifiedSender: threadSender ?? null,
         currentUserAddress: currentUserAddress ?? '',
         conversationType,
         updatedUserProfile: {
@@ -3366,10 +3377,19 @@ export class MessageService {
       });
     } else if (decryptedContent.content.type === 'thread') {
       const threadMsg = decryptedContent.content as ThreadMessage;
+      // Same verdict inputs as the DB path above, or the cache and the store
+      // disagree about whether a thread action happened.
+      const { sender: threadSender } = await this.verifySpaceSender(
+        decryptedContent,
+        this.messageDB,
+        spaceId,
+        channelId
+      );
       await this.threadService.handleThreadCache({
         threadMsg,
         spaceId,
         channelId,
+        verifiedSender: threadSender ?? null,
         queryClient,
       });
     } else if (decryptedContent.content.type === 'update-profile') {
@@ -7285,15 +7305,17 @@ export class MessageService {
       const nonce = crypto.randomUUID();
       const space = await this.messageDB.getSpace(spaceId);
 
-      // Read-only posts must always be signed (receive-side drops unsigned ones,
-      // including a manager's own), so force-sign regardless of the repudiable
-      // "send unsigned" toggle.
       const targetChannel = space
         ? this.findChannelInSpace(space, channelId)
         : undefined;
-      const effectiveSkipSigning = targetChannel?.isReadOnly
-        ? false
-        : skipSigning;
+      // Shared decision, so send-side and receive-side cannot drift. See
+      // shouldSignOutbound: deniability still applies to ordinary posts.
+      const effectiveSkipSigning = !shouldSignOutbound({
+        contentType: (pendingMessage as { type?: string })?.type ?? 'post',
+        isRepudiable: !!space?.isRepudiable,
+        isReadOnlyChannel: !!targetChannel?.isReadOnly,
+        skipSigning: !!skipSigning,
+      });
 
       // Calculate messageId (SHA-256 of the canonical fingerprint). Uses the
       // shared builder so the real content.type is hashed (control messages
@@ -7662,8 +7684,20 @@ export class MessageService {
           conversationId,
         });
 
-        // Enforce non-repudiability
-        if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
+        // Enforce non-repudiability. 'pin' is refused unsigned by receivers
+        // (authorizeControlMessage denies a null sender), so honoring the
+        // "send unsigned" toggle here would pin the message locally and
+        // nowhere else, with nothing reporting the disagreement.
+        if (
+          shouldSignOutbound({
+            contentType: 'pin',
+            isRepudiable: !!space?.isRepudiable,
+            isReadOnlyChannel: !!(
+              space && this.findChannelInSpace(space, channelId)?.isReadOnly
+            ),
+            skipSigning: !!skipSigning,
+          })
+        ) {
           const inboxKey = await this.getSigningKey(spaceId);
           message.publicKey = inboxKey.publicKey;
           message.signature = Buffer.from(
@@ -7743,8 +7777,21 @@ export class MessageService {
           } as ThreadMessage,
         } as Message;
 
-        // Sign (same pattern as pin messages)
-        if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
+        // Thread frames are refused unsigned by every receiver
+        // (authorizeThreadAction denies a null sender outright), so the
+        // "send unsigned" toggle must not reach this branch: an unsigned
+        // 'remove' would delete the thread on this device and nowhere else,
+        // which reads as a successful deletion and is not one.
+        if (
+          shouldSignOutbound({
+            contentType: 'thread',
+            isRepudiable: !!space?.isRepudiable,
+            isReadOnlyChannel: !!(
+              space && this.findChannelInSpace(space, channelId)?.isReadOnly
+            ),
+            skipSigning: !!skipSigning,
+          })
+        ) {
           const inboxKey = await this.getSigningKey(spaceId);
           message.publicKey = inboxKey.publicKey;
           message.signature = Buffer.from(

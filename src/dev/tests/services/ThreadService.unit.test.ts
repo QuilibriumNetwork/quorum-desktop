@@ -30,58 +30,15 @@ describe('ThreadService', () => {
     threadService = new ThreadService(mockDB);
   });
 
-  describe('isThreadAuthorized', () => {
-    it('returns true when sender is thread creator', async () => {
-      const result = await threadService.isThreadAuthorized({
-        senderId: 'user-a',
-        createdBy: 'user-a',
-        spaceId: 'space-1',
-      });
-      expect(result).toBe(true);
-      // Should NOT call getSpace — short-circuits on author match
-      expect(mockDB.getSpace).not.toHaveBeenCalled();
-    });
-
-    it('returns true when sender has message:delete permission', async () => {
-      (mockDB.getSpace as any).mockResolvedValue({
-        roles: [{
-          members: ['user-mod'],
-          permissions: ['message:delete'],
-        }],
-      });
-      const result = await threadService.isThreadAuthorized({
-        senderId: 'user-mod',
-        createdBy: 'user-other',
-        spaceId: 'space-1',
-      });
-      expect(result).toBe(true);
-    });
-
-    it('returns false when sender is neither author nor has permission', async () => {
-      (mockDB.getSpace as any).mockResolvedValue({
-        roles: [{
-          members: ['user-mod'],
-          permissions: ['message:pin'],  // wrong permission
-        }],
-      });
-      const result = await threadService.isThreadAuthorized({
-        senderId: 'user-random',
-        createdBy: 'user-other',
-        spaceId: 'space-1',
-      });
-      expect(result).toBe(false);
-    });
-
-    it('returns false when space has no roles', async () => {
-      (mockDB.getSpace as any).mockResolvedValue({ roles: undefined });
-      const result = await threadService.isThreadAuthorized({
-        senderId: 'user-random',
-        createdBy: 'user-other',
-        spaceId: 'space-1',
-      });
-      expect(result).toBe(false);
-    });
-  });
+  // The `isThreadAuthorized` block that used to sit here was deleted with the
+  // method. It fed the helper raw `senderId` strings, so it passed identically
+  // whether callers supplied a verified sender or a payload claim — it could
+  // not have detected the bug that made this rewrite necessary.
+  //
+  // The rule itself now lives in shared `authorizeThreadAction` and is unit
+  // tested there. Whether callers reach it with a PROVEN identity is covered by
+  // threadActionsRequireVerifiedSender.test.ts, which is the part that has to
+  // be tested through the public API to mean anything.
 
   describe('handleThreadReceive', () => {
     it('rejects DMs (spaceId === channelId)', async () => {
@@ -122,6 +79,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'space-1',
         channelId: 'channel-1',
+        verifiedSender: threadMsg.senderId as any,
         currentUserAddress: 'user-a',
         conversationType: 'group',
         updatedUserProfile: { user_icon: '', display_name: '' },
@@ -150,6 +108,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'space-1',
         channelId: 'channel-1',
+        verifiedSender: threadMsg.senderId as any,
         currentUserAddress: 'user-a',
         conversationType: 'group',
         updatedUserProfile: { user_icon: '', display_name: '' },
@@ -177,6 +136,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'space-1',
         channelId: 'channel-1',
+        verifiedSender: threadMsg.senderId as any,
         currentUserAddress: 'user-a',
         conversationType: 'group',
         updatedUserProfile: { user_icon: '', display_name: '' },
@@ -206,6 +166,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'space-1',
         channelId: 'channel-1',
+        verifiedSender: threadMsg.senderId as any,
         currentUserAddress: 'user-a',
         conversationType: 'group',
         updatedUserProfile: { user_icon: '', display_name: '' },
@@ -238,6 +199,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'space-1',
         channelId: 'channel-1',
+        verifiedSender: threadMsg.senderId as any,
         currentUserAddress: 'user-a',
         conversationType: 'group',
         updatedUserProfile: { user_icon: '', display_name: '' },
@@ -268,6 +230,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'space-1',
         channelId: 'channel-1',
+        verifiedSender: threadMsg.senderId as any,
         currentUserAddress: 'user-a',
         conversationType: 'group',
         updatedUserProfile: { user_icon: '', display_name: '' },
@@ -297,6 +260,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'space-1',
         channelId: 'channel-1',
+        verifiedSender: threadMsg.senderId as any,
         currentUserAddress: 'user-a',
         conversationType: 'group',
         updatedUserProfile: { user_icon: '', display_name: '' },
@@ -329,6 +293,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'space-1',
         channelId: 'channel-1',
+        verifiedSender: threadMsg.senderId as any,
         currentUserAddress: 'user-a',
         conversationType: 'group',
         updatedUserProfile: { user_icon: '', display_name: '' },
@@ -353,6 +318,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'space-1',
         channelId: 'channel-1',
+        verifiedSender: threadMsg.senderId as any,
         currentUserAddress: 'user-a',
         conversationType: 'group',
         updatedUserProfile: { user_icon: '', display_name: '' },
@@ -382,6 +348,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'space-1',
         channelId: 'channel-1',
+        verifiedSender: threadMsg.senderId as any,
         currentUserAddress: 'user-a',
         conversationType: 'group',
         updatedUserProfile: { user_icon: '', display_name: '' },
@@ -412,6 +379,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'space-1',
         channelId: 'channel-1',
+        verifiedSender: threadMsg.senderId as any,
         currentUserAddress: 'user-a',
         conversationType: 'group',
         updatedUserProfile: { user_icon: '', display_name: '' },
@@ -509,6 +477,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'same',
         channelId: 'same',
+        verifiedSender: threadMsg.senderId as any,
         queryClient,
       });
       expect(result).toBe(false);
@@ -531,6 +500,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'space-1',
         channelId: 'channel-1',
+        verifiedSender: threadMsg.senderId as any,
         queryClient,
       });
       expect(result).toBe(false);
@@ -561,6 +531,7 @@ describe('ThreadService', () => {
         threadMsg,
         spaceId: 'space-1',
         channelId: 'channel-1',
+        verifiedSender: threadMsg.senderId as any,
         queryClient,
       });
       expect(result).toBe(true);
