@@ -208,15 +208,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [npm Publish Access + Release Flow for @quilibrium/quorum-shared](issues/quorum-shared-migration/reference/npm-publish-access.md)
 - 📋 [Stacked PRs Workflow](issues/quorum-shared-migration/reference/stacked-prs-workflow.md)
 
-#### Receive Auth Hardening
-
-- 📋 [Deduplicate the DM control verdict](issues/receive-auth-hardening/2026-08-21-deduplicate-the-dm-control-verdict.md)
-- 📋 [ESLint boundary for `senderId` reads](issues/receive-auth-hardening/2026-08-21-eslint-boundary-for-senderid-reads.md)
-- 📋 [Exhaustive message-auth policy map](issues/receive-auth-hardening/2026-08-21-exhaustive-message-auth-policy-map.md)
-- 📋 [Handler identifier-mismatch audit](issues/receive-auth-hardening/2026-08-21-handler-identifier-mismatch-audit.md)
-- 📋 [Table-driven receive dispatch](issues/receive-auth-hardening/2026-08-21-table-driven-receive-dispatch.md)
-- 📋 [Receive-side authorization hardening](issues/receive-auth-hardening/README.md)
-
 #### Search Optimization
 
 - 📋 [Design Decisions & Rationale](issues/search-optimization/decisions.md)
@@ -813,4 +804,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-21 19:39:36
+**Last Updated**: 2026-08-21 19:48:48
