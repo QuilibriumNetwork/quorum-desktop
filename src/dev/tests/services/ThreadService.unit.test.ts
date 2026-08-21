@@ -153,7 +153,18 @@ describe('ThreadService', () => {
       };
       (mockDB.getMessage as any).mockResolvedValue(rootMessage);
       (mockDB.getSpace as any).mockResolvedValue({ roles: [] });
-      (mockDB.getThreadMessages as any).mockResolvedValue({ messages: [{ messageId: 'reply-1' }] });
+      // The reply needs a real `content.senderId`: removal is refused when the
+      // thread holds replies the remover did not write, and an unreadable
+      // author counts as someone else's. A bare `{ messageId }` is not a shape
+      // any live reply has.
+      (mockDB.getThreadMessages as any).mockResolvedValue({
+        messages: [
+          {
+            messageId: 'reply-1',
+            content: { type: 'post', senderId: 'user-a', text: 'a reply' },
+          },
+        ],
+      });
 
       const threadMsg: ThreadMessage = {
         type: 'thread',

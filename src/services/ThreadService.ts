@@ -7,7 +7,11 @@ import type {
   ChannelThread,
   VerifiedSender,
 } from '@quilibrium/quorum-shared';
-import { authorizeThreadAction, logger } from '@quilibrium/quorum-shared';
+import {
+  authorizeThreadAction,
+  createChannelPermissionChecker,
+  logger,
+} from '@quilibrium/quorum-shared';
 import {
   buildChannelThreadFromCreate,
   updateChannelThreadOnReply,
@@ -64,6 +68,57 @@ export class ThreadService {
   }
 
   /**
+   * May `actor` remove this whole thread?
+   *
+   * `remove` hard-deletes every reply in the thread, so a creator's authority
+   * over a thread they opened stops where other members' content begins: they
+   * may remove a thread holding nothing but their own replies, and past that it
+   * takes `message:delete` — the same permission that would let them delete
+   * those replies one at a time anyway.
+   *
+   * The rule is not new. It already existed in `ThreadSettingsModal.tsx:194`,
+   * which hides the Delete button and explains why — but a button an honest
+   * client declines to draw decides nothing about what a receiver accepts. This
+   * is that rule where it is actually a boundary.
+   *
+   * Deliberately `hasChannelPermission`, never `canDeleteMessage`: the latter
+   * answers yes to "may I delete my own message", and "this root is mine" must
+   * not answer "may I destroy your replies".
+   */
+  private async mayRemoveThread(params: {
+    spaceId: string;
+    channelId: string;
+    threadId: string;
+    actor: string;
+  }): Promise<boolean> {
+    const { spaceId, channelId, threadId, actor } = params;
+
+    // Replies only — `getThreadMessages` reads the by_thread index, which the
+    // root is not in. That matches what the modal counts (it is handed
+    // `threadMessages`, not `allThreadMessages`), so the two agree about a
+    // thread opened on someone else's post with no replies yet.
+    const { messages: replies } = await this.messageDB.getThreadMessages({
+      spaceId,
+      channelId,
+      threadId,
+    });
+    // Fail CLOSED on a reply whose author cannot be read: an unreadable
+    // senderId counts as someone else's. Every real reply carries one — the
+    // send path writes it and soft-delete explicitly preserves it
+    // (MessageService.ts:2538) — so this costs nothing in practice, and the
+    // alternative default silently widens a destructive action.
+    if (!replies.some((r) => r.content?.senderId !== actor)) return true;
+
+    const { space, channel } = await this.resolveChannel(spaceId, channelId);
+    return createChannelPermissionChecker({
+      userAddress: actor,
+      isSpaceOwner: false, // receiver-unverifiable, as everywhere else here
+      space: space ?? undefined,
+      channel,
+    }).hasChannelPermission('message:delete');
+  }
+
+  /**
    * The single authorization gate for an incoming thread frame. Both the DB and
    * the cache path funnel through it so they cannot reach different verdicts
    * about the same frame.
@@ -93,6 +148,30 @@ export class ThreadService {
       channel,
     });
 
+    let denyReason: string | null = verdict.allowed ? null : verdict.reason;
+
+    // `remove` alone reaches past the thread's own metadata and hard-deletes
+    // every reply in it. Whether that is permitted depends on WHO WROTE those
+    // replies — stored state the shared verdict has no access to — so the
+    // second half of the rule is applied here. It only ever narrows.
+    //
+    // Refused means the frame is DROPPED WHOLE, not partially applied. Deleting
+    // the sender's own replies and keeping the rest would be closer to what an
+    // honest client would have produced, but a receiver cannot distinguish a
+    // modified client from a merely stale one, so partial application would
+    // hand every attacker the accommodation built for the race. "Nothing
+    // happened" is also a state both devices can agree on; a half-removed
+    // thread is not. The race itself is closed on the send side instead.
+    if (!denyReason && threadMsg.action === 'remove') {
+      const permitted = await this.mayRemoveThread({
+        spaceId,
+        channelId,
+        threadId: threadMsg.threadMeta.threadId,
+        actor: verifiedSender,
+      });
+      if (!permitted) denyReason = 'thread-has-other-authors';
+    }
+
     // A denial here is indistinguishable from "nothing happened" for the user,
     // and several BENIGN causes land on this path: a join broadcast that has
     // not arrived yet, a device key not yet admitted, a rotation in flight. The
@@ -100,15 +179,16 @@ export class ThreadService {
     // discarding the one piece of information that makes this diagnosable.
     // The reason names no key or address and tells an attacker nothing they
     // did not already supply.
-    if (!verdict.allowed) {
+    if (denyReason) {
       logger.warn('thread action denied', {
         action: threadMsg.action,
-        reason: verdict.reason,
+        reason: denyReason,
         threadId: threadMsg.threadMeta.threadId,
       });
+      return false;
     }
 
-    return verdict.allowed;
+    return true;
   }
 
   /**
@@ -589,6 +669,32 @@ export class ThreadService {
     // ourselves, which proves nothing and drifts from the receive-side rule.
     if (threadMsg.action === 'updateTitle' && currentUserAddress !== targetMessage.threadMeta?.createdBy) {
       return { shouldProceed: false };
+    }
+
+    // The same rule the receive side applies, so we never broadcast a frame
+    // every recipient will refuse. This is NOT a security boundary — a modified
+    // client simply skips it — but it is what keeps an HONEST client's local
+    // state from diverging: `handleThreadSendPostBroadcast` deletes the replies
+    // on THIS device, and it runs only when this gate says proceed. Without it,
+    // a refused remove leaves this client alone in believing the thread is gone.
+    //
+    // The reachable case is a race, not an attack: ThreadSettingsModal decides
+    // what to show when it opens, so a reply landing while it is open leaves a
+    // stale Delete button on screen.
+    if (threadMsg.action === 'remove') {
+      const permitted = await this.mayRemoveThread({
+        spaceId,
+        channelId,
+        threadId: threadMsg.threadMeta.threadId,
+        actor: currentUserAddress,
+      });
+      if (!permitted) {
+        logger.warn('thread remove not sent', {
+          reason: 'thread-has-other-authors',
+          threadId: threadMsg.threadMeta.threadId,
+        });
+        return { shouldProceed: false };
+      }
     }
 
     return { shouldProceed: true, targetMessage };

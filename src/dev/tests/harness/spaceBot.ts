@@ -73,6 +73,20 @@ export interface HarnessSpaceBot {
   /** Post a text message to a channel via the real submitChannelMessage path. */
   post(spaceId: string, channelId: string, text: string): Promise<void>;
   /**
+   * Post a text reply INSIDE a thread, via the same real path as `post`.
+   *
+   * Separate only because `submitChannelMessage` takes `threadId` as its tenth
+   * positional argument, which is what tags the message `isThreadReply` and puts
+   * it in the by_thread index. A scenario that faked that tagging by writing to
+   * the DB directly would skip the tagging code and prove nothing about it.
+   */
+  postToThread(
+    spaceId: string,
+    channelId: string,
+    threadId: string,
+    text: string
+  ): Promise<void>;
+  /**
    * Send a structured control payload (thread / pin / edit-message / …) through
    * the same real `submitChannelMessage` path `post` uses.
    *
@@ -368,6 +382,29 @@ export async function createSpaceBot(
       // in that order — the handler is what puts frames into the FIFO.
       await mustDrain(drainActionQueue(), 'post action queue');
       await mustDrain(graph.outbound.flush(), 'post outbound');
+    },
+
+    postToThread: async (
+      spaceId: string,
+      channelId: string,
+      threadId: string,
+      text: string
+    ) => {
+      await graph.messageService.submitChannelMessage(
+        spaceId,
+        channelId,
+        text,
+        queryClient,
+        passkeyInfo,
+        undefined, // inReplyTo
+        undefined, // skipSigning
+        undefined, // isSpaceOwner
+        undefined, // parentMessage
+        threadId
+      );
+      // Same two-stage drain as `post`, and for the same reason.
+      await mustDrain(drainActionQueue(), 'postToThread action queue');
+      await mustDrain(graph.outbound.flush(), 'postToThread outbound');
     },
 
     sendControl: async (
