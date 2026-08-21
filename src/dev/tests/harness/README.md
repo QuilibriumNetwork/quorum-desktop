@@ -171,6 +171,8 @@ Log analyzers stay in `.agents/tools/dm-debug/` (`dr-ablate`, `dr-replay`,
 | `yarn harness space-create` | S0: a bot creates a real space on production and reads its manifest back through the joiner's own decode path |
 | `yarn harness space-basic` | S1: B joins A's space by invite and must receive **both** A's post and A's member row. `HARNESS_SPACE_WINDOW_MS` / `HARNESS_SPACE_SAMPLE_MS` tune the wait |
 | `yarn harness space-thread-forgery` | can an ordinary member DESTROY your message by opening a thread on it? Two arms: an attacker forges the thread's `createdBy`, then forges authorship of a `remove`; a control arm does the same removal honestly. **The control arm is what makes the run meaningful** — its stripped `threadMeta` proves removes are arriving and being applied, so the attack arm cannot pass by everything being broken. See the caveat below |
+| `yarn harness space-thread-reply-wipe` | can someone who opened a thread on your message DELETE your replies inside it? Three arms: a raw-sealed `remove` (a modified client), the same request through the real send path (which an honest client must refuse to broadcast AND must not apply locally), and a control that removes a thread holding only the sender's own replies. The send-side half is measured the instant the send returns, not at the end — see the note below |
+| `yarn harness space-thread-target-mismatch` | a thread frame names what it acts on twice — `threadMeta.threadId` (which every authorization check reads) and `targetMessageId` (which the destructive work operates on). Can they be pointed at different things? Attack arm removes the attacker's own thread while targeting the victim's caption-less image; control arm removes that same thread honestly and must still hard-delete its own root |
 | `yarn harness space-wipe-restore` | what logging back in restores after a storage eviction. Two accounts of identical shape, one variable — `allowSync`. Sync on: Space, keys and profile return, DMs do not. Sync off (the DEFAULT): nothing returns, so the eviction takes the Spaces too. The sync-off arm is also the control — if both restored, something other than the published config would be doing it |
 
 `space-basic` asserts the ROSTER as well as the message, because the roster half
@@ -188,6 +190,16 @@ second row can only have come off the wire.
 > attack WORKS**, and seen to go red. `git checkout <pre-fix-sha> -- <files>`,
 > run, confirm red, restore. If it stays green, the scenario is not expressing
 > the attack — it is expressing something the code rejects anyway.
+
+> ⚠️ **Read a sender's own local state at the moment the send returns, not at
+> the end of the run.** `space-thread-reply-wipe` first asserted the sender's
+> view after the settle wait, and failed — but the send gate was working. A
+> root's `threadMeta` disappears from the SENDER's copy during ordinary sync
+> traffic anyway (backlog re-delivery re-saving the post as first published,
+> before it had any). MEASURED: a root nobody removed on either device reads the
+> same way, which is why that scenario now reports the two side by side and
+> asserts neither. Local-state assertions need a control that should NOT change,
+> or ambient behaviour gets attributed to the change under test.
 
 > ⚠️ **A green `space-basic` is not evidence the roster bug is absent.** It runs
 > at N=2 members; the reported failure is at N≈79 and is intermittent. Quoting a

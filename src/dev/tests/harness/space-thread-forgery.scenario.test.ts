@@ -71,13 +71,9 @@
 //
 // ⚠️ Talks to the PRODUCTION relay with throwaway accounts. See identity.ts.
 import { test, expect } from 'vitest';
-import { channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
-import {
-  canonicalize,
-  type Message,
-  type ThreadMessage,
-} from '@quilibrium/quorum-shared';
+import { type ThreadMessage } from '@quilibrium/quorum-shared';
 import { createSpaceBot, type HarnessSpaceBot } from './spaceBot';
+import { sealThreadFrame, threadIdFor } from './threadFrames';
 import { RunLog } from './log';
 
 const WINDOW_MS = Number(process.env.HARNESS_SPACE_WINDOW_MS ?? 120_000);
@@ -85,17 +81,6 @@ const SAMPLE_MS = Number(process.env.HARNESS_SPACE_SAMPLE_MS ?? 2000);
 const SETTLE_MS = Number(process.env.HARNESS_SETTLE_MS ?? 20_000);
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-/** The thread id the app derives from a root message — see Channel.tsx. */
-async function threadIdFor(messageId: string): Promise<string> {
-  const buf = await crypto.subtle.digest(
-    'SHA-256',
-    new TextEncoder().encode(messageId + ':thread')
-  );
-  return Array.from(new Uint8Array(buf))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-}
 
 /** Poll until `check` returns a value, or the window closes. */
 async function until<T>(
@@ -118,54 +103,6 @@ function postIdByText(bot: HarnessSpaceBot, text: string): string | undefined {
       m.content?.type === 'post' &&
       (m.content as { text?: string }).text === text
   )?.messageId;
-}
-
-/**
- * Build a space `Message` around a thread payload exactly as the honest send
- * path builds it, then sign it with `signing`.
- *
- * The fingerprint uses `content.senderId` because that is what the RECEIVER
- * feeds to `buildMessageFingerprint`. Keeping them equal is what makes a forged
- * frame internally consistent rather than merely malformed — a malformed frame
- * would be dropped early and would prove nothing.
- */
-async function sealThreadFrame(params: {
-  spaceId: string;
-  channelId: string;
-  thread: ThreadMessage;
-  signing: { publicKey: string; privateKey: string };
-}): Promise<Message> {
-  const { spaceId, channelId, thread, signing } = params;
-  const nonce = crypto.randomUUID();
-  const digest = await crypto.subtle.digest(
-    'SHA-256',
-    Buffer.from(
-      nonce + 'thread' + thread.senderId + canonicalize(thread as never),
-      'utf-8'
-    )
-  );
-  return {
-    spaceId,
-    channelId,
-    messageId: Buffer.from(digest).toString('hex'),
-    digestAlgorithm: 'SHA-256',
-    nonce,
-    createdDate: Date.now(),
-    modifiedDate: Date.now(),
-    lastModifiedHash: '',
-    content: thread,
-    publicKey: signing.publicKey,
-    signature: Buffer.from(
-      JSON.parse(
-        ch.js_sign_ed448(
-          Buffer.from(signing.privateKey, 'hex').toString('base64'),
-          Buffer.from(digest).toString('base64')
-        )
-      ),
-      'base64'
-    ).toString('hex'),
-    reactions: [],
-  } as unknown as Message;
 }
 
 test(
