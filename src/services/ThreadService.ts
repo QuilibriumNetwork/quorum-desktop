@@ -104,8 +104,11 @@ export class ThreadService {
     });
     // Fail CLOSED on a reply whose author cannot be read: an unreadable
     // senderId counts as someone else's. Every real reply carries one — the
-    // send path writes it and soft-delete explicitly preserves it
-    // (MessageService.ts:2538) — so this costs nothing in practice, and the
+    // send path writes it, and a reply individually removed via `remove-message`
+    // is HARD-deleted rather than emptied (the soft-delete branch at
+    // MessageService.ts:2532 applies only to messages carrying `threadMeta`,
+    // which replies do not), so it leaves the index entirely rather than
+    // lingering with a stripped author. This costs nothing in practice, and the
     // alternative default silently widens a destructive action.
     if (!replies.some((r) => r.content?.senderId !== actor)) return true;
 
@@ -116,6 +119,31 @@ export class ThreadService {
       space: space ?? undefined,
       channel,
     }).hasChannelPermission('message:delete');
+  }
+
+  /**
+   * Refetch every view a thread removal touches, so the screen re-reads the
+   * store instead of trusting an optimistic update that turned out to be wrong.
+   *
+   * These are the same three keys `Channel.tsx:906-937` wipes optimistically
+   * before submitting a removal.
+   */
+  private invalidateThreadViews(params: {
+    spaceId: string;
+    channelId: string;
+    threadId: string;
+    queryClient: QueryClient;
+  }): void {
+    const { spaceId, channelId, threadId, queryClient } = params;
+    queryClient.invalidateQueries({
+      queryKey: buildMessagesKeyPrefix({ spaceId, channelId }),
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['thread-messages', spaceId, channelId, threadId],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['channel-threads', spaceId, channelId],
+    });
   }
 
   /**
@@ -134,6 +162,49 @@ export class ThreadService {
       params;
     // Cheap denial first: an unverifiable frame needs no space lookup at all.
     if (!verifiedSender) return false;
+
+    // A frame must act on the thread its target message actually carries.
+    //
+    // `targetMessageId` and `threadMeta.threadId` are two independent
+    // attacker-written fields, and every check below reads only the SECOND
+    // while the destructive work reads only the FIRST. Nothing tied them
+    // together, so a member could name a harmless thread of their own and point
+    // the target at anything they liked:
+    //
+    //   - target a root whose real thread is full of other members' replies →
+    //     authorization and the reply check both evaluate the decoy thread and
+    //     allow, then the applier strips that root's threadMeta and orphans
+    //     every reply under it.
+    //   - target a message with no thread at all → `resolveThreadCreator` falls
+    //     through to `channel_threads`, which is keyed by BARE threadId, and
+    //     answers with the decoy's own creator. The applier's hard-delete branch
+    //     fires on `isSoftDeleted`, computed as "content.text is empty" — true
+    //     of every caption-less image, embed and sticker, and of anything
+    //     already soft-deleted — so an ordinary member destroys another's
+    //     message outright, on every device, with no role and no forged
+    //     signature.
+    //
+    // So a non-`create` frame requires a target that IS this thread's root.
+    // A target with no `threadMeta` is not a valid subject for any of these
+    // actions; treating "absent" as "acceptable" is what opened the second case.
+    //
+    // `remove` against an ALREADY-DELETED root stays allowed — that is
+    // deliberate (see handleThreadReceive) and there is no stored value to
+    // disagree with. It is also harmless: with no target, the applier skips root
+    // handling entirely and touches only the named thread's own replies.
+    // `create` is what establishes the value, so it has nothing to check.
+    if (
+      threadMsg.action !== 'create' &&
+      targetMessage &&
+      targetMessage.threadMeta?.threadId !== threadMsg.threadMeta.threadId
+    ) {
+      logger.warn('thread action denied', {
+        action: threadMsg.action,
+        reason: 'thread-target-mismatch',
+        threadId: threadMsg.threadMeta.threadId,
+      });
+      return false;
+    }
 
     const [{ space, channel }, threadCreatedBy] = await Promise.all([
       this.resolveChannel(spaceId, channelId),
@@ -664,6 +735,23 @@ export class ThreadService {
       return { shouldProceed: false };
     }
 
+    // Same target/thread consistency rule the receive gate applies. Not a
+    // boundary here — the honest UI builds the frame from the root's own
+    // threadMeta, so it always matches — but the send path must not be able to
+    // emit a shape every receiver refuses, and `handleThreadSendPostBroadcast`
+    // reproduces the applier's hard-delete branch locally.
+    if (
+      threadMsg.action !== 'create' &&
+      targetMessage.threadMeta?.threadId !== threadMsg.threadMeta.threadId
+    ) {
+      logger.warn('thread action not sent', {
+        action: threadMsg.action,
+        reason: 'thread-target-mismatch',
+        threadId: threadMsg.threadMeta.threadId,
+      });
+      return { shouldProceed: false };
+    }
+
     // updateTitle: only creator. Send-side, so the actor is simply us — reading
     // it off the outgoing payload would be checking our own claim about
     // ourselves, which proves nothing and drifts from the receive-side rule.
@@ -692,6 +780,23 @@ export class ThreadService {
         logger.warn('thread remove not sent', {
           reason: 'thread-has-other-authors',
           threadId: threadMsg.threadMeta.threadId,
+        });
+        // Undo any optimistic wipe the caller already did. `Channel.tsx`
+        // (`handleRemoveThread`) strips the thread from these three caches
+        // BEFORE submitting and does not look at the result, which was safe
+        // while no refusal was reachable from that button. This refusal is
+        // reachable — it is exactly the stale-modal race — so without this the
+        // remover is left looking at a thread the UI says is gone and the
+        // database says is not.
+        //
+        // Refetching from the store is the repair, because the store is right:
+        // nothing was deleted anywhere. Done here rather than in the caller so
+        // any future optimistic caller inherits it.
+        this.invalidateThreadViews({
+          spaceId,
+          channelId,
+          threadId: threadMsg.threadMeta.threadId,
+          queryClient: params.queryClient,
         });
         return { shouldProceed: false };
       }

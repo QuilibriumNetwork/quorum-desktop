@@ -21,7 +21,7 @@
  * CONTROL ARM doing the legitimate version of the same thing, so deleting the
  * feature outright cannot score as a fix.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { QueryClient } from '@tanstack/react-query';
 import { ThreadService } from '@/services/ThreadService';
 import type { MessageDB } from '@/db/messages';
@@ -190,6 +190,117 @@ describe('a thread removal may not destroy other members’ replies', () => {
       expect(mockDB.deleteMessage).toHaveBeenCalledWith('msg-reply-alice');
     });
 
+    it('ATTACK: a remove cannot name one thread while targeting another thread’s root', async () => {
+      // The bypass this closes. Nothing required a `remove` frame's threadId to
+      // be the thread the TARGET ROOT actually carries, and the two values are
+      // then used by different code:
+      //
+      //   authorization  reads the ROOT's createdBy  (targetMessage.threadMeta)
+      //   the reply check and the deletion loop read the FRAME's threadId
+      //
+      // So Mallory, legitimate creator of a thread on Alice's post that is now
+      // full of Alice's replies, points `targetMessageId` at Alice's post and
+      // `threadId` at some other empty thread of their own. Authorization sees
+      // "creator", the reply check sees an empty thread and permits, and the
+      // applier then strips the threadMeta off Alice's post — un-threading it
+      // and orphaning every reply, which is the outcome the new rule exists to
+      // refuse.
+      mockDB = createMockMessageDB([]); // the DECOY thread is empty
+      threadService = new ThreadService(mockDB);
+
+      const honored = await threadService.handleThreadReceive({
+        ...RECEIVE_CONTEXT,
+        threadMsg: {
+          ...removeFrame(MALLORY),
+          targetMessageId: 'msg-root', // Alice's post, carrying thread-1
+          threadMeta: { threadId: 'thread-DECOY', createdBy: MALLORY },
+        } as ThreadMessage,
+        verifiedSender: MALLORY,
+      });
+
+      expect(honored).toBe(false);
+      // The root must keep its threadMeta: stripping it is the damage here,
+      // not the (harmless, self-owned) decoy thread being torn down.
+      expect(mockDB.saveMessage).not.toHaveBeenCalled();
+      expect(mockDB.deleteMessage).not.toHaveBeenCalled();
+      expect(mockDB.deleteChannelThread).not.toHaveBeenCalled();
+    });
+
+    it('ATTACK: a remove cannot hard-delete an unrelated message that has no thread at all', async () => {
+      // The severe form of the same decoupling, and it needs NO victim reply to
+      // exist. `remove`'s root handling hard-deletes the target outright when
+      // `isSoftDeleted` — which is computed as "content.text is empty" and is
+      // therefore TRUE for every image-only post, embed, sticker, and every
+      // message already soft-deleted by an ordinary `remove-message`.
+      //
+      // Mallory opens a throwaway thread on their OWN post (always permitted,
+      // no role needed), then points `targetMessageId` at the victim's
+      // caption-less image while naming that throwaway thread. Authorization
+      // resolves the creator from `channel_threads`, which is keyed by bare
+      // threadId, sees Mallory, and allows. The applier then hard-deletes a
+      // message that was never part of any thread, on every device, with a
+      // tombstone that also suppresses re-sync.
+      mockDB = createMockMessageDB([]);
+      (mockDB.getMessage as any).mockResolvedValue({
+        messageId: 'msg-victim-image',
+        // No `text`, and no `threadMeta` — never threaded by anyone.
+        content: { type: 'post', senderId: ALICE, embeddedMedia: ['pic'] },
+      } as unknown as Message);
+      (mockDB.getChannelThread as any).mockResolvedValue({
+        threadId: 'thread-mallorys-own',
+        createdBy: MALLORY,
+      });
+      threadService = new ThreadService(mockDB);
+
+      const honored = await threadService.handleThreadReceive({
+        ...RECEIVE_CONTEXT,
+        threadMsg: {
+          ...removeFrame(MALLORY),
+          targetMessageId: 'msg-victim-image',
+          threadMeta: { threadId: 'thread-mallorys-own', createdBy: MALLORY },
+        } as ThreadMessage,
+        verifiedSender: MALLORY,
+      });
+
+      expect(honored).toBe(false);
+      expect(mockDB.deleteMessage).not.toHaveBeenCalled();
+    });
+
+    it('CONTROL: a remove naming the root’s own thread is unaffected by that check', async () => {
+      withReplies([reply('msg-r1', MALLORY)]);
+
+      const honored = await threadService.handleThreadReceive({
+        ...RECEIVE_CONTEXT,
+        threadMsg: removeFrame(MALLORY), // threadId matches the root's
+        verifiedSender: MALLORY,
+      });
+
+      expect(honored).toBe(true);
+      expect(mockDB.deleteChannelThread).toHaveBeenCalledWith('thread-1');
+    });
+
+    it('CONTROL: a remove still works when the root is already gone', async () => {
+      // `handleThreadReceive` deliberately allows `remove` with no target
+      // (`ThreadService.ts`: "allow proceeding even if root was already
+      // deleted"). The consistency check must not turn that into a denial —
+      // there is no root to disagree with.
+      withReplies([reply('msg-r1', MALLORY)]);
+      (mockDB.getMessage as any).mockResolvedValue(null);
+      (mockDB.getChannelThread as any).mockResolvedValue({
+        threadId: 'thread-1',
+        createdBy: MALLORY,
+      });
+
+      const honored = await threadService.handleThreadReceive({
+        ...RECEIVE_CONTEXT,
+        threadMsg: removeFrame(MALLORY),
+        verifiedSender: MALLORY,
+      });
+
+      expect(honored).toBe(true);
+      expect(mockDB.deleteChannelThread).toHaveBeenCalledWith('thread-1');
+    });
+
     it('fails CLOSED on a reply whose author cannot be read', async () => {
       // No live reply has this shape — the send path always writes senderId and
       // soft-delete preserves it — so this costs nothing in practice. It is
@@ -209,12 +320,16 @@ describe('a thread removal may not destroy other members’ replies', () => {
       expect(mockDB.deleteMessage).not.toHaveBeenCalled();
     });
 
-    it('ATTACK: the root author’s own permission over the root does not extend to the replies', async () => {
-      // `canDeleteMessage` says yes to "may I delete my own message". If the
-      // guard reached for that instead of `hasChannelPermission`, Alice would
-      // inherit authority over Mallory's replies purely by having written the
-      // root. Alice is not the thread's creator, so this is refused earlier —
-      // the case is here to pin that no own-message shortcut is introduced.
+    it('the root author’s own permission over the root does not extend to the replies', async () => {
+      // ⚠️ NOT a test of `mayRemoveThread`, and it passes against code with no
+      // reply-authorship rule at all. Alice is not the thread's creator, so
+      // `authorizeThreadAction` refuses her before the new gate is reached.
+      //
+      // Kept deliberately, as a regression pin rather than coverage: it fails if
+      // a future refactor reorders these checks, or reintroduces the own-message
+      // shortcut that `canDeleteMessage` has and `hasChannelPermission`
+      // deliberately does not. Labelled honestly so it is not counted as
+      // evidence the fix works.
       withReplies([reply('msg-reply-mallory', MALLORY)]);
 
       const honored = await threadService.handleThreadReceive({
@@ -225,6 +340,67 @@ describe('a thread removal may not destroy other members’ replies', () => {
 
       expect(honored).toBe(false);
       expect(mockDB.deleteMessage).not.toHaveBeenCalled();
+    });
+
+    describe('read-only channels keep their isolated rule', () => {
+      // `hasChannelPermission` ignores the ordinary role/permission list
+      // entirely in a read-only channel and asks only "are you one of this
+      // channel's managers" (channelPermissions.ts:169-181). Every other case
+      // in this file leaves `channel` undefined, so without these two the
+      // read-only branch of `mayRemoveThread`'s fallback is never executed.
+      const readOnlySpace = (managerRoleIds: string[]) => ({
+        roles: [
+          // Mallory holds `message:delete` the ORDINARY way. In a read-only
+          // channel that must count for nothing.
+          {
+            roleId: 'role-mod',
+            members: [MALLORY],
+            permissions: ['message:delete'],
+          },
+          { roleId: 'role-mgr', members: [MALLORY], permissions: [] },
+        ],
+        groups: [
+          {
+            channels: [
+              { channelId: 'channel-1', isReadOnly: true, managerRoleIds },
+            ],
+          },
+        ],
+      });
+
+      // Both arms send as MALLORY, the thread's CREATOR, so
+      // `authorizeThreadAction` allows and the verdict genuinely turns on
+      // `mayRemoveThread`'s fallback. Sending as a non-creator would be refused
+      // by the older check first and would exercise none of this.
+      it('ATTACK: an ordinary message:delete role does not survive into a read-only channel', async () => {
+        withReplies([reply('msg-reply-alice', ALICE)]);
+        (mockDB.getSpace as any).mockResolvedValue(readOnlySpace([]));
+
+        const honored = await threadService.handleThreadReceive({
+          ...RECEIVE_CONTEXT,
+          threadMsg: removeFrame(MALLORY),
+          verifiedSender: MALLORY,
+        });
+
+        // Would be TRUE if the fallback used the traditional role list, since
+        // Mallory does hold `message:delete` there.
+        expect(honored).toBe(false);
+        expect(mockDB.deleteMessage).not.toHaveBeenCalled();
+      });
+
+      it('CONTROL: a manager of that read-only channel may still remove it', async () => {
+        withReplies([reply('msg-reply-alice', ALICE)]);
+        (mockDB.getSpace as any).mockResolvedValue(readOnlySpace(['role-mgr']));
+
+        const honored = await threadService.handleThreadReceive({
+          ...RECEIVE_CONTEXT,
+          threadMsg: removeFrame(MALLORY),
+          verifiedSender: MALLORY,
+        });
+
+        expect(honored).toBe(true);
+        expect(mockDB.deleteMessage).toHaveBeenCalledWith('msg-reply-alice');
+      });
     });
   });
 
@@ -303,6 +479,62 @@ describe('a thread removal may not destroy other members’ replies', () => {
       });
 
       expect(shouldProceed).toBe(true);
+    });
+
+    it('undoes the caller’s optimistic wipe when it refuses', async () => {
+      // `Channel.tsx:906-937` strips the thread from three caches BEFORE
+      // submitting, and never looks at the result. That was safe while no
+      // refusal was reachable from that button; this refusal IS reachable (the
+      // stale-modal race), so a refusal that stayed silent would leave the
+      // remover looking at a thread the UI says is gone and the store says is
+      // not. Refetching is the repair, because the store is right.
+      const mockDB = createMockMessageDB([reply('msg-reply-alice', ALICE)]);
+      const threadService = new ThreadService(mockDB);
+      const queryClient = new QueryClient();
+      const invalidated = vi.spyOn(queryClient, 'invalidateQueries');
+
+      const { shouldProceed } = await threadService.handleThreadSend({
+        ...SEND_CONTEXT,
+        queryClient,
+        threadMsg: removeFrame(MALLORY),
+        currentUserAddress: MALLORY,
+      });
+
+      expect(shouldProceed).toBe(false);
+      const keys = invalidated.mock.calls.map((c) =>
+        JSON.stringify((c[0] as { queryKey: unknown[] }).queryKey)
+      );
+      // All three of the caches the caller wiped, or the view stays stale in
+      // whichever one was missed.
+      expect(keys).toContainEqual(
+        JSON.stringify(['Messages', 'space-1', 'channel-1'])
+      );
+      expect(keys).toContainEqual(
+        JSON.stringify(['thread-messages', 'space-1', 'channel-1', 'thread-1'])
+      );
+      expect(keys).toContainEqual(
+        JSON.stringify(['channel-threads', 'space-1', 'channel-1'])
+      );
+    });
+
+    it('CONTROL: a permitted remove does NOT invalidate — the caller’s optimistic wipe was right', async () => {
+      // Invalidating here would refetch from the store before the post-broadcast
+      // handler has deleted anything, resurrecting the thread on screen. That is
+      // the reason `Channel.tsx:927-929` deliberately does not invalidate.
+      const mockDB = createMockMessageDB([reply('msg-r1', MALLORY)]);
+      const threadService = new ThreadService(mockDB);
+      const queryClient = new QueryClient();
+      const invalidated = vi.spyOn(queryClient, 'invalidateQueries');
+
+      const { shouldProceed } = await threadService.handleThreadSend({
+        ...SEND_CONTEXT,
+        queryClient,
+        threadMsg: removeFrame(MALLORY),
+        currentUserAddress: MALLORY,
+      });
+
+      expect(shouldProceed).toBe(true);
+      expect(invalidated).not.toHaveBeenCalled();
     });
 
     it('CONTROL: a non-remove action is not gated by the reply check at all', async () => {

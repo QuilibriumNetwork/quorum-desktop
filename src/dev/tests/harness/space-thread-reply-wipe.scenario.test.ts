@@ -185,10 +185,25 @@ test(
       // ── B opens all three threads, honestly, as itself ───────────────────
       // Nothing is forged here. Threading someone else's post is allowed, and
       // it is what makes B the creator of all three.
-      await b.sendControl(
+      //
+      // ARM 1's `create` deliberately goes through the RAW SEALING PATH rather
+      // than `sendControl`, and that is load-bearing beyond convenience. ARM 1's
+      // assertion is "the victim's reply survived", which is equally true if the
+      // attack frame was refused for a reason having nothing to do with
+      // authorization — a drifted `sealThreadFrame` producing a signature the
+      // receiver rejects outright would do it, and that is the exact way this
+      // test family has already failed twice. Sealing the `create` the same way
+      // makes the existing "the threads never reached the victim" precondition
+      // below a canary for the helper itself: if sealing is broken, the run
+      // aborts loudly there instead of passing ARM 1 vacuously.
+      await b.forgeSend(
         spaceId,
-        channelId,
-        createFrame(b, attackRootId, attackThreadId)
+        await sealThreadFrame({
+          spaceId,
+          channelId,
+          signing: signing!,
+          thread: createFrame(b, attackRootId, attackThreadId),
+        })
       );
       await b.sendControl(
         spaceId,
