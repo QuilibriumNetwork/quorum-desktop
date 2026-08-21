@@ -170,11 +170,24 @@ Log analyzers stay in `.agents/tools/dm-debug/` (`dr-ablate`, `dr-replay`,
 |---|---|
 | `yarn harness space-create` | S0: a bot creates a real space on production and reads its manifest back through the joiner's own decode path |
 | `yarn harness space-basic` | S1: B joins A's space by invite and must receive **both** A's post and A's member row. `HARNESS_SPACE_WINDOW_MS` / `HARNESS_SPACE_SAMPLE_MS` tune the wait |
+| `yarn harness space-thread-forgery` | can an ordinary member DESTROY your message by opening a thread on it? Two arms: an attacker forges the thread's `createdBy`, then forges authorship of a `remove`; a control arm does the same removal honestly. **The control arm is what makes the run meaningful** — its stripped `threadMeta` proves removes are arriving and being applied, so the attack arm cannot pass by everything being broken. See the caveat below |
 | `yarn harness space-wipe-restore` | what logging back in restores after a storage eviction. Two accounts of identical shape, one variable — `allowSync`. Sync on: Space, keys and profile return, DMs do not. Sync off (the DEFAULT): nothing returns, so the eviction takes the Spaces too. The sync-off arm is also the control — if both restored, something other than the published config would be doing it |
 
 `space-basic` asserts the ROSTER as well as the message, because the roster half
 is the thing under investigation. B writes only its own member row locally, so a
 second row can only have come off the wire.
+
+> ⚠️ **`space-thread-forgery` was green against the vulnerable code on its first
+> draft**, and the reason generalises to any security scenario written here.
+> That draft opened the thread honestly and forged only the `remove`. The claimed
+> sender was then neither the thread's creator nor a role-holder, so the old
+> check denied it — for a reason with nothing to do with the fix. A test that
+> cannot fail is worse than none, because it manufactures confidence.
+>
+> **Any arm asserting "the attack failed" must be run against code where the
+> attack WORKS**, and seen to go red. `git checkout <pre-fix-sha> -- <files>`,
+> run, confirm red, restore. If it stays green, the scenario is not expressing
+> the attack — it is expressing something the code rejects anyway.
 
 > ⚠️ **A green `space-basic` is not evidence the roster bug is absent.** It runs
 > at N=2 members; the reported failure is at N≈79 and is intermittent. Quoting a
@@ -286,4 +299,4 @@ See `2026-07-27-headless-dm-harness.md` under .agents/issues/ for the DM slice p
 `.agents/issues/transport/2026-07-27-headless-space-harness.md` for the space one,
 and `.agents/issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §1 for the DM
 findings.
-*Last updated: 2026-08-17*
+*Last updated: 2026-08-21*
