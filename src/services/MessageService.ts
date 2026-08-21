@@ -6697,7 +6697,32 @@ export class MessageService {
               // Collect unique channelIds that need to be refetched
               const channelIdsToRefetch = new Set<string>();
 
+              // A sync delta may only touch messages already stored under the
+              // delivering space. `messages` is keyed by bare messageId, so every
+              // arm must guard, not just delete: otherwise `newMessages` could
+              // overwrite a target's row to claim this space, and the delete arm
+              // would then pass its own check on the laundered row. Both arms read
+              // the same stored row, closing that ordering trick. An id not yet
+              // stored falls through and is created/deleted as before.
+              const wouldCrossSpaceBoundary = async (
+                messageId: string
+              ): Promise<boolean> => {
+                const stored = await this.messageDB.getMessageById(messageId);
+                if (stored && stored.spaceId !== spaceId) {
+                  logger.warn(
+                    `[MessageService] sync-delta: refusing out-of-space write/delete of ` +
+                      `${messageId.substring(0, 12)} — belongs to ${stored.spaceId.substring(
+                        0,
+                        12
+                      )}, delta delivered on ${spaceId.substring(0, 12)}`
+                  );
+                  return true;
+                }
+                return false;
+              };
+
               for (const msg of msgDelta.newMessages || []) {
+                if (await wouldCrossSpaceBoundary(msg.messageId)) continue;
                 const channelId = msg.channelId || msgDelta.channelId;
                 await this.saveMessage(
                   msg,
@@ -6715,6 +6740,7 @@ export class MessageService {
               }
 
               for (const msg of msgDelta.updatedMessages || []) {
+                if (await wouldCrossSpaceBoundary(msg.messageId)) continue;
                 const channelId = msg.channelId || msgDelta.channelId;
                 await this.saveMessage(
                   msg,
@@ -6732,6 +6758,7 @@ export class MessageService {
               }
 
               for (const msgId of msgDelta.deletedMessageIds || []) {
+                if (await wouldCrossSpaceBoundary(msgId)) continue;
                 await this.messageDB.deleteMessage(msgId);
               }
 
