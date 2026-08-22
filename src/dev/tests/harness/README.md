@@ -173,6 +173,7 @@ Log analyzers stay in `.agents/tools/dm-debug/` (`dr-ablate`, `dr-replay`,
 | `yarn harness space-thread-forgery` | can an ordinary member DESTROY your message by opening a thread on it? Two arms: an attacker forges the thread's `createdBy`, then forges authorship of a `remove`; a control arm does the same removal honestly. **The control arm is what makes the run meaningful** — its stripped `threadMeta` proves removes are arriving and being applied, so the attack arm cannot pass by everything being broken. See the caveat below |
 | `yarn harness space-thread-reply-wipe` | can someone who opened a thread on your message DELETE your replies inside it? Three arms: a raw-sealed `remove` (a modified client), the same request through the real send path (which an honest client must refuse to broadcast AND must not apply locally), and a control that removes a thread holding only the sender's own replies. The send-side half is measured the instant the send returns, not at the end — see the note below |
 | `yarn harness space-thread-target-mismatch` | a thread frame names what it acts on twice — `threadMeta.threadId` (which every authorization check reads) and `targetMessageId` (which the destructive work operates on). Can they be pointed at different things? Attack arm removes the attacker's own thread while targeting the victim's caption-less image; control arm removes that same thread honestly and must still hard-delete its own root |
+| `yarn harness space-message-id-derivation` | may an ordinary member REPLACE your stored message by sending an unsigned post that reuses its `messageId`? A space message's id is a hash of its own content, and the receiver only recomputed it for signed frames. Four arms: the attack; a CONTROL forgery whose id IS correctly derived, which must still arrive (so the refusal is narrow); the refusal's own log line as a positive control; and one honest frame per content type — post, embed, sticker, reply, reaction, edit, thread, remove, mute, update-profile — each of which must survive the gate. Read the two harness traps in the file header before changing its batching |
 | `yarn harness space-wipe-restore` | what logging back in restores after a storage eviction. Two accounts of identical shape, one variable — `allowSync`. Sync on: Space, keys and profile return, DMs do not. Sync off (the DEFAULT): nothing returns, so the eviction takes the Spaces too. The sync-off arm is also the control — if both restored, something other than the published config would be doing it |
 
 `space-basic` asserts the ROSTER as well as the message, because the roster half
@@ -190,6 +191,28 @@ second row can only have come off the wire.
 > attack WORKS**, and seen to go red. `git checkout <pre-fix-sha> -- <files>`,
 > run, confirm red, restore. If it stays green, the scenario is not expressing
 > the attack — it is expressing something the code rejects anyway.
+
+> ⚠️ **A frame that never left the sender looks exactly like a frame the
+> receiver rejected.** Two independent causes produce the identical symptom — a
+> content type missing at the receiver, with zero receive errors and nothing
+> logged — and in a security scenario the tempting reading is always "the fix
+> under test dropped it". Both were MEASURED while building
+> `space-message-id-derivation`:
+>
+> 1. **Batch size.** The receiver processes a delivered batch concurrently and
+>    loses writes. Six frames per batch passed once and failed later; seven
+>    failed every time. This is the §5 concurrency trap, and it bites well before
+>    "two frames writing the same row".
+> 2. **Sending just after a reconnect.** `reconnect()` resolves on the first
+>    socket's `open`, but the closing socket's own handler schedules a second
+>    `open()` a second later, so the transport can end up pointing at a socket in
+>    readyState CONNECTING while `connected` is still `true`. A send in that
+>    window is recorded in `outbound.failures` and **resolves anyway** — the
+>    sender believes it sent. This is what actually lost the frames.
+>
+> So: assert `graph.outbound.failures` is empty, and make an expired wait fail
+> loudly, BEFORE reporting anything about what the receiver did or did not
+> accept. Otherwise the run quietly indicts the code under test.
 
 > ⚠️ **Read a sender's own local state at the moment the send returns, not at
 > the end of the run.** `space-thread-reply-wipe` first asserted the sender's
