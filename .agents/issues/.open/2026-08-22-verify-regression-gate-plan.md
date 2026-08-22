@@ -69,6 +69,68 @@ Dependency wiring, measured:
 
 ---
 
+## Branching
+
+**One branch per repo for the whole plan, one PR per repo at the end.** Every
+task below commits to that branch — no task commits to a default branch, and no
+task opens a PR. Shipping is Task 13.
+
+Branch name in all three repos: `feat/verify-regression-gate`
+
+**Base branches differ, and one repo needs care** (measured 2026-08-22):
+
+| Repo | Default branch | State when this plan was written |
+|---|---|---|
+| `quorum-desktop` | `main` | clean, on `main` |
+| `quorum-shared` | `master` | clean, on `master`, level with origin |
+| `quorum-mobile` | `master` | clean, but on `fix/space-profile-wire-timestamp-cannot-pin-the-future`, **2 commits ahead of `origin/master`** |
+
+Mobile's branch **must be cut from `origin/master`, not from the current HEAD.**
+Those two commits are unrelated security fixes still in flight; branching from
+them would put them in this plan's PR and make it look like this work changed the
+receive path.
+
+### Task 0: Create the three branches
+
+- [ ] **Step 1: Desktop**
+
+```bash
+cd e:/GitHub/Quilibrium/quorum-desktop
+git checkout main && git pull
+git checkout -b feat/verify-regression-gate
+```
+
+- [ ] **Step 2: Shared**
+
+```bash
+cd ../quorum-shared
+git checkout master && git pull
+git checkout -b feat/verify-regression-gate
+```
+
+- [ ] **Step 3: Mobile — from `origin/master`, NOT from the current branch**
+
+```bash
+cd ../quorum-mobile
+git fetch origin
+git checkout -b feat/verify-regression-gate origin/master
+```
+
+- [ ] **Step 4: Confirm all three, and confirm mobile is clean of the other work**
+
+```bash
+for r in quorum-desktop quorum-shared quorum-mobile; do
+  cd "e:/GitHub/Quilibrium/$r" && echo "$r: $(git branch --show-current)"
+done
+cd ../quorum-mobile && git log --oneline origin/master..HEAD
+```
+
+Expected: all three on `feat/verify-regression-gate`, and the mobile log is
+**empty** — if it lists the two `fix(spaces)` commits, the branch was cut from
+the wrong base. Delete it and redo step 3.
+
+---
+
 ## PART A — The gate
 
 ### Task 1: A runnable `yarn verify` for desktop's fast tier
@@ -801,10 +863,23 @@ import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { planFromPaths, changedPaths } from './routing.mjs';
 
+const argv = process.argv.slice(2);
+
+/**
+ * Where the sibling repos live. Overridable ONLY so the degrade-loudly path can
+ * be tested by pointing at an empty directory. The alternative — renaming a real
+ * checkout to simulate its absence — leaves a repo renamed if the run dies
+ * halfway, which is not a risk worth taking to test an error message.
+ */
+const reposRootArg = argv.find((a) => a.startsWith('--repos-root='));
+const SIBLINGS = reposRootArg
+  ? resolve(reposRootArg.split('=')[1])
+  : resolve(DESKTOP, '..');
+
 const REPOS = {
   desktop: DESKTOP,
-  shared: resolve(DESKTOP, '../quorum-shared'),
-  mobile: resolve(DESKTOP, '../quorum-mobile'),
+  shared: resolve(SIBLINGS, 'quorum-shared'),
+  mobile: resolve(SIBLINGS, 'quorum-mobile'),
 };
 
 const execGit = (cwd, args) => {
@@ -822,7 +897,7 @@ const allPaths = Object.entries(REPOS)
 const plan = planFromPaths(allPaths);
 
 // An explicit request beats inference; a diff-less run would otherwise do nothing.
-const argv = process.argv.slice(2);
+// `argv` is already declared above, with the repos-root override.
 if (argv.includes('--all')) {
   plan.repos = ['desktop', 'shared', 'mobile'];
   plan.live = true;
@@ -948,16 +1023,14 @@ Expected: rows for desktop, shared and mobile; `shared build` appears once, befo
 
 - [ ] **Step 4: Prove it degrades loudly when a repo is missing**
 
-Simulate absence without moving anything, by pointing the run at a nonexistent sibling:
+Point the run at an empty directory instead of the real siblings. **Nothing is renamed or moved**, so an interrupted run leaves no mess:
 
 ```bash
-git stash list >/dev/null  # no-op, keeps the shell honest
-mv ../quorum-mobile ../quorum-mobile.hidden
-yarn verify --all --fast 2>&1 | tail -20
-mv ../quorum-mobile.hidden ../quorum-mobile
+mkdir -p /tmp/no-siblings
+yarn verify --all --fast --repos-root=/tmp/no-siblings 2>&1 | tail -20
 ```
 
-Expected: `VERDICT  PASS (PARTIAL)` and `⚠ quorum-mobile not found at ../quorum-mobile — MOBILE COVERAGE SKIPPED`. Confirm the verdict is NOT a bare `PASS`.
+Expected: `VERDICT  PASS (PARTIAL)`, with `⚠ quorum-shared not found …` and `⚠ quorum-mobile not found … COVERAGE SKIPPED`. Confirm the verdict is **not** a bare `PASS` — that is the assertion this step exists for.
 
 - [ ] **Step 5: Commit**
 
@@ -1156,7 +1229,12 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO = resolve(HERE, '..');
-const ORCHESTRATOR = resolve(REPO, '../quorum-desktop/scripts/verify/index.mjs');
+// The override exists so the fallback path below can be tested by pointing at a
+// path that does not exist. Renaming a real checkout to prove an error message
+// leaves a repo renamed if the run dies halfway.
+const ORCHESTRATOR =
+  process.env.VERIFY_ORCHESTRATOR ??
+  resolve(REPO, '../quorum-desktop/scripts/verify/index.mjs');
 const passthrough = process.argv.slice(2);
 
 if (existsSync(ORCHESTRATOR)) {
@@ -1201,15 +1279,15 @@ Expected: both produce the orchestrator's verdict block, not a bare test run.
 
 - [ ] **Step 4: Prove the fallback works**
 
+Point the wrapper at an orchestrator path that does not exist. **Nothing is renamed**, so an interrupted run leaves no mess:
+
 ```bash
 cd ../quorum-shared
-mv ../quorum-desktop ../quorum-desktop.hidden
-yarn verify 2>&1 | tail -6
-mv ../quorum-desktop.hidden ../quorum-desktop
+VERIFY_ORCHESTRATOR=/nonexistent/verify.mjs yarn verify 2>&1 | tail -6
 cd ../quorum-desktop
 ```
 
-Expected: `PASS (PARTIAL) — orchestrator not found, single-repo fast tier only`. Confirm it is not a bare `PASS`, and confirm the move is reversed.
+Expected: `PASS (PARTIAL) — orchestrator not found, single-repo fast tier only`, plus the "does NOT clear a change that touches shared or the wire" warning. Confirm it is **not** a bare `PASS`.
 
 - [ ] **Step 5: Commit in both repos**
 
@@ -1675,6 +1753,93 @@ cd ../quorum-shared && git add AGENTS.md && git commit -m "docs: require yarn ve
 cd ../quorum-mobile && git add AGENTS.md && git commit -m "docs: require yarn verify before reporting a change complete"
 cd ../quorum-desktop
 ```
+
+---
+
+### Task 13: Ship — one PR per repo
+
+Only run this once every task above is done and `yarn verify --all` has been seen
+green on the branch.
+
+**Files:** none. This task only pushes and opens PRs.
+
+- [ ] **Step 1: Confirm the gate passes on its own branch**
+
+```bash
+cd e:/GitHub/Quilibrium/quorum-desktop && yarn verify --all
+```
+
+Expected: `VERDICT  PASS`. A gate that cannot clear itself is not shippable.
+`PASS (PARTIAL)` is acceptable **only** if the warning is the known
+published-shared one; any other skip must be explained in the PR body.
+
+- [ ] **Step 2: Confirm nothing unrelated rode along**
+
+```bash
+for r in quorum-desktop quorum-shared quorum-mobile; do
+  cd "e:/GitHub/Quilibrium/$r"
+  echo "=== $r ==="
+  git log --oneline "$(git symbolic-ref refs/remotes/origin/HEAD | sed 's|refs/remotes/||')..HEAD"
+done
+```
+
+Read each list. Every commit must belong to this plan. Mobile in particular must
+**not** list the two `fix(spaces)` commits — if it does, the branch was cut from
+the wrong base and the PR must not be opened.
+
+- [ ] **Step 3: Confirm no secret or machine-local file is staged anywhere**
+
+```bash
+for r in quorum-desktop quorum-shared quorum-mobile; do
+  cd "e:/GitHub/Quilibrium/$r"
+  git diff --name-only "$(git symbolic-ref refs/remotes/origin/HEAD | sed 's|refs/remotes/||')..HEAD" \
+    | grep -Ei '\.env|\.state/|verify-receipt|\.secret/' && echo "  ⚠ $r: STOP" || echo "  ok: $r"
+done
+```
+
+Expected: `ok` for all three. Anything listed must be removed from the branch
+before pushing — this repo is public.
+
+- [ ] **Step 4: Push all three branches**
+
+```bash
+for r in quorum-desktop quorum-shared quorum-mobile; do
+  cd "e:/GitHub/Quilibrium/$r" && git push -u origin feat/verify-regression-gate
+done
+```
+
+- [ ] **Step 5: Open one PR per repo**
+
+Each PR body states: what the gate does, the measured baseline it was built
+against, the two new live arms **and the fact that each was seen to fail**, and
+what it explicitly does not cover. Paste the `yarn verify --all` verdict block
+from step 1 into the desktop PR.
+
+```bash
+cd e:/GitHub/Quilibrium/quorum-desktop
+gh pr create --base main --title "feat: a routed regression gate with a readable verdict" --body-file <(cat <<'EOF'
+Adds `yarn verify`: one command that routes checks from the diff across the
+three repos and prints a verdict readable without reading the diff.
+
+Also closes two measured coverage gaps: no DM scenario asserted any content type
+beyond plain text, and `remove-reaction` was asserted nowhere.
+
+Design: `.agents/issues/.open/2026-08-22-verify-regression-gate-design.md`
+Plan:   `.agents/issues/.open/2026-08-22-verify-regression-gate-plan.md`
+
+Both new live arms were run against deliberately broken code and seen to go red
+before being trusted.
+EOF
+)
+```
+
+For shared and mobile, `--base master`, and a short body noting the PR only adds
+a wrapper that delegates to desktop's orchestrator plus an AGENTS.md rule, and
+that no source code is modified.
+
+- [ ] **Step 6: Do NOT merge**
+
+Leave all three PRs open for review. Report the three URLs and stop.
 
 ---
 
