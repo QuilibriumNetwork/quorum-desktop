@@ -317,7 +317,16 @@ export function useChannelMute({
           buildConfigKey({ userAddress })
         ) ?? (await messageDB.getUserConfig({ address: userAddress }));
 
-      // Get current notification settings for this space
+      // Get current notification settings for this space.
+      //
+      // Deliberately NOT normalized. A partial record (mobile's setSpaceMuted
+      // used to write a bare `{ isMuted }`) is spread forward as-is, so this
+      // write asserts only the mute flag the user just toggled. Completing it
+      // here was tried and reverted: the completion asserts the all-enabled
+      // DEFAULT, which is not a value the user chose, and config sync is
+      // last-write-wins over the whole blob — so it could silently revert a real
+      // selection made on another device that has not synced down yet. Every
+      // READER normalizes instead, which fixes the crash without inventing data.
       const currentSettings = currentConfig?.notificationSettings?.[spaceId] ||
         getDefaultNotificationSettings(spaceId);
 
@@ -377,7 +386,9 @@ export function useChannelMute({
           buildConfigKey({ userAddress })
         ) ?? (await messageDB.getUserConfig({ address: userAddress }));
 
-      // Get current notification settings for this space
+      // Get current notification settings for this space. Deliberately NOT
+      // normalized, for the same reason as muteSpace above — this write must
+      // assert only the mute flag, never an invented type selection.
       const currentSettings = currentConfig?.notificationSettings?.[spaceId] ||
         getDefaultNotificationSettings(spaceId);
 
