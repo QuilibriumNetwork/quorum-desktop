@@ -319,6 +319,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Rebuild the sync indicator on a per-space "behind by N" signal](issues/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md)
 - 📋 [A DB call landing mid-close still fails once](issues/.open/2026-08-17-a-db-call-landing-mid-close-still-fails-once.md)
 - 📋 [Outbound signing is decided in four places, only one of which is the shared rule](issues/.open/2026-08-21-outbound-signing-is-decided-in-four-places-not-one.md)
+- 📋 [Is a whole-app regression net worth building, and if so what shape?](issues/.open/2026-08-22-regression-safety-net-what-would-it-take.md)
 
 ### Deferred
 
@@ -805,4 +806,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-22 18:32:59
+**Last Updated**: 2026-08-22 18:47:02
