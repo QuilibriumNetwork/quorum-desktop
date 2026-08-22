@@ -318,6 +318,66 @@ describe('the unverified resolver cannot come back', () => {
     ).toBe(false);
   });
 
+  it('the sync gate asks a membership question and never keeps the identity', () => {
+    // `syncFrameAuth.ts` is the ONE place outside the fused primitive allowed to
+    // touch the raw reverse lookup, and this test is the price of that. It is an
+    // EXTENSION of the guard above, not an exemption from it: the invariant being
+    // protected is "no sender identity without a signature check", and that holds
+    // here only because the resolved identity is discarded on the spot.
+    //
+    // The sync gate genuinely needs a different question from the auth paths —
+    // "is this signing key one the space already knows", answered as a boolean,
+    // with the ed448 check run against the same key immediately afterwards. If a
+    // future edit starts returning, storing or passing on what the lookup
+    // returns, that question quietly becomes "who is this", and this fails.
+    const SYNC_AUTH = readFileSync(
+      resolve(process.cwd(), 'src/services/syncFrameAuth.ts'),
+      'utf8'
+    );
+
+    const calls = SYNC_AUTH.match(/\bresolveVerifiedSender\s*\(/g) ?? [];
+    expect(
+      calls.length,
+      'syncFrameAuth should call the reverse lookup exactly once'
+    ).toBe(1);
+
+    // THE STRUCTURAL ASSERTION, and it is the only one here with real teeth.
+    //
+    // Used ONLY as an `if` condition, the resolved identity never becomes a
+    // value in that module — so there is nothing to leak, by construction. That
+    // is what makes the guarantee hold rather than merely be policed.
+    //
+    // ⚠️ This was briefly replaced with softer checks (count the exports, match
+    // the declared return type) when the implementation needed a local to
+    // re-screen the resolved row. An independent review then demonstrated TWO
+    // low-effort constructions that leaked the identity — via `globalThis`, and
+    // via a separate `export { … }` statement the export regex never matches —
+    // while passing every one of those checks. A regex cannot follow data flow;
+    // it can only observe shape. So the implementation was restructured to
+    // filter kicked rows BEFORE the lookup, which removed the need for the local
+    // and let this assertion come back. Do not trade it away again: if a change
+    // needs the resolved value, the right move is to find a shape that does not.
+    //
+    // MEASURED after restoring it — five constructions that genuinely move the
+    // resolver's return value somewhere observable were run against these
+    // assertions, and all five are caught: assign to a local; assign inside the
+    // condition; pass it to a function; store it in a module-level variable that
+    // is exported; call the resolver a second time. The only shape that passes is
+    // the one where the value is never bound to anything.
+    expect(
+      /\bif\s*\(\s*resolveVerifiedSender\s*\(/.test(SYNC_AUTH),
+      'the reverse lookup is no longer used purely as an `if` condition, so the ' +
+        'resolved identity now exists as a value that could escape the module. ' +
+        'Restructure so it does not, rather than relaxing this check.'
+    ).toBe(true);
+
+    expect(
+      /(?:return|=)\s*resolveVerifiedSender\s*\(/.test(SYNC_AUTH),
+      'syncFrameAuth returned or stored the resolved identity; it must only ever ' +
+        'answer a membership question'
+    ).toBe(false);
+  });
+
   it('every sender resolution goes through verifySpaceSender', () => {
     // One definition, and at least the four auth paths consuming it: control
     // messages, update-profile, read-only posts, and the @everyone gate.

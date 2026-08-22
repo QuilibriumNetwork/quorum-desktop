@@ -35,6 +35,7 @@ import {
   type AnnounceKeysStatement,
   type RevokeDeviceStatement,
 } from '@quilibrium/quorum-shared';
+import { classifySyncFrameSigner } from './syncFrameAuth';
 import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
 import type { SpaceMemberRow } from '../db/messages';
 import type {
@@ -2057,6 +2058,92 @@ export class MessageService {
       deviceKeys: deviceKeys as unknown as Params['deviceKeys'],
       provider: this.signingProvider,
     });
+  }
+
+  /**
+   * May this signing key speak for the space on a directed sync frame?
+   *
+   * `sync-peer-map`, `sync-members` and `sync-messages` share one gate, and its
+   * second disjunct used to admit ANY key once this client had requested a sync
+   * — after which the handler verified `owner_signature` against
+   * `owner_public_key`, both taken from the SAME envelope. A signature checked
+   * against a key the frame supplied proves only that the frame is internally
+   * consistent with itself; it says nothing about authority. This binds the key
+   * to an identity the space already knows BEFORE the signature is checked,
+   * which is what makes checking it mean anything.
+   *
+   * ⚠️ It deliberately does NOT require the registered owner key, and that is
+   * the whole difficulty of this gate. Only `synchronizeAll` signs with the
+   * owner key (`SyncService.ts:92`, and it only runs on a client that holds one
+   * at all). `directSync`, `handleSyncInitiateV2` and `handleSyncManifest` all
+   * sign with the SENDER'S OWN space `inbox` key (`SyncService.ts:348`, `:837`,
+   * `:968`), so an owner-only rule would refuse every peer-to-peer sync and
+   * break syncing silently — the failure mode this codebase can least afford.
+   *
+   * The membership question itself lives in `syncFrameAuth.ts`, deliberately
+   * NOT here: answering it needs the shared reverse lookup, which runs no
+   * cryptography, and a source guard forbids this file from touching that
+   * directly (see that module's header, and
+   * `dev/tests/services/verifiedSenderRequiresVerification.test.ts`). What
+   * crosses back is a verdict, never an identity.
+   *
+   * A storage failure fails CLOSED here rather than propagating. Letting it
+   * throw would abandon the whole hub/sync branch for this frame in the terminal
+   * catch — losing any LATER handler work the same frame would have done — and
+   * report it as a generic "Error processing hub/sync message" with no hint that
+   * a roster read was the cause. Refusing this one frame is recoverable: the next
+   * sync round re-sends it.
+   *
+   * (An earlier version of this comment claimed a throw would get the frame
+   * RETAINED for redelivery as unopenable. That was wrong — `opened` is already
+   * true by the time any of these handlers run (`:5473`), so the retain branch
+   * cannot fire here. Corrected after independent review rather than left as a
+   * plausible-sounding justification for the right code.)
+   */
+  private async syncFrameSignerIsBoundToSpace(
+    spaceId: string,
+    publicKeyHex: string,
+    selfAddress: string
+  ): Promise<boolean> {
+    let members: Awaited<ReturnType<MessageDB['getSpaceMembers']>>;
+    let deviceKeys: Awaited<ReturnType<MessageDB['getSpaceMemberDevices']>>;
+    try {
+      [members, deviceKeys] = await Promise.all([
+        this.messageDB.getSpaceMembers(spaceId),
+        this.messageDB.getSpaceMemberDevices(spaceId),
+      ]);
+    } catch (err) {
+      logger.warn(
+        `[MessageService] sync-auth: refusing a sync frame for ${spaceId.substring(0, 12)} — ` +
+          `could not read the roster to check its signing key`,
+        err
+      );
+      return false;
+    }
+
+    type ClassifyParams = Parameters<typeof classifySyncFrameSigner>[0];
+    const verdict = classifySyncFrameSigner({
+      publicKeyHex,
+      members: members as unknown as ClassifyParams['members'],
+      deviceKeys: deviceKeys as unknown as ClassifyParams['deviceKeys'],
+      selfAddress,
+    });
+
+    if (verdict === 'member') return true;
+
+    if (verdict === 'bootstrap') {
+      logger.warn(
+        `[MessageService] sync-auth: accepting a signing key bound to no member of ` +
+          `${spaceId.substring(0, 12)} — roster bootstrap, we know of no other member yet`
+      );
+      return true;
+    }
+
+    logger.warn(
+      `[MessageService] sync-auth: refusing a sync frame for ${spaceId.substring(0, 12)} — ` +
+        `its signing key ${publicKeyHex.substring(0, 16)} is bound to no member of this space`
+    );
+    return false;
   }
 
   /**
@@ -5784,11 +5871,23 @@ export class MessageService {
               this.spaceInfo.current[conversationId.split('/')[0]] = reg;
             }
 
+            // The second disjunct used to be the bare truthiness of
+            // `syncInfo.current[spaceId]`, which let ANY key through once this
+            // client had ever requested a sync — and the verify below then
+            // checked that key against its own signature. Requiring the signer
+            // to be bound to this space first is what gives the verify meaning.
+            // See syncFrameSignerIsBoundToSpace for why an owner-only rule is
+            // NOT the fix here.
             if (
               reg.owner_public_keys.includes(
                 exteriorEnvelope.owner_public_key
               ) ||
-              this.syncInfo.current[conversationId.split('/')[0]]
+              (!!this.syncInfo.current[conversationId.split('/')[0]] &&
+                (await this.syncFrameSignerIsBoundToSpace(
+                  conversationId.split('/')[0],
+                  exteriorEnvelope.owner_public_key,
+                  self_address
+                )))
             ) {
               const verify = JSON.parse(
                 ch.js_verify_ed448(
@@ -6516,11 +6615,23 @@ export class MessageService {
               this.spaceInfo.current[conversationId.split('/')[0]] = reg;
             }
 
+            // The second disjunct used to be the bare truthiness of
+            // `syncInfo.current[spaceId]`, which let ANY key through once this
+            // client had ever requested a sync — and the verify below then
+            // checked that key against its own signature. Requiring the signer
+            // to be bound to this space first is what gives the verify meaning.
+            // See syncFrameSignerIsBoundToSpace for why an owner-only rule is
+            // NOT the fix here.
             if (
               reg.owner_public_keys.includes(
                 exteriorEnvelope.owner_public_key
               ) ||
-              this.syncInfo.current[conversationId.split('/')[0]]
+              (!!this.syncInfo.current[conversationId.split('/')[0]] &&
+                (await this.syncFrameSignerIsBoundToSpace(
+                  conversationId.split('/')[0],
+                  exteriorEnvelope.owner_public_key,
+                  self_address
+                )))
             ) {
               const verify = JSON.parse(
                 ch.js_verify_ed448(
@@ -6645,11 +6756,23 @@ export class MessageService {
               this.spaceInfo.current[conversationId.split('/')[0]] = reg;
             }
 
+            // The second disjunct used to be the bare truthiness of
+            // `syncInfo.current[spaceId]`, which let ANY key through once this
+            // client had ever requested a sync — and the verify below then
+            // checked that key against its own signature. Requiring the signer
+            // to be bound to this space first is what gives the verify meaning.
+            // See syncFrameSignerIsBoundToSpace for why an owner-only rule is
+            // NOT the fix here.
             if (
               reg.owner_public_keys.includes(
                 exteriorEnvelope.owner_public_key
               ) ||
-              this.syncInfo.current[conversationId.split('/')[0]]
+              (!!this.syncInfo.current[conversationId.split('/')[0]] &&
+                (await this.syncFrameSignerIsBoundToSpace(
+                  conversationId.split('/')[0],
+                  exteriorEnvelope.owner_public_key,
+                  self_address
+                )))
             ) {
               const verify = JSON.parse(
                 ch.js_verify_ed448(
