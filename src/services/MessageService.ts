@@ -16,6 +16,7 @@ import {
   SimpleRateLimiter,
   RATE_LIMITS,
   buildMessageFingerprint,
+  computeMessageIdHex,
   verifyAndResolveSender,
   authorizeControlMessage,
   isControlMessageType,
@@ -2372,6 +2373,79 @@ export class MessageService {
     return (
       !!sender && canManageReadOnlyChannel(sender, false, space, channel)
     );
+  }
+
+  /**
+   * Does this space frame carry the messageId its own content derives?
+   *
+   * The id of a space message IS a hash of its content:
+   * `SHA-256(buildMessageFingerprint({nonce, content, senderId, spaceId,
+   * channelId}))`. Every send branch on both clients produces that value —
+   * desktop's `submitChannelMessage` (posts/embeds/stickers/reactions/removes/
+   * mutes), its edit and pin branches, and mobile's `generateMessageIdHash`
+   * (quorum-mobile `services/space/spaceMessageService.ts`) all CALL the shared
+   * builder. Nothing on the receive side required it, which is the gap this
+   * closes: the `messages` store is keyed by `messageId` and the durable save is
+   * an upsert, so a frame that names an id it did not derive addresses a row it
+   * did not write.
+   *
+   * ⚠️ TWO send branches reproduce the recipe BY HAND rather than calling the
+   * builder — `thread` and `update-profile` (and the profile announce in
+   * `signSpaceProfileMessage`), which spell out `nonce + type + senderId +
+   * canonicalize(content)`. They agree today only because neither is one of the
+   * frozen `CONTROL_MESSAGE_TYPES`, so the builder's scope term is empty, and
+   * because `canonicalize` ignores `senderId`. Change the non-control
+   * fingerprint format and those two silently stop matching — at which point
+   * this gate drops every live frame of both types. The `thread`,
+   * `update-profile`, `pin`, `mute` and `remove-message` arms of the
+   * `space-message-id-derivation` harness scenario exist to make that go red
+   * instead of shipping.
+   *
+   * ⚠️ WIRE FRAMES ONLY — do NOT reuse this on the sync paths. A STORED row's id
+   * is its ORIGINAL content's hash and legitimately stops matching once the row
+   * is mutated in place: an edit rewrites `content.text` under the same id
+   * (`saveMessage`'s edit-message branch), a soft delete replaces the content
+   * outright, and the locally synthesized `join`/`leave`/`kick` rows have
+   * content types `canonicalize` cannot express at all. `sync-messages` and
+   * `sync-delta` ship stored rows verbatim (`SyncService.getAllSpaceMessages`,
+   * shared `buildMessageDelta`), so applying this rule there would silently drop
+   * every edited, deleted and system row. Those paths need authorization rather
+   * than derivation, and that work is tracked with the sync-delta finding.
+   *
+   * A fingerprint that cannot be BUILT counts as a mismatch. `canonicalize`
+   * throws on content types it does not enumerate, and a client that cannot
+   * canonicalize a type cannot send it either (its own send path hashes through
+   * the same function), so no honest frame can carry one.
+   *
+   * Scope comes from the DELIVERING space and the frame's own channel — the
+   * same pair the save uses — so a control type's scope-bound fingerprint
+   * attests where the row will actually land. Non-control types bind no scope
+   * (`buildMessageFingerprint`), so this is NOT a scope check for them: it binds
+   * content, sender and nonce, which is what an attacker has to change.
+   */
+  private isSpaceMessageIdDerived(
+    message: Message,
+    spaceId: string,
+    channelId: string
+  ): boolean {
+    if (!message?.messageId) return false;
+    try {
+      return (
+        computeMessageIdHex(
+          buildMessageFingerprint({
+            nonce: message.nonce,
+            content: message.content as Parameters<
+              typeof buildMessageFingerprint
+            >[0]['content'],
+            senderId: message.content.senderId,
+            spaceId,
+            channelId,
+          })
+        ) === message.messageId
+      );
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -5429,6 +5503,38 @@ export class MessageService {
             }
 
             decryptedContent = JSON.parse(output);
+          }
+
+          if (decryptedContent) {
+            // A space frame may only be stored under the id its own content
+            // derives. See `isSpaceMessageIdDerived` for the recipe and for why
+            // this is a WIRE-FRAME rule that must not be reused on the sync
+            // paths.
+            //
+            // FIRST, before the space row is even read: a frame refused here
+            // must touch nothing. Nulling `decryptedContent` is the drop
+            // mechanism the update-profile check below already uses, and it is
+            // the one that skips the whole tail — the durable save, the
+            // notification, and the query-cache insert — rather than only the
+            // save. The frame is still acked at the end of the handler, so a
+            // refusal costs one unseal and does not leave the frame to be
+            // re-pushed on every listen.
+            if (
+              !this.isSpaceMessageIdDerived(
+                decryptedContent,
+                conversationId.split('/')[0],
+                decryptedContent.channelId
+              )
+            ) {
+              logger.warn(
+                `[MessageService] refusing a space frame whose messageId is not ` +
+                  `its own content fingerprint: id=${String(
+                    decryptedContent.messageId
+                  ).substring(0, 12)} type=${decryptedContent.content?.type} ` +
+                  `space=${conversationId.split('/')[0].substring(0, 12)}`
+              );
+              decryptedContent = null;
+            }
           }
 
           if (decryptedContent) {
