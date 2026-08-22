@@ -5834,35 +5834,50 @@ export class MessageService {
                   }
                 }
 
-                await this.messageDB.saveSpace(space);
-                await queryClient.setQueryData(
-                  buildSpaceKey({ spaceId: conversationId.split('/')[0] }),
-                  () => {
-                    return space;
-                  }
-                );
-                // Also update the spaces list cache so components using useSpaces/buildSpacesKey
-                // (e.g., UserSettingsModal tag preview) reflect the updated space data
-                queryClient.setQueryData(
-                  buildSpacesKey({}),
-                  (oldSpaces: Space[] | undefined) => {
-                    if (!oldSpaces) return oldSpaces;
-                    return oldSpaces.map((s) =>
-                      s.spaceId === space.spaceId ? space : s
-                    );
-                  }
-                );
-
-                // Auto re-broadcast profile if this space's tag is the one we display
-                try {
-                  await this.rebroadcastTagIfChanged(
-                    space,
-                    self_address,
-                    keyset,
-                    queryClient
+                // The manifest is authenticated against the DELIVERING space (its
+                // owner keys, its config key), but space.spaceId comes from the
+                // decrypted payload the signer chose. Persist only when the two
+                // agree, so an owner of one space cannot overwrite another space's
+                // stored row. Same guard processDeviceKeyStatement applies; on a
+                // mismatch fall through without writing, like the owner/signature
+                // checks above.
+                if (space.spaceId === conversationId.split('/')[0]) {
+                  await this.messageDB.saveSpace(space);
+                  await queryClient.setQueryData(
+                    buildSpaceKey({ spaceId: conversationId.split('/')[0] }),
+                    () => {
+                      return space;
+                    }
                   );
-                } catch (err) {
-                  logger.error('Failed to re-broadcast space tag on manifest update', err);
+                  // Also update the spaces list cache so components using useSpaces/buildSpacesKey
+                  // (e.g., UserSettingsModal tag preview) reflect the updated space data
+                  queryClient.setQueryData(
+                    buildSpacesKey({}),
+                    (oldSpaces: Space[] | undefined) => {
+                      if (!oldSpaces) return oldSpaces;
+                      return oldSpaces.map((s) =>
+                        s.spaceId === space.spaceId ? space : s
+                      );
+                    }
+                  );
+
+                  // Auto re-broadcast profile if this space's tag is the one we display
+                  try {
+                    await this.rebroadcastTagIfChanged(
+                      space,
+                      self_address,
+                      keyset,
+                      queryClient
+                    );
+                  } catch (err) {
+                    logger.error('Failed to re-broadcast space tag on manifest update', err);
+                  }
+                } else {
+                  logger.warn(
+                    `[MessageService] space-manifest: refusing cross-space write — ` +
+                      `payload names ${space.spaceId?.substring(0, 12)}, delivered on ` +
+                      `${conversationId.split('/')[0].substring(0, 12)}`
+                  );
                 }
               }
             }
