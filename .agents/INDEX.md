@@ -320,6 +320,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [A DB call landing mid-close still fails once](issues/.open/2026-08-17-a-db-call-landing-mid-close-still-fails-once.md)
 - 📋 [Outbound signing is decided in four places, only one of which is the shared rule](issues/.open/2026-08-21-outbound-signing-is-decided-in-four-places-not-one.md)
 - 📋 [`yarn verify` — a routed, cross-repo regression gate with a readable verdict](issues/.open/2026-08-22-verify-regression-gate-design.md)
+- 📋 [`yarn verify` Implementation Plan](issues/.open/2026-08-22-verify-regression-gate-plan.md)
 
 ### Deferred
 
@@ -807,4 +808,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-22 19:10:37
+**Last Updated**: 2026-08-22 19:45:50

@@ -173,25 +173,54 @@ minutes.
 |---|---|---|
 | `dm-basic` | DMs send, arrive, decrypt | exists |
 | `space-basic` | join works; post and member row both arrive | exists |
-| **`space-delivery`** | one honest frame of **each** content type still arrives — see the list below | **NEW** |
+| **`space-delivery`** | one honest frame of **each** space content type still arrives — see the list below | **NEW** |
+| **`dm-delivery`** | one honest frame of **each** DM content type still arrives | **NEW** |
 | `harness:cross` | desktop↔mobile DM, both directions, computes loss | exists |
 | `harness:config-cross` | desktop↔mobile settings sync, both directions | exists |
+
+> **`dm-delivery` was added after this section was first written**, when a
+> coverage check found the hole it fills. **No DM scenario asserts any content
+> type beyond plain text** — `dm-basic` sends numbered strings, and nothing in
+> the harness sends a DM `embed`, `sticker`, `reaction`, `edit-message` or
+> `remove-message`. The receive-auth epic touches the DM path, so a fix that
+> broke DM attachments would have shipped with every check green.
+>
+> It also needs a harness change first: `HarnessBot` exposes only
+> `send(toAddress, text)`, with no `sendControl` as `spaceBot` has. And a DM bot
+> has no `graph`, so the space arm's `outbound.failures` diagnostic has no DM
+> equivalent. Both measured 2026-08-22; see the plan's Task 10.
+>
+> `remove-reaction` turned out to be asserted **nowhere**, for spaces either. It
+> is added to `space-delivery` as part of the same work.
 
 `space-delivery` is promoted from the DELIVERY arm already inside
 `space-message-id-derivation.scenario.test.ts`, which sends and asserts all of
 this today. Extracting it makes "did this fix drop a feature" answerable on its
 own, without running an attack scenario to get the answer.
 
-**The content types it covers, read from the scenario (not from memory):**
-`post`, `embed`, `sticker`, `reaction`, `edit-message`, `remove-message`,
-`thread`, `pin`, `mute`, `update-profile` — ten wire types, eleven behaviours,
-because a reply is sent as a `post` carrying a reply relation rather than as a
-type of its own.
+**The content types it covers, read from the scenario's assertion loop at
+`space-message-id-derivation.scenario.test.ts:691-708` (not from memory):**
 
-> The brainstorm item this design answers lists that set slightly wrong — it
-> names `reply` and `join` as types and omits `pin`. The list above is the
-> measured one. Any implementation must re-read the scenario rather than trust
-> either document, because the set will grow.
+| Asserted on the receiver | 9 types |
+|---|---|
+| observed on the victim | `post`, `embed`, `sticker`, `reaction`, `edit-message`, `thread`, `remove-message`, `update-profile` |
+| observed on the attacker | `mute` |
+
+A reply is exercised too, sent as a `post` carrying `repliesToMessageId` rather
+than as a type of its own.
+
+**`pin` is sent but deliberately NOT asserted.** Documented at line 433: its send
+branch requires an explicit role holding `message:pin` with no owner bypass, so a
+freshly created space's owner cannot produce one, and the frame never reaches the
+wire. Giving it a real arm means creating a role and broadcasting a manifest
+first. `space-delivery` inherits this limitation as-is and must carry the same
+comment — quietly adding a `pin` assertion would produce a scenario that fails
+for a reason unrelated to delivery.
+
+> The brainstorm item this design answers lists the set wrong: it names `reply`
+> and `join` as types of their own and omits `pin` entirely. The table above is
+> the measured one. Any implementation must re-read the scenario rather than
+> trust either document, because the set will grow.
 
 Read the harness README's batching and post-reconnect traps before changing how
 that arm batches its sends. Both were measured; both produce a symptom identical
@@ -317,6 +346,11 @@ Separate scope, a few days, and it should be planned only after phase 1 is
 running and its arms have been proven able to fail.
 
 ## 12. What this explicitly does not cover
+
+The authoritative list lives in `.agents/docs/regression-coverage-map.md`, which
+the plan's Task 7 creates by measurement — every row cites a file or says "none
+found". The gate's `NOT COVERED` line is derived from it, so the two cannot
+drift apart silently. What follows is the summary as of 2026-08-22.
 
 Stated so a `PASS` is never read as more than it is:
 
