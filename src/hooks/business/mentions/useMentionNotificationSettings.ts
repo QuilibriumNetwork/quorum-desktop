@@ -15,7 +15,7 @@ import { t } from '@lingui/core/macro';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type { SpaceNotificationSettings, SpaceNotificationTypeId } from '../../../types/notifications';
-import { getDefaultNotificationSettings, logger } from '@quilibrium/quorum-shared';
+import { normalizeSpaceNotificationSettings, logger } from '@quilibrium/quorum-shared';
 import { useConfig, buildConfigKey } from '../../queries/config';
 import { showError } from '../../../utils/toast';
 
@@ -88,10 +88,19 @@ export function useMentionNotificationSettings({
 
   // The persisted settings for this space, derived from the live config.
   // Falls back to all-types-enabled defaults for a space with no stored value.
+  //
+  // `normalize` rather than `??`: a record can EXIST but omit
+  // enabledNotificationTypes (quorum-mobile's setSpaceMuted writes a bare
+  // `{ isMuted }` for a space with no prior settings, which then syncs here).
+  // `??` does not fire on that truthy record, so the missing array used to
+  // reach `selectedTypes` as undefined and kill the channel route at
+  // NotificationPanel's `selectedTypes.filter(...)`.
   const settings = useMemo<SpaceNotificationSettings>(
     () =>
-      config?.notificationSettings?.[spaceId] ??
-      getDefaultNotificationSettings(spaceId),
+      normalizeSpaceNotificationSettings(
+        spaceId,
+        config?.notificationSettings?.[spaceId]
+      ),
     [config?.notificationSettings, spaceId]
   );
 
@@ -143,15 +152,35 @@ export function useMentionNotificationSettings({
 
       // Preserve any other fields already in notificationSettings[spaceId]
       // (most importantly isMuted, written by useChannelMute.muteSpace).
-      const currentSettings =
-        currentConfig?.notificationSettings?.[spaceId] ||
-        getDefaultNotificationSettings(spaceId);
+      // Normalized so a partial record can't reach the sameTypes() guard below
+      // with an undefined array — that threw on `.length` and made Save fail.
+      const currentSettings = normalizeSpaceNotificationSettings(
+        spaceId,
+        currentConfig?.notificationSettings?.[spaceId]
+      );
 
       // Clobber guard: if the selection matches what's already persisted, there
       // is nothing to write. This protects against the no-op Save that would
       // otherwise POST the current (now always-fresh) value back. Combined with
       // the reactive read above, a Save can no longer overwrite a value set on
       // another device with a stale desktop default.
+      //
+      // A malformed stored record deliberately does NOT bypass this guard, even
+      // though that means the broken shape survives on the server. Bypassing was
+      // tried and reverted: the repair write asserts the all-enabled DEFAULT,
+      // which is not a value the user chose, and config sync is last-write-wins
+      // over the whole blob (ConfigService compares timestamps; there is no
+      // per-field merge). So a repair racing a real selection made on another
+      // device and not yet synced down here would silently revert it. That window
+      // is not exotic — mobile's flow is mute-first-then-refine, so a partial
+      // record is a normal transient state on the way to a real value, and this
+      // Save runs on EVERY Account-tab save (SpaceSettingsModal.handleAccountSave),
+      // including ones where the user never touched the notification selector.
+      //
+      // Reading through normalizeSpaceNotificationSettings already makes a
+      // partial record harmless everywhere. It converges on its own the moment
+      // the user genuinely changes a selection on any device, because that write
+      // goes out through this same path below and lands complete.
       if (sameTypes(selectedTypes, currentSettings.enabledNotificationTypes)) {
         isDirtyRef.current = false;
         return;
