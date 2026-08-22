@@ -30,15 +30,18 @@ const execGit = (cwd, args) => {
   }
 };
 
-// The siblings live next to the MAIN checkout, which is not `..` when verify
-// runs from a linked worktree — there, `..` is the `.worktrees/` directory,
-// which holds no sibling repos. `--git-common-dir` resolves to the main
-// worktree's `.git` from anywhere (a relative `.git` in the main checkout, an
-// absolute path from a linked one — `resolve(DESKTOP, ...)` normalises both),
-// so its parent is the real repo root. In a normal, non-worktree clone this
-// collapses back to `resolve(DESKTOP, '..')`: MEASURED 2026-08-22, `git
-// rev-parse --git-common-dir` there returns the relative `.git`, so `dirname`
-// lands back on DESKTOP itself and the two paths agree.
+// Deviation from the plan's verbatim source, ruled authorized on review
+// (2026-08-22): the brief has SIBLINGS default to `resolve(DESKTOP, '..')`,
+// which is wrong when verify runs from a linked worktree — there, `..` is the
+// `.worktrees/` directory, which holds no sibling repos, not the checkout that
+// actually sits next to `quorum-shared`/`quorum-mobile`. `--git-common-dir`
+// resolves to the MAIN worktree's `.git` from anywhere (a relative `.git` in
+// the main checkout, an absolute path from a linked one — `resolve(DESKTOP,
+// ...)` normalises both), so its parent is the main checkout and that parent's
+// parent is where the siblings live. In a normal, non-worktree clone this
+// collapses back to the brief's `resolve(DESKTOP, '..')`: MEASURED 2026-08-22,
+// `git rev-parse --git-common-dir` there returns the relative `.git`, so
+// `dirname` lands back on DESKTOP itself and the two paths agree.
 const mainCheckout = (() => {
   const commonDir = execGit(DESKTOP, ['rev-parse', '--git-common-dir']).trim();
   return commonDir ? dirname(resolve(DESKTOP, commonDir)) : DESKTOP;
