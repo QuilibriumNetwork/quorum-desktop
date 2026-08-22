@@ -406,6 +406,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [The profile card's Kick button state came from the click payload](issues/.done/2026-08-16-profile-card-entry-point-parity.md)
 - 🐛 [A failed refetch keeps serving stale QNS verifications](issues/.done/2026-08-17-a-failed-refetch-keeps-serving-stale-qns-verifications.md)
 - 🐛 [A failing decrypt leaks 10 characters of plaintext into the error message](issues/.done/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md)
+- 🐛 [2026 08 22 Partial Notification Record Crashes Channel Route](issues/.done/2026-08-22-partial-notification-record-crashes-channel-route.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -804,4 +805,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-21 19:48:48
+**Last Updated**: 2026-08-22 11:40:52

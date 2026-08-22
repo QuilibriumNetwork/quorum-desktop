@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A partial notificationSettings record written by mobile crashes the whole channel route on desktop"
-status: in-progress
+status: done
 priority: high
 created: 2026-08-22
 updated: 2026-08-22
@@ -217,8 +217,23 @@ revert: the predicate also fired for a record with a valid array but a missing
 
 ## Status
 
-Implemented across all three repos on branch
-`fix/partial-notification-settings-record`. Not yet shipped.
+**2026-08-22 — shipped across all three repos**
+
+- quorum-desktop **#363** (`fix(notifications): stop a partial settings record crashing the channel route`)
+- quorum-shared **#88** (`fix(notifications): tolerate a partial per-space settings record`)
+- quorum-mobile **#269** (`fix(config): write a complete per-space notification record when muting`)
+
+What landed: desktop normalizes the record on read, which stops the route crash;
+shared gained the normalizer and its two guards now shape-check; mobile's
+`setSpaceMuted` writes a complete record so no new partial records are created.
+No desktop write path changed.
+
+**Shared was NOT republished, deliberately.** Desktop consumes it via
+`link:../quorum-shared` so it picks the change up from the sibling checkout,
+while mobile is pinned to the published `2.1.0-45` and does not use any of the
+changed functions — its own fix references only mobile-local symbols. Whoever
+publishes shared next must bump the version, because `master` now differs in
+content from the published `2.1.0-45` while carrying the same version number.
 
 Stored records are deliberately not repaired (see the rejected design above), so
 an affected account keeps its partial record until the user next changes a

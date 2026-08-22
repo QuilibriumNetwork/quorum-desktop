@@ -1,16 +1,16 @@
 ---
 type: recap
 title: "Quorum Desktop — Project State"
-updated: 2026-08-20
+updated: 2026-08-22
 ---
 
 # Quorum Desktop — Project State
 
-> Last updated: 2026-08-20
+> Last updated: 2026-08-22
 
 ## Dashboard
 
-> Updated: 2026-08-20 · 92 live · 76 startable · 7 nearly done · 10 blocked
+> Updated: 2026-08-22 · 92 live · 76 startable · 7 nearly done · 10 blocked
 
 **Next step:** Finish production diagnostics (Option 2: a diagnostics toggle with an export) — it is the only route that gets a failure report from a user who will never open devtools, and **four** separate issues are now waiting on evidence it would collect.
 
@@ -70,6 +70,7 @@ Nothing in flight.
 
 | date | decision | rationale |
 |------|----------|-----------|
+| 2026-08-22 | A malformed record in the synced config is tolerated on READ and never repaired by a write | Repairing was built and reverted. The repaired value asserts a DEFAULT the user never chose, and config sync is last-write-wins over the whole blob, so the repair races a real selection made on another device that has not synced down yet and silently reverts it. A partial record is inert while readers normalize, and converges by itself on the next genuine edit. Applies beyond notifications: any "the stored shape is broken, let me fix it" write has this shape (#363, shared #88) |
 | 2026-08-17 | `allowSync` stays **off** by default, so backups carry the whole recovery story | Measured: with sync off the server holds nothing, and an eviction takes Spaces and profile as well as DMs. Turning sync on would recover more, but the default is a deliberate privacy position — so the answer is to prevent the wipe (M2) and make a backup exist when it happens anyway (M4, shipped #350), not to sync more |
 | 2026-08-17 | Nothing tells users their DM sessions were not restored | Not actionable (the conversation re-establishes itself), not visible (the only symptom is a message you never received), and unsayable in the user's vocabulary. Reasons recorded in `docs/features/user-data-backup.md` so the same copy is not re-proposed (#350) |
 | 2026-08-17 | Cross-client sync is measured in BOTH directions, not one | The two ConfigService implementations are independent code sharing only a type, so "desktop's blob decrypts on mobile" is not evidence about the reverse. The one-directional harness could not have seen the drift its own merge-asymmetry issue was filed for (#351) |
