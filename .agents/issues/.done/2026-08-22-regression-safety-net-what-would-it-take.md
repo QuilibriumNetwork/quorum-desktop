@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Is a whole-app regression net worth building, and if so what shape?"
-status: open
+status: done
 priority: medium
 created: 2026-08-22
 updated: 2026-08-22
@@ -9,6 +9,29 @@ area: testing / developer confidence
 ---
 
 # Is a whole-app regression net worth building, and if so what shape?
+
+## Status
+
+**Answered 2026-08-22.** Decision and full design:
+`2026-08-22-verify-regression-gate-design.md`.
+
+Outcome in one line: **yes, but the framing in this file was wrong about where
+the gap is.**
+
+- The biggest missing piece was not tests. Desktop already has 1680 unit tests
+  that pass in 103 seconds, and **nothing causes them to run** — no CI, no git
+  hooks, in any of the three repos. That was unmeasured when this file was
+  written.
+- Option 1 (core-feature smoke) is adopted, as the `space-delivery` arm. Its
+  content-type list in §"Options to weigh" below is slightly wrong: the scenario
+  sends `pin`, and does not send `reply` or `join` as types of their own. Read
+  the scenario, not this file.
+- Option 2 (Playwright UI smoke) is **declined for now**, for the reason this
+  file itself argues: UI regressions are loud and self-announcing.
+- Option 3 (do neither) is superseded.
+- Two things this file did not consider and the design does: cross-repo breakage
+  through `quorum-shared` (desktop symlinks it, mobile pins the published copy),
+  and through the wire (desktop↔mobile interop, invisible to file-path analysis).
 
 ## Why this exists
 

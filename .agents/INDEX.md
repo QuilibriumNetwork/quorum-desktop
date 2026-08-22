@@ -319,7 +319,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Rebuild the sync indicator on a per-space "behind by N" signal](issues/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md)
 - 📋 [A DB call landing mid-close still fails once](issues/.open/2026-08-17-a-db-call-landing-mid-close-still-fails-once.md)
 - 📋 [Outbound signing is decided in four places, only one of which is the shared rule](issues/.open/2026-08-21-outbound-signing-is-decided-in-four-places-not-one.md)
-- 📋 [Is a whole-app regression net worth building, and if so what shape?](issues/.open/2026-08-22-regression-safety-net-what-would-it-take.md)
+- 📋 [`yarn verify` — a routed, cross-repo regression gate with a readable verdict](issues/.open/2026-08-22-verify-regression-gate-design.md)
 
 ### Deferred
 
@@ -546,6 +546,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Dev pages design system — implementation plan](issues/.done/2026-08-11-dev-pages-design-system-plan.md)
 - 📋 [Remove the single-repo cross-platform leftovers](issues/.done/2026-08-13-remove-single-repo-cross-platform-leftovers.md)
 - 📋 [DM identity on desktop: the dialect fix, then the privacy rule](issues/.done/2026-08-20-dm-identity-reveal-desktop-and-shared-plan.md)
+- 📋 [Is a whole-app regression net worth building, and if so what shape?](issues/.done/2026-08-22-regression-safety-net-what-would-it-take.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
 - 📋 [Add DM-Specific Action Queue Handlers](issues/.done/dm-action-queue-handlers.md)
@@ -806,4 +807,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-22 18:47:02
+**Last Updated**: 2026-08-22 19:10:37
