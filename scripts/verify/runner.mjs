@@ -36,7 +36,9 @@ function once(step) {
     };
     child.stdout.on('data', tee);
     child.stderr.on('data', tee);
-    child.on('exit', (code) =>
+    // 'close', not 'exit': 'exit' can fire before stdio has flushed, silently
+    // truncating the captured output that every detail extractor reads.
+    child.on('close', (code) =>
       resolveRun({ code: code ?? 1, output, ms: Date.now() - startedAt })
     );
   });
