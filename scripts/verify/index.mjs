@@ -3,9 +3,9 @@
  * `yarn verify` — run the checks that apply to what changed, and print a
  * verdict readable without reading the diff.
  *
- * Grown in slices: this revision runs desktop's fast tier only. Routing,
- * environment reporting, cross-repo fan-out and the receipt land in later
- * tasks of the same plan.
+ * Grown in slices: this revision runs desktop's fast tier only, with the
+ * ENVIRONMENT block describing what it tested against. Routing, cross-repo
+ * fan-out and the receipt land in later tasks of the same plan.
  */
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
