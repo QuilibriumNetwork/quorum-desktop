@@ -10,13 +10,20 @@
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync, realpathSync, existsSync } from 'node:fs';
-import { resolve, join } from 'node:path';
+import { join } from 'node:path';
 
+// Deviation from the plan's verbatim source, ruled authorized on review
+// (2026-08-22): returns null on failure instead of '', so callers can tell
+// "command failed" apart from "command succeeded with empty output". The
+// commit lookup doesn't care (both are falsy, both fall back to 'no-git'),
+// but the dirty check below does — collapsing a failed `git status` into the
+// same '' a clean tree produces silently reports "clean" when we actually
+// don't know, which is the false negative this module exists to prevent.
 const git = (cwd, args) => {
   try {
     return execFileSync('git', args, { cwd, encoding: 'utf8' }).trim();
   } catch {
-    return '';
+    return null;
   }
 };
 
@@ -51,8 +58,16 @@ function describeDep(desktopPath, name) {
   }
 
   const commit = git(real, ['rev-parse', '--short', 'HEAD']) || 'no-git';
-  const dirty = git(real, ['status', '--porcelain']) !== '';
-  if (dirty) {
+  const status = git(real, ['status', '--porcelain']);
+  // null (command failed) is a distinct, worse state than '' (command
+  // succeeded, nothing to report) — see the note on git() above. Do not
+  // collapse it back into "clean".
+  const dirty = status === null ? null : status !== '';
+  if (dirty === null) {
+    warnings.push(
+      'could not determine whether this checkout has uncommitted changes (git status failed) — treat this run as unverified, not clean'
+    );
+  } else if (dirty) {
     warnings.push('uncommitted changes in this checkout — the result is not reproducible');
   }
   // A `link:` specifier is honest about being local. A semver range is not:
@@ -62,9 +77,10 @@ function describeDep(desktopPath, name) {
       `package.json declares ${declared} (published) — you are NOT testing that`
     );
   }
+  const dirtyLabel = dirty === null ? 'UNKNOWN' : dirty ? 'DIRTY' : 'clean';
   return {
     name: shortName(name),
-    summary: `LINKED → ${version} (${commit}${dirty ? ', DIRTY' : ', clean'})`,
+    summary: `LINKED → ${version} (${commit}, ${dirtyLabel})`,
     warnings,
   };
 }
@@ -73,7 +89,12 @@ const shortName = (name) => (name.includes('sdk') ? 'sdk' : 'shared');
 
 export async function describeEnvironment(desktopPath) {
   const commit = git(desktopPath, ['rev-parse', '--short', 'HEAD']) || 'no-git';
-  const dirtyFiles = git(desktopPath, ['status', '--porcelain'])
+  // git() can now return null on failure (see the note above). Guard the
+  // `.split` so a failed `git status` here can't crash the whole report;
+  // this call site's dirty/clean duplication vs. describeDep's is a known,
+  // separately-tracked deferral, not something this fix expands the scope to
+  // restructure.
+  const dirtyFiles = (git(desktopPath, ['status', '--porcelain']) ?? '')
     .split('\n')
     .filter(Boolean).length;
 
