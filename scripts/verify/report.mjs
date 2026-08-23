@@ -64,15 +64,18 @@ export function renderReport({ env, plan, results }) {
 }
 
 /**
- * Stated on every run, so a PASS can never be read as more than it is. Update
- * this list when coverage actually changes — see
- * `.agents/docs/regression-coverage-map.md`.
+ * Stated on every run, so a PASS can never be read as more than it is.
+ * Ranked by silence, not size: a gap nobody would ever notice outranks one
+ * they'd hit on the next click, because loud failures take care of
+ * themselves. Measured in `.agents/docs/regression-coverage-map.md` — update
+ * both together when coverage actually changes.
  */
 export const NOT_COVERED = [
-  'UI rendering',
-  'Electron packaging',
-  'iOS/Android native builds',
-  '153 of 169 components have no test',
+  'role/permission gating — untested; the harness cannot even build one yet',
+  'reaction removal — never confirmed to reach anyone but the sender',
+  'pin & profile updates — sent, never confirmed delivered',
+  'calling — zero coverage of all 8 WebRTC message types',
+  'no end-to-end or integration test exists',
 ];
 
 const VERDICT_NOTE = {

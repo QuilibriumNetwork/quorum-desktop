@@ -14,6 +14,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mobile-Browser Touch Support](docs/mobile-browser-touch-support.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
 - [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
+- [Regression coverage map](docs/regression-coverage-map.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
 
 ### .Archived
@@ -810,4 +811,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-23 08:50:34
+**Last Updated**: 2026-08-23 11:01:17
