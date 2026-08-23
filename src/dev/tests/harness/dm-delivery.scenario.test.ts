@@ -119,10 +119,23 @@ test(
       log.add(Date.now(), 'harness', 'note', { msg, ...fields });
     };
 
+    // Bot names are FIXED, not stamped. A new name mints a new account on the
+    // relay, and account registrations are permanent — there is no delete
+    // endpoint (measured 2026-08-23: throwaways from 26 days earlier still
+    // resolve). Reuse costs nothing here because isolation does not come from
+    // the identity: `storage.ts` backs MessageDB with in-memory fake-indexeddb,
+    // so every run already starts with an empty database. Per-run uniqueness
+    // that assertions actually depend on comes from `stamp` in the message
+    // CONTENT below, which is free.
     const [receiver, sender] = await Promise.all([
-      createBot(`delivery-receiver-${stamp}`),
-      createBot(`delivery-sender-${stamp}`),
+      createBot('dm-delivery-receiver'),
+      createBot('dm-delivery-sender'),
     ]);
+    // Drain before subscribing: a reused inbox may still hold frames the relay
+    // queued for a previous run. Stamped content means they cannot satisfy an
+    // assertion, but they can still fail to decrypt against this run's fresh
+    // ratchet state and show up as spurious errors.
+    await Promise.all([receiver.drainInbox(), sender.drainInbox()]);
     await Promise.all([receiver.start(), sender.start()]);
 
     // Declared before the try so the finally can always restore what it

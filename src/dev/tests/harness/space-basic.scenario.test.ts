@@ -55,13 +55,23 @@ test(
       log.add(Date.now(), 'harness', 'note', { msg, ...fields });
     };
 
-    // Fresh throwaways every run: a reused bot would already hold the member row
-    // and the message from a previous run, and would then "pass" without any
-    // exchange having happened. This scenario is only meaningful from zero.
+    // This previously minted fresh throwaway accounts every run, on the reasoning
+    // that a reused bot would still hold the member row and the message from a
+    // previous run and so "pass" without any exchange happening. That premise no
+    // longer holds: `storage.ts` backs MessageDB with in-memory fake-indexeddb,
+    // so both bots start from an empty database on every run regardless of name.
+    // The concern was right to raise — a scenario that passes without the
+    // exchange is worse than no scenario — so the names below were changed only
+    // after breaking the join path and confirming this arm goes red.
+    //
+    // The identity is what must stay fixed: a new name mints a permanent account
+    // on the relay, and there is no endpoint to delete one. Per-run uniqueness
+    // still comes from `stamp`, which is in the space name and message text.
     const [a, b] = await Promise.all([
-      createSpaceBot(`space-a-${stamp}`),
-      createSpaceBot(`space-b-${stamp}`),
+      createSpaceBot('space-basic-a'),
+      createSpaceBot('space-basic-b'),
     ]);
+    await Promise.all([a.drainInbox(), b.drainInbox()]);
     await Promise.all([a.start(), b.start()]);
 
     // Everything from here runs inside try/finally. Without it, ANY early throw

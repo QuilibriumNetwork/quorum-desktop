@@ -112,10 +112,15 @@ test(
       log.add(Date.now(), 'harness', 'note', { msg, ...fields });
     };
 
+    // Fixed names, not stamped — see the note in dm-delivery. A stamped name
+    // mints a permanent, undeletable account on the relay every run; the
+    // isolation it was standing in for is already provided by the in-memory
+    // database, and per-run uniqueness comes from `stamp` in the content below.
     const [v, x] = await Promise.all([
-      createSpaceBot(`delivery-victim-${stamp}`),
-      createSpaceBot(`delivery-sender-${stamp}`),
+      createSpaceBot('space-delivery-victim'),
+      createSpaceBot('space-delivery-sender'),
     ]);
+    await Promise.all([v.drainInbox(), x.drainInbox()]);
     await Promise.all([v.start(), x.start()]);
 
     // Declared before the try so the finally can always restore what it patched,
