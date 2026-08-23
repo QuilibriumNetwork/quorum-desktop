@@ -152,6 +152,19 @@ describe('classifyKnownRed', () => {
     expect(classifyKnownRed('shared:typecheck', 'FAIL', output).status).toBe('FAIL');
   });
 
+  // A parsed-but-zero count is a distinct case from "unparseable" — the
+  // extractor worked, and honestly reported that eslint found no rule
+  // errors — but the step still failed. Since KNOWN_RED's baseline for this
+  // step is a positive number, a real recurrence of the tracked failure can
+  // never parse to 0. A non-zero exit with 0 parsed errors is therefore
+  // evidence of something ELSE (a --max-warnings gate, a wrapper script
+  // exiting non-zero for its own reasons) — not the known failure — and must
+  // fail the same way an unparseable one does.
+  it('keeps FAIL when the step failed but the parsed error count is 0', () => {
+    const output = '✖ 5 problems (0 errors, 5 warnings)';
+    expect(classifyKnownRed('mobile:lint', 'FAIL', output).status).toBe('FAIL');
+  });
+
   // Row 4: passes -> PASS, plus a warning that the exemption is stale.
   it('reports a stale-exemption warning when a known-red step passes', () => {
     const result = classifyKnownRed('mobile:lint', 'PASS', '');

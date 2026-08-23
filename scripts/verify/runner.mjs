@@ -102,16 +102,29 @@ function finish(step, plan, result, output) {
  * the caller to act on rather than mutating `plan` itself — specifically so
  * all four rows of the table can be unit tested without spawning a process.
  *
- *   status  | count vs baseline   -> new status | why
- *   FAIL    | count <= baseline   -> KNOWN-RED   | pre-existing, already tracked
- *   FAIL    | count >  baseline   -> FAIL         | it got worse: that IS new breakage
- *   FAIL    | count unparseable   -> FAIL         | never assume an unreadable failure is the known one
- *   PASS    | (n/a)               -> PASS         | + staleWarning: the exemption must be deleted
+ *   status  | count vs baseline        -> new status | why
+ *   FAIL    | 0 < count <= baseline    -> KNOWN-RED   | pre-existing, already tracked
+ *   FAIL    | count >  baseline        -> FAIL         | it got worse: that IS new breakage
+ *   FAIL    | count unparseable OR 0   -> FAIL         | never assume an unreadable — or irrelevant — failure is the known one
+ *   PASS    | (n/a)                    -> PASS         | + staleWarning: the exemption must be deleted
  *
  * A step not in KNOWN_RED, or whose status is neither FAIL nor PASS (i.e.
  * FLAKY), passes through unchanged. FLAKY in particular must never be
  * relabelled KNOWN-RED or PASS: a retry that only went green by luck is not
  * the tracked, bounded failure this table exists to recognize.
+ *
+ * A parsed count of exactly 0 is deliberately treated the same as
+ * unparseable (`null`), not as "at or under baseline". Every KNOWN_RED entry
+ * records a POSITIVE baseline, so a genuine recurrence of the tracked
+ * failure can never parse to 0 — a failing step that nonetheless reports 0
+ * errors is evidence of something else entirely (an eslint --max-warnings
+ * gate, a wrapper exiting non-zero on its own terms), and treating that as
+ * "the known failure" would silently absorb an unrelated regression into the
+ * exemption. This check is intentionally centralized here rather than pushed
+ * into each extractor in baseline.mjs: the "0 on a failing step is
+ * suspicious" rule doesn't depend on eslint vs tsc vs whatever comes next,
+ * so putting it here protects every future extractor by default instead of
+ * requiring each one to independently remember it.
  */
 export function classifyKnownRed(id, status, output) {
   const baseline = KNOWN_RED[id];
@@ -130,7 +143,7 @@ export function classifyKnownRed(id, status, output) {
   if (status !== 'FAIL') return { status };
 
   const count = errorCountOf(id, output);
-  if (count !== null && count <= baseline.errors) {
+  if (count !== null && count > 0 && count <= baseline.errors) {
     return {
       status: 'KNOWN-RED',
       detail: `${count} errors (known-red, baseline ${baseline.errors}) — ${baseline.issue}`,
