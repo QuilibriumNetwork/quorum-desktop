@@ -273,6 +273,8 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A failed QNS verification can stay failed for the whole session](issues/.open/2026-08-17-a-failed-qns-verification-can-stay-failed-for-the-whole-session.md)
 - 🐛 [A just-joined member permanently misses a space-manifest broadcast](issues/.open/2026-08-19-a-just-joined-member-permanently-misses-a-space-manifest.md)
 - 🐛 [Desktop applies any signed space-manifest, with no staleness guard](issues/.open/2026-08-19-desktop-applies-any-space-manifest-with-no-staleness-guard.md)
+- 🐛 [quorum-mobile: yarn lint fails with 302 pre-existing errors on master](issues/.open/2026-08-23-mobile-lint-302-errors.md)
+- 🐛 [quorum-shared: Input.native.tsx leaks a falsy ReactNode literal into a View style slot (TS2769)](issues/.open/2026-08-23-shared-typecheck-zero-in-native-style-union.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -808,4 +810,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-22 19:45:50
+**Last Updated**: 2026-08-23 08:50:34

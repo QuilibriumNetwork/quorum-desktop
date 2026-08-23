@@ -8,8 +8,18 @@
  * it manufactures confidence rather than merely lacking it.
  */
 
-/** Worst-first. The first status present in the results wins. */
-const SEVERITY = ['FAIL', 'FLAKY', 'SKIP'];
+/**
+ * Worst-first. The first status present in the results wins.
+ *
+ * KNOWN-RED sits below FLAKY: a retry that only went green by luck is a worse
+ * signal than a failure that was already tracked and bounded, so a run with
+ * both must report FLAKY, not the (arguably more specific-sounding) KNOWN-RED.
+ * It sits above SKIP because a KNOWN-RED row is not skipped — it ran, it
+ * failed, and it was deliberately classified. Both still render PASS
+ * (PARTIAL): the point of the small vocabulary is that a reader only has to
+ * learn four words, not five.
+ */
+const SEVERITY = ['FAIL', 'FLAKY', 'KNOWN-RED', 'SKIP'];
 
 export function verdictOf(results, plan) {
   const present = new Set(results.map((r) => r.status));
@@ -37,8 +47,9 @@ export function renderReport({ env, plan, results }) {
   lines.push('');
   for (const r of results) {
     const detail = r.status === 'SKIP' ? (r.skipReason ?? '') : r.detail;
+    // 10, not 6: 'KNOWN-RED' is 9 characters, the longest status word.
     lines.push(
-      `  ${pad(r.repo, 8)} ${pad(r.label, 14)} ${pad(r.status, 6)} ${pad(secs(r.ms), 6)} ${detail}`
+      `  ${pad(r.repo, 8)} ${pad(r.label, 14)} ${pad(r.status, 10)} ${pad(secs(r.ms), 6)} ${detail}`
     );
   }
   lines.push('');

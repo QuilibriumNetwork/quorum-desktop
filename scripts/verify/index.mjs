@@ -90,7 +90,7 @@ if (plan.repos.includes('shared') && existsSync(REPOS.shared)) {
   const [buildStep] = stepsFor('shared', REPOS.shared, 'fast').filter(
     (s) => s.label === 'build'
   );
-  if (buildStep) results.push(await runStep(buildStep));
+  if (buildStep) results.push(await runStep(buildStep, plan));
 }
 
 for (const repo of plan.repos) {
@@ -105,7 +105,7 @@ for (const repo of plan.repos) {
     // Already run above; do not pay for it twice.
     if (repo === 'shared' && step.label === 'build' && results.some((r) => r.id === step.id))
       continue;
-    results.push(await runStep(step));
+    results.push(await runStep(step, plan));
   }
 }
 

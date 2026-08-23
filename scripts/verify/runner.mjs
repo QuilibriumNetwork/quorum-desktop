@@ -7,6 +7,7 @@
  * is what makes `yarn` resolve on Windows.
  */
 import { spawn } from 'node:child_process';
+import { KNOWN_RED, errorCountOf } from './baseline.mjs';
 
 /**
  * Steps whose failure is known to be load-sensitive rather than deterministic.
@@ -17,6 +18,13 @@ import { spawn } from 'node:child_process';
  * `desktop:unit` is here because `src/dev/tests/hooks/fetchSpaceReplies.unit.test.ts`
  * and the websocket pickup test are documented in `vitest.config.ts` as
  * intermittently load-sensitive.
+ *
+ * RETRYABLE and KNOWN_RED (baseline.mjs) are deliberately independent sets.
+ * Neither current KNOWN_RED entry is retryable, and that ordering matters:
+ * `runStep` resolves retries FIRST and only classifies known-red AFTER, on
+ * whichever attempt is final. A step that were both would otherwise risk a
+ * retry laundering its baseline failure into a false green before
+ * known-red classification ever saw it.
  */
 export const RETRYABLE = new Set(['desktop:unit']);
 
@@ -44,31 +52,91 @@ function once(step) {
   });
 }
 
-export async function runStep(step) {
+/**
+ * `plan` is optional so `runStep` stays callable in isolation (as the
+ * classifyKnownRed tests do, indirectly, by not needing it at all); when
+ * given, a KNOWN_RED step that unexpectedly passes pushes a warning there —
+ * see classifyKnownRed's `staleWarning`.
+ */
+export async function runStep(step, plan) {
   const base = { id: step.id, label: step.label, repo: step.repo, tier: step.tier };
   console.log(`\n[verify] ── ${step.repo} ${step.label} ──`);
 
   const first = await once(step);
   if (first.code === 0) {
-    return { ...base, status: 'PASS', ms: first.ms, detail: safeDetail(step, first.output) };
+    return finish(step, plan, { ...base, status: 'PASS', ms: first.ms }, first.output);
   }
 
   if (!RETRYABLE.has(step.id)) {
-    return { ...base, status: 'FAIL', ms: first.ms, detail: safeDetail(step, first.output) };
+    return finish(step, plan, { ...base, status: 'FAIL', ms: first.ms }, first.output);
   }
 
   console.log(`[verify] ${step.id} failed; retrying ONCE (known load-sensitive)`);
   const second = await once(step);
   const ms = first.ms + second.ms;
   if (second.code === 0) {
+    const result = finish(step, plan, { ...base, status: 'FLAKY', ms }, second.output);
+    return { ...result, detail: `${result.detail}  (failed once, passed on retry)` };
+  }
+  return finish(step, plan, { ...base, status: 'FAIL', ms }, second.output);
+}
+
+/**
+ * Computes the ordinary detail line, then lets classifyKnownRed override
+ * status/detail using that same attempt's output — see the RETRYABLE comment
+ * above for why every call site passes the FINAL attempt, never the first.
+ * classifyKnownRed only ever overrides a FAIL, so it can't collide with the
+ * "(failed once, passed on retry)" suffix the FLAKY caller appends after this
+ * returns — that suffix only ever decorates a passthrough result.
+ */
+function finish(step, plan, result, output) {
+  const detail = safeDetail(step, output);
+  const classified = classifyKnownRed(step.id, result.status, output);
+  if (classified.staleWarning) plan?.skipped?.push(classified.staleWarning);
+  return { ...result, status: classified.status, detail: classified.detail ?? detail };
+}
+
+/**
+ * Applies the KNOWN_RED table (see baseline.mjs's header) to one step's
+ * already-finished result. Pure and side-effect free — it returns data for
+ * the caller to act on rather than mutating `plan` itself — specifically so
+ * all four rows of the table can be unit tested without spawning a process.
+ *
+ *   status  | count vs baseline   -> new status | why
+ *   FAIL    | count <= baseline   -> KNOWN-RED   | pre-existing, already tracked
+ *   FAIL    | count >  baseline   -> FAIL         | it got worse: that IS new breakage
+ *   FAIL    | count unparseable   -> FAIL         | never assume an unreadable failure is the known one
+ *   PASS    | (n/a)               -> PASS         | + staleWarning: the exemption must be deleted
+ *
+ * A step not in KNOWN_RED, or whose status is neither FAIL nor PASS (i.e.
+ * FLAKY), passes through unchanged. FLAKY in particular must never be
+ * relabelled KNOWN-RED or PASS: a retry that only went green by luck is not
+ * the tracked, bounded failure this table exists to recognize.
+ */
+export function classifyKnownRed(id, status, output) {
+  const baseline = KNOWN_RED[id];
+  if (!baseline) return { status };
+
+  if (status === 'PASS') {
     return {
-      ...base,
-      status: 'FLAKY',
-      ms,
-      detail: `${safeDetail(step, second.output)}  (failed once, passed on retry)`,
+      status,
+      staleWarning:
+        `${id} passed, but it is listed in baseline.mjs's KNOWN_RED as a tracked ` +
+        `failure (${baseline.issue}) — that exemption is now stale and must be ` +
+        'deleted, or it will silently hide a future regression',
     };
   }
-  return { ...base, status: 'FAIL', ms, detail: safeDetail(step, second.output) };
+
+  if (status !== 'FAIL') return { status };
+
+  const count = errorCountOf(id, output);
+  if (count !== null && count <= baseline.errors) {
+    return {
+      status: 'KNOWN-RED',
+      detail: `${count} errors (known-red, baseline ${baseline.errors}) — ${baseline.issue}`,
+    };
+  }
+  return { status };
 }
 
 export function skipped(step, reason) {
