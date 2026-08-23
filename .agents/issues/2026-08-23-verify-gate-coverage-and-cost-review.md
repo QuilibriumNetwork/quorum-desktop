@@ -1,12 +1,79 @@
 ---
 type: task
 title: 'Review the verify gate: is it running the right tests, cheaply, and what is missing?'
-status: open
+status: in-progress
 created: 2026-08-23
 updated: 2026-08-23
 ---
 
 # Review the verify gate: right tests, cheap, and what is missing
+
+## Status
+
+Questions 1, 2 and 4 are answered and shipped. Question 3 is one slice of three
+done. Nothing is pushed. Read the git log on `feat/verify-regression-gate`
+rather than the checkboxes below, which predate the work.
+
+**Q1 — routing.** Three defects found and fixed, all falsified by mutation
+against a green control:
+
+- `src/locales/` matched no file in any repo; desktop's catalogues are under
+  `src/i18n/<locale>/`, so ~100 translation files were forcing a 6-minute run.
+- The safe list assumed one layout for three repos. quorum-mobile has no `src/`
+  directory at all, so the component and test patterns silently covered desktop
+  only. Mobile went 74% → 32% of files forcing the live tier; shared 99% → 66%.
+- The live tier ran all six arms whichever repo changed. Only the two
+  cross-client runners spawn quorum-mobile, so a mobile-only diff now runs just
+  those two.
+
+A fourth, found by adversarial review afterwards and more serious than any of
+them: the safe list cleared `src/components/context/WebsocketProvider.tsx`,
+which owns the literal `new WebSocket(...)`. A change to the transport skipped
+every live arm and printed a clean PASS. Carved out, and policed by a contract
+test so the carve-out cannot silently reopen.
+
+Also added `yarn verify --explain`, which prints the resolved plan and the arms
+it would run without running any of them.
+
+**The most important finding was not in the four questions.** The gate read
+only the working tree, so a clean tree meant "nothing changed" however much the
+branch contained. MEASURED on this branch: 31 files changed versus `main`,
+including services, hooks and the harness, and `yarn verify` ran zero live arms
+and reported a baseline PASS. The documented flow is commit, verify, open a PR
+— so the gate was useless at exactly the moment it was meant to matter. It now
+diffs `merge-base(HEAD, base)..HEAD` as well.
+
+**Q2 — the 42-scenario audit.** Written into
+[regression-coverage-map.md](../docs/regression-coverage-map.md) as a new
+"Scenario inventory" section: 27 regression arms, 11 instruments, 3 offline, 1
+needing a human. **Nothing is dead.** Two findings worth acting on: `cross-dm`
+is already wired in and still mints one permanent account per run, and ten
+authorization scenarios exist of which none runs.
+
+**Q3 — wiring, slice 1 of 3 done** (the operator chose the free wins first):
+
+- The three offline scenarios now run on the fast tier. 15s, mints nothing, and
+  they previously ran nowhere at all.
+- `space-delivery` now asserts the mute PERMISSION GATE. Asserting the mute was
+  honoured went red on the first run, and correctly: muting needs a role
+  granting `user:mute` with no owner bypass. What is pinned instead is that an
+  unprivileged mute is refused, bound to the delivery assertion so it cannot
+  pass vacuously.
+- The channel message filter is extracted as `selectVisibleMessages` and
+  tested, and quorum-shared's block helpers now have tests. Block had none
+  anywhere. It is viewer-side only, so no live arm could ever have covered it.
+
+Still to do on Q3: the identity fix plus space reuse for the ten authorization
+arms (the operator chose this over a separate `--deep` tier), then wire them in.
+Then `cross-dm`'s minting, which needs the worktree path bug fixed first so the
+change can be verified at all.
+
+**Q4 — `space-basic`.** Held back to `yarn verify --all`. Every run that leaves
+it out prints a `HELD BACK` line naming it and the flag that runs it.
+
+MEASURED, plain `yarn verify` on this branch after all of the above: **383s,
+`PASS (PARTIAL)`, 0 new accounts, 0 new Spaces.** The PARTIAL is the two
+cross-client arms, which still skip from a linked worktree (tracked separately).
 
 Follow-on from the two harness-cost issues, both now closed:
 [accounts](.done/2026-08-23-harness-mints-permanent-accounts-every-run.md) and

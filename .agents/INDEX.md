@@ -120,6 +120,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
 - 📋 [Name resolution: an API that cannot express a partial identity](issues/2026-08-10-identity-resolution-architecture-design.md)
 - 📋 [Identity Resolution Implementation Plan](issues/2026-08-10-identity-resolution-architecture-plan.md)
+- 📋 [Review the verify gate: right tests, cheap, and what is missing](issues/2026-08-23-verify-gate-coverage-and-cost-review.md)
 
 #### Messagedb
 
@@ -325,7 +326,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Outbound signing is decided in four places, only one of which is the shared rule](issues/.open/2026-08-21-outbound-signing-is-decided-in-four-places-not-one.md)
 - 📋 [`yarn verify` — a routed, cross-repo regression gate with a readable verdict](issues/.open/2026-08-22-verify-regression-gate-design.md)
 - 📋 [`yarn verify` Implementation Plan](issues/.open/2026-08-22-verify-regression-gate-plan.md)
-- 📋 [Review the verify gate: right tests, cheap, and what is missing](issues/.open/2026-08-23-verify-gate-coverage-and-cost-review.md)
 
 ### Deferred
 
@@ -815,4 +815,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-23 19:24:59
+**Last Updated**: 2026-08-23 22:59:37
