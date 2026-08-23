@@ -36,8 +36,20 @@ the `tier === 'live'` branch, desktop-only since every arm, including the two
 cross-client ones, is driven from this repo): `dm-basic`, `dm-delivery`,
 `space-basic`, `space-delivery`, `cross-dm`, `config-cross`. Desktop's own
 routing (`scripts/verify/routing.mjs`) puts real code changes on this tier
-automatically; only docs/styles/images/locales and components-only diffs stay
-on the fast tier.
+automatically.
+
+**Updated 2026-08-23 — a per-change run is FIVE of those six.** `space-basic`
+is marked `exhaustiveOnly` in `steps.mjs` and runs on `--all` only, because it
+creates a permanent, undeletable Space every time and cannot reuse one (that IS
+its subject). Runs that leave it out print a `HELD BACK` line naming it, so the
+omission is visible on the run rather than only in a doc. Routing also narrows
+by repo now: a quorum-mobile-only diff runs just the two cross-client arms,
+since the other four are desktop vitest scenarios that load no mobile code
+(READ: only `run-cross.mjs` and `run-config-cross.mjs` reach that repo). And
+docs, styles, images, **translation catalogues under `src/i18n/<locale>/`**,
+components, shared primitives, mobile's flat component/asset/native tree, and
+non-harness tests all stay on the fast tier. `yarn verify --explain` prints the
+resolved plan without running anything.
 
 MEASURED 2026-08-23, full `yarn verify --all` from this worktree: verdict
 **`PASS (PARTIAL)`**, total **393s (6.5 min)** — this is the measured actual,
@@ -131,7 +143,7 @@ Asserts behaviour that must keep working. "In gate" marks the six live arms.
 |---|---|---|---|
 | `dm-basic` | DM text round-trips both ways | ✅ | reuses |
 | `dm-delivery` | every DM content type reaches the receiver's store | ✅ | reuses |
-| `space-basic` | a joiner gets both the post and the roster row | ✅ | reuses, **+space** |
+| `space-basic` | a joiner gets both the post and the roster row | `--all` only | reuses, **+space** |
 | `space-delivery` | every space content type survives the receive path | ✅ | reuses |
 | `cross-dm` (file: `dm-cross`) | mobile↔desktop DM delivery | ✅ | **mints 1/run** |
 | `config-cross` | a desktop-written config decrypts on mobile | ✅ | reuses |

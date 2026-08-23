@@ -21,6 +21,7 @@ import {
   changedPaths,
   mainCheckoutFrom,
   liveArmsFor,
+  heldBackArms,
   needsMobile,
 } from './routing.mjs';
 
@@ -116,7 +117,10 @@ if (argv.includes('--all')) {
   // Explicit, not inherited: `--all` means every arm, so it must override a
   // `cross-only` scope the diff would otherwise have inferred.
   plan.liveScope = 'all';
-  plan.reasons = ['(--all: every repo, every tier)'];
+  // Releases the arms held back for cost on the per-change tier — today just
+  // `space-basic`, which creates a permanent Space every time it runs.
+  plan.exhaustive = true;
+  plan.reasons = ['(--all: every repo, every tier, including the arms held back for cost)'];
 }
 if (argv.includes('--fast')) {
   plan.live = false;
@@ -142,10 +146,13 @@ if (plan.repos.length === 0) {
 // Placed after the argv overrides so it explains the run you actually asked
 // for, and before `describeEnvironment` so it stays fast.
 if (argv.includes('--explain')) {
-  const arms = liveArmsFor(plan, stepsFor('desktop', REPOS.desktop, 'live')).map((s) => s.label);
+  const liveSteps = stepsFor('desktop', REPOS.desktop, 'live');
+  const arms = liveArmsFor(plan, liveSteps).map((s) => s.label);
+  const held = heldBackArms(plan, liveSteps).map((s) => s.label);
   console.log(`  ROUTED     ${plan.repos.join(' + ') || 'nothing'}`);
   console.log(`  TIER       ${plan.live ? 'fast + live' : 'fast'}`);
   console.log(`  LIVE ARMS  ${arms.join(', ') || '(none)'}`);
+  if (held.length) console.log(`  HELD BACK  ${held.join(', ')}  (run \`yarn verify --all\`)`);
   for (const reason of plan.reasons) console.log(`             ${reason}`);
   process.exit(0);
 }
@@ -215,8 +222,18 @@ const crossScriptMobilePath = resolve(DESKTOP, '..', 'quorum-mobile');
 // when nothing is wrong stops being read. The routing reason line above the
 // table says what was left out and why.
 if (plan.live) {
+  const liveSteps = stepsFor('desktop', REPOS.desktop, 'live');
+  // Named on the run itself, not only in AGENTS.md. The person reading a PASS
+  // is not usually the person who read the doc, and an arm that quietly stops
+  // running is exactly what this gate exists to prevent.
+  for (const step of heldBackArms(plan, liveSteps)) {
+    plan.reasons.push(
+      `(held back for cost: ${step.label} — it creates a permanent Space; ` +
+        '`yarn verify --all` runs it)'
+    );
+  }
   let ranPreviousLiveStep = false;
-  for (const step of liveArmsFor(plan, stepsFor('desktop', REPOS.desktop, 'live'))) {
+  for (const step of liveArmsFor(plan, liveSteps)) {
     // The two cross-client arms need mobile; the rest do not. Skipping via
     // `skipped()` (not silently omitting the row) is what keeps a reduced run
     // from ever printing a bare PASS — SKIP is in report.mjs's SEVERITY list.

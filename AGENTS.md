@@ -223,6 +223,11 @@ rather than guessing from the list below:
   change to it is exactly the change a live run has to check. Every other
   directory under `src/dev/tests/` stays on the fast tier, which already runs
   those tests.
+- **`space-basic` is HELD BACK from every per-change run.** It is the one arm
+  that creates a permanent, undeletable Space each time it runs, and unlike
+  `space-delivery` it cannot reuse one, because creating a space is its
+  subject. `yarn verify --all` runs it. Every run that leaves it out says so on
+  its own `HELD BACK` line, so this can never quietly become "nobody ran it".
 - `yarn verify --fast` skips the live tier on request, for a quick check
   mid-work; it is not a substitute for the full run before reporting done.
 - `space-delivery` is retried once if it fails, because it is load-sensitive

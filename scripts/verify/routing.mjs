@@ -145,7 +145,24 @@ export const needsMobile = (step) => step.id.includes('cross');
  */
 export function liveArmsFor(plan, steps) {
   if (!plan.live) return [];
-  return (plan.liveScope ?? 'all') === 'cross-only' ? steps.filter(needsMobile) : steps;
+  const inScope =
+    (plan.liveScope ?? 'all') === 'cross-only' ? steps.filter(needsMobile) : steps;
+  return plan.exhaustive ? inScope : inScope.filter((s) => !s.exhaustiveOnly);
+}
+
+/**
+ * Arms that WOULD have run but were held back for cost.
+ *
+ * Returned so the report can name them on every run. An arm that silently
+ * stops running is the failure this whole gate exists to prevent, and "it is
+ * documented in AGENTS.md" is not a substitute for the run itself saying so —
+ * the person reading a PASS is not usually the person who read the doc.
+ */
+export function heldBackArms(plan, steps) {
+  if (!plan.live || plan.exhaustive) return [];
+  const inScope =
+    (plan.liveScope ?? 'all') === 'cross-only' ? steps.filter(needsMobile) : steps;
+  return inScope.filter((s) => s.exhaustiveOnly);
 }
 
 /**

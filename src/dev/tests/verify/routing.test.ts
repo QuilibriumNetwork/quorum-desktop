@@ -1,9 +1,11 @@
 import { describe, it, expect } from 'vitest';
+import { stepsFor } from '../../../../scripts/verify/steps.mjs';
 import {
   planFromPaths,
   changedPaths,
   mainCheckoutFrom,
   liveArmsFor,
+  heldBackArms,
   needsMobile,
 } from '../../../../scripts/verify/routing.mjs';
 
@@ -169,7 +171,13 @@ const LIVE_STEPS = [
   'space-delivery',
   'cross-dm',
   'config-cross',
-].map((label) => ({ id: `desktop:${label}`, label }));
+].map((label) => ({
+  id: `desktop:${label}`,
+  label,
+  // Mirrors steps.mjs: space-basic creates a permanent Space, so it runs on
+  // `--all` rather than on every code change.
+  ...(label === 'space-basic' ? { exhaustiveOnly: true } : {}),
+}));
 
 describe('liveArmsFor', () => {
   const labels = (plan: unknown) =>
@@ -179,11 +187,11 @@ describe('liveArmsFor', () => {
     expect(labels(planFromPaths(['desktop/README.md']))).toEqual([]);
   });
 
-  it('runs every arm for a desktop change', () => {
+  // space-basic is absent: it mints a permanent Space, so it waits for --all.
+  it('runs every per-change arm for a desktop change', () => {
     expect(labels(planFromPaths(['desktop/src/services/MessageService.ts']))).toEqual([
       'dm-basic',
       'dm-delivery',
-      'space-basic',
       'space-delivery',
       'cross-dm',
       'config-cross',
@@ -200,7 +208,40 @@ describe('liveArmsFor', () => {
   // Defensive: a plan built before liveScope existed, or hand-made by a test,
   // must fail toward running MORE — the same direction as the allowlist.
   it('treats a missing liveScope as every arm', () => {
-    expect(labels({ live: true })).toHaveLength(6);
+    expect(labels({ live: true })).toHaveLength(5);
+  });
+
+  it('releases the held-back arms only when the plan is exhaustive', () => {
+    const perChange = planFromPaths(['desktop/src/services/MessageService.ts']);
+    expect(labels(perChange)).not.toContain('space-basic');
+    expect(labels({ ...perChange, exhaustive: true })).toContain('space-basic');
+  });
+});
+
+describe('heldBackArms', () => {
+  const labels = (plan: unknown) =>
+    heldBackArms(plan, LIVE_STEPS).map((s: { label: string }) => s.label);
+
+  // The report prints these, so a cost decision cannot become a silent gap.
+  it('names the arm a per-change run left out', () => {
+    expect(labels(planFromPaths(['desktop/src/services/MessageService.ts']))).toEqual([
+      'space-basic',
+    ]);
+  });
+
+  it('names nothing on an exhaustive run, because nothing was held back', () => {
+    const plan = planFromPaths(['desktop/src/services/MessageService.ts']);
+    expect(labels({ ...plan, exhaustive: true })).toEqual([]);
+  });
+
+  it('names nothing when the live tier never runs', () => {
+    expect(labels(planFromPaths(['desktop/README.md']))).toEqual([]);
+  });
+
+  // A mobile-only run never reaches space-basic in the first place, so it is
+  // out of scope rather than held back — reporting it would be misleading.
+  it('names nothing for a mobile-only run, where the arm was out of scope', () => {
+    expect(labels(planFromPaths(['mobile/services/space/SpaceService.ts']))).toEqual([]);
   });
 
   it('identifies exactly the two arms that spawn quorum-mobile', () => {
@@ -270,5 +311,37 @@ describe('mainCheckoutFrom', () => {
     const desktop = 'E:/repo/quorum-desktop';
     const execGit = () => null;
     expect(mainCheckoutFrom(desktop, execGit)).toBe(desktop);
+  });
+});
+
+// LIVE_STEPS above is a hand-written mirror of what steps.mjs builds, which is
+// only useful while the two agree. This pins them together: if someone adds an
+// arm, renames one, or flips `exhaustiveOnly`, the mirror stops matching and
+// every assertion built on it becomes a lie the moment it goes green.
+describe('LIVE_STEPS matches the real step catalogue', () => {
+  const real = stepsFor('desktop', '/fake/desktop', 'live') as {
+    id: string;
+    label: string;
+    exhaustiveOnly?: boolean;
+  }[];
+
+  it('has the same arms, in the same order', () => {
+    expect(real.map((s) => s.label)).toEqual(LIVE_STEPS.map((s) => s.label));
+  });
+
+  it('agrees on which arms are held back for cost', () => {
+    const heldFor = (steps: { label: string; exhaustiveOnly?: boolean }[]) =>
+      steps.filter((s) => s.exhaustiveOnly).map((s) => s.label);
+    expect(heldFor(real)).toEqual(heldFor(LIVE_STEPS));
+    // Stated as a value, not just a comparison: if BOTH sides lost the flag,
+    // the equality above would still pass and space-basic would quietly start
+    // creating a Space on every code change again.
+    expect(heldFor(real)).toEqual(['space-basic']);
+  });
+
+  it('agrees on which arms need quorum-mobile', () => {
+    expect(real.filter(needsMobile).map((s) => s.label)).toEqual(
+      LIVE_STEPS.filter(needsMobile).map((s) => s.label)
+    );
   });
 });

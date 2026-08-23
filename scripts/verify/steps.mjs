@@ -95,7 +95,24 @@ export function stepsFor(repoName, repoPath, tier) {
     return [
       mk('dm-basic', 'dm-basic', ['harness', 'dm-basic'], harnessDetail),
       mk('dm-delivery', 'dm-delivery', ['harness', 'dm-delivery'], harnessDetail),
-      mk('space-basic', 'space-basic', ['harness', 'space-basic'], harnessDetail),
+      // `exhaustiveOnly`: runs on `--all`, not on every code change.
+      //
+      // This is the last arm that creates a permanent, undeletable Space on
+      // every run, and unlike `space-delivery` it cannot be fixed by reusing
+      // one — creating a space IS its subject. Every other minting arm was
+      // either fixed or was never wired in; leaving this one on the per-change
+      // tier means the Space count rises with the number of times anyone edits
+      // a service file, forever.
+      //
+      // Creation is also the right thing to exercise rarely. It is a
+      // once-per-space path that changes seldom, and the joiner half it shares
+      // with `space-delivery`'s create branch still runs whenever a persisted
+      // space is unavailable. The report names it as held back on every run
+      // that skips it, so this cannot quietly become "nobody ever ran it".
+      {
+        ...mk('space-basic', 'space-basic', ['harness', 'space-basic'], harnessDetail),
+        exhaustiveOnly: true,
+      },
       mk('space-delivery', 'space-delivery', ['harness', 'space-delivery'], harnessDetail),
       mk('cross-dm', 'cross-dm', ['harness:cross'], harnessDetail),
       mk('config-cross', 'config-cross', ['harness:config-cross'], harnessDetail),
