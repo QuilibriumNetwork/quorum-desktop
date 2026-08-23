@@ -38,26 +38,18 @@ which means `loadOrCreateBot` takes the mint-and-register branch
 
 ### What has already accumulated
 
-```
-src/dev/tests/harness/.state/          385 files, 376 with a userKeyset
-.worktrees/secondary/.../.state/        84 files
-```
-
-A file carrying a `userKeyset` is a distinct account minted and registered.
-Date range 2026-07-27 → 2026-08-22, so roughly **460 accounts in four weeks**
-from one machine.
+Every `.state/<name>.json` carrying a `userKeyset` is a distinct account that was
+minted and registered. Both the primary checkout and the worktree hold a large
+backlog of them, accumulated since the harness was written. Exact counts are
+deliberately not recorded here — this repository is public.
 
 ### Registrations are permanent
 
-Addresses derived from `.state` files and queried directly:
-
-| Bot | Minted | Response |
-|---|---|---|
-| a throwaway stamped bot | 2026-07-29 | HTTP 200, 1113 bytes, 1 device |
-| a second throwaway stamped bot | 2026-07-29 | HTTP 200, 1113 bytes, 1 device |
-| `alice-bot` (reused, fixed name) | 2026-07-27 | HTTP 200, 1113 bytes, **1 device** |
-
-26 days on, all still resolve in full. Nothing expires.
+Addresses were derived from `.state` files and queried directly. Throwaway bots
+minted weeks earlier still return HTTP 200 with a full registration payload, and
+the long-lived fixed-name bots still report exactly **one** device registration
+each — which is the persistence mechanism in `identity.ts` working as designed.
+Nothing expires.
 
 ### There is no way to delete them
 
@@ -73,10 +65,10 @@ Full API surface (`src/api/quorumApi.ts`, `src/api/baseTypes.ts`):
 
 ### Scale calibration
 
-1113 bytes each, so ~460 accounts is ~420 KB. Small in raw storage. The concern
-is unbounded, uncleanable growth of a namespace, and that it is unknown from the
-client side whether registrations propagate to the permanent Quilibrium
-hypergraph or stay in relay storage — quorum-mobile's
+A registration is on the order of a kilobyte, so the raw storage cost is small.
+The concern is unbounded, uncleanable growth of a namespace, and that it is
+unknown from the client side whether registrations propagate to the permanent
+Quilibrium hypergraph or stay in relay storage — quorum-mobile's
 `.agents/docs/message-transport-architecture.md` §2.0 explicitly declines to
 assert either way. Fix it because it is cheap to fix, not because it is urgent.
 
@@ -113,13 +105,24 @@ switching is one environment variable and no code change.
 **In scope** — the four live arms wired into `yarn verify`, since those are what
 the AGENTS.md rule causes to run on every code change:
 
-- [ ] Replace stamped bot names in `dm-delivery`, `space-basic`, `space-delivery`
+- [x] Replace stamped bot names in `dm-delivery`, `space-basic`, `space-delivery`
       with a fixed roster
-- [ ] Drain relay-side inbox state at scenario start so a reused identity cannot
+- [x] Drain relay-side inbox state at scenario start so a reused identity cannot
       inherit stale queued frames
+- [x] Document the local-relay switch in the harness README
 - [ ] Falsify each changed arm: break real application code, confirm the arm goes
       red, restore
-- [ ] Document the local-relay switch in the harness README
+  - [ ] `space-delivery` — run with a RESTORED space, so it doubles as the
+        falsification the space-reuse work needs. Costs no new space
+  - [ ] `dm-delivery` — costs no space at all
+  - [ ] `space-basic` — costs one space, unavoidable: creation is its subject.
+        Its in-file comment currently claims this was already done. It was
+        **not**. Either make it true or correct the comment; an unproven claim of
+        verification is worse than none
+
+MEASURED after the identity fix: `.state/` went from 84 files to 90 on the first
+run and has stayed at 90 across every run since, so the three changed arms mint
+**zero** accounts on repeat. All arms pass at unchanged timings.
 
 **Out of scope, tracked separately** — the ~20 manually-run scenarios that also
 use stamped names (`wipe-*`, `mid-*`, `sm-*`, `sokf-*`, `thr-*`, `tgt-*`,

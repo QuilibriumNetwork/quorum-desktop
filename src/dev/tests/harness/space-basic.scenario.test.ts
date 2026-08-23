@@ -60,13 +60,21 @@ test(
     // previous run and so "pass" without any exchange happening. That premise no
     // longer holds: `storage.ts` backs MessageDB with in-memory fake-indexeddb,
     // so both bots start from an empty database on every run regardless of name.
-    // The concern was right to raise — a scenario that passes without the
-    // exchange is worse than no scenario — so the names below were changed only
-    // after breaking the join path and confirming this arm goes red.
+    // Both assertions below are also scoped to THIS run independently of that:
+    // `bMembers` counts rows for a spaceId created moments ago, and the posts
+    // carry `stamp` in their text.
     //
     // The identity is what must stay fixed: a new name mints a permanent account
     // on the relay, and there is no endpoint to delete one. Per-run uniqueness
     // still comes from `stamp`, which is in the space name and message text.
+    //
+    // ⚠️ NOT YET FALSIFIED under these fixed names. The reasoning above is READ,
+    // not MEASURED — nobody has broken the join path and watched this arm go red
+    // since the change. Tracked in
+    // `.agents/issues/2026-08-23-harness-mints-permanent-accounts-every-run.md`.
+    // An earlier version of this comment asserted the falsification had been
+    // done. It had not, and that claim is exactly the failure mode this file's
+    // header warns about — do not restore it without doing the run.
     const [a, b] = await Promise.all([
       createSpaceBot('space-basic-a'),
       createSpaceBot('space-basic-b'),

@@ -115,6 +115,62 @@ Two things to know about the canonical pair:
   re-runs do not spawn new device registrations (which would feed the
   device-registration ghost-accumulation problem).
 
+### Accounts and spaces are permanent — reuse them
+
+**The relay has no delete endpoint for either.** `/inbox/delete` and `/hub/delete`
+remove messages, and `DELETE /users/<addr>/public-profile` removes a profile, but
+nothing removes an account or a space. Registrations do not expire either, so
+anything a scenario mints is there for good.
+
+So a scenario must **not** mint either unless minting is the thing it measures:
+
+- **Bot names are fixed, never stamped.** A new name means a new
+  `.state/<name>.json`, which sends `loadOrCreateBot` down the mint-and-register
+  branch. Reuse is safe because isolation never came from the identity —
+  `storage.ts` backs `MessageDB` with in-memory `fake-indexeddb`, so every run
+  already starts from an empty database. Per-run uniqueness comes from a `stamp`
+  in the message *content*, which is free. Call `drainInbox()` before `start()`
+  so a reused inbox does not inherit frames the relay queued for a previous run.
+- **Spaces are carried across runs** by `spaceState.ts`, which snapshots the
+  space-scoped rows of `spaces`, `space_keys`, `space_members`,
+  `space_member_devices` and `encryption_states` to `.state/<bot>-space.json` and
+  restores them into the fresh in-memory database before `start()`. Read that
+  file's header before changing the store list: the split is deliberate, and
+  `messages` in particular must never be carried.
+
+`HARNESS_FRESH=1 yarn harness <scenario>` bypasses the persisted space and mints
+a new one. Use it for clean-room reproduction, and after any change to the
+persisted store list.
+
+> ⚠️ **Reuse changes what an assertion is worth.** The relay holds a frame until
+> it is acked, so a run that fails partway leaves its frames queued and the next
+> run gets them re-pushed. A check like `typesSeenBy('v').has('embed')` cannot
+> tell last run's embed from this run's, so under reuse it can go green on
+> evidence produced by a *failing* run. Scope every delivery check to something
+> this run minted — a stamped string, or the messageId the sender's own local
+> echo recorded (`sendAs` in `space-delivery.scenario.test.ts`).
+
+`.state/` is gitignored and machine-local, so a persisted space differs between
+machines and between checkouts. A failure may reproduce on one and not another;
+`HARNESS_FRESH=1` is the first thing to try when that happens.
+
+### Pointing at a local relay
+
+Both clients support it, so nothing here is desktop-specific: quorum-mobile has a
+dev toggle for `http://localhost:5000` (`services/api/config.ts`), and this
+harness honours `QUORUM_API_URL` / `QUORUM_WS_URL` (`env.ts`). Switching is one
+environment variable and no code change:
+
+```bash
+QUORUM_API_URL=http://localhost:5000 \
+QUORUM_WS_URL=ws://localhost:5000/ws \
+yarn harness dm-basic
+```
+
+The server that serves that port is **not** in any of the three repos and is not
+documented, so this is currently unusable here. It is recorded because it is the
+clean fix for everything above: against a local relay, minting costs nothing.
+
 ## Why it does NOT need the `diag/dm-frame-join` branch
 
 That branch smears probe logging (and real key material) into `MessageService`
@@ -135,6 +191,7 @@ not just failures), no key material in service code. See the task file for detai
 | `deps.ts` | MessageServiceDependencies wiring (real for DM, no-op for space/sync) |
 | `spaceBot.ts` | SPACE bot: same construction, plus create/invite/join/post and a member-row capture seam |
 | `spaceDeps.ts` | the real ConfigService/SyncService/InvitationService/SpaceService graph |
+| `spaceState.ts` | carry one space across runs so scenarios stop minting permanent ones |
 | `outbound.ts` | the app's serialized outbound FIFO (spaces need it — see below) |
 | `storage.ts` | MessageDB on fake-indexeddb |
 | `inspect.ts` | read ratchet state (skipped-keys count) out of a bot's MessageDB |

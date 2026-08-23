@@ -40,7 +40,22 @@
 // copy, because it was never put on the wire. Giving it a real arm means
 // creating a role and broadcasting a manifest first.
 //
-// PRODUCTION relay, throwaway accounts. See identity.ts.
+// PRODUCTION relay, FIXED accounts and a REUSED space. See identity.ts and
+// spaceState.ts — spaces and accounts are both create-only on the relay, so a
+// scenario that minted them per run left permanent state behind on every code
+// change. Creating a space is not what this file measures; it just needs
+// somewhere to post.
+//
+// ⚠️ Reuse forced the per-type checks below to change shape, and the reason is
+// the whole reason this note exists. The relay holds a frame until it is acked,
+// so a run that FAILS partway leaves its frames queued — and the next run's
+// `listen` gets them re-pushed. Under the old `typesSeenBy(...).has(type)`
+// check, last run's embed would satisfy this run's embed assertion, and the arm
+// would go green on evidence from a run that failed. Every check is therefore
+// scoped to a token only THIS run could have produced — a stamped payload
+// string, or the id of a target row minted this run (`sawThisRun` below). That
+// is strictly stronger than the type-presence check it replaces, and it
+// generalises the trick the file already used for `post`.
 //
 // FALSIFIED 2026-08-23: dropping `sticker` before `saveMessage` in the space
 // receive dispatch (handleNewMessage's non-DM branch) turns this red — sticker
@@ -52,6 +67,7 @@
 import { test, expect } from 'vitest';
 import { type Message } from '@quilibrium/quorum-shared';
 import { createSpaceBot, type HarnessSpaceBot } from './spaceBot';
+import { restoreSharedSpace, saveSharedSpace } from './spaceState';
 import { RunLog } from './log';
 
 const WINDOW_MS = Number(process.env.HARNESS_SPACE_WINDOW_MS ?? 120_000);
@@ -121,6 +137,16 @@ test(
       createSpaceBot('space-delivery-sender'),
     ]);
     await Promise.all([v.drainInbox(), x.drainInbox()]);
+
+    // Restore BEFORE start(). `start()` calls `refreshSubscriptions`, which
+    // derives the socket subscription list from `encryption_states` — a bot
+    // that has not been given its space row yet subscribes to its device inbox
+    // only and never hears the space at all.
+    const participants = [
+      { name: 'space-delivery-victim', messageDB: v.messageDB },
+      { name: 'space-delivery-sender', messageDB: x.messageDB },
+    ];
+    const restored = await restoreSharedSpace(participants);
     await Promise.all([v.start(), x.start()]);
 
     // Declared before the try so the finally can always restore what it patched,
@@ -129,6 +155,13 @@ test(
     /** Waits that expired rather than resolving — a silent timeout reads as a
      *  delivery bug at the assertion, so name them at the point they happen. */
     const timedOut: string[] = [];
+    /**
+     * The space this run used. Declared out here so the `finally` can persist
+     * it even when the run fails: the space is already permanent by then, and
+     * NOT saving it would mean the next run mints another one — turning a
+     * failing arm into a source of exactly the litter this reuse removes.
+     */
+    let persistSpace: { spaceId: string; channelId: string } | undefined;
     /**
      * Push, wait, and push AGAIN if it did not land.
      *
@@ -168,12 +201,30 @@ test(
       );
 
       // ── Setup: the victim owns the space, the sender is an ordinary member.
-      const s = await v.createSpace(`delivery-S-${stamp}`);
-      say(`space=${s.spaceId.slice(0, 12)} channel=${s.channelId.slice(0, 12)}`);
-      const link = await v.inviteLink(s.spaceId);
-      const joined = await x.join(link);
-      expect(joined.spaceId).toBe(s.spaceId);
-      say('sender joined as an ordinary member (no role)');
+      //
+      // Created once and then carried across runs on disk. Creating a space
+      // leaves permanent, undeletable state on the relay, and this file does
+      // not measure creation — `space-basic` does. When no persisted space is
+      // available (first run, HARNESS_FRESH=1, or a state file that failed to
+      // round-trip) the original create/invite/join path runs unchanged.
+      let s: { spaceId: string; channelId: string };
+      if (restored) {
+        s = { spaceId: restored.spaceId, channelId: restored.channelId };
+        say(
+          `space=${s.spaceId.slice(0, 12)} channel=${s.channelId.slice(0, 12)} ` +
+            `REUSED (${(restored.ageMs / 3_600_000).toFixed(1)}h old)`
+        );
+      } else {
+        s = await v.createSpace(`delivery-S-${stamp}`);
+        say(
+          `space=${s.spaceId.slice(0, 12)} channel=${s.channelId.slice(0, 12)} CREATED`
+        );
+        const link = await v.inviteLink(s.spaceId);
+        const joined = await x.join(link);
+        expect(joined.spaceId).toBe(s.spaceId);
+        say('sender joined as an ordinary member (no role)');
+      }
+      persistSpace = s;
 
       // DELIVERY instrument. Every frame that reaches the receive path ends up
       // at `MessageService.saveMessage`; a frame that never arrives does not.
@@ -190,12 +241,15 @@ test(
       // on the bot that did not send it. `pin` and `mute` are owner-only on the
       // send path, so those two are sent by the victim and observed on the
       // sender.
-      const acceptedBy = new Map<string, { messageId: string; type: string }[]>();
+      const acceptedBy = new Map<
+        string,
+        { messageId: string; type: string; json: string }[]
+      >();
       for (const [name, bot] of [
         ['v', v],
         ['x', x],
       ] as const) {
-        const seen: { messageId: string; type: string }[] = [];
+        const seen: { messageId: string; type: string; json: string }[] = [];
         acceptedBy.set(name, seen);
         const svc = bot.graph.messageService as unknown as {
           saveMessage: (m: Message, ...rest: unknown[]) => Promise<void>;
@@ -205,6 +259,11 @@ test(
           seen.push({
             messageId: String(m?.messageId),
             type: String(m?.content?.type),
+            // The frame's own content, kept so a delivery check can be scoped
+            // to THIS run — see `sawThisRun`. `saveMessage` receives the frame
+            // (`decryptedContent`) before any target row is mutated, so this is
+            // the sent payload rather than the merged result.
+            json: JSON.stringify(m?.content ?? {}),
           });
           return orig(m, ...rest);
         };
@@ -218,6 +277,33 @@ test(
        *  `post`, where the type-only check below is a tautology — see its use. */
       const sawMessage = (who: 'v' | 'x', messageId: string) =>
         (acceptedBy.get(who) ?? []).some((a) => a.messageId === messageId);
+
+      /**
+       * Did `who` accept a frame of `type` that THIS run produced?
+       *
+       * This is what makes a reused space safe to assert on. The relay holds a
+       * frame until it is acked, so a run that fails partway leaves its frames
+       * queued and the next run's `listen` gets them re-pushed. The old
+       * `typesSeenBy(...).has('embed')` check cannot tell last run's embed from
+       * this run's — so under reuse it would go green on evidence produced by a
+       * *failing* run, which is the worst shape a test can have.
+       *
+       * `token` must be something only this run could have put in the frame.
+       * Every arm below has one already: a stamped string in the payload
+       * (`sticker-123456`, `thread-123456`) or the id of a target row minted
+       * this run. Deliberately NOT the bare `stamp`, which is six digits and
+       * could collide by chance with an unrelated number in an old frame — a
+       * false PASS, the direction that matters.
+       *
+       * Scoping by the frame's own messageId was tried first and abandoned:
+       * `thread` produces no local echo on the sender (MEASURED — its send path
+       * writes `channel_threads` rather than saving a message row), so there is
+       * no sender-side id to compare against for that type.
+       */
+      const sawThisRun = (who: 'v' | 'x', type: string, token: string) =>
+        (acceptedBy.get(who) ?? []).some(
+          (a) => a.type === type && a.json.includes(token)
+        );
 
       // ── The message the honest reply targets ───────────────────────────────
       const M_TEXT = `root-post-${stamp}`;
@@ -293,17 +379,22 @@ test(
       await x.post(s.spaceId, s.channelId, B_TEXT);
       await x.post(s.spaceId, s.channelId, C_TEXT);
       await x.post(s.spaceId, s.channelId, D_TEXT);
+      // Per-run tokens for the two types the victim does not index by text.
+      // The four posts are already run-scoped by their stamped text, which
+      // `victimHasText` matches exactly.
+      const EMBED_TOKEN = `example.invalid/${stamp}.png`;
+      const STICKER_TOKEN = `sticker-${stamp}`;
       await x.sendControl(s.spaceId, s.channelId, {
         type: 'embed',
         senderId: x.identity.address,
-        imageUrl: `https://example.invalid/${stamp}.png`,
+        imageUrl: `https://${EMBED_TOKEN}`,
         width: 100,
         height: 100,
       });
       await x.sendControl(s.spaceId, s.channelId, {
         type: 'sticker',
         senderId: x.identity.address,
-        stickerId: `sticker-${stamp}`,
+        stickerId: STICKER_TOKEN,
       });
       say('sent batch 1: [post A, post B, post C, post D, embed, sticker] (6)');
 
@@ -315,8 +406,8 @@ test(
           (await victimHasText(B_TEXT)) &&
           (await victimHasText(C_TEXT)) &&
           (await victimHasText(D_TEXT)) &&
-          typesSeenBy('v').has('embed') &&
-          typesSeenBy('v').has('sticker')
+          sawThisRun('v', 'embed', EMBED_TOKEN) &&
+          sawThisRun('v', 'sticker', STICKER_TOKEN)
       );
       await sleep(SETTLE_MS);
 
@@ -339,6 +430,9 @@ test(
       // BATCH 2 — the target-mutating types, each on a DIFFERENT row, plus the
       // reply (which needs M, resolved above) and D's reaction (set up here for
       // batch 3's remove-reaction — see the comment on that send below).
+      // Run-scoping tokens: the reaction and the edit carry a target row minted
+      // this run, the thread carries its stamped title.
+      const THREAD_TOKEN = `thread-${stamp}`;
       await x.sendControl(s.spaceId, s.channelId, {
         type: 'reaction',
         senderId: x.identity.address,
@@ -366,7 +460,7 @@ test(
         targetMessageId: rowC!.messageId,
         threadMeta: {
           threadId: await threadIdFor(rowC!.messageId),
-          title: `thread-${stamp}`,
+          title: THREAD_TOKEN,
           createdBy: x.identity.address,
           createdAt: Date.now(),
         },
@@ -388,9 +482,9 @@ test(
         [v],
         async () =>
           (await victimHasText(REPLY_TEXT)) &&
-          typesSeenBy('v').has('reaction') &&
-          typesSeenBy('v').has('edit-message') &&
-          typesSeenBy('v').has('thread')
+          sawThisRun('v', 'reaction', rowA!.messageId) &&
+          sawThisRun('v', 'edit-message', EDITED_TEXT) &&
+          sawThisRun('v', 'thread', THREAD_TOKEN)
       );
       await sleep(SETTLE_MS);
 
@@ -410,6 +504,8 @@ test(
       // instrumented above.
       //
       // `pin` is sent but NOT asserted — see the file header for why.
+      const PROFILE_TOKEN = `sender-${stamp}`;
+      const MUTE_TOKEN = `mute-${stamp}`;
       await x.sendControl(s.spaceId, s.channelId, {
         type: 'remove-message',
         senderId: x.identity.address,
@@ -418,7 +514,7 @@ test(
       await x.sendControl(s.spaceId, s.channelId, {
         type: 'update-profile',
         senderId: x.identity.address,
-        displayName: `sender-${stamp}`,
+        displayName: PROFILE_TOKEN,
         userIcon: '',
       });
       await v.sendControl(s.spaceId, s.channelId, {
@@ -432,7 +528,7 @@ test(
         senderId: v.identity.address,
         // Nobody's address, so honouring or refusing it changes nothing else.
         targetUserId: `QmMutedNobody${stamp}`,
-        muteId: `mute-${stamp}`,
+        muteId: MUTE_TOKEN,
         timestamp: Date.now(),
         action: 'mute',
       });
@@ -450,10 +546,10 @@ test(
         'batch3 record-scoped types',
         [v, x],
         async () =>
-          typesSeenBy('v').has('remove-message') &&
-          typesSeenBy('v').has('update-profile') &&
-          typesSeenBy('v').has('remove-reaction') &&
-          typesSeenBy('x').has('mute')
+          sawThisRun('v', 'remove-message', rowReply!.messageId) &&
+          sawThisRun('v', 'update-profile', PROFILE_TOKEN) &&
+          sawThisRun('v', 'remove-reaction', rowD!.messageId) &&
+          sawThisRun('x', 'mute', MUTE_TOKEN)
       );
       await sleep(SETTLE_MS);
 
@@ -550,19 +646,24 @@ test(
       // Each type is asserted on the bot that did NOT send it, so a pass means
       // the frame crossed the wire and was applied, rather than being read off
       // the sender's own local copy.
-      for (const [who, type] of [
-        ['v', 'embed'],
-        ['v', 'sticker'],
-        ['v', 'reaction'],
-        ['v', 'edit-message'],
-        ['v', 'thread'],
-        ['v', 'remove-message'],
-        ['v', 'update-profile'],
-        ['v', 'remove-reaction'],
-        ['x', 'mute'],
+      // Each names a token only THIS run could have put in the frame, not
+      // merely "a frame of this type was seen at some point" — see
+      // `sawThisRun`. The space is reused, so a type-presence check here could
+      // be satisfied by a frame a previous FAILED run left un-acked on the
+      // relay, and the arm would report green off a red run's leftovers.
+      for (const [who, type, token] of [
+        ['v', 'embed', EMBED_TOKEN],
+        ['v', 'sticker', STICKER_TOKEN],
+        ['v', 'reaction', rowA!.messageId],
+        ['v', 'edit-message', EDITED_TEXT],
+        ['v', 'thread', THREAD_TOKEN],
+        ['v', 'remove-message', rowReply!.messageId],
+        ['v', 'update-profile', PROFILE_TOKEN],
+        ['v', 'remove-reaction', rowD!.messageId],
+        ['x', 'mute', MUTE_TOKEN],
       ] as const) {
         expect(
-          typesSeenBy(who).has(type),
+          sawThisRun(who, type, token),
           `DELIVERY: an honest '${type}' frame did not survive the receive path ` +
             `— every message of this type would now be dropped on arrival`
         ).toBe(true);
@@ -571,6 +672,24 @@ test(
       say('PASS — every space content type survived the receive path');
     } finally {
       for (const restore of restoreSaves) restore();
+      // Persist the space for the next run. Guarded so a save failure cannot
+      // mask the real result: if this throws out of a `finally` it replaces
+      // whatever the test was actually reporting, turning a clean delivery
+      // failure into an unrelated I/O error.
+      if (persistSpace) {
+        try {
+          await saveSharedSpace(
+            participants,
+            persistSpace.spaceId,
+            persistSpace.channelId
+          );
+        } catch (err) {
+          console.log(
+            `[space-delivery] ⚠ could not persist the space, the next run will ` +
+              `mint a new one: ${(err as Error)?.message ?? String(err)}`
+          );
+        }
+      }
       v.stop();
       x.stop();
     }

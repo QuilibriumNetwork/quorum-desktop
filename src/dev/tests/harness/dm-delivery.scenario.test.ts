@@ -121,8 +121,8 @@ test(
 
     // Bot names are FIXED, not stamped. A new name mints a new account on the
     // relay, and account registrations are permanent — there is no delete
-    // endpoint (measured 2026-08-23: throwaways from 26 days earlier still
-    // resolve). Reuse costs nothing here because isolation does not come from
+    // endpoint, and they do not expire. Reuse costs nothing here because
+    // isolation does not come from
     // the identity: `storage.ts` backs MessageDB with in-memory fake-indexeddb,
     // so every run already starts with an empty database. Per-run uniqueness
     // that assertions actually depend on comes from `stamp` in the message
