@@ -25,15 +25,23 @@
 //      send that lands on a not-yet-open socket has no separate "recorded
 //      but resolved anyway" failure list to consult.
 //   3. `dm-update-profile` is not "target-mutating" in the sense the other
-//      four types are — it never reaches `MessageService.saveMessage` AT
-//      ALL. `interceptControlMessages` (MessageService.ts, the `parseDmProfileUpdate`
-//      branch) consumes it before the generic save path and calls
-//      `handleDMProfileUpdate`, which upserts the CONVERSATION row
-//      (`messageDB.saveConversation`) — never a message row, receipt-ack- and
-//      typing-signal-style. Instrumenting `saveMessage` for this type would
-//      be a permanent false negative regardless of whether the frame
-//      actually arrived. Asserted separately below by reading the receiver's
-//      stored conversation `displayName` after the push.
+//      four types are — on the RECEIVE path it never reaches
+//      `MessageService.saveMessage` AT ALL. `interceptControlMessages`
+//      (MessageService.ts, the `parseDmProfileUpdate` branch) consumes it
+//      before the generic save path and calls `handleDMProfileUpdate`, which
+//      upserts the CONVERSATION row (`messageDB.saveConversation`) — never a
+//      message row, receipt-ack- and typing-signal-style. Instrumenting
+//      `saveMessage` for this type on the receiver would be a permanent
+//      false negative regardless of whether the frame actually arrived.
+//      Asserted separately below by reading the receiver's stored
+//      conversation `displayName` after the push. This is receive-side
+//      only, though: on the SEND side `submitMessage` classifies it
+//      `isPostMessage = true` (it matches none of edit-message /
+//      delete-conversation / reaction / remove-message, so it falls into the
+//      same catch-all bucket as a real post), and the sender's own local
+//      echo DOES reach `saveMessage` through that path — confirmed by this
+//      file's own run log, which lists `dm-update-profile` under
+//      `typesSeenBy('s')`. Only `typesSeenBy('r')` structurally never will.
 //
 // `reaction` / `remove-reaction` / `edit-message` / `remove-message` ARE
 // target-mutating exactly as space-delivery's header describes: at the DB
@@ -51,6 +59,23 @@
 // The six-frames-per-batch cap is kept anyway, per the task brief, as a
 // conservative match to the measured space limit rather than a DM-specific
 // re-measurement.
+//
+// FALSIFIED 2026-08-23: commenting out the `handleDMProfileUpdate` call
+// inside `interceptControlMessages`'s dm-update-profile branch
+// (MessageService.ts) — so the frame is still recognized and consumed (the
+// anti-spoofing senderId check still runs) but never applied — turns this
+// red. The receiver's conversation `displayName` never becomes the marker,
+// so `settleFor('batch3 dm-update-profile applied at receiver', ...)` times
+// out; `timedOut` holds exactly that one label, with 0 novel receive errors
+// and no other batch/type affected. It surfaces via the blanket
+// `expect(timedOut).toEqual([])` check, not the deeper per-type assert below
+// it — that assert is structurally unreachable for ANY type in this file,
+// since `timedOut` accumulates labels from every batch's `settleFor` calls
+// and is asserted once, before all per-type checks. Task 9 found the same
+// shape on the space arm, but there it was explained by a 6-item AND inside
+// one batch; here it holds even for batch 3's un-ANDed, individually
+// labelled checks, so it isn't a batch-size effect — it's the assertion
+// order itself. Restored and reran GREEN. Unfalsified = not evidence.
 //
 // PRODUCTION relay, throwaway accounts. See identity.ts.
 import { test, expect } from 'vitest';
