@@ -69,13 +69,19 @@
 // out; `timedOut` holds exactly that one label, with 0 novel receive errors
 // and no other batch/type affected. It surfaces via the blanket
 // `expect(timedOut).toEqual([])` check, not the deeper per-type assert below
-// it — that assert is structurally unreachable for ANY type in this file,
-// since `timedOut` accumulates labels from every batch's `settleFor` calls
-// and is asserted once, before all per-type checks. Task 9 found the same
-// shape on the space arm, but there it was explained by a 6-item AND inside
-// one batch; here it holds even for batch 3's un-ANDed, individually
-// labelled checks, so it isn't a batch-size effect — it's the assertion
-// order itself. Restored and reran GREEN. Unfalsified = not evidence.
+// it — that assert is structurally unreachable for the other SEVEN per-type
+// checks in this file, since each one repeats its own `settleFor`'s exact
+// predicate: once the wait has already confirmed it, nothing later reverts
+// it, so the assert below can't see anything different. `post` is the one
+// exception: its `settleFor` tests text presence (`sawText`) while its
+// deeper assert requires a specific message id (`sawMessage`) — a strictly
+// different, reachable condition, and the one Task 8 used to catch a
+// bogus-message-id bug on the space arm (see that file's header). Task 9
+// found a related shape there, explained by a 6-item AND inside one batch;
+// here it holds even for batch 3's un-ANDed, individually labelled checks,
+// so for the seven duplicate-predicate types it isn't a batch-size effect —
+// their deeper assert is just redundant with the wait that already passed.
+// Restored and reran GREEN. Unfalsified = not evidence.
 //
 // PRODUCTION relay, throwaway accounts. See identity.ts.
 import { test, expect } from 'vitest';
