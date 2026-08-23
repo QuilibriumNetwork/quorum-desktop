@@ -1,10 +1,10 @@
 ---
 type: task
 title: 'Implementation plan — `yarn verify` gate, coverage audit, and the top delivery gaps'
-status: open
+status: in-progress
 priority: high
 created: 2026-08-22
-updated: 2026-08-22
+updated: 2026-08-23
 area: testing / developer confidence
 ---
 
@@ -1855,3 +1855,32 @@ Leave all three PRs open for review. Report the three URLs and stop.
 ---
 
 _Last updated: 2026-08-22_
+
+## Status (2026-08-23)
+
+Built and committed, **not shipped**. Three branches named
+`feat/verify-regression-gate` exist in quorum-desktop, quorum-shared and
+quorum-mobile; nothing is pushed and no PR is open, at the operator's explicit
+instruction.
+
+The checkboxes above are per-step and were never ticked as work progressed —
+read the git log on the branch rather than the boxes for what actually landed.
+
+Done since this plan was written, and not covered by it:
+
+- The gate was found to mint permanent, undeletable accounts and spaces on the
+  production relay on every run. Fixed for accounts and for `space-delivery`;
+  see [accounts](../.done/2026-08-23-harness-mints-permanent-accounts-every-run.md)
+  and [space reuse](../.done/2026-08-23-harness-space-reuse-design.md).
+- Every live arm has now been falsified — broken deliberately, watched go red,
+  restored — which the original plan did not require of all of them.
+
+Remaining before this can close:
+
+1. The coverage and cost review in
+   [2026-08-23-verify-gate-coverage-and-cost-review.md](2026-08-23-verify-gate-coverage-and-cost-review.md)
+   — routing tightness, an audit of all 42 scenarios, wiring in the user-ops and
+   authorization arms, and the `space-basic` decision.
+2. Ship: one PR per repo. Held.
+
+*Last updated: 2026-08-23*

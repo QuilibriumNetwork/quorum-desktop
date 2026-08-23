@@ -1,14 +1,28 @@
 ---
 type: task
 title: 'Harness: reuse a persistent space instead of minting a permanent one every run'
-status: in-progress
+status: done
 created: 2026-08-23
 updated: 2026-08-23
 ---
 
+## Status
+
+Done. `space-delivery` reuses one space and mints nothing on repeat, the change
+survived adversarial review, and the arm has been seen to fail for the right
+reason with a restored space. Shipped in `9ed1972cb` and `335cebbe8` (unpushed).
+
+MEASURED across six consecutive runs: one space created on the first, the same
+spaceId reused by every run after it, account state files unchanged throughout,
+timings unchanged (91-92s against a 92-97s baseline).
+
+The one open thread — what to do about `space-basic`, now the only per-run space
+minter — moved to
+[2026-08-23-verify-gate-coverage-and-cost-review.md](../.open/2026-08-23-verify-gate-coverage-and-cost-review.md).
+
 # Harness: reuse a persistent space instead of minting one every run
 
-Sibling of [2026-08-23-harness-mints-permanent-accounts-every-run.md](.done/2026-08-23-harness-mints-permanent-accounts-every-run.md),
+Sibling of [2026-08-23-harness-mints-permanent-accounts-every-run.md](2026-08-23-harness-mints-permanent-accounts-every-run.md),
 which fixed the account half of the same problem. Read that one first — it holds
 the measurements this design rests on.
 
@@ -149,9 +163,13 @@ cheaper.
       evidence — this step is the deliverable, not a formality
 - [x] Independent review before merge — this changes test isolation. Ran
       adversarial, in a fresh context. Three findings, all fixed (below)
-- [ ] Decide `space-basic` separately: same treatment for the joiner only, or
+- [~] Decide `space-basic` separately: same treatment for the joiner only, or
       option 1 (lower frequency). Creation is genuinely its subject — this is
-      the ONLY remaining source of per-run space minting
+      the ONLY remaining source of per-run space minting. **Moved out of this
+      issue** to
+      [2026-08-23-verify-gate-coverage-and-cost-review.md](../.open/2026-08-23-verify-gate-coverage-and-cost-review.md),
+      because the answer depends on which tier `space-basic` should sit in, and
+      that is a question about the gate's routing rather than about space reuse
 
 ## What independent review caught
 

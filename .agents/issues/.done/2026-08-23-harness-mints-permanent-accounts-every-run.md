@@ -118,7 +118,7 @@ the AGENTS.md rule causes to run on every code change:
         intact, no sticker sent) showed a STALE sticker arriving and reaching
         `saveMessage`, which the run-scoped check correctly refused to count.
         Full write-up in
-        [the space-reuse issue](../2026-08-23-harness-space-reuse-design.md)
+        [the space-reuse issue](2026-08-23-harness-space-reuse-design.md)
   - [x] `dm-delivery` — DONE. Suppressing the `handleDMProfileUpdate` call in
         `interceptControlMessages` turns it RED on exactly one label
         (`batch3 dm-update-profile applied at receiver`), 0 novel receive
@@ -153,7 +153,7 @@ to fail for the right reason and then pass again.
 
 The account half of the problem is closed: the three live arms mint **zero**
 accounts on repeat. The space half is closed for `space-delivery` (see
-[the space-reuse issue](../2026-08-23-harness-space-reuse-design.md)) and remains
+[the space-reuse issue](2026-08-23-harness-space-reuse-design.md)) and remains
 open for `space-basic` only, where creating a space is genuinely the subject of
 the test.
 

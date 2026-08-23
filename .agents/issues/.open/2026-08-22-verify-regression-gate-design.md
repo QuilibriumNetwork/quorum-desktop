@@ -1,10 +1,10 @@
 ---
 type: task
 title: '`yarn verify` — a routed, cross-repo regression gate with a readable verdict'
-status: open
+status: in-progress
 priority: high
 created: 2026-08-22
-updated: 2026-08-22
+updated: 2026-08-23
 area: testing / developer confidence
 ---
 
@@ -392,3 +392,18 @@ ships unnoticed.
 ---
 
 _Last updated: 2026-08-22_
+
+## Status (2026-08-23)
+
+Implemented, **not shipped**. See the
+[implementation plan](2026-08-22-verify-regression-gate-plan.md) for the current
+state and what is left, and
+[the coverage and cost review](2026-08-23-verify-gate-coverage-and-cost-review.md)
+for the open questions about whether the gate runs the right things.
+
+Two design assumptions did not survive contact and are corrected in the issues
+above: the harness was minting permanent relay state on every run, and reusing
+state across runs required the delivery assertions to be scoped per run or a
+failing run could turn the next one green.
+
+*Last updated: 2026-08-23*

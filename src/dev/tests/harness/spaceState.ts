@@ -48,7 +48,7 @@
 //                             arrives on it.
 //
 // ⚠️ The design doc for this work
-// (`.agents/issues/2026-08-23-harness-space-reuse-design.md`) listed
+// (`.agents/issues/.done/2026-08-23-harness-space-reuse-design.md`) listed
 // `encryption_states` under "never persist". That was WRONG, and the reason it
 // looked right is worth keeping: for DMs the store holds an advancing double
 // ratchet, and carrying a stale one across runs would be exactly the kind of

@@ -325,6 +325,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Outbound signing is decided in four places, only one of which is the shared rule](issues/.open/2026-08-21-outbound-signing-is-decided-in-four-places-not-one.md)
 - 📋 [`yarn verify` — a routed, cross-repo regression gate with a readable verdict](issues/.open/2026-08-22-verify-regression-gate-design.md)
 - 📋 [`yarn verify` Implementation Plan](issues/.open/2026-08-22-verify-regression-gate-plan.md)
+- 📋 [Review the verify gate: right tests, cheap, and what is missing](issues/.open/2026-08-23-verify-gate-coverage-and-cost-review.md)
 
 ### Deferred
 
@@ -413,6 +414,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A failed refetch keeps serving stale QNS verifications](issues/.done/2026-08-17-a-failed-refetch-keeps-serving-stale-qns-verifications.md)
 - 🐛 [A failing decrypt leaks 10 characters of plaintext into the error message](issues/.done/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md)
 - 🐛 [2026 08 22 Partial Notification Record Crashes Channel Route](issues/.done/2026-08-22-partial-notification-record-crashes-channel-route.md)
+- 🐛 [Harness mints permanent, undeletable accounts on the production relay every run](issues/.done/2026-08-23-harness-mints-permanent-accounts-every-run.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -552,6 +554,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Remove the single-repo cross-platform leftovers](issues/.done/2026-08-13-remove-single-repo-cross-platform-leftovers.md)
 - 📋 [DM identity on desktop: the dialect fix, then the privacy rule](issues/.done/2026-08-20-dm-identity-reveal-desktop-and-shared-plan.md)
 - 📋 [Is a whole-app regression net worth building, and if so what shape?](issues/.done/2026-08-22-regression-safety-net-what-would-it-take.md)
+- 📋 [Harness: reuse a persistent space instead of minting one every run](issues/.done/2026-08-23-harness-space-reuse-design.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
 - 📋 [Add DM-Specific Action Queue Handlers](issues/.done/dm-action-queue-handlers.md)
@@ -812,4 +815,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-23 15:21:04
+**Last Updated**: 2026-08-23 19:24:59
