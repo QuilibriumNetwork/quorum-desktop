@@ -10,16 +10,35 @@ exists. Where a claim could not be verified from the code, it says
 `UNKNOWN — not yet measured` rather than guessing.
 
 The scope is the regression harness under `src/dev/tests/harness/` (the
-`*.scenario.test.ts` files `yarn verify`'s live tier runs) plus the component
-test suite under `src/dev/tests/components/`. Unit tests elsewhere in the repo
-exist and pass, but they mock the SDK and check logic in isolation — they are
-not what this map is about, which is "does a message or action survive a real
-send/receive round trip."
+`*.scenario.test.ts` files, run by hand today via `yarn harness <name>`) plus
+the component test suite under `src/dev/tests/components/`. Unit tests
+elsewhere in the repo exist and pass, but they mock the SDK and check logic in
+isolation — they are not what this map is about, which is "does a message or
+action survive a real send/receive round trip."
 
-When coverage changes (a new scenario ships, a gap closes), update this
-document and `NOT_COVERED` in `scripts/verify/report.mjs` together — a stale
-map is worse than no map, because it makes the gate's silence look
-deliberate when it is really just unmeasured.
+**⚠️ None of this runs automatically yet.** `yarn verify` currently executes
+only the fast tier (typecheck, lint, unit tests, build) — `stepsFor()` in
+`scripts/verify/steps.mjs:31-65` has no `tier === 'live'` branch and falls
+through to `return []`, and `index.mjs`'s only call site
+(`scripts/verify/index.mjs:142`) always passes `'fast'`. The file's own header
+says so plainly: *"Tier selection from `plan.live` (running the live tier, not
+just fast) still lands later"* (`scripts/verify/index.mjs:8`). Wiring the live
+tier in is tracked as its own step (Task 12) in
+`.agents/issues/.open/2026-08-22-verify-regression-gate-plan.md`. Until that
+ships, every "Asserted" or "Covered" cell below describes a test that
+**exists in the repo**, not one that runs on every `yarn verify`. A `PASS`
+today says nothing about space delivery, DM delivery, kick, config sync, or
+storage eviction/restore — this is arguably the single largest gap between
+what this document measures and what the gate currently enforces, and it sits
+outside `NOT_COVERED`'s five slots only because it is a wiring gap, not a
+missing-test gap; `NOT_COVERED` ranks gaps in *test coverage*, not gaps in
+*what the gate has been wired to run*.
+
+When coverage changes (a new scenario ships, a gap closes, or the live tier
+gets wired in), update this document and `NOT_COVERED` in
+`scripts/verify/report.mjs` together — a stale map is worse than no map,
+because it makes the gate's silence look deliberate when it is really just
+unmeasured.
 
 ## Content types
 
@@ -56,7 +75,7 @@ format exercised) — there is no space cross-client scenario.
 | `sticker` | Asserted — `:694` | None found | None found | |
 | `pin` | **Sent but never asserted** — `space-message-id-derivation.scenario.test.ts:433`. Requires a role holding `message:pin` with no owner bypass, and the harness has no role-creation helper (`spaceBot.ts` has none) | None found | None found | See Gaps — highest-priority content-type gap alongside `remove-reaction` |
 | `delete-conversation` | None found | None found | None found | Distinct from `delete-conversation-self`, below |
-| `delete-conversation-self` | N/A (DM-only type) | Asserted via storage effect, not a `content.type` equality check — `dm-selfdelete-control.scenario.test.ts:103-108` (own second device honours the delete) and `dm-selfdelete-forgery.scenario.test.ts:95` (a forged one from a stranger is rejected) | None found | Real coverage, just not the pattern the brief's grep (`content?.type ===`) would find — flagged here so it isn't miscounted as a gap |
+| `delete-conversation-self` | N/A (DM-only type) | Asserted via storage effect, not a `content.type` equality check — `dm-selfdelete-control.scenario.test.ts:103-108` (own second device honours the delete) and `dm-selfdelete-forgery.scenario.test.ts:146-149` (a forged one from a stranger is rejected; the forged payload itself is built at `:95`) | None found | Real coverage, just not the pattern the brief's grep (`content?.type ===`) would find — flagged here so it isn't miscounted as a gap |
 | `edit-message` | Asserted — `:696` | None found | None found | |
 | `thread` | Asserted — `:697` | None found (DMs have no threads) | None found | |
 | `call-offer` | None found | None found | None found | No scenario touches any of the 8 call/WebRTC content types |
