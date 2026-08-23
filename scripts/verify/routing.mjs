@@ -10,6 +10,7 @@
  *
  * Paths arrive prefixed with their repo: `desktop/src/...`, `shared/src/...`.
  */
+import { dirname, resolve } from 'node:path';
 
 /** Safe: cannot change what goes on the wire or what comes off it. */
 const SAFE = [
@@ -58,14 +59,57 @@ export function planFromPaths(paths) {
   return { repos: [...new Set(repos)], live, reasons, skipped: [] };
 }
 
-/** Repo-prefixed changed paths, working tree + staged, vs the merge base. */
+/**
+ * Repo-prefixed changed paths, working tree + staged, vs the merge base.
+ *
+ * Deviation from the plan's verbatim source, ruled authorized on review
+ * (2026-08-22): `execGit` is expected to return `null` on a failed command —
+ * as opposed to `''` for "ran fine, nothing to report" — mirroring
+ * `environment.mjs`'s `git()`. Collapsing the two would let a git failure
+ * (corrupted repo, index lock, permission error) read as "this repo has no
+ * changes", silently suppressing both its fan-out and the live-tier trigger.
+ * That inverts the header comment above: an allowlist has to fail toward
+ * running MORE, not less. So an unreadable repo instead contributes one
+ * synthetic path that no `SAFE`/`SAFE_ALONE` pattern can match, forcing
+ * `live` and naming the repo in the printed reasons exactly like any other
+ * risky, unclassified change — because from routing's point of view, that is
+ * what it is.
+ */
 export function changedPaths(repoName, repoPath, execGit) {
-  const out = [
+  const reads = [
     execGit(repoPath, ['diff', '--name-only', 'HEAD']),
     execGit(repoPath, ['diff', '--name-only', '--staged']),
     execGit(repoPath, ['ls-files', '--others', '--exclude-standard']),
-  ].join('\n');
+  ];
+  if (reads.some((r) => r === null)) {
+    return [`${repoName}/<unreadable — git command failed>`];
+  }
+  const out = reads.join('\n');
   return [...new Set(out.split('\n').map((l) => l.trim()).filter(Boolean))].map(
     (p) => `${repoName}/${p}`
   );
+}
+
+/**
+ * Resolve the MAIN checkout root from any worktree, linked or not.
+ *
+ * Deviation from the plan's verbatim source, ruled authorized on review
+ * (2026-08-22): the brief has the caller default siblings to `resolve(desktop,
+ * '..')`, which is wrong from a linked worktree — there, `..` is just the
+ * `.worktrees/` directory, not the checkout that actually sits next to the
+ * sibling repos. `execGit` here is expected to run `git rev-parse
+ * --git-common-dir` from `desktop` and return its (untrimmed) stdout, or
+ * `null` on failure. A linked worktree gets an ABSOLUTE `.git` path back; the
+ * main checkout gets a RELATIVE one (just `.git`), which collapses
+ * `dirname(resolve(desktop, commonDir))` right back onto `desktop` itself —
+ * that is what makes this a no-op in the shipped, non-worktree case
+ * (MEASURED 2026-08-22 in both a linked worktree and the main checkout).
+ * A git failure (missing git, not a repo, …) falls back to `desktop` too:
+ * there is no better answer available, and failing open here just reproduces
+ * the brief's original expression one call site up.
+ */
+export function mainCheckoutFrom(desktop, execGit) {
+  const commonDir = execGit(desktop, ['rev-parse', '--git-common-dir']);
+  if (!commonDir) return desktop;
+  return dirname(resolve(desktop, commonDir.trim()));
 }

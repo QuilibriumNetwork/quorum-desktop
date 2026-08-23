@@ -15,48 +15,42 @@ import { stepsFor } from './steps.mjs';
 import { runStep } from './runner.mjs';
 import { renderReport, verdictOf } from './report.mjs';
 import { describeEnvironment } from './environment.mjs';
-import { planFromPaths, changedPaths } from './routing.mjs';
+import { planFromPaths, changedPaths, mainCheckoutFrom } from './routing.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DESKTOP = resolve(HERE, '../..');
 
 const argv = process.argv.slice(2);
 
+// Deviation from the plan's verbatim source, ruled authorized on review
+// (2026-08-22): returns `null` on failure instead of `''`, mirroring
+// `environment.mjs`'s `git()`. `changedPaths()` and `mainCheckoutFrom()` in
+// routing.mjs both depend on this tri-state: collapsing "command failed" into
+// the same `''` a clean/no-op result produces would make an unreadable repo
+// look identical to an untouched one, which is the exact silent-rot failure
+// mode this gate's allowlist design exists to avoid (see routing.mjs's header).
 const execGit = (cwd, args) => {
   try {
     return execFileSync('git', args, { cwd, encoding: 'utf8' });
   } catch {
-    return '';
+    return null;
   }
 };
-
-// Deviation from the plan's verbatim source, ruled authorized on review
-// (2026-08-22): the brief has SIBLINGS default to `resolve(DESKTOP, '..')`,
-// which is wrong when verify runs from a linked worktree — there, `..` is the
-// `.worktrees/` directory, which holds no sibling repos, not the checkout that
-// actually sits next to `quorum-shared`/`quorum-mobile`. `--git-common-dir`
-// resolves to the MAIN worktree's `.git` from anywhere (a relative `.git` in
-// the main checkout, an absolute path from a linked one — `resolve(DESKTOP,
-// ...)` normalises both), so its parent is the main checkout and that parent's
-// parent is where the siblings live. In a normal, non-worktree clone this
-// collapses back to the brief's `resolve(DESKTOP, '..')`: MEASURED 2026-08-22,
-// `git rev-parse --git-common-dir` there returns the relative `.git`, so
-// `dirname` lands back on DESKTOP itself and the two paths agree.
-const mainCheckout = (() => {
-  const commonDir = execGit(DESKTOP, ['rev-parse', '--git-common-dir']).trim();
-  return commonDir ? dirname(resolve(DESKTOP, commonDir)) : DESKTOP;
-})();
 
 /**
  * Where the sibling repos live. Overridable ONLY so the degrade-loudly path can
  * be tested by pointing at an empty directory. The alternative — renaming a real
  * checkout to simulate its absence — leaves a repo renamed if the run dies
  * halfway, which is not a risk worth taking to test an error message.
+ *
+ * `mainCheckoutFrom` spawns a `git rev-parse` subprocess; the ternary short-
+ * circuits it whenever `--repos-root=` is given, since the override makes its
+ * result irrelevant. No point paying for a subprocess whose answer is discarded.
  */
 const reposRootArg = argv.find((a) => a.startsWith('--repos-root='));
 const SIBLINGS = reposRootArg
   ? resolve(reposRootArg.split('=')[1])
-  : resolve(mainCheckout, '..');
+  : resolve(mainCheckoutFrom(DESKTOP, execGit), '..');
 
 const REPOS = {
   desktop: DESKTOP,
