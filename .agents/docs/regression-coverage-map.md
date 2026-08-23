@@ -1,3 +1,12 @@
+---
+type: doc
+title: Regression Coverage Map
+status: done
+ai_generated: true
+created: 2026-08-23
+updated: 2026-08-23
+---
+
 # Regression coverage map
 
 ## Purpose
@@ -75,10 +84,10 @@ format exercised) — there is no space cross-client scenario.
 | `sticker` | Asserted — `:694` | None found | None found | |
 | `pin` | **Sent but never asserted** — `space-message-id-derivation.scenario.test.ts:433`. Requires a role holding `message:pin` with no owner bypass, and the harness has no role-creation helper (`spaceBot.ts` has none) | None found | None found | See Gaps — highest-priority content-type gap alongside `remove-reaction` |
 | `delete-conversation` | None found | None found | None found | Distinct from `delete-conversation-self`, below |
-| `delete-conversation-self` | N/A (DM-only type) | Asserted via storage effect, not a `content.type` equality check — `dm-selfdelete-control.scenario.test.ts:103-108` (own second device honours the delete) and `dm-selfdelete-forgery.scenario.test.ts:146-149` (a forged one from a stranger is rejected; the forged payload itself is built at `:95`) | None found | Real coverage, just not the pattern the brief's grep (`content?.type ===`) would find — flagged here so it isn't miscounted as a gap |
+| `delete-conversation-self` | N/A (DM-only type) | Asserted via storage effect, not a `content.type` equality check — `dm-selfdelete-control.scenario.test.ts:107-110` (own second device honours the delete; preconditions checked at `:103-104`) and `dm-selfdelete-forgery.scenario.test.ts:146-149` (a forged one from a stranger is rejected; the forged payload itself is built at `:95`) | None found | Real coverage, just not the pattern the brief's grep (`content?.type ===`) would find — flagged here so it isn't miscounted as a gap |
 | `edit-message` | Asserted — `:696` | None found | None found | |
 | `thread` | Asserted — `:697` | None found (DMs have no threads) | None found | |
-| `call-offer` | None found | None found | None found | No scenario touches any of the 8 call/WebRTC content types |
+| `call-offer` | None found | None found | None found | No scenario touches any of the 9 call/WebRTC content types |
 | `call-answer` | None found | None found | None found | |
 | `call-reject` | None found | None found | None found | |
 | `call-hangup` | None found | None found | None found | |
@@ -88,14 +97,17 @@ format exercised) — there is no space cross-client scenario.
 | `space-call-start` | None found | None found | None found | |
 | `space-call-end` | None found | None found | None found | |
 
-**Tally:** of 27 content types, 9 are asserted delivered on the space arm
-(matching the pre-measured finding), 1 more (`post`) is asserted delivered on
-the DM arm, 1 (`delete-conversation-self`) is asserted via effect rather than
-type-equality on the DM arm, 2 (`pin`, `dm-update-profile`) are sent but never
-confirmed delivered, 3 (`join`/`leave`/`kick`) are architecturally excluded
-from the id-derivation gate with their effects covered elsewhere, and **11**
-(`event`, `remove-reaction`, `delete-conversation`, and the 8 call types) have
-no coverage of any kind on any arm.
+**Tally**, re-derived from the table above rather than asserted:
+**9** asserted delivered on the space arm (`post`, `update-profile`,
+`remove-message`, `embed`, `reaction`, `mute`, `sticker`, `edit-message`,
+`thread` — matching the pre-measured finding; `post`'s DM-arm assertion is
+the same type, not an additional one, so it is not counted twice) **+ 1**
+(`delete-conversation-self`) asserted via effect rather than type-equality on
+the DM arm **+ 2** (`pin`, `dm-update-profile`) sent but never confirmed
+delivered **+ 3** (`join`/`leave`/`kick`) architecturally excluded from the
+id-derivation gate with their effects covered elsewhere **+ 12** (`event`,
+`remove-reaction`, `delete-conversation`, and all 9 call/WebRTC types) with no
+coverage of any kind on any arm **= 27**.
 
 ## Non-message critical paths
 
@@ -141,7 +153,7 @@ take care of themselves.
    stale profile is easy to misread as "nobody did that" rather than "this
    broke."
 
-4. **Calling has zero coverage.** All 8 WebRTC content types
+4. **Calling has zero coverage.** All 9 WebRTC content types
    (`call-offer` through `space-call-end`) appear in no scenario. The
    headline failure (a call never connects) is loud and would be caught by
    anyone testing the feature by hand. The quieter regressions this leaves

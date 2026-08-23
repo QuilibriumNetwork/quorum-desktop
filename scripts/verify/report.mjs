@@ -74,7 +74,7 @@ export const NOT_COVERED = [
   'role/permission gating — untested; the harness cannot even build one yet',
   'reaction removal — never confirmed to reach anyone but the sender',
   'pin & profile updates — sent, never confirmed delivered',
-  'calling — zero coverage of all 8 WebRTC message types',
+  'calling — zero coverage of all 9 WebRTC message types',
   'no end-to-end or integration test exists',
 ];
 
