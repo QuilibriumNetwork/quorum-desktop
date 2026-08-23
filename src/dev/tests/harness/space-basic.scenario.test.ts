@@ -68,13 +68,21 @@ test(
     // on the relay, and there is no endpoint to delete one. Per-run uniqueness
     // still comes from `stamp`, which is in the space name and message text.
     //
-    // ⚠️ NOT YET FALSIFIED under these fixed names. The reasoning above is READ,
-    // not MEASURED — nobody has broken the join path and watched this arm go red
-    // since the change. Tracked in
-    // `.agents/issues/2026-08-23-harness-mints-permanent-accounts-every-run.md`.
-    // An earlier version of this comment asserted the falsification had been
-    // done. It had not, and that claim is exactly the failure mode this file's
-    // header warns about — do not restore it without doing the run.
+    // FALSIFIED 2026-08-23, under these fixed names. Emptying the member-delta
+    // apply loop (`MessageService.ts`, the `for (const member of
+    // envelope.message.memberDelta.members || [])` inside the sync-delta
+    // branch) turns this red: `B member rows=1 … first at never`, failing on
+    // `expect(bMembers).toBeGreaterThanOrEqual(2)`. The run carries its own
+    // control — B still received A's posts and A's own roster still reached 2,
+    // so the arm went red because the roster half broke, not because the run
+    // lost the network. Probe reverted; production code confirmed byte-identical
+    // to HEAD afterwards.
+    //
+    // ⚠️ An earlier version of this comment asserted a falsification that had
+    // NOT been performed. That is the exact failure mode this file's header
+    // warns about, and it survived for a while because a claim of verification
+    // reads the same whether or not anyone did the work. Do not restate this
+    // block for a future change without re-running it.
     const [a, b] = await Promise.all([
       createSpaceBot('space-basic-a'),
       createSpaceBot('space-basic-b'),

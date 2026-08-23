@@ -8,7 +8,7 @@ updated: 2026-08-23
 
 # Harness: reuse a persistent space instead of minting one every run
 
-Sibling of [2026-08-23-harness-mints-permanent-accounts-every-run.md](../2026-08-23-harness-mints-permanent-accounts-every-run.md),
+Sibling of [2026-08-23-harness-mints-permanent-accounts-every-run.md](.done/2026-08-23-harness-mints-permanent-accounts-every-run.md),
 which fixed the account half of the same problem. Read that one first — it holds
 the measurements this design rests on.
 
@@ -102,8 +102,11 @@ thing on the current path — `SpaceService.sendHubMessage`
 (`SpaceService.ts:1202`) seals with the static `hub` and `config` keys out of
 `space_keys`, the receive branch unseals with the same two
 (`MessageService.ts:5421-5471`), and `TripleRatchetEncrypt` appears nowhere in
-`src/services/`. Nothing advances, so a restored space key is as good as a fresh
-one however old it is.
+`src/services/`. Nothing advances **on the message path this harness
+exercises**, so a restored space key is as good as a fresh one however old it
+is. The `state` field IS mutated elsewhere — the `peerMapDelta` apply on a
+member join and `rekey` — neither of which fires in a fixed two-member space
+where nobody joins after the first run. See finding 3 below.
 
 ### ⚠️ Second correction: reuse forces the assertions to change
 
@@ -144,9 +147,43 @@ cheaper.
 - [x] **Falsify**: break the delivery path, confirm the arm still goes red with a
       restored space, restore. An arm that has not been seen to fail is not
       evidence — this step is the deliverable, not a formality
+- [x] Independent review before merge — this changes test isolation. Ran
+      adversarial, in a fresh context. Three findings, all fixed (below)
 - [ ] Decide `space-basic` separately: same treatment for the joiner only, or
-      option 1 (lower frequency). Creation is genuinely its subject
-- [ ] Independent review before merge — this changes test isolation
+      option 1 (lower frequency). Creation is genuinely its subject — this is
+      the ONLY remaining source of per-run space minting
+
+## What independent review caught
+
+Worth recording because two of the three were mistakes of *reasoning stated as
+fact*, which is the failure mode this repo keeps paying for.
+
+1. **CRITICAL — the per-run token was not actually unique per run.**
+   `stamp` was `String(Date.now()).slice(-6)`, which repeats exactly for any two
+   runs whose start times differ by a multiple of 1,000,000 ms (≈16m40s). Every
+   content token derived from it. Since the space is now kept forever, a frame a
+   failing run left un-acked stays on the relay indefinitely — so a later run
+   drawing the same six digits would match that old frame and report PASS on a
+   broken receive path. Per-pair odds ~1e-6; the birthday bound puts it at 50%
+   within ~1,200 runs, which this arm will reach. **This is the very false pass
+   the redesign existed to remove, reintroduced by a weak token.** Fixed by
+   appending a `crypto.randomUUID()` slice. Also hardened the same seed in
+   `dm-delivery`, which is currently protected only by its inbox drain.
+2. **IMPORTANT — the round-trip check did not verify the hop its comment
+   claimed.** `restoreSpaceState` compared the restored rows against `snap`,
+   which has *already* been through `JSON.parse`. So it could only catch
+   corruption from the IndexedDB put/get, never the `JSON.stringify` step the
+   comment said it was guarding. No live impact (every field in these stores is
+   a string, number or boolean today), but the documented safety property was
+   not the delivered one. Fixed by verifying serialization in `saveSpaceState`,
+   where it actually happens, and by correcting the comment.
+3. **MINOR — "nothing ratchets" was broader than the code supports.** True for
+   the message path this harness exercises; the `state` field IS mutated by the
+   `peerMapDelta` apply on a member join and by `rekey`. Neither fires in a
+   fixed two-member space, but the sentence is now scoped to what was actually
+   established.
+
+Post-fix: `space-delivery` reran GREEN on the reused space at 91.6s.
 
 ## Measurements
 

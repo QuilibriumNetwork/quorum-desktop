@@ -7,12 +7,12 @@
 // surface (`src/api/quorumApi.ts`) — `/inbox/delete`, `/hub/delete` and
 // `DELETE /users/<addr>/public-profile` exist, nothing removes an account or a
 // space, and registrations do not expire. So every `yarn verify` run that
-// creates a space leaves one
-// behind forever, and the AGENTS.md rule makes that per-code-change.
+// creates a space leaves one behind forever, and the AGENTS.md rule makes that
+// per-code-change.
 //
 // The account half of the same problem was fixed by simply reusing fixed bot
 // names (see `identity.ts` and
-// `.agents/issues/2026-08-23-harness-mints-permanent-accounts-every-run.md`).
+// `.agents/issues/.done/2026-08-23-harness-mints-permanent-accounts-every-run.md`).
 // That worked because isolation never depended on the identity: `storage.ts`
 // backs MessageDB with in-memory `fake-indexeddb`, so every run already starts
 // from an empty database.
@@ -48,16 +48,24 @@
 //                             arrives on it.
 //
 // ⚠️ The design doc for this work
-// (`.agents/issues/.open/2026-08-23-harness-space-reuse-design.md`) listed
+// (`.agents/issues/2026-08-23-harness-space-reuse-design.md`) listed
 // `encryption_states` under "never persist". That was WRONG, and the reason it
 // looked right is worth keeping: for DMs the store holds an advancing double
 // ratchet, and carrying a stale one across runs would be exactly the kind of
-// silent corruption the doc was guarding against. For a SPACE it holds no such
-// thing on the current path — the ratchet fields are read only by the legacy
-// `TripleRatchetDecrypt` branch and the `peerMapDelta` apply, and
-// `TripleRatchetEncrypt` appears nowhere in `src/services/`. So the DM rows
-// stay ephemeral and the space rows are carried; the split is by conversation,
-// not by store.
+// silent corruption the doc was guarding against. So the DM rows stay
+// ephemeral and the space rows are carried; the split is by conversation, not
+// by store.
+//
+// Precisely what was established for the space row, no wider: **nothing
+// advances it on the message path this harness exercises.** The frames here
+// take the `isPlaintextMessage` branch and never read `keys.state`
+// (`MessageService.ts:5540-5593`), and `TripleRatchetEncrypt` appears nowhere
+// in `src/services/`. The `state` field IS mutated and re-persisted elsewhere
+// — the `peerMapDelta` apply on a member join (`MessageService.ts:5791-5817`)
+// and `rekey` (`:6254-6263`) — neither of which fires in a fixed two-member
+// space where nobody joins after the first run. A scenario that adds or
+// removes members while reusing a space would need this re-checked; that is
+// why the sentence is scoped rather than "space rows never ratchet".
 //
 // ── What is deliberately NOT carried ───────────────────────────────────────
 //
@@ -181,13 +189,18 @@ export async function snapshotSpaceState(
 /**
  * Put a snapshot back into a fresh in-memory database.
  *
- * Verifies the round-trip before returning, and throws if it does not match.
- * That check is not ceremony: these rows go to disk as JSON, and a field that
- * does not survive `JSON.stringify` (a typed array, a Date, an ArrayBuffer of
- * key material) would come back subtly wrong rather than absent. A space whose
- * `hub` key lost a byte still looks like a restored space to every caller here
- * — it just silently fails to decrypt anything, which presents at the far end
- * as a delivery bug in whatever change is being verified.
+ * Verifies that what went into IndexedDB is what comes back out, and throws if
+ * it is not. Note precisely which hop this covers: `snap` has ALREADY been
+ * through `JSON.parse` by the time it arrives here, so this compares the
+ * post-disk value against itself and can only catch corruption introduced by
+ * the `put`/`getAll` round trip — a store whose keyPath silently rejected a
+ * row, say. The serialization hop is guarded separately, at the point it
+ * actually happens, in `saveSpaceState`.
+ *
+ * (Both halves matter for the same reason: a space whose `hub` key lost a byte
+ * still looks like a restored space to every caller here, and just silently
+ * fails to decrypt — which presents at the far end as a delivery bug in
+ * whatever change is being verified.)
  */
 export async function restoreSpaceState(
   db: MessageDB,
@@ -222,9 +235,36 @@ function spaceStatePath(name: string): string {
   return resolve(config.stateDir, `${name}-space.json`);
 }
 
+/**
+ * Write a snapshot to disk, refusing to write one that JSON cannot represent.
+ *
+ * This is the hop the restore-side check cannot cover. Every field currently in
+ * these five stores is a string, number or boolean — `encryption_states.state`
+ * is itself already a JSON string (`SpaceService.ts:434`) — so nothing here is
+ * expected to fail today. It is guarded anyway because the failure is silent
+ * and permanent: a typed array or a Date added to any of these stores later
+ * would serialize to `{"0":1,…}` or an ISO string, restore into something that
+ * still LOOKS like a space, and then fail to decrypt for the rest of the
+ * file's life. Catching it at the write is the difference between a loud error
+ * naming the store and a delivery arm that mysteriously stops working.
+ */
 export function saveSpaceState(name: string, snap: SpaceStateSnapshot): void {
+  const serialized = JSON.stringify(snap, null, 2);
+  const reparsed = JSON.parse(serialized) as SpaceStateSnapshot;
+  for (const { name: store } of PERSIST_STORES) {
+    const live = digest(snap.stores[store] ?? []);
+    const afterJson = digest(reparsed.stores[store] ?? []);
+    if (live !== afterJson) {
+      throw new Error(
+        `[spaceState] "${store}" does not survive JSON serialization, so the ` +
+          `persisted space would restore corrupted and silently fail to ` +
+          `decrypt. A field in this store is probably a typed array, Date or ` +
+          `ArrayBuffer; it must be encoded before it can be carried across runs.`
+      );
+    }
+  }
   mkdirSync(config.stateDir, { recursive: true });
-  writeFileSync(spaceStatePath(name), JSON.stringify(snap, null, 2), 'utf-8');
+  writeFileSync(spaceStatePath(name), serialized, 'utf-8');
 }
 
 export function loadSpaceState(name: string): SpaceStateSnapshot | undefined {

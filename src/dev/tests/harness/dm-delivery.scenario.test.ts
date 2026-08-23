@@ -112,7 +112,16 @@ test(
   'dm-delivery: every DM content type survives the receive path',
   async () => {
     const startedAt = Date.now();
-    const stamp = String(startedAt).slice(-6);
+    // Unique per run, not merely time-derived. `String(Date.now()).slice(-6)`
+    // repeats for any two runs whose start times differ by a multiple of
+    // 1,000,000 ms, which would let a frame a previous failed run left un-acked
+    // satisfy this run's checks (the shape independent review found in
+    // `space-delivery` on 2026-08-23). This arm is already protected by a
+    // different mechanism — DM frames land on the DEVICE inbox and
+    // `drainInbox()` below deletes anything queued before the run starts — but
+    // that is one mechanism, and it is the kind that stops working quietly if
+    // the drain is ever removed or its delete call fails.
+    const stamp = `${String(startedAt).slice(-6)}-${crypto.randomUUID().slice(0, 8)}`;
     const log = new RunLog('dm-delivery', startedAt);
     const say = (msg: string, fields: Record<string, unknown> = {}) => {
       console.log(`[dm-delivery] ${msg}`);

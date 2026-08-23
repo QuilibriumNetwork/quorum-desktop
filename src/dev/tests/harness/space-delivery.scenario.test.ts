@@ -121,7 +121,19 @@ test(
   'space-delivery: every space content type survives the receive path',
   async () => {
     const startedAt = Date.now();
-    const stamp = String(startedAt).slice(-6);
+    // ⚠️ The random half is load-bearing, not decoration. Every content token
+    // below is derived from `stamp`, and `String(Date.now()).slice(-6)` on its
+    // own REPEATS: two runs whose start times differ by a multiple of 1,000,000
+    // ms (≈16m40s) produce the identical six digits. Since the space is now
+    // reused forever, a frame that a failing run left un-acked stays on the
+    // relay indefinitely — so a later run that happened to draw the same six
+    // digits would re-push that old frame, match it with `sawThisRun`, and
+    // report PASS on evidence from the run that failed. Per-pair odds are ~1e-6,
+    // but this arm runs on every services/sync/storage/crypto change and the
+    // birthday bound puts that at 50% within ~1,200 runs, which is a realistic
+    // lifetime for this repo. The uuid suffix removes the collision rather than
+    // making it rarer. Found by independent review, 2026-08-23.
+    const stamp = `${String(startedAt).slice(-6)}-${crypto.randomUUID().slice(0, 8)}`;
     const log = new RunLog('space-delivery', startedAt);
     const say = (msg: string, fields: Record<string, unknown> = {}) => {
       console.log(`[space-delivery] ${msg}`);
@@ -290,10 +302,10 @@ test(
        *
        * `token` must be something only this run could have put in the frame.
        * Every arm below has one already: a stamped string in the payload
-       * (`sticker-123456`, `thread-123456`) or the id of a target row minted
-       * this run. Deliberately NOT the bare `stamp`, which is six digits and
-       * could collide by chance with an unrelated number in an old frame — a
-       * false PASS, the direction that matters.
+       * (`sticker-<stamp>`, `thread-<stamp>`) or the id of a target row minted
+       * this run. Both rest on `stamp` being unique PER RUN and not merely
+       * distinctive-looking — see its definition above for why the six-digit
+       * form alone was not, and what that would have cost.
        *
        * Scoping by the frame's own messageId was tried first and abandoned:
        * `thread` produces no local echo on the sender (MEASURED — its send path

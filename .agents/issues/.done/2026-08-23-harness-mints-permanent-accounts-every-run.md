@@ -1,7 +1,7 @@
 ---
 type: bug
 title: 'Harness mints permanent, undeletable accounts on the production relay every run'
-status: in-progress
+status: done
 created: 2026-08-23
 updated: 2026-08-23
 ---
@@ -112,13 +112,29 @@ the AGENTS.md rule causes to run on every code change:
 - [x] Document the local-relay switch in the harness README
 - [ ] Falsify each changed arm: break real application code, confirm the arm goes
       red, restore
-  - [ ] `space-delivery` — run with a RESTORED space, so it doubles as the
-        falsification the space-reuse work needs. Costs no new space
-  - [ ] `dm-delivery` — costs no space at all
-  - [ ] `space-basic` — costs one space, unavoidable: creation is its subject.
-        Its in-file comment currently claims this was already done. It was
-        **not**. Either make it true or correct the comment; an unproven claim of
-        verification is worse than none
+  - [x] `space-delivery` — DONE. Dropping `sticker` before `saveMessage` in the
+        space receive dispatch turns it RED on a restored space, with `sticker`
+        cleanly absent and every counter clean. A second probe (receive path
+        intact, no sticker sent) showed a STALE sticker arriving and reaching
+        `saveMessage`, which the run-scoped check correctly refused to count.
+        Full write-up in
+        [the space-reuse issue](../2026-08-23-harness-space-reuse-design.md)
+  - [x] `dm-delivery` — DONE. Suppressing the `handleDMProfileUpdate` call in
+        `interceptControlMessages` turns it RED on exactly one label
+        (`batch3 dm-update-profile applied at receiver`), 0 novel receive
+        errors. Reverted, reran GREEN at 31.4s
+  - [x] `space-basic` — DONE, and it cost the one space predicted. Emptying the
+        member-delta apply loop turns it RED (`B member rows=1 … first at
+        never`). The run carries its own control: B still received A's posts and
+        A's roster still reached 2, so the arm failed because the roster half
+        broke rather than because the run lost the network.
+        **Its comment previously claimed this had been done when it had not** —
+        corrected, then made true
+
+No green re-run was spent on `space-basic` after reverting its probe: that would
+mint another permanent space to re-prove what `git status` already shows (the
+production tree is byte-identical to HEAD, and the only change to the scenario
+file is comments). Its green state under fixed names was already measured.
 
 MEASURED after the identity fix: `.state/` went from 84 files to 90 on the first
 run and has stayed at 90 across every run since, so the three changed arms mint
@@ -132,7 +148,18 @@ growth).
 
 ## Status
 
-In progress. Blocks shipping the `yarn verify` PRs, because the AGENTS.md rule in
-those PRs is what multiplies the cost.
+Done. All four in-scope items are complete and every changed arm has been seen
+to fail for the right reason and then pass again.
+
+The account half of the problem is closed: the three live arms mint **zero**
+accounts on repeat. The space half is closed for `space-delivery` (see
+[the space-reuse issue](../2026-08-23-harness-space-reuse-design.md)) and remains
+open for `space-basic` only, where creating a space is genuinely the subject of
+the test.
+
+Still open, tracked in the space-reuse issue's out-of-scope list: the ~20
+manually-run scenarios that still use stamped names. They do not run under
+`yarn verify`, so they cost nothing per code change — the AGENTS.md rule does
+not touch them.
 
 *Last updated: 2026-08-23*
