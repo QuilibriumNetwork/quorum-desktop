@@ -41,6 +41,14 @@
 // creating a role and broadcasting a manifest first.
 //
 // PRODUCTION relay, throwaway accounts. See identity.ts.
+//
+// FALSIFIED 2026-08-23: dropping `sticker` before `saveMessage` in the space
+// receive dispatch (handleNewMessage's non-DM branch) turns this red — sticker
+// is cleanly absent from the victim's accepted types, 0 outbound failures, 0
+// novel errors. It surfaces as batch1's `timedOut` failure, not the per-type
+// one, since settleFor ANDs sticker with 5 other items in that batch. Task 8's
+// fix round separately falsified `post` via a bogus message id — a different
+// assertion, different proof. Unfalsified = not evidence.
 import { test, expect } from 'vitest';
 import { type Message } from '@quilibrium/quorum-shared';
 import { createSpaceBot, type HarnessSpaceBot } from './spaceBot';
