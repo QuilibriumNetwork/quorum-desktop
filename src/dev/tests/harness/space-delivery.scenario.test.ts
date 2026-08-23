@@ -201,6 +201,10 @@ test(
       }
       const typesSeenBy = (who: 'v' | 'x') =>
         new Set((acceptedBy.get(who) ?? []).map((a) => a.type));
+      /** Did a SPECIFIC message id show up in `who`'s accepted list? Needed for
+       *  `post`, where the type-only check below is a tautology — see its use. */
+      const sawMessage = (who: 'v' | 'x', messageId: string) =>
+        (acceptedBy.get(who) ?? []).some((a) => a.messageId === messageId);
 
       // ── The message the honest reply targets ───────────────────────────────
       const M_TEXT = `root-post-${stamp}`;
@@ -426,7 +430,7 @@ test(
         reaction: '🎉',
       });
       say(
-        'sent batch 3: [remove→reply, update-profile, remove-reaction→D (x); pin→A, mute (v)] (5)'
+        'sent batch 3: [remove→reply, update-profile (x); pin→A, mute (v); remove-reaction→D (x)] (5)'
       );
 
       await settleFor(
@@ -497,12 +501,26 @@ test(
           'frames that never arrived rather than frames the receive path dropped.'
       ).toEqual([]);
 
-      // ── DELIVERY PRESERVATION — every honest type survived the receive path ──
+      // `post` cannot use the generic `typesSeenBy(...).has(type)` check below.
+      // The victim's own M send (needed earlier so the reply has something to
+      // point at) already puts 'post' in `v`'s accepted-types set before `x`
+      // ever sends anything — so a receive path that silently stopped
+      // accepting posts FROM OTHER MEMBERS would still read that line as true,
+      // and its failure message could never fire. Assert on a specific
+      // x-authored post's id instead: this can only be true if that exact
+      // frame crossed the wire and was saved by `v`.
+      expect(
+        sawMessage('v', rowA!.messageId),
+        "DELIVERY: x's honest 'post' A did not survive the receive path — " +
+          'a post from another member would now be dropped on arrival'
+      ).toBe(true);
+
+      // ── DELIVERY PRESERVATION — every other honest type survived the
+      //    receive path ──────────────────────────────────────────────────
       // Each type is asserted on the bot that did NOT send it, so a pass means
       // the frame crossed the wire and was applied, rather than being read off
       // the sender's own local copy.
       for (const [who, type] of [
-        ['v', 'post'],
         ['v', 'embed'],
         ['v', 'sticker'],
         ['v', 'reaction'],
