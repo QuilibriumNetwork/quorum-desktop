@@ -55,6 +55,24 @@ export function stepsFor(repoName, repoPath, tier) {
         mk('typecheck', 'typecheck', ['tsc', '--noEmit'], () => ''),
         mk('lint', 'lint', ['lint'], eslintDetail),
         mk('unit', 'unit', ['test:run'], vitestDetail),
+        // The harness's three OFFLINE scenarios. They belong on the fast tier
+        // and nowhere else: `vitest.config.ts` cannot host them (its setup
+        // mocks WebSocket and crypto, which these need real, so they were
+        // excluded from the unit suite), and the live tier would be absurd for
+        // work that touches no relay. Before this they ran nowhere at all.
+        //
+        // MEASURED 2026-08-23: 15s wall clock, 0 new account files in
+        // `.state/`. `integration-check` in particular fails loudly when the
+        // harness's own load-bearing seams break — MessageDB opening on
+        // fake-indexeddb, and the whole MessageService import graph resolving
+        // under the jsdom+lingui pipeline. Without it, that same breakage
+        // surfaces as four live arms erroring out three minutes into a run.
+        mk(
+          'harness-offline',
+          'harness-offline',
+          ['harness', 'smoke', 'integration-check', 'xpdump-format'],
+          vitestDetail
+        ),
         mk('build', 'build', ['build'], () => ''),
       ];
     if (repoName === 'shared')

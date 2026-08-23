@@ -518,6 +518,11 @@ test(
       // `pin` is sent but NOT asserted — see the file header for why.
       const PROFILE_TOKEN = `sender-${stamp}`;
       const MUTE_TOKEN = `mute-${stamp}`;
+      // Nobody's address, so honouring or refusing the mute changes nothing
+      // else in the run. Bound to a name because the MODERATION assertions at
+      // the end check the recorded row against it — inlining it twice is how
+      // the two silently drift apart.
+      const MUTE_TARGET = `QmMutedNobody${stamp}`;
       await x.sendControl(s.spaceId, s.channelId, {
         type: 'remove-message',
         senderId: x.identity.address,
@@ -538,8 +543,7 @@ test(
       await v.sendControl(s.spaceId, s.channelId, {
         type: 'mute',
         senderId: v.identity.address,
-        // Nobody's address, so honouring or refusing it changes nothing else.
-        targetUserId: `QmMutedNobody${stamp}`,
+        targetUserId: MUTE_TARGET,
         muteId: MUTE_TOKEN,
         timestamp: Date.now(),
         action: 'mute',
@@ -680,6 +684,57 @@ test(
             `— every message of this type would now be dropped on arrival`
         ).toBe(true);
       }
+
+      // ── MODERATION GATE — the mute frame arrived AND was refused ────────
+      //
+      // Every assertion above stops at `saveMessage`, and for `mute` that is
+      // strictly weaker than it looks. READ `MessageService.ts:3608` — the
+      // whole mute handler lives INSIDE `saveMessage`, after the instrument
+      // has already recorded the call, and each of its guards is a bare
+      // `return`: DM rejection, self-mute, `isSpaceControlAuthorized`, dedup.
+      // So the delivery arm above says nothing whatsoever about whether the
+      // mute took effect.
+      //
+      // MEASURED 2026-08-23: it does not, and that is CORRECT. Muting requires
+      // a role granting `user:mute`, with no owner bypass — READ
+      // `quorum-shared/src/utils/channelPermissions.ts:136-137`: "NO
+      // isSpaceOwner bypass - receiving side can't verify owner status. Space
+      // owners must assign themselves a role with user:mute permission." The
+      // victim owns this space but holds no role, so `authorizeControlMessage`
+      // returns `deny('no-permission')` and no row is written. An earlier
+      // version of this block asserted the opposite and went red on the first
+      // run; the assertion was wrong, not the code.
+      //
+      // What is left is still worth holding down, and it is an AUTHORIZATION
+      // arm rather than a delivery one: an unprivileged mute must be refused.
+      // If that check ever fails open, anyone in a space could silence anyone
+      // else, and nothing in the muter's own client would look unusual.
+      //
+      // The pairing is what makes this a real assertion instead of a vacuous
+      // one. "No mute row" alone would also pass if the frame never arrived —
+      // the classic negative that cannot fail. It is bound to the delivery
+      // assertion above (`sawThisRun('x', 'mute', MUTE_TOKEN)`), which proves
+      // the frame DID reach the receive path this run. Arrived, then refused.
+      //
+      // Run-scoping is doubled, deliberately. `MUTE_TOKEN` is the lookup key,
+      // so a row from an earlier run cannot answer this query — and separately
+      // `muted_users` is not one of the stores `spaceState.ts` carries across
+      // runs, so it starts empty regardless.
+      //
+      // ⚠️ To assert the POSITIVE — that an authorized mute is honoured —
+      // `spaceBot.ts` needs a role-creation helper it does not have. That is
+      // the same blocker the coverage map ranks as gap #1 (role/permission
+      // gating, untestable by any current scenario) and the same one that
+      // leaves `pin` sent-but-never-asserted. Closing it unlocks all three.
+      const muteRow = await x.messageDB.getMuteByMuteId(MUTE_TOKEN);
+      expect(
+        muteRow,
+        `AUTHORIZATION: a 'mute' from a sender holding no user:mute role was ` +
+          `HONOURED. The receive-side permission check has failed open — any ` +
+          `member can now silence any other member, and the muter's own client ` +
+          `would look completely normal while doing it`
+      ).toBeUndefined();
+      say('mute correctly refused: sender holds no user:mute role');
 
       say('PASS — every space content type survived the receive path');
     } finally {

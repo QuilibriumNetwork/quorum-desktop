@@ -74,8 +74,8 @@ export function renderReport({ env, plan, results }) {
  */
 export const NOT_COVERED = [
   'role/permission gating — untested; the harness cannot even build one yet',
-  'reaction removal — never confirmed to reach anyone but the sender',
-  'pin & profile updates — sent, never confirmed delivered',
+  'authorization — 10 forgery/scope scenarios exist, none of them runs here',
+  'pin, an honoured mute & DM profile updates — sent, never confirmed to land',
   'calling — zero coverage of all 9 WebRTC message types',
   'no end-to-end or integration test exists',
 ];

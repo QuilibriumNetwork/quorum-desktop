@@ -224,20 +224,20 @@ format exercised) — there is no space cross-client scenario.
 | `post` | Asserted — `space-message-id-derivation.scenario.test.ts:692` | Asserted (delivery) — `dm-basic.scenario.test.ts:78-79`, and the receive path is exercised across most `dm-*` scenarios | Asserted — `dm-cross.scenario.test.ts:108,158` | The only type exercised on every arm |
 | `update-profile` | Asserted — `:699` | None found | None found | |
 | `dm-update-profile` | N/A (DM-only type) | **Sent only** — counted at the send seam, `dm-auto-reveal.scenario.test.ts:56`, asserted as a count at lines 111 and 115; never confirmed to arrive/decrypt at the peer | None found | Same shape as space's `pin`: proven to leave the client, not proven to land |
-| `remove-message` | Asserted — `:698` | None found | None found | |
+| `remove-message` | Asserted — `:698`, and in `space-delivery` | Asserted via APPLIED STATE — `dm-delivery`, the target row is gone at the receiver | None found | |
 | `event` | None found | None found | None found | |
-| `embed` | Asserted — `:693` | None found | None found | |
-| `reaction` | Asserted — `:695` | None found | None found | |
-| `remove-reaction` | **None found** — absent from the assertion loop | **None found** | None found | Zero coverage on any arm; see Gaps |
+| `embed` | Asserted — `:693`, and in `space-delivery` | Asserted — `dm-delivery.scenario.test.ts`, type-presence on the receiver | None found | |
+| `reaction` | Asserted — `:695`, and in `space-delivery` | Asserted via APPLIED STATE — `dm-delivery`, the receiver's row carries the emoji and the sender's id | None found | Applied state is stronger than type presence: it can only be true if the mutation ran |
+| `remove-reaction` | Asserted — `space-delivery`, on the bot that did not send it | Asserted via APPLIED STATE — `dm-delivery` | None found | **Corrected 2026-08-23.** The previous version of this row read "None found ... zero coverage on any arm", written before `dm-delivery` and the `space-delivery` extraction existed. Both now cover it, and the DM arm covers it the stronger way |
 | `join` | Not a wire frame — receiver-synthesized, deliberately excluded from the id-derivation check (`space-message-id-derivation.scenario.test.ts:562-566`); the underlying *effect* (roster growth) is asserted in `space-basic.scenario.test.ts:191` | N/A | N/A | The content type itself is architecturally untestable by this gate; the membership effect is covered separately (see critical paths) |
 | `leave` | Same as `join`: synthesized, excluded at `:562-566` | N/A | N/A | No scenario exercises a member leaving |
 | `kick` | Same as `join`: synthesized, excluded at `:562-566`; the *action* (`kickUser`) is covered in `space-kick.scenario.test.ts:124` | N/A | N/A | Content type itself untestable by the id gate; the effect is covered (see critical paths) |
-| `mute` | Asserted — `:700` (sent by the space owner, observed on the attacker bot per the comment at `:428-430`) | None found | None found | |
-| `sticker` | Asserted — `:694` | None found | None found | |
+| `mute` | DELIVERY asserted — `:700`, and in `space-delivery`. **The EFFECT is asserted as a REFUSAL**, not an application: MEASURED 2026-08-23, an owner holding no `user:mute` role is correctly denied (`quorum-shared/src/utils/channelPermissions.ts:136-137`, no owner bypass), so `space-delivery` pins that the check does not fail open. Asserting an honoured mute needs a role helper the harness does not have | None found | None found | Same blocker as `pin`: see gap 1 |
+| `sticker` | Asserted — `:694`, and in `space-delivery` | Asserted — `dm-delivery`, type-presence on the receiver | None found | |
 | `pin` | **Sent but never asserted** — `space-message-id-derivation.scenario.test.ts:433`. Requires a role holding `message:pin` with no owner bypass, and the harness has no role-creation helper (`spaceBot.ts` has none) | None found | None found | See Gaps — highest-priority content-type gap alongside `remove-reaction` |
 | `delete-conversation` | None found | None found | None found | Distinct from `delete-conversation-self`, below |
 | `delete-conversation-self` | N/A (DM-only type) | Asserted via storage effect, not a `content.type` equality check — `dm-selfdelete-control.scenario.test.ts:107-110` (own second device honours the delete; preconditions checked at `:103-104`) and `dm-selfdelete-forgery.scenario.test.ts:146-149` (a forged one from a stranger is rejected; the forged payload itself is built at `:95`) | None found | Real coverage, just not the pattern the brief's grep (`content?.type ===`) would find — flagged here so it isn't miscounted as a gap |
-| `edit-message` | Asserted — `:696` | None found | None found | |
+| `edit-message` | Asserted — `:696`, and in `space-delivery` | Asserted via APPLIED STATE — `dm-delivery`, the receiver's row carries the edited text | None found | |
 | `thread` | Asserted — `:697` | None found (DMs have no threads) | None found | |
 | `call-offer` | None found | None found | None found | No scenario touches any of the 9 call/WebRTC content types |
 | `call-answer` | None found | None found | None found | |
@@ -290,11 +290,22 @@ take care of themselves.
    category measured: not "untested," but "the test infrastructure to even
    attempt it doesn't exist" (`spaceBot.ts` has no role helper).
 
-2. **`remove-reaction` is asserted nowhere, on either arm.** If delivery
-   breaks, the person who removed their reaction sees their own optimistic
-   UI update succeed and has no reason to suspect anything failed; only a
-   peer who happens to notice a reaction that should be gone would ever
-   catch it, and that reads as "didn't refresh" long before it reads as "bug."
+2. **Ten authorization scenarios exist and not one of them runs in the gate.**
+   `space-manifest-scope`, `space-sync-delta-scope`, `space-sync-delta-launder`,
+   `space-sync-owner-key-forgery`, `space-message-id-derivation`,
+   `space-thread-forgery`, `space-thread-reply-wipe`,
+   `space-thread-target-mismatch`, `dm-selfdelete-forgery` and
+   `dm-reveal-forgery` each pin a rule that, if it failed open, would let one
+   member destroy or unmask another with nothing unusual visible in either
+   client. Every one of them mints permanent accounts, which is why none is
+   wired in — so the fix is the identity work, not the wiring. This is the
+   sharpest mismatch in the whole audit: the code being shipped is
+   overwhelmingly authorization, and the gate checks none of it.
+
+   *(This slot previously read "`remove-reaction` is asserted nowhere on either
+   arm". That is no longer true — `space-delivery` asserts it on the bot that
+   did not send it, and `dm-delivery` asserts it via applied state. Corrected
+   2026-08-23 rather than left to rot.)*
 
 3. **`pin` is sent but never confirmed delivered, on either arm**
    (`space-message-id-derivation.scenario.test.ts:433`), and
@@ -330,11 +341,13 @@ definition, which is exactly why they do not need to occupy one of the five
   broken render is normally a blank screen, a thrown error boundary, or an
   obviously wrong layout, all things a user hits on the very next screen
   they open.
-- **DMs are never tested past plain text.** No `dm-*.scenario.test.ts` sends
-  `embed`, `sticker`, `reaction`, `edit-message` or `remove-message`. A
-  regression here is visible the moment someone tries the feature (a
-  missing embed, a reaction that won't apply) — loud to the user, silent
-  only to the gate.
+- ~~**DMs are never tested past plain text.**~~ **Closed 2026-08-23** by
+  `dm-delivery.scenario.test.ts`, which sends `embed`, `sticker`, `reaction`,
+  `edit-message`, `remove-message` and `remove-reaction` the real way and
+  asserts the last four on APPLIED STATE at the receiver rather than on type
+  presence. It is one of the six wired live arms. Kept here, struck through,
+  because a gap that silently disappears from a list is indistinguishable from
+  one nobody re-checked.
 - **Electron packaging and iOS/Android native builds** are outside what a
   Node-based `yarn verify` can exercise at all — the loudest possible
   failure mode (the build itself fails) takes care of surfacing itself.
