@@ -3,6 +3,7 @@ import { stepsFor } from '../../../../scripts/verify/steps.mjs';
 import {
   planFromPaths,
   changedPaths,
+  branchBaseRef,
   mainCheckoutFrom,
   liveArmsFor,
   heldBackArms,
@@ -271,19 +272,115 @@ describe('changedPaths', () => {
     expect(plan.repos).toEqual(['desktop']);
   });
 
-  it('a single failing call is enough — not all three need to fail', () => {
-    // Only `ls-files` fails; the two `diff` calls "succeed" with empty output.
+  it('a single failing call is enough — not all the others need to fail', () => {
+    // Only `ls-files` fails; every other call "succeeds" with empty output.
     const partiallyFailingExecGit = (_cwd, args) =>
-      args[0] === 'ls-files' ? null : '';
+      args[0] === 'ls-files' ? null : args[0] === 'diff' ? '' : 'origin/main\n';
     const paths = changedPaths('mobile', '/fake/mobile', partiallyFailingExecGit);
+    expect(paths[0]).toContain('unreadable');
     expect(planFromPaths(paths).live).toBe(true);
   });
 
   it('returns real paths when every git call succeeds', () => {
-    const succeedingExecGit = (_cwd, args) =>
-      args[0] === 'diff' && args.includes('HEAD') ? 'src/services/X.ts\n' : '';
-    const paths = changedPaths('desktop', '/fake/desktop', succeedingExecGit);
+    const paths = changedPaths(
+      'desktop',
+      '/fake/desktop',
+      fakeGit({ worktree: 'src/services/X.ts' })
+    );
     expect(paths).toEqual(['desktop/src/services/X.ts']);
+  });
+});
+
+/**
+ * A git double covering every call `changedPaths` makes. Written as one fake
+ * rather than per-test one-liners because the branch-diff support added a
+ * second round of calls, and a fake that answers only the ones a given test
+ * cares about returns `''` for the rest — which reads as "ran fine, nothing
+ * changed" and would hide exactly the bug these tests exist to pin.
+ */
+function fakeGit({
+  worktree = '',
+  branch = '',
+  base = 'origin/main',
+  mergeBase = 'abc123',
+}: {
+  worktree?: string;
+  branch?: string;
+  base?: string | null;
+  mergeBase?: string | null;
+} = {}) {
+  return (_cwd: string, args: string[]) => {
+    if (args[0] === 'symbolic-ref') return base === null ? null : `${base}\n`;
+    if (args[0] === 'rev-parse') return base === null ? null : `${base}\n`;
+    if (args[0] === 'merge-base') return mergeBase === null ? null : `${mergeBase}\n`;
+    if (args[0] === 'ls-files') return '';
+    if (args[0] === 'diff' && args[2]?.includes('..')) return branch ? `${branch}\n` : '';
+    if (args[0] === 'diff') return worktree ? `${worktree}\n` : '';
+    return '';
+  };
+}
+
+/**
+ * The hole this closes: commit your work, run the gate on a clean tree, and it
+ * reported "no changes detected" and ran zero live arms. MEASURED on the branch
+ * that introduced these tests — 31 files changed versus main, none of them seen.
+ * The normal flow is commit, then verify, then open a PR, so the gate was
+ * silently useless at exactly the moment it was supposed to matter.
+ */
+describe('changedPaths: the branch, not just the working tree', () => {
+  it('sees a committed change with a clean working tree', () => {
+    const paths = changedPaths(
+      'desktop',
+      '/fake/desktop',
+      fakeGit({ branch: 'src/services/MessageService.ts' })
+    );
+    expect(paths).toEqual(['desktop/src/services/MessageService.ts']);
+    expect(planFromPaths(paths).live).toBe(true);
+  });
+
+  it('merges branch commits with uncommitted work, without duplicating', () => {
+    const paths = changedPaths(
+      'desktop',
+      '/fake/desktop',
+      fakeGit({ branch: 'src/services/A.ts', worktree: 'src/services/A.ts' })
+    );
+    expect(paths).toEqual(['desktop/src/services/A.ts']);
+  });
+
+  // On the base branch with a clean tree there is nothing under review, and
+  // the gate must NOT invent work to do.
+  it('reports nothing on the base branch with a clean tree', () => {
+    expect(changedPaths('desktop', '/fake/desktop', fakeGit())).toEqual([]);
+  });
+
+  it('forces the live tier when no base branch can be resolved', () => {
+    const paths = changedPaths('desktop', '/fake/desktop', fakeGit({ base: null }));
+    expect(paths).toHaveLength(1);
+    expect(paths[0]).toContain('no base branch');
+    expect(planFromPaths(paths).live).toBe(true);
+  });
+
+  it('forces the live tier when there is no merge base with it', () => {
+    const paths = changedPaths('desktop', '/fake/desktop', fakeGit({ mergeBase: null }));
+    expect(paths[0]).toContain('no merge base');
+    expect(planFromPaths(paths).live).toBe(true);
+  });
+
+  // `(unknown)` is the literal string git prints when the remote HEAD was
+  // never set. Using it as a ref name yields `origin/(unknown)` and errors
+  // that read as repo corruption.
+  it('does not treat git\'s "(unknown)" placeholder as a branch name', () => {
+    const execGit = (_cwd: string, args: string[]) =>
+      args[0] === 'symbolic-ref'
+        ? '(unknown)\n'
+        : args[0] === 'rev-parse'
+          ? 'origin/main\n'
+          : '';
+    expect(branchBaseRef('/fake/desktop', execGit)).toBe('origin/main');
+  });
+
+  it('returns null when no candidate base ref exists at all', () => {
+    expect(branchBaseRef('/fake/desktop', () => null)).toBeNull();
   });
 });
 

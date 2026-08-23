@@ -166,20 +166,59 @@ export function heldBackArms(plan, steps) {
 }
 
 /**
- * Repo-prefixed changed paths, working tree + staged, vs the merge base.
+ * The branch this work will be merged into, as a ref name.
  *
- * Deviation from the plan's verbatim source, ruled authorized on review
- * (2026-08-22): `execGit` is expected to return `null` on a failed command —
- * as opposed to `''` for "ran fine, nothing to report" — mirroring
- * `environment.mjs`'s `git()`. Collapsing the two would let a git failure
- * (corrupted repo, index lock, permission error) read as "this repo has no
- * changes", silently suppressing both its fan-out and the live-tier trigger.
- * That inverts the header comment above: an allowlist has to fail toward
- * running MORE, not less. So an unreadable repo instead contributes one
- * synthetic path that no `SAFE`/`SAFE_ALONE` pattern can match, forcing
- * `live` and naming the repo in the printed reasons exactly like any other
- * risky, unclassified change — because from routing's point of view, that is
- * what it is.
+ * Prefers the local `refs/remotes/origin/HEAD` because it is offline and
+ * instant, then falls back through the usual names. Returns `null` when none
+ * resolves, which callers must treat as "cannot tell what changed" rather than
+ * "nothing changed".
+ *
+ * `(unknown)` is checked explicitly: that literal string is what git prints
+ * when the remote HEAD was never set, and treating it as a ref name produces
+ * `origin/(unknown)` and a pile of confusing downstream errors.
+ */
+export function branchBaseRef(repoPath, execGit) {
+  const symbolic = execGit(repoPath, [
+    'symbolic-ref',
+    '--short',
+    'refs/remotes/origin/HEAD',
+  ])?.trim();
+  if (symbolic && symbolic !== '(unknown)') return symbolic;
+  for (const candidate of ['origin/main', 'origin/master', 'main', 'master']) {
+    if (execGit(repoPath, ['rev-parse', '--verify', '--quiet', candidate])) return candidate;
+  }
+  return null;
+}
+
+/**
+ * Repo-prefixed changed paths: this branch's own commits, PLUS staged and
+ * unstaged work, PLUS untracked files.
+ *
+ * The branch half was missing until 2026-08-23 and it silently voided the gate
+ * at the exact moment it matters. MEASURED on this very branch: 31 files
+ * changed versus `main`, including `src/services/`, `src/hooks/` and the
+ * harness itself, and with a clean working tree `yarn verify` reported "no
+ * changes detected — desktop fast tier as a baseline" and ran zero live arms.
+ * The normal flow is commit, then verify, then open a PR; under that flow the
+ * gate was answering a question nobody asked and returning a PASS that had
+ * tested none of the work. The function's own doc comment already claimed it
+ * compared against the merge base, so the code and its description had
+ * disagreed since it was written.
+ *
+ * On the base branch itself with a clean tree, `merge-base(HEAD, origin/main)`
+ * IS `HEAD`, so the extra diff is empty and this changes nothing — which is
+ * correct, because there is then nothing under review.
+ *
+ * Every failure mode contributes one synthetic path that no `SAFE`/
+ * `SAFE_ALONE` pattern can match, forcing `live` and naming the repo in the
+ * printed reasons exactly like any other risky, unclassified change — because
+ * from routing's point of view, that is what it is. `execGit` returning `null`
+ * on a failed command (as opposed to `''` for "ran fine, nothing to report",
+ * mirroring `environment.mjs`'s `git()`) is what makes that distinction
+ * possible: collapsing the two would let a corrupted repo, an index lock or a
+ * permission error read as "this repo has no changes", silently suppressing
+ * both its fan-out and the live-tier trigger. An allowlist has to fail toward
+ * running MORE, not less.
  */
 export function changedPaths(repoName, repoPath, execGit) {
   const reads = [
@@ -187,6 +226,17 @@ export function changedPaths(repoName, repoPath, execGit) {
     execGit(repoPath, ['diff', '--name-only', '--staged']),
     execGit(repoPath, ['ls-files', '--others', '--exclude-standard']),
   ];
+
+  const base = branchBaseRef(repoPath, execGit);
+  if (!base) {
+    return [`${repoName}/<no base branch — cannot tell what this branch changed>`];
+  }
+  const mergeBase = execGit(repoPath, ['merge-base', 'HEAD', base])?.trim();
+  if (!mergeBase) {
+    return [`${repoName}/<no merge base with ${base} — cannot tell what this branch changed>`];
+  }
+  reads.push(execGit(repoPath, ['diff', '--name-only', `${mergeBase}..HEAD`]));
+
   if (reads.some((r) => r === null)) {
     return [`${repoName}/<unreadable — git command failed>`];
   }
