@@ -1,5 +1,11 @@
-import { describe, it, expect } from 'vitest';
-import { verdictOf, renderReport, buildReceipt } from '../../../../scripts/verify/report.mjs';
+import { describe, it, expect, vi } from 'vitest';
+import {
+  verdictOf,
+  renderReport,
+  buildReceipt,
+  writeReceiptSafely,
+  clearReceipt,
+} from '../../../../scripts/verify/report.mjs';
 import { classifyKnownRed } from '../../../../scripts/verify/runner.mjs';
 import { KNOWN_RED, errorCountOf } from '../../../../scripts/verify/baseline.mjs';
 
@@ -240,5 +246,80 @@ describe('buildReceipt', () => {
     const knownRedStep = r.steps.find((s) => s.id === 'mobile:lint');
     expect(knownRedStep.status).toBe('KNOWN-RED');
     expect(knownRedStep.detail).toContain('302 errors');
+  });
+});
+
+// Both functions take an injectable `fsOps` specifically so they can be unit
+// tested without touching the real filesystem or importing index.mjs (which
+// executes its whole pipeline at import time).
+describe('writeReceiptSafely', () => {
+  const PATH = '/tmp/.verify-receipt.json';
+
+  // Would fail under an implementation that serializes differently (e.g.
+  // forgets JSON.stringify's indentation arg, or writes the raw object) or
+  // that calls rmSync on the success path by mistake.
+  it('writes the expected JSON on a successful write', () => {
+    const fsOps = { writeFileSync: vi.fn(), rmSync: vi.fn() };
+    const result = writeReceiptSafely(PATH, { verdict: 'PASS' }, fsOps);
+    expect(result.ok).toBe(true);
+    expect(fsOps.writeFileSync).toHaveBeenCalledWith(PATH, JSON.stringify({ verdict: 'PASS' }, null, 2));
+    expect(fsOps.rmSync).not.toHaveBeenCalled();
+  });
+
+  // Would fail under an implementation that only logs/reports the write
+  // failure without also removing whatever partial or stale file is on
+  // disk — the exact gap that let a previous run's receipt survive.
+  it('leaves no receipt on disk when the write throws', () => {
+    const fsOps = {
+      writeFileSync: vi.fn(() => {
+        throw new Error('disk full');
+      }),
+      rmSync: vi.fn(),
+    };
+    writeReceiptSafely(PATH, { verdict: 'PASS' }, fsOps);
+    expect(fsOps.rmSync).toHaveBeenCalledWith(PATH, { force: true });
+  });
+
+  // Would fail under an implementation that lets the write error propagate
+  // instead of catching it — which is exactly what would flip index.mjs's
+  // exit code for a reason unrelated to the actual verify verdict.
+  it('does not propagate an exception when the write throws', () => {
+    const fsOps = {
+      writeFileSync: vi.fn(() => {
+        throw new Error('disk full');
+      }),
+      rmSync: vi.fn(),
+    };
+    let result;
+    expect(() => {
+      result = writeReceiptSafely(PATH, { verdict: 'PASS' }, fsOps);
+    }).not.toThrow();
+    expect(result.ok).toBe(false);
+    expect(result.error).toBeInstanceOf(Error);
+  });
+});
+
+describe('clearReceipt', () => {
+  const PATH = '/tmp/.verify-receipt.json';
+
+  // Would fail under an implementation that no-ops instead of actually
+  // calling through to rmSync.
+  it('removes an existing receipt', () => {
+    const fsOps = { rmSync: vi.fn() };
+    clearReceipt(PATH, fsOps);
+    expect(fsOps.rmSync).toHaveBeenCalledWith(PATH, { force: true });
+  });
+
+  // Mirrors the real rmSync({ force: true }) contract (no throw when the
+  // file is already gone), but exercises clearReceipt's OWN try/catch rather
+  // than relying on that real contract — an implementation missing the
+  // wrapper would let this throw straight out to the caller.
+  it('does not throw when the underlying removal fails', () => {
+    const fsOps = {
+      rmSync: vi.fn(() => {
+        throw new Error('EPERM: operation not permitted');
+      }),
+    };
+    expect(() => clearReceipt(PATH, fsOps)).not.toThrow();
   });
 });

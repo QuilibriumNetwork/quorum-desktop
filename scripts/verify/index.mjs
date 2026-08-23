@@ -10,10 +10,10 @@
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-import { existsSync, writeFileSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { stepsFor } from './steps.mjs';
 import { runStep } from './runner.mjs';
-import { renderReport, verdictOf, buildReceipt } from './report.mjs';
+import { renderReport, verdictOf, buildReceipt, writeReceiptSafely, clearReceipt } from './report.mjs';
 import { describeEnvironment } from './environment.mjs';
 import { planFromPaths, changedPaths, mainCheckoutFrom } from './routing.mjs';
 
@@ -35,6 +35,16 @@ if (argv.includes('--show-receipt')) {
     process.exit(1);
   }
 }
+
+// Invalidate any receipt from a PREVIOUS run before this one does anything
+// else. Without this, a process that dies before reaching the write at the
+// end (Ctrl+C, an uncaught exception in a step, a CI timeout) would leave
+// that old receipt on disk looking like it describes the run that just
+// aborted — the exact "reported as done" failure the receipt exists to
+// prevent, just arriving through interruption instead of a skipped step.
+// Must run AFTER the --show-receipt block above, or `--show-receipt` would
+// delete the very receipt it is about to print.
+clearReceipt(RECEIPT);
 
 // Deviation from the plan's verbatim source, ruled authorized on review
 // (2026-08-22): returns `null` on failure instead of `''`, mirroring
@@ -140,32 +150,16 @@ console.log('\n' + renderReport({ env, plan, results }) + '\n');
 
 const verdict = verdictOf(results, plan);
 
-try {
-  writeFileSync(
-    RECEIPT,
-    JSON.stringify(
-      buildReceipt({ env, plan, results, verdict, startedAt, finishedAt: Date.now() }),
-      null,
-      2
-    )
-  );
-} catch (err) {
-  // A write failure must not leave a stale receipt looking authoritative: an
-  // untouched leftover from a PREVIOUS run would otherwise answer
-  // `--show-receipt` as if it described this one (see buildReceipt's header
-  // in report.mjs). Delete whatever is on disk so a subsequent
-  // `--show-receipt` fails loudly ("no receipt yet") instead of silently
-  // serving stale data. This deliberately does not change THIS run's exit
-  // code: the report printed above already states the true verdict, and the
-  // receipt is a supplementary record — letting an unrelated I/O error (full
-  // disk, permissions) flip the exit code would let it mask, or fake, a real
-  // test result.
-  console.error(`[verify] could not write receipt: ${err.message}`);
-  try {
-    rmSync(RECEIPT, { force: true });
-  } catch {
-    // Best effort — the error above already makes the failure visible.
-  }
+const receiptResult = writeReceiptSafely(
+  RECEIPT,
+  buildReceipt({ env, plan, results, verdict, startedAt, finishedAt: Date.now() })
+);
+if (!receiptResult.ok) {
+  // writeReceiptSafely already cleared any stale file; this deliberately
+  // does not change THIS run's exit code — see the function's header in
+  // report.mjs for why an I/O error here must not masquerade as a test
+  // failure (or a test failure be masked by one).
+  console.error(`[verify] could not write receipt: ${receiptResult.error.message}`);
 }
 
 // --strict is for when you want the full net or nothing: a reduced run stops

@@ -7,6 +7,7 @@
  * PASS — a gate that launders a flake into a pass is worse than no gate, because
  * it manufactures confidence rather than merely lacking it.
  */
+import { writeFileSync, rmSync } from 'node:fs';
 
 /**
  * Worst-first. The first status present in the results wins.
@@ -104,6 +105,53 @@ export function buildReceipt({ env, plan, results, verdict, startedAt, finishedA
       ...(skipReason ? { skipReason } : {}),
     })),
   };
+}
+
+// Real node:fs by default; tests inject fakes instead, since `index.mjs`
+// (the only other caller) executes its whole pipeline at import time and so
+// cannot itself be imported by a test without triggering a multi-minute run.
+// Extracting the fs-touching logic here — as a pair of small, pure-shaped
+// functions — is what makes it unit-testable at all.
+const REAL_FS = { writeFileSync, rmSync };
+
+/**
+ * Deletes whatever receipt is currently on disk. `{ force: true }` makes a
+ * missing file a no-op; the try/catch is a second layer under that, for the
+ * injected-fake case (and any real failure mode odder than ENOENT) — this
+ * must never throw, because both of its callers use it to make failure safe
+ * and neither should have to handle a further failure from the cleanup
+ * itself.
+ */
+export function clearReceipt(path, fsOps = REAL_FS) {
+  try {
+    fsOps.rmSync(path, { force: true });
+  } catch {
+    // Best effort. If even deletion fails there is nothing further this
+    // function can do; the caller already treats "no confirmed receipt" as
+    // the safe state regardless of why it's missing.
+  }
+}
+
+/**
+ * Writes the receipt, and never lets the attempt escape as an exception —
+ * the receipt is a supplementary record, and letting an unrelated I/O error
+ * (full disk, permissions) flip the run's exit code would let it mask, or
+ * fake, the real test verdict.
+ *
+ * On failure, also clears whatever is on disk. Without that, a write failure
+ * would leave a STALE receipt from a previous run looking authoritative for
+ * a run that didn't actually finish — the same "reported as done" failure
+ * the receipt exists to prevent, just arriving through a failed write
+ * instead of a skipped step.
+ */
+export function writeReceiptSafely(path, receipt, fsOps = REAL_FS) {
+  try {
+    fsOps.writeFileSync(path, JSON.stringify(receipt, null, 2));
+    return { ok: true };
+  } catch (error) {
+    clearReceipt(path, fsOps);
+    return { ok: false, error };
+  }
 }
 
 export function renderEnvironment(env) {
