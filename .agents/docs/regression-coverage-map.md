@@ -84,6 +84,123 @@ wiring changes), update this document and `NOT_COVERED` in
 because it makes the gate's silence look deliberate when it is really just
 unmeasured.
 
+## Scenario inventory — all 42, classified
+
+The tables above answer "what is covered". This one answers a different
+question the gate review asked: **of the 42 scenario files, which are
+regression arms that belong in `yarn verify`, which are one-off instruments,
+and which are dead?**
+
+Three buckets, plus the cost that decides whether an arm can be wired in at
+all. Classification is from each file's own header (READ 2026-08-23) and its
+identity handling (READ: `createBot` / `createSpaceBot` call sites).
+
+**Nothing is dead.** That is a finding, not an omission — every one of the 42
+still answers a question, and the reason 36 of them do not run automatically is
+cost and identity, not rot.
+
+### The cost column, and why it gates everything else
+
+A scenario whose bot names carry a timestamp mints a **permanent** relay
+account on every run. There is no endpoint that deletes one. So "wire this arm
+in" and "this arm mints" are the same decision, and the identity fix
+(fixed names + `drainInbox()` before `start()`, see the harness README) is a
+prerequisite for wiring anything in, not a follow-up.
+
+- **reuses** — fixed bot names, nothing new is created
+- **mints N/run** — a timestamped name; N permanent accounts per run
+- **+space** — creates a Space, which is also permanent and undeletable
+
+> ⚠️ **`cross-dm` is in the gate today and still mints.** READ
+> `dm-cross.scenario.test.ts:64`: the desktop bot is named
+> `cross-desktop-${ROLE}-${stamp}`, so every run registers one more permanent
+> account. It has been invisible because both cross-client arms currently SKIP
+> from a linked worktree (see the wiring note above), so on this machine it has
+> not actually been minting — but on a normal checkout it mints on every code
+> change that reaches the live tier. Mobile's half is already correct
+> (`quorum-mobile/dev/harness/dm-two-bot.scenario.ts:74` uses the fixed
+> `dm-bot-${ROLE}`, and `identity.ts` persists), so the fix is desktop-side and
+> small. It cannot be verified from a worktree until the cross-script path bug
+> is fixed.
+
+### Bucket 1 — regression arms (27)
+
+Asserts behaviour that must keep working. "In gate" marks the six live arms.
+
+| Scenario | What it holds down | In gate | Cost |
+|---|---|---|---|
+| `dm-basic` | DM text round-trips both ways | ✅ | reuses |
+| `dm-delivery` | every DM content type reaches the receiver's store | ✅ | reuses |
+| `space-basic` | a joiner gets both the post and the roster row | ✅ | reuses, **+space** |
+| `space-delivery` | every space content type survives the receive path | ✅ | reuses |
+| `cross-dm` (file: `dm-cross`) | mobile↔desktop DM delivery | ✅ | **mints 1/run** |
+| `config-cross` | a desktop-written config decrypts on mobile | ✅ | reuses |
+| `config-from-mobile` | the reverse direction | via `harness:config-cross` | reuses |
+| `space-kick` | a kicked member stays out, and a backup cannot re-admit them | — | reuses, **+space** |
+| `dm-selfdelete-forgery` | a stranger cannot delete your conversations | — | reuses |
+| `dm-selfdelete-control` | your own second device still can (the other half) | — | **mints 3/run** |
+| `dm-reveal` | the sender is revealed, the receiver is not until they engage | — | reuses |
+| `dm-reveal-forgery` | a crafted message cannot forge consent and unmask you | — | reuses |
+| `dm-auto-reveal` | consent survives a peer's reinstall, and fires exactly once | — | reuses |
+| `dm-reset-recover` | a conversation recovers after one side's session is wiped | — | reuses |
+| `dm-multidevice` | self-sync copies and a peer's second device both arrive | — | reuses |
+| `dm-itp-wipe` | what a DM account actually loses to storage eviction | — | reuses |
+| `space-wipe-restore` | login restores Spaces/profile/keys, and never DMs | — | **mints 2/run, +space** |
+| `space-manifest-scope` | a manifest may only write the space that delivered it | — | **mints 2/run, +space** |
+| `space-message-id-derivation` | a message may only be stored under the id its content derives | — | **mints 2/run, +space** |
+| `space-sync-delta-scope` | a delta may only delete its own space's messages | — | **mints 2/run, +space** |
+| `space-sync-delta-launder` | a delta cannot launder a row to bypass that scope check | — | **mints 2/run, +space** |
+| `space-sync-owner-key-forgery` | a sync frame verifies only against an already-bound key | — | **mints 2/run, +space** |
+| `space-thread-forgery` | thread removal is authorized by crypto, not by plaintext | — | **mints 2/run, +space** |
+| `space-thread-reply-wipe` | a thread creator cannot delete other people's replies | — | **mints 2/run, +space** |
+| `space-thread-target-mismatch` | the checked id and the deleted id must be the same id | — | **mints 2/run, +space** |
+| `space-typing` | typing frames are acked, not redelivered forever | — | **mints 2/run, +space** |
+| `space-create` | a created space publishes a manifest that reads back | — | **mints 1/run, +space** |
+
+Ten of these twenty-seven are authorization arms (`*-forgery`,
+`*-scope`, `*-launder`, `*-mismatch`, `*-wipe`, `selfdelete-*`). **None of them
+runs in the gate**, and every one of them mints. That is the sharpest mismatch
+the audit found: the work actually being shipped is almost entirely
+authorization, and the gate checks none of it.
+
+### Bucket 2 — instruments (11)
+
+Built to answer one investigation. Keep them, do not wire them in: they measure
+rates and reproduce conditions rather than asserting an invariant, so a red one
+means "the number moved", which is not a regression signal. Most also need
+volume, which is what makes them expensive.
+
+| Scenario | The question it was built to answer | Cost |
+|---|---|---|
+| `dm-loss` | desktop↔desktop transport loss, per direction | mints 2/run |
+| `dm-volume` | does volume alone age a DM session | reuses |
+| `dm-reorder` | can the ratchet be poisoned deliberately | mints 2/run |
+| `dm-stale-bucket` | does the stale-bucket retry ever break a good frame | mints 2/run |
+| `dm-session-churn` | session replacement while frames are in flight | mints 2/run |
+| `space-backlog` | does a reconnect backlog starve the roster handshake | mints 2/run, +space |
+| `space-payload` | is the member delta lost when it is the last payload (refuted) | mints 2/run, +space |
+| `space-rate` | how OFTEN a joiner gets the roster, at scale | mints 2/run, +space |
+| `replay-captured` | does the shipped helper handle real captured production state | needs a captured corpus |
+| `lock-probe` | does the lock probe measure what it claims | offline |
+| `ping` | is the stack real at all — register, connect, subscribe | reuses |
+
+### Bucket 3 — offline sanity (3), and one that needs a human (1)
+
+| Scenario | What it checks | Cost |
+|---|---|---|
+| `smoke` | the crypto/identity pipeline loads and runs headlessly | **offline, no relay** |
+| `integration-check` | MessageDB opens; the MessageService import graph loads | **offline, no relay** |
+| `xpdump-format` | harness `[XPDUMP]` output still parses with the dr-ablate reader | **offline, no relay** |
+| `dm-receive` | a real DM sent by hand from a browser decrypts headlessly | needs a person at a browser |
+
+The three offline ones are the cheapest coverage in the repo and they run
+**nowhere**: `vitest.config.ts` excludes `src/dev/tests/harness/` (its setup
+mocks WebSocket and crypto, which the harness needs real), and the fast tier
+only runs `vitest.config.ts`. They cost no relay traffic and mint nothing, and
+`integration-check` in particular fails loudly if the harness's own load-bearing
+seams break — which is exactly the failure that currently shows up as four live
+arms erroring out three minutes into a run.
+
 ## Content types
 
 `@quilibrium/quorum-shared`'s `src/types/message.ts` defines **27** content

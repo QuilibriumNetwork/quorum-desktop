@@ -191,18 +191,38 @@ verdict block **verbatim**.
 ### What it costs, so you can predict before you run it
 
 The gate routes itself from the diff (`scripts/verify/routing.mjs`), so the
-cost depends on what changed, not on asking:
+cost depends on what changed. **`yarn verify --explain` prints the plan and
+the arms it would run, in milliseconds, without running any of them** — ask it
+rather than guessing from the list below:
 
-- **Docs, styles, images, locales, or a components-only change**: the fast
-  tier only, about **3 minutes** (desktop's fast tier: typecheck, lint, unit
-  tests, build; measured 2026-08-23). The live tier does not run. Changing
-  the colour of a button falls here.
+```
+  ROUTED     mobile
+  TIER       fast + live
+  LIVE ARMS  cross-dm, config-cross
+             (only quorum-mobile changed — running the cross-client arms; the
+              four same-client arms load no mobile code and cannot observe it)
+```
+
+- **Docs, styles, images, translation catalogues, or a components-only
+  change**: the fast tier only, about **3 minutes** (desktop's fast tier:
+  typecheck, lint, unit tests, build; measured 2026-08-23). The live tier does
+  not run. Changing the colour of a button falls here, as does editing
+  `src/i18n/<locale>/messages.po` — but not `src/i18n/i18n.ts`, which is code.
+- **A quorum-mobile-only change**: the fast tier plus **only the two
+  cross-client arms**. The other four live arms are desktop vitest scenarios
+  that never load mobile code, so they cannot observe the change; running them
+  would be six minutes of real-relay traffic that could not have gone red.
 - **Services, sync, storage, crypto, or any path nobody has classified**: the
   fast tier plus the live tier, about **6.5 minutes measured** (longer once
   the two cross-client arms are runnable; they are currently skipped from a
   linked worktree checkout, tracked in quorum-desktop's
   `.agents/issues/.open/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md`).
   Real bots send real messages over a real relay.
+- **A change under `src/dev/tests/harness/`**: the fast tier plus the full live
+  tier, deliberately. The harness IS the live tier's measuring equipment, so a
+  change to it is exactly the change a live run has to check. Every other
+  directory under `src/dev/tests/` stays on the fast tier, which already runs
+  those tests.
 - `yarn verify --fast` skips the live tier on request, for a quick check
   mid-work; it is not a substitute for the full run before reporting done.
 - `space-delivery` is retried once if it fails, because it is load-sensitive
