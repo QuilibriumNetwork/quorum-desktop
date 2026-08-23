@@ -169,7 +169,7 @@ Asserts behaviour that must keep working. "In gate" marks the six live arms.
 | `config-from-mobile` | the reverse direction | via `harness:config-cross` | reuses |
 | `space-kick` | a kicked member stays out, and a backup cannot re-admit them | — | reuses, **+space** |
 | `dm-selfdelete-forgery` | a stranger cannot delete your conversations | — | reuses |
-| `dm-selfdelete-control` | your own second device still can (the other half) | — | **mints 3/run** |
+| `dm-selfdelete-control` | your own second device still can (the other half) | — | **mints 2/run** (3 bots, but two share one throwaway account key — `:34-45`) |
 | `dm-reveal` | the sender is revealed, the receiver is not until they engage | — | reuses |
 | `dm-reveal-forgery` | a crafted message cannot forge consent and unmask you | — | reuses |
 | `dm-auto-reveal` | consent survives a peer's reinstall, and fires exactly once | — | reuses |

@@ -82,11 +82,9 @@ describe('planFromPaths: paths that exist, classified', () => {
     expect(planFromPaths(['desktop/src/i18n/locales.ts']).live).toBe(true);
   });
 
-  it("clears mobile's flat layout: components, assets, harness, tests, native", () => {
+  it("clears mobile's assets, tests and native build config", () => {
     for (const p of [
-      'mobile/components/Chat/MessageList.tsx',
       'mobile/assets/icons/IconSend.jsx',
-      'mobile/dev/harness/dm.scenario.test.ts',
       'mobile/__tests__/migrated/foo.test.ts',
       'mobile/android/app/build.gradle',
       'mobile/ios/Quorum/Info.plist',
@@ -95,8 +93,43 @@ describe('planFromPaths: paths that exist, classified', () => {
     }
   });
 
+  // Deliberately NOT cleared, and this test asserted the opposite until
+  // adversarial review 2026-08-23. Mobile components import services directly
+  // and widely — unlike desktop's, where MEASURED it is 7 files out of 196 —
+  // so the capability argument that clears a desktop component does not hold
+  // there. Mobile's harness is the instrument the two cross-client arms
+  // actually run, exactly like desktop's.
+  it("does not clear mobile's components or its harness", () => {
+    expect(planFromPaths(['mobile/components/Chat/MessageList.tsx']).live).toBe(true);
+    expect(planFromPaths(['mobile/dev/harness/dm.scenario.test.ts']).live).toBe(true);
+  });
+
   it("clears shared's primitives, the same category as desktop components", () => {
     expect(planFromPaths(['shared/src/primitives/Button/Button.tsx']).live).toBe(false);
+  });
+
+  // The bug this whole carve-out exists for: WebsocketProvider owns the
+  // literal `new WebSocket(...)` and was being cleared from the live tier
+  // because it happens to live under a directory called `components/`.
+  it('runs live for the components that own the transport and the services', () => {
+    for (const p of [
+      'desktop/src/components/context/WebsocketProvider.tsx',
+      'desktop/src/components/context/MessageDB.tsx',
+      'desktop/src/components/modals/UserSettingsModal/Security.tsx',
+      'desktop/src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx',
+    ]) {
+      expect(planFromPaths([p]).live, p).toBe(true);
+    }
+  });
+
+  // The carve-out must stay narrow enough to be worth having.
+  it('still clears ordinary presentational components', () => {
+    expect(planFromPaths(['desktop/src/components/modals/BlockUserModal.tsx']).live).toBe(false);
+    expect(planFromPaths(['desktop/src/components/Button.tsx']).live).toBe(false);
+  });
+
+  it('excludes the harness directory from the safe list', () => {
+    expect(planFromPaths(['desktop/src/dev/tests/harness/bot.ts']).live).toBe(true);
   });
 
   it('clears agent and editor config', () => {
@@ -369,14 +402,21 @@ describe('changedPaths: the branch, not just the working tree', () => {
   // `(unknown)` is the literal string git prints when the remote HEAD was
   // never set. Using it as a ref name yields `origin/(unknown)` and errors
   // that read as repo corruption.
+  // `--short` strips only `refs/remotes/`, NOT the remote name, so the shape
+  // real git produces is `origin/(unknown)`. An earlier version of both the
+  // guard and this test used the bare `(unknown)`, which real git never
+  // returns — so the test passed while exercising a case that cannot occur.
+  // Adversarial review 2026-08-23.
   it('does not treat git\'s "(unknown)" placeholder as a branch name', () => {
-    const execGit = (_cwd: string, args: string[]) =>
-      args[0] === 'symbolic-ref'
-        ? '(unknown)\n'
-        : args[0] === 'rev-parse'
-          ? 'origin/main\n'
-          : '';
-    expect(branchBaseRef('/fake/desktop', execGit)).toBe('origin/main');
+    for (const placeholder of ['origin/(unknown)\n', '(unknown)\n']) {
+      const execGit = (_cwd: string, args: string[]) =>
+        args[0] === 'symbolic-ref'
+          ? placeholder
+          : args[0] === 'rev-parse'
+            ? 'origin/main\n'
+            : '';
+      expect(branchBaseRef('/fake/desktop', execGit), placeholder).toBe('origin/main');
+    }
   });
 
   it('returns null when no candidate base ref exists at all', () => {

@@ -52,20 +52,47 @@ const SAFE = [
  * cannot observe any of it.
  */
 const SAFE_ALONE = [
-  // Desktop + shared. `src/primitives/` is shared's home for the same UI
-  // primitives desktop re-exports, so it is the same category as components.
-  /^[^/]+\/src\/components\//,
+  // Desktop + shared components, EXCEPT the subtrees that reach past the view
+  // layer. "A component cannot reach the wire" is a claim about capability,
+  // and a directory name is not capability — this pattern used to clear
+  // `src/components/context/WebsocketProvider.tsx`, which owns the literal
+  // `new WebSocket(...)` (`:167`), so a change to the transport itself skipped
+  // every live arm. Found by adversarial review 2026-08-23; the comment above
+  // asserting components are safe was the justification for the bug.
+  //
+  // MEASURED: 7 of 196 files under `src/components/` import from `services/`
+  // or `api/` — 4 in `context/`, 3 in those two modal subtrees. So the
+  // category is right and its boundary was wrong, which is why this is a
+  // carve-out rather than a deletion.
+  //
+  // The list is kept honest by `componentsRoutingScope.contract.test.ts`,
+  // which fails the fast tier if any OTHER file under `src/components/` starts
+  // importing a service. Without that, this is a hole that reopens silently
+  // the first time someone adds an import.
+  /^[^/]+\/src\/components\/(?!context(?:\/|$)|modals\/UserSettingsModal(?:\/|$)|modals\/SpaceSettingsModal(?:\/|$))/,
+  // `src/primitives/` is shared's home for the same UI primitives desktop
+  // re-exports. MEASURED: nothing under it imports a service.
   /^[^/]+\/src\/primitives\//,
   // Everything under `src/dev/tests/` EXCEPT the harness. The harness is the
   // live tier's own instrument — `spaceState.ts`, the scenario files, the bot
   // helpers — so a change there is precisely the change that needs a live run
   // to mean anything. Excluding it from the safe list is not conservatism, it
   // is the only way the gate can check its own measuring equipment.
-  /^[^/]+\/src\/dev\/tests\/(?!harness\/)/,
-  // quorum-mobile's flat layout.
-  /^[^/]+\/components\//,
+  //
+  // `(?:\/|$)` rather than a bare `harness\/`: the bare form only rejects the
+  // literal 8 characters, so a sibling named `harness-legacy/` or
+  // `harnessing/` would slip through and be treated as ordinary test code.
+  /^[^/]+\/src\/dev\/tests\/(?!harness(?:\/|$))/,
+  // quorum-mobile's flat layout. `components/` is deliberately ABSENT:
+  // MEASURED, mobile components import services directly and widely (unlike
+  // desktop's, where it is 7 files), so the same capability argument that
+  // carves out desktop's `context/` disqualifies the whole mobile tree. A
+  // mobile-only change already runs just the two cross-client arms, so the
+  // cost of being careful here is small.
+  //
+  // `dev/harness/` is absent for the same reason desktop's is: it is the
+  // instrument the two cross-client arms actually run.
   /^[^/]+\/assets\//,
-  /^[^/]+\/dev\/harness\//,
   /^[^/]+\/__tests__\//,
   // Native build config. MEASURED: `android/` and `ios/` hold no `.js`/`.ts`
   // at all (png, webp, xml, json, swift, plist, gradle, kt), so they cannot
@@ -173,9 +200,14 @@ export function heldBackArms(plan, steps) {
  * resolves, which callers must treat as "cannot tell what changed" rather than
  * "nothing changed".
  *
- * `(unknown)` is checked explicitly: that literal string is what git prints
- * when the remote HEAD was never set, and treating it as a ref name produces
- * `origin/(unknown)` and a pile of confusing downstream errors.
+ * The `(unknown)` placeholder is rejected explicitly. `--short` strips only the
+ * `refs/remotes/` prefix, NOT the remote name, so what actually comes back when
+ * the remote HEAD was never properly set is `origin/(unknown)` — checking for a
+ * bare `(unknown)` (as this did until adversarial review caught it on
+ * 2026-08-23) is a comparison real git never satisfies. Both forms are handled
+ * now. The consequence of missing it was mild rather than dangerous — a bogus
+ * ref makes `merge-base` fail, which forces the live tier — but the guard read
+ * as tested when it was not.
  */
 export function branchBaseRef(repoPath, execGit) {
   const symbolic = execGit(repoPath, [
@@ -183,7 +215,8 @@ export function branchBaseRef(repoPath, execGit) {
     '--short',
     'refs/remotes/origin/HEAD',
   ])?.trim();
-  if (symbolic && symbolic !== '(unknown)') return symbolic;
+  const placeholder = symbolic === '(unknown)' || symbolic?.endsWith('/(unknown)');
+  if (symbolic && !placeholder) return symbolic;
   for (const candidate of ['origin/main', 'origin/master', 'main', 'master']) {
     if (execGit(repoPath, ['rev-parse', '--verify', '--quiet', candidate])) return candidate;
   }
