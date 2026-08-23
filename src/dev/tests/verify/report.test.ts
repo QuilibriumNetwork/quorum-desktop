@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { verdictOf, renderReport } from '../../../../scripts/verify/report.mjs';
+import { verdictOf, renderReport, buildReceipt } from '../../../../scripts/verify/report.mjs';
 import { classifyKnownRed } from '../../../../scripts/verify/runner.mjs';
 import { KNOWN_RED, errorCountOf } from '../../../../scripts/verify/baseline.mjs';
 
@@ -183,5 +183,62 @@ describe('classifyKnownRed', () => {
   // as either a quiet PASS or a KNOWN-RED — a flake is not the known failure.
   it('never launders a FLAKY into KNOWN-RED or PASS', () => {
     expect(classifyKnownRed('mobile:lint', 'FLAKY', 'irrelevant').status).toBe('FLAKY');
+  });
+});
+
+describe('buildReceipt', () => {
+  const args = {
+    env: { deps: [{ name: 'desktop', summary: 'abc1234  clean', warnings: [] }] },
+    plan: { repos: ['desktop'], live: false, reasons: [], skipped: [] },
+    results: [
+      { id: 'desktop:unit', label: 'unit', repo: 'desktop', tier: 'fast', status: 'PASS', ms: 1000, detail: '1680 passed' },
+    ],
+    verdict: 'PASS',
+    startedAt: 1000,
+    finishedAt: 4000,
+  };
+
+  it('records the verdict, the steps and the duration', () => {
+    const r = buildReceipt(args);
+    expect(r.verdict).toBe('PASS');
+    expect(r.durationMs).toBe(3000);
+    expect(r.steps).toHaveLength(1);
+    expect(r.steps[0].id).toBe('desktop:unit');
+  });
+
+  // The point of the receipt: "was this run against THIS code?" must be a
+  // checkable fact rather than a claim.
+  it('records the environment summaries so the commit is recoverable', () => {
+    expect(buildReceipt(args).environment[0].summary).toContain('abc1234');
+  });
+
+  it('records the plan, so a partial run cannot be replayed as a full one', () => {
+    const partial = { ...args, plan: { ...args.plan, skipped: ['mobile absent'] } };
+    expect(buildReceipt(partial).plan.skipped).toEqual(['mobile absent']);
+  });
+
+  // A KNOWN-RED step must be recorded faithfully, not filtered or normalized
+  // to FAIL/PASS — a receipt that hid a known-red row would defeat the point
+  // of the receipt (see the module's header comment in report.mjs).
+  it('records a KNOWN-RED step status verbatim, not filtered or normalized', () => {
+    const withKnownRed = {
+      ...args,
+      results: [
+        ...args.results,
+        {
+          id: 'mobile:lint',
+          label: 'lint',
+          repo: 'mobile',
+          tier: 'fast',
+          status: 'KNOWN-RED',
+          ms: 500,
+          detail: '302 errors (known-red, baseline 302) — issue-123',
+        },
+      ],
+    };
+    const r = buildReceipt(withKnownRed);
+    const knownRedStep = r.steps.find((s) => s.id === 'mobile:lint');
+    expect(knownRedStep.status).toBe('KNOWN-RED');
+    expect(knownRedStep.detail).toContain('302 errors');
   });
 });

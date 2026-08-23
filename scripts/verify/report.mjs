@@ -81,6 +81,31 @@ const VERDICT_NOTE = {
   FAIL: ' — see the failing step above',
 };
 
+/**
+ * A machine-readable record of what ran, against which code.
+ *
+ * This is not tamper-proof and is not meant to be: the printed block could be
+ * fabricated by anything that can print. What it defends against is the
+ * realistic failure — a run that was skipped and reported as done — by making
+ * "was this run against the current HEAD?" a question with a checkable answer.
+ */
+export function buildReceipt({ env, plan, results, verdict, startedAt, finishedAt }) {
+  return {
+    verdict,
+    startedAt: new Date(startedAt).toISOString(),
+    durationMs: finishedAt - startedAt,
+    environment: env?.deps ?? [],
+    plan: { repos: plan.repos, live: plan.live, skipped: plan.skipped ?? [] },
+    steps: results.map(({ id, status, ms, detail, skipReason }) => ({
+      id,
+      status,
+      ms,
+      detail,
+      ...(skipReason ? { skipReason } : {}),
+    })),
+  };
+}
+
 export function renderEnvironment(env) {
   const lines = ['  ENVIRONMENT'];
   for (const d of env.deps) {
