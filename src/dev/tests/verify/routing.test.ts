@@ -3,6 +3,8 @@ import {
   planFromPaths,
   changedPaths,
   mainCheckoutFrom,
+  liveArmsFor,
+  needsMobile,
 } from '../../../../scripts/verify/routing.mjs';
 
 describe('planFromPaths', () => {
@@ -59,6 +61,153 @@ describe('planFromPaths', () => {
     const plan = planFromPaths([]);
     expect(plan.repos).toEqual([]);
     expect(plan.live).toBe(false);
+  });
+});
+
+// Every path below was taken from a real `git ls-files` in one of the three
+// repos on 2026-08-23, not invented — the bug these guard against was a safe
+// pattern (`src/locales/`) that named a directory no repo has.
+describe('planFromPaths: paths that exist, classified', () => {
+  it('clears a translation catalogue, which used to force a live run', () => {
+    expect(planFromPaths(['desktop/src/i18n/it/messages.po']).live).toBe(false);
+    expect(planFromPaths(['desktop/src/i18n/en/messages.ts']).live).toBe(false);
+  });
+
+  // The locale folder is safe; the code that loads locales is not.
+  it('still runs live for the i18n loader at that directory root', () => {
+    expect(planFromPaths(['desktop/src/i18n/i18n.ts']).live).toBe(true);
+    expect(planFromPaths(['desktop/src/i18n/locales.ts']).live).toBe(true);
+  });
+
+  it("clears mobile's flat layout: components, assets, harness, tests, native", () => {
+    for (const p of [
+      'mobile/components/Chat/MessageList.tsx',
+      'mobile/assets/icons/IconSend.jsx',
+      'mobile/dev/harness/dm.scenario.test.ts',
+      'mobile/__tests__/migrated/foo.test.ts',
+      'mobile/android/app/build.gradle',
+      'mobile/ios/Quorum/Info.plist',
+    ]) {
+      expect(planFromPaths([p]).live, p).toBe(false);
+    }
+  });
+
+  it("clears shared's primitives, the same category as desktop components", () => {
+    expect(planFromPaths(['shared/src/primitives/Button/Button.tsx']).live).toBe(false);
+  });
+
+  it('clears agent and editor config', () => {
+    expect(planFromPaths(['desktop/.claude/skills/x/run.cjs']).live).toBe(false);
+  });
+
+  // The gate must be able to check its own measuring equipment.
+  it('runs live for a change to the harness itself', () => {
+    expect(planFromPaths(['desktop/src/dev/tests/harness/spaceState.ts']).live).toBe(true);
+    expect(
+      planFromPaths(['desktop/src/dev/tests/harness/space-delivery.scenario.test.ts']).live
+    ).toBe(true);
+  });
+
+  it('still clears unit and component tests, which the fast tier already runs', () => {
+    expect(planFromPaths(['desktop/src/dev/tests/components/Button.test.tsx']).live).toBe(false);
+    expect(planFromPaths(['desktop/src/dev/tests/verify/routing.test.ts']).live).toBe(false);
+  });
+});
+
+describe('planFromPaths: liveScope', () => {
+  it('narrows to the cross-client arms when only mobile changed', () => {
+    const plan = planFromPaths(['mobile/services/space/SpaceService.ts']);
+    expect(plan.live).toBe(true);
+    expect(plan.liveScope).toBe('cross-only');
+    expect(plan.reasons.join(' ')).toContain('cannot observe');
+  });
+
+  it('runs every arm when desktop changed', () => {
+    expect(planFromPaths(['desktop/src/services/MessageService.ts']).liveScope).toBe('all');
+  });
+
+  // A shared change reaches desktop through the symlinked build, so it is never
+  // mobile-only however many mobile files ride along with it.
+  it('runs every arm when shared changed alongside mobile', () => {
+    const plan = planFromPaths([
+      'shared/src/sync/service.ts',
+      'mobile/services/space/SpaceService.ts',
+    ]);
+    expect(plan.liveScope).toBe('all');
+  });
+
+  it('runs every arm when desktop and mobile changed together', () => {
+    const plan = planFromPaths([
+      'desktop/src/services/MessageService.ts',
+      'mobile/components/Chat/MessageList.tsx',
+    ]);
+    expect(plan.liveScope).toBe('all');
+  });
+
+  // A mobile-safe path is not risky at all, so it cannot be what narrows the
+  // scope — the narrowing must come from a mobile path that genuinely triggers
+  // the live tier, alongside a desktop path that does not.
+  it('is mobile-only even when a safe desktop path is in the same diff', () => {
+    const plan = planFromPaths([
+      'desktop/README.md',
+      'mobile/services/space/SpaceService.ts',
+    ]);
+    expect(plan.liveScope).toBe('cross-only');
+  });
+
+  it('leaves scope at all when nothing forces the live tier', () => {
+    expect(planFromPaths(['desktop/README.md']).liveScope).toBe('all');
+  });
+});
+
+// The six live arms as `steps.mjs` builds them. Ids, not labels, because
+// `needsMobile` reads the id.
+const LIVE_STEPS = [
+  'dm-basic',
+  'dm-delivery',
+  'space-basic',
+  'space-delivery',
+  'cross-dm',
+  'config-cross',
+].map((label) => ({ id: `desktop:${label}`, label }));
+
+describe('liveArmsFor', () => {
+  const labels = (plan: unknown) =>
+    liveArmsFor(plan, LIVE_STEPS).map((s: { label: string }) => s.label);
+
+  it('runs nothing when the live tier is off', () => {
+    expect(labels(planFromPaths(['desktop/README.md']))).toEqual([]);
+  });
+
+  it('runs every arm for a desktop change', () => {
+    expect(labels(planFromPaths(['desktop/src/services/MessageService.ts']))).toEqual([
+      'dm-basic',
+      'dm-delivery',
+      'space-basic',
+      'space-delivery',
+      'cross-dm',
+      'config-cross',
+    ]);
+  });
+
+  it('runs only the two cross-client arms for a mobile-only change', () => {
+    expect(labels(planFromPaths(['mobile/services/space/SpaceService.ts']))).toEqual([
+      'cross-dm',
+      'config-cross',
+    ]);
+  });
+
+  // Defensive: a plan built before liveScope existed, or hand-made by a test,
+  // must fail toward running MORE — the same direction as the allowlist.
+  it('treats a missing liveScope as every arm', () => {
+    expect(labels({ live: true })).toHaveLength(6);
+  });
+
+  it('identifies exactly the two arms that spawn quorum-mobile', () => {
+    expect(LIVE_STEPS.filter(needsMobile).map((s) => s.label)).toEqual([
+      'cross-dm',
+      'config-cross',
+    ]);
   });
 });
 

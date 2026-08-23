@@ -43,7 +43,9 @@ export function renderReport({ env, plan, results }) {
   lines.push('── VERIFY ──────────────────────────────────────────────');
   if (env) lines.push(...renderEnvironment(env));
   lines.push(`  ROUTED    ${plan.repos.join(' + ') || 'nothing'}`);
-  lines.push(`  TIER      ${plan.live ? 'fast + live' : 'fast'}`);
+  const liveLabel =
+    plan.liveScope === 'cross-only' ? 'fast + live (cross-client arms only)' : 'fast + live';
+  lines.push(`  TIER      ${plan.live ? liveLabel : 'fast'}`);
   for (const reason of plan.reasons) lines.push(`            ${reason}`);
   lines.push('');
   for (const r of results) {
@@ -99,7 +101,15 @@ export function buildReceipt({ env, plan, results, verdict, startedAt, finishedA
     startedAt: new Date(startedAt).toISOString(),
     durationMs: finishedAt - startedAt,
     environment: env?.deps ?? [],
-    plan: { repos: plan.repos, live: plan.live, skipped: plan.skipped ?? [] },
+    plan: {
+      repos: plan.repos,
+      live: plan.live,
+      // Recorded because a `cross-only` run omits four arms without emitting a
+      // SKIP row for them, so the step list alone cannot tell a reader whether
+      // an arm was absent by plan or by accident.
+      liveScope: plan.liveScope ?? 'all',
+      skipped: plan.skipped ?? [],
+    },
     steps: results.map(({ id, status, ms, detail, skipReason }) => ({
       id,
       status,

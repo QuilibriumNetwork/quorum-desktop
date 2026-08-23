@@ -16,7 +16,13 @@ import { stepsFor } from './steps.mjs';
 import { runStep, skipped } from './runner.mjs';
 import { renderReport, verdictOf, buildReceipt, writeReceiptSafely, clearReceipt } from './report.mjs';
 import { describeEnvironment } from './environment.mjs';
-import { planFromPaths, changedPaths, mainCheckoutFrom } from './routing.mjs';
+import {
+  planFromPaths,
+  changedPaths,
+  mainCheckoutFrom,
+  liveArmsFor,
+  needsMobile,
+} from './routing.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DESKTOP = resolve(HERE, '../..');
@@ -107,6 +113,9 @@ const plan = planFromPaths(allPaths);
 if (argv.includes('--all')) {
   plan.repos = ['desktop', 'shared', 'mobile'];
   plan.live = true;
+  // Explicit, not inherited: `--all` means every arm, so it must override a
+  // `cross-only` scope the diff would otherwise have inferred.
+  plan.liveScope = 'all';
   plan.reasons = ['(--all: every repo, every tier)'];
 }
 if (argv.includes('--fast')) {
@@ -116,6 +125,29 @@ if (argv.includes('--fast')) {
 if (plan.repos.length === 0) {
   plan.repos = ['desktop'];
   plan.reasons.push('(no changes detected — desktop fast tier as a baseline)');
+}
+
+// `--explain` answers "what would this run, and why" without running any of
+// it. Two reasons it earns its place rather than being a convenience:
+//
+//   1. The routing decides how many minutes a `yarn verify` costs, and until
+//      now the only way to find out was to pay them. A question you cannot ask
+//      cheaply does not get asked.
+//   2. It is the only cheap CONTROL for the live-arm selection below. Proving
+//      that a mobile-only diff drops the four same-client arms means nothing
+//      unless you can also see a desktop diff keep them, and doing that for
+//      real costs six minutes of relay traffic and a permanent Space. This
+//      prints both answers in milliseconds.
+//
+// Placed after the argv overrides so it explains the run you actually asked
+// for, and before `describeEnvironment` so it stays fast.
+if (argv.includes('--explain')) {
+  const arms = liveArmsFor(plan, stepsFor('desktop', REPOS.desktop, 'live')).map((s) => s.label);
+  console.log(`  ROUTED     ${plan.repos.join(' + ') || 'nothing'}`);
+  console.log(`  TIER       ${plan.live ? 'fast + live' : 'fast'}`);
+  console.log(`  LIVE ARMS  ${arms.join(', ') || '(none)'}`);
+  for (const reason of plan.reasons) console.log(`             ${reason}`);
+  process.exit(0);
 }
 
 const env = await describeEnvironment(DESKTOP);
@@ -176,18 +208,25 @@ const crossScriptMobilePath = resolve(DESKTOP, '..', 'quorum-mobile');
 // Live tier: six arms driving real bots against a real relay. Desktop-only —
 // see steps.mjs — because that is where every scenario (including the two
 // cross-client ones) actually lives.
+// `liveArmsFor` drops the arms routing decided cannot observe this change.
+// They are OMITTED rather than emitted as SKIP — exactly as a docs-only diff
+// omits the whole live tier and still earns a bare PASS. A SKIP row would
+// report PASS (PARTIAL) on every mobile-only change, and a warning that fires
+// when nothing is wrong stops being read. The routing reason line above the
+// table says what was left out and why.
 if (plan.live) {
   let ranPreviousLiveStep = false;
-  for (const step of stepsFor('desktop', REPOS.desktop, 'live')) {
+  for (const step of liveArmsFor(plan, stepsFor('desktop', REPOS.desktop, 'live'))) {
     // The two cross-client arms need mobile; the rest do not. Skipping via
     // `skipped()` (not silently omitting the row) is what keeps a reduced run
     // from ever printing a bare PASS — SKIP is in report.mjs's SEVERITY list.
-    const needsMobile = step.id.includes('cross');
-    if (needsMobile && !existsSync(REPOS.mobile)) {
+    // This is the opposite case from the omission above: mobile being absent
+    // is an accident, not a plan, so it must be loud.
+    if (needsMobile(step) && !existsSync(REPOS.mobile)) {
       results.push(skipped(step, 'quorum-mobile not found — cross-client arm skipped'));
       continue;
     }
-    if (needsMobile && !existsSync(crossScriptMobilePath)) {
+    if (needsMobile(step) && !existsSync(crossScriptMobilePath)) {
       results.push(
         skipped(
           step,
