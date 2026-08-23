@@ -13,9 +13,17 @@ import { resolve } from 'node:path';
 const vitestDetail = (out) => (out.match(/Tests\s+([^\n]+)/) ?? [])[1]?.trim() ?? '';
 /** Jest: "Tests:       1222 passed, 1222 total" */
 const jestDetail = (out) => (out.match(/Tests:\s+([^\n]+)/) ?? [])[1]?.trim() ?? '';
-/** ESLint: "✖ 232 problems (0 errors, 232 warnings)" — no match means clean. */
-const eslintDetail = (out) =>
-  (out.match(/\d+\s+problems?\s+\(([^)]+)\)/) ?? [])[1] ?? '0 errors, 0 warnings';
+/**
+ * ESLint: "✖ 232 problems (0 errors, 232 warnings)".
+ * No match must degrade to '', matching vitestDetail/jestDetail below — NOT a
+ * literal '0 errors, 0 warnings'. Eslint can crash or exit without ever
+ * printing its summary line, and that failure still lands in a FAIL row; a
+ * hardcoded "0 errors" default would print next to that FAIL and read as
+ * clean. baseline.mjs's eslintErrors/tscErrors were hardened against exactly
+ * this (return null, not 0, on unparseable output) — this is the same fix
+ * applied to the cosmetic detail column instead of the classification path.
+ */
+const eslintDetail = (out) => (out.match(/\d+\s+problems?\s+\(([^)]+)\)/) ?? [])[1] ?? '';
 
 /**
  * Jest can exit 0 while warning that a worker leaked. MEASURED on mobile

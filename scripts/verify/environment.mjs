@@ -89,21 +89,30 @@ const shortName = (name) => (name.includes('sdk') ? 'sdk' : 'shared');
 
 export async function describeEnvironment(desktopPath) {
   const commit = git(desktopPath, ['rev-parse', '--short', 'HEAD']) || 'no-git';
-  // git() can now return null on failure (see the note above). Guard the
-  // `.split` so a failed `git status` here can't crash the whole report;
-  // this call site's dirty/clean duplication vs. describeDep's is a known,
-  // separately-tracked deferral, not something this fix expands the scope to
-  // restructure.
-  const dirtyFiles = (git(desktopPath, ['status', '--porcelain']) ?? '')
-    .split('\n')
-    .filter(Boolean).length;
+  const status = git(desktopPath, ['status', '--porcelain']);
+  // Same rule describeDep already applies above: null (git status failed) is
+  // a distinct, worse state than '' (command succeeded, nothing to report).
+  // This was the module's own motivating example — collapsing a failed `git
+  // status` into '' here silently reports this repo's own row as "clean"
+  // while the two dependency rows correctly report "unverified" — so it must
+  // not be re-collapsed with `?? ''`.
+  const dirtyFiles = status === null ? null : status.split('\n').filter(Boolean).length;
+
+  const warnings = [];
+  let summary;
+  if (dirtyFiles === null) {
+    warnings.push(
+      'could not determine whether this checkout has uncommitted changes (git status failed) — treat this run as unverified, not clean'
+    );
+    summary = `${commit}  ⚠ UNKNOWN (git status failed)`;
+  } else if (dirtyFiles) {
+    summary = `${commit}  ⚠ working tree dirty (${dirtyFiles} files)`;
+  } else {
+    summary = `${commit}  clean`;
+  }
 
   const deps = [
-    {
-      name: 'desktop',
-      summary: `${commit}${dirtyFiles ? `  ⚠ working tree dirty (${dirtyFiles} files)` : '  clean'}`,
-      warnings: [],
-    },
+    { name: 'desktop', summary, warnings },
     describeDep(desktopPath, '@quilibrium/quorum-shared'),
     describeDep(desktopPath, '@quilibrium/quilibrium-js-sdk-channels'),
   ];
