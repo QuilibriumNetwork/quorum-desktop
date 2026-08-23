@@ -3,16 +3,17 @@
  * `yarn verify` — run the checks that apply to what changed, and print a
  * verdict readable without reading the diff.
  *
- * Grown in slices: this revision fans the plan out across all three repos and
- * refuses to report a bare PASS on a reduced run. Tier selection from
- * `plan.live` (running the live tier, not just fast) still lands later.
+ * Grown in slices: this revision fans the plan out across all three repos,
+ * refuses to report a bare PASS on a reduced run, and (as of Task 12) runs the
+ * live tier from `plan.live` — six arms driving real bots against a real
+ * relay, not just the fast tier.
  */
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { stepsFor } from './steps.mjs';
-import { runStep } from './runner.mjs';
+import { runStep, skipped } from './runner.mjs';
 import { renderReport, verdictOf, buildReceipt, writeReceiptSafely, clearReceipt } from './report.mjs';
 import { describeEnvironment } from './environment.mjs';
 import { planFromPaths, changedPaths, mainCheckoutFrom } from './routing.mjs';
@@ -144,6 +145,64 @@ for (const repo of plan.repos) {
     if (repo === 'shared' && step.label === 'build' && results.some((r) => r.id === step.id))
       continue;
     results.push(await runStep(step, plan));
+  }
+}
+
+// A settle gap between real-relay live arms. MEASURED 2026-08-23 (Task 12):
+// `space-delivery` passed reliably alone (~95s, matching Tasks 8-9's own
+// baseline) but genuinely executed and failed when run as the fourth live arm
+// immediately after three other real scenarios with no gap — diagnosed as
+// load/contention against the shared relay, not a scenario bug (ruled out:
+// standalone invocation with the exact command the gate uses; ruled out: a
+// generic spawn-count ceiling, via a 20-call synthetic spawn loop that showed
+// no degradation). This value is a deliberately modest, not precisely-tuned,
+// gap — `desktop:space-delivery` in `RETRYABLE` (runner.mjs) is the backstop
+// for whatever it doesn't cover.
+const LIVE_STEP_GAP_MS = 5000;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// `run-cross.mjs` and `run-config-cross.mjs` are plain Node scripts, not part
+// of scripts/verify/, and independently resolve mobile as
+// `resolve(DESKTOP, '..', 'quorum-mobile')` — correct from the main checkout,
+// wrong from a linked worktree (there, `DESKTOP/..` is just `.worktrees/`).
+// This predicts the exact path those scripts will compute so we can skip
+// BEFORE paying for a spawn we already know fails, rather than after.
+// MEASURED 2026-08-23: both scripts fail with this identical error whether
+// run through this orchestrator or standalone — a pre-existing bug, not a
+// sequencing artifact. Tracked:
+// .agents/issues/.open/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md
+const crossScriptMobilePath = resolve(DESKTOP, '..', 'quorum-mobile');
+
+// Live tier: six arms driving real bots against a real relay. Desktop-only —
+// see steps.mjs — because that is where every scenario (including the two
+// cross-client ones) actually lives.
+if (plan.live) {
+  let ranPreviousLiveStep = false;
+  for (const step of stepsFor('desktop', REPOS.desktop, 'live')) {
+    // The two cross-client arms need mobile; the rest do not. Skipping via
+    // `skipped()` (not silently omitting the row) is what keeps a reduced run
+    // from ever printing a bare PASS — SKIP is in report.mjs's SEVERITY list.
+    const needsMobile = step.id.includes('cross');
+    if (needsMobile && !existsSync(REPOS.mobile)) {
+      results.push(skipped(step, 'quorum-mobile not found — cross-client arm skipped'));
+      continue;
+    }
+    if (needsMobile && !existsSync(crossScriptMobilePath)) {
+      results.push(
+        skipped(
+          step,
+          `${step.label} resolves mobile at ${crossScriptMobilePath} (worktree-relative, not ` +
+            'the real sibling) and fails there even though quorum-mobile is present — see ' +
+            '.agents/issues/.open/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md'
+        )
+      );
+      continue;
+    }
+    // Only wait after a step that actually touched the relay — a skip never
+    // did, so there is nothing to settle from.
+    if (ranPreviousLiveStep) await sleep(LIVE_STEP_GAP_MS);
+    results.push(await runStep(step, plan));
+    ranPreviousLiveStep = true;
   }
 }
 

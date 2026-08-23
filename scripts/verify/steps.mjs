@@ -61,5 +61,19 @@ export function stepsFor(repoName, repoPath, tier) {
         mk('unit', 'unit', ['test', '--ci'], jestDetailWithLeak),
       ];
   }
+
+  if (tier === 'live' && repoName === 'desktop') {
+    // Desktop-only: every live arm is driven from this repo, including the two
+    // cross-client ones, which spawn mobile's scenarios without modifying it.
+    const harnessDetail = (out) => (out.includes('PASS') ? 'arms green' : '');
+    return [
+      mk('dm-basic', 'dm-basic', ['harness', 'dm-basic'], harnessDetail),
+      mk('dm-delivery', 'dm-delivery', ['harness', 'dm-delivery'], harnessDetail),
+      mk('space-basic', 'space-basic', ['harness', 'space-basic'], harnessDetail),
+      mk('space-delivery', 'space-delivery', ['harness', 'space-delivery'], harnessDetail),
+      mk('cross-dm', 'cross-dm', ['harness:cross'], harnessDetail),
+      mk('config-cross', 'config-cross', ['harness:config-cross'], harnessDetail),
+    ];
+  }
   return [];
 }

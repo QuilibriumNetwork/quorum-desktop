@@ -19,32 +19,67 @@ exists. Where a claim could not be verified from the code, it says
 `UNKNOWN — not yet measured` rather than guessing.
 
 The scope is the regression harness under `src/dev/tests/harness/` (the
-`*.scenario.test.ts` files, run by hand today via `yarn harness <name>`) plus
-the component test suite under `src/dev/tests/components/`. Unit tests
-elsewhere in the repo exist and pass, but they mock the SDK and check logic in
-isolation — they are not what this map is about, which is "does a message or
-action survive a real send/receive round trip."
+`*.scenario.test.ts` files; six of them now also run automatically as part of
+`yarn verify`'s live tier, see below — every one of them, wired in or not,
+remains runnable by hand via `yarn harness <name>`) plus the component test
+suite under `src/dev/tests/components/`. Unit tests elsewhere in the repo
+exist and pass, but they mock the SDK and check logic in isolation — they are
+not what this map is about, which is "does a message or action survive a real
+send/receive round trip."
 
-**⚠️ None of this runs automatically yet.** `yarn verify` currently executes
-only the fast tier (typecheck, lint, unit tests, build) — `stepsFor()` in
-`scripts/verify/steps.mjs:31-65` has no `tier === 'live'` branch and falls
-through to `return []`, and `index.mjs`'s only call site
-(`scripts/verify/index.mjs:142`) always passes `'fast'`. The file's own header
-says so plainly: *"Tier selection from `plan.live` (running the live tier, not
-just fast) still lands later"* (`scripts/verify/index.mjs:8`). Wiring the live
-tier in is tracked as its own step (Task 12) in
-`.agents/issues/.open/2026-08-22-verify-regression-gate-plan.md`. Until that
-ships, every "Asserted" or "Covered" cell below describes a test that
-**exists in the repo**, not one that runs on every `yarn verify`. A `PASS`
-today says nothing about space delivery, DM delivery, kick, config sync, or
-storage eviction/restore — this is arguably the single largest gap between
-what this document measures and what the gate currently enforces, and it sits
-outside `NOT_COVERED`'s five slots only because it is a wiring gap, not a
-missing-test gap; `NOT_COVERED` ranks gaps in *test coverage*, not gaps in
-*what the gate has been wired to run*.
+**The live tier is wired in as of Task 12 (2026-08-23).** This replaces the
+earlier version of this section, which warned that none of it ran
+automatically — that warning no longer describes the code and would now
+understate what a `PASS` means. `yarn verify --all` runs six live arms after
+the fast tier, driving real bots against a real relay (`scripts/verify/steps.mjs`,
+the `tier === 'live'` branch, desktop-only since every arm, including the two
+cross-client ones, is driven from this repo): `dm-basic`, `dm-delivery`,
+`space-basic`, `space-delivery`, `cross-dm`, `config-cross`. Desktop's own
+routing (`scripts/verify/routing.mjs`) puts real code changes on this tier
+automatically; only docs/styles/images/locales and components-only diffs stay
+on the fast tier.
 
-When coverage changes (a new scenario ships, a gap closes, or the live tier
-gets wired in), update this document and `NOT_COVERED` in
+MEASURED 2026-08-23, full `yarn verify --all` from this worktree: verdict
+**`PASS (PARTIAL)`**, total **393s (6.5 min)** — this is the measured actual,
+replacing the plan's budgeted estimate of 15-20 minutes
+(`.agents/issues/.open/2026-08-22-verify-regression-gate-plan.md`, Task 12 Step 3):
+
+| live step | status | seconds |
+|---|---|---|
+| dm-basic | PASS | 28 |
+| dm-delivery | PASS | 31 |
+| space-basic | PASS | 21 |
+| space-delivery | PASS | 97 |
+| cross-dm | SKIP | 0 |
+| config-cross | SKIP | 0 |
+
+The two skips are why the verdict reads `PASS (PARTIAL)`, not `PASS`:
+`cross-dm` and `config-cross` both spawn `run-cross.mjs` /
+`run-config-cross.mjs`, which resolve `quorum-mobile` relative to the desktop
+checkout in a way that is correct from the main checkout but wrong from a
+linked worktree (`.worktrees/secondary`, where this was measured) — tracked in
+`.agents/issues/.open/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md`.
+On a normal, non-worktree checkout both arms are expected to run rather than
+skip.
+
+This closes the "space delivery" and "DM delivery" gaps named in the previous
+version of this warning: those two now run on every `yarn verify --all`, not
+just on a manual `yarn harness <name>`. **Kick and storage eviction/restore
+remain outside the live tier** — `space-kick.scenario.test.ts`,
+`dm-itp-wipe.scenario.test.ts` and `space-wipe-restore.scenario.test.ts` exist
+and pass when run by hand, but none of the three is one of the six wired
+arms, so a `PASS` still says nothing about them. `config-cross` (config sync)
+IS one of the six, but is currently one of the two arms skipped from a
+worktree checkout, so in this development setup it is not actually exercised
+by `yarn verify` either, until the tracked issue above is fixed.
+
+Every "Asserted" or "Covered" cell in the tables below still describes what
+the underlying scenario tests, independent of whether that scenario is one of
+the six wired live arms — check this section, not the cell, for what runs
+automatically today.
+
+When coverage changes (a new scenario ships, a gap closes, or a live arm's
+wiring changes), update this document and `NOT_COVERED` in
 `scripts/verify/report.mjs` together — a stale map is worse than no map,
 because it makes the gate's silence look deliberate when it is really just
 unmeasured.
@@ -119,7 +154,7 @@ coverage of any kind on any arm **= 27**.
 | Kick | Covered | `space-kick.scenario.test.ts` — asserts pre-kick control (B can read A), the kick itself (`:124`), post-kick exclusion, and that a pre-kick backup restore does not let the kicked member back in (`:179-202`) |
 | Rejoin (reconnect) | Covered, with a caveat | `space-backlog.scenario.test.ts:149` (`b.reconnect()`) measures whether a reconnect backlog starves the roster handshake. This is a socket-reconnect scenario, not a leave-then-rejoin-as-a-new-member scenario — the latter is `UNKNOWN — not yet measured` |
 | Role permissions | **None found** | No scenario creates a role or grants a permission. `spaceBot.ts` has no role-creation helper at all — this is a harness capability gap, not just a missing test (confirmed by the `pin` comment at `space-message-id-derivation.scenario.test.ts:439-440`: "Giving it a real arm means creating a role and broadcasting a manifest first") |
-| Config sync | Covered, both directions | Desktop→mobile: `config-cross.scenario.test.ts:92`. Mobile→desktop: `config-from-mobile.scenario.test.ts:97-106`. Each direction asserts publish-then-read-back; concurrent-edit merge conflict (the "known merge-asymmetry issue" the file's own header references) is not separately exercised |
+| Config sync | Covered, both directions | Desktop→mobile: `config-cross.scenario.test.ts:92`. Mobile→desktop: `config-from-mobile.scenario.test.ts:97-106`. Each direction asserts publish-then-read-back; concurrent-edit merge conflict (the "known merge-asymmetry issue" the file's own header references) is not separately exercised. As of Task 12, the desktop→mobile direction (`config-cross`) is one of `yarn verify --all`'s six live arms, but is currently one of the two skipped from a worktree checkout — see the wiring note above |
 | Storage eviction and restore | Covered, both DM and Space | DM: `dm-itp-wipe.scenario.test.ts:89-163` (history and sessions lost, conversation resumes fresh). Space: `space-wipe-restore.scenario.test.ts:156-250` (Spaces/profile/keys restore from a published config; DMs do not; the sync-off arm is the control and restores nothing) |
 | Login | Partial | Only exercised as the config-restore path inside `space-wipe-restore.scenario.test.ts` (title: "login rebuilds Spaces and profile only for a published config, and never DMs", `:126`) — this is `ConfigService.getConfig` on a fresh device, not an authentication/passkey/session flow. No scenario or component test drives an actual login UI or session-creation path — that part is `UNKNOWN — not yet measured` |
 
