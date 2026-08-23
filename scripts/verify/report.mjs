@@ -118,17 +118,25 @@ const REAL_FS = { writeFileSync, rmSync };
  * Deletes whatever receipt is currently on disk. `{ force: true }` makes a
  * missing file a no-op; the try/catch is a second layer under that, for the
  * injected-fake case (and any real failure mode odder than ENOENT) — this
- * must never throw, because both of its callers use it to make failure safe
- * and neither should have to handle a further failure from the cleanup
- * itself.
+ * must never throw, so neither caller has to handle a further failure from
+ * the cleanup itself.
+ *
+ * Returns the same `{ ok }` / `{ ok: false, error }` shape as
+ * `writeReceiptSafely`, deliberately: these are the two I/O operations
+ * guarding the same invariant (no stale receipt survives on disk), and a
+ * caller that can tell success from failure on one must be able to on the
+ * other. A removal failure here is not cosmetic — see the start-of-run call
+ * in `index.mjs`: if THIS clear fails and the run then aborts before ever
+ * reaching `writeReceiptSafely`, the previous run's receipt survives with no
+ * signal anything went wrong, which is the exact failure this whole feature
+ * exists to prevent.
  */
 export function clearReceipt(path, fsOps = REAL_FS) {
   try {
     fsOps.rmSync(path, { force: true });
-  } catch {
-    // Best effort. If even deletion fails there is nothing further this
-    // function can do; the caller already treats "no confirmed receipt" as
-    // the safe state regardless of why it's missing.
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, error };
   }
 }
 

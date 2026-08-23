@@ -322,4 +322,22 @@ describe('clearReceipt', () => {
     };
     expect(() => clearReceipt(PATH, fsOps)).not.toThrow();
   });
+
+  // A silent clearReceipt has no observable failure to assert against — this
+  // is what makes the start-of-run clear failure mode (see index.mjs)
+  // testable at all. Mirrors 'does not propagate an exception when the
+  // write throws' from writeReceiptSafely's tests, for the same reason:
+  // both functions guard the same invariant and must expose failure the
+  // same way.
+  it('reports a not-ok result carrying the error when removal fails', () => {
+    const fsOps = {
+      rmSync: vi.fn(() => {
+        throw new Error('EPERM: operation not permitted');
+      }),
+    };
+    const result = clearReceipt(PATH, fsOps);
+    expect(result.ok).toBe(false);
+    expect(result.error).toBeInstanceOf(Error);
+    expect(result.error.message).toContain('EPERM');
+  });
 });

@@ -44,7 +44,21 @@ if (argv.includes('--show-receipt')) {
 // prevent, just arriving through interruption instead of a skipped step.
 // Must run AFTER the --show-receipt block above, or `--show-receipt` would
 // delete the very receipt it is about to print.
-clearReceipt(RECEIPT);
+//
+// If the clear itself fails (AV lock, permissions) and this run then aborts
+// before reaching the write at the end, the old receipt survives — the same
+// failure this call exists to prevent, just re-entered through the one I/O
+// path a silent failure here wouldn't have covered. Surfaced the same way
+// the write path surfaces its own failure, for the same reason: this must
+// not flip the exit code (an unrelated I/O error must not turn a real PASS
+// into a reported FAIL), but it must not be silent either.
+const clearResult = clearReceipt(RECEIPT);
+if (!clearResult.ok) {
+  console.error(
+    `[verify] could not clear the previous receipt: ${clearResult.error.message} — ` +
+      'if this run does not finish, any receipt left on disk is from a PREVIOUS run and must not be trusted.'
+  );
+}
 
 // Deviation from the plan's verbatim source, ruled authorized on review
 // (2026-08-22): returns `null` on failure instead of `''`, mirroring
