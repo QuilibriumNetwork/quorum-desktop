@@ -65,6 +65,25 @@ replacing the plan's budgeted estimate of 15-20 minutes
 | cross-dm | SKIP | 0 |
 | config-cross | SKIP | 0 |
 
+**Re-MEASURED 2026-08-23 after the routing, held-back and coverage work**, plain
+`yarn verify` on this branch (no flags): verdict **`PASS (PARTIAL)`**, total
+**377s**, **0 new accounts and 0 new Spaces**. `space-basic` was held back with
+its reason printed; the two cross-client arms still SKIP from a worktree, which
+is what makes the verdict PARTIAL rather than PASS.
+
+| step | status | seconds |
+|---|---|---|
+| shared build / typecheck / unit | PASS / KNOWN-RED / PASS | 6 / 5 / 5 |
+| desktop typecheck / lint / unit | PASS / PASS / PASS | 14 / 35 / 95 |
+| desktop harness-offline | PASS | 14 |
+| desktop build | PASS | 19 |
+| mobile lint / unit | KNOWN-RED / PASS | 3 / 17 |
+| dm-basic | PASS | 28 |
+| dm-delivery | PASS | 31 |
+| space-delivery | PASS | 93 |
+| space-basic | held back (`--all`) | — |
+| cross-dm, config-cross | SKIP | 0 |
+
 The two skips are why the verdict reads `PASS (PARTIAL)`, not `PASS`:
 `cross-dm` and `config-cross` both spawn `run-cross.mjs` /
 `run-config-cross.mjs`, which resolve `quorum-mobile` relative to the desktop
