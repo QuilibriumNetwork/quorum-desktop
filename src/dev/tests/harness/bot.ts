@@ -48,6 +48,14 @@ export interface HarnessBot {
   onError?: (message: string, frame: unknown) => void;
   /** Send a DM to another account address via the real submitMessage path. */
   send(toAddress: string, text: string): Promise<void>;
+  /**
+   * Send a non-text DM content object through the REAL send path.
+   *
+   * `submitMessage` takes `string | object`, so this is the same call `send`
+   * makes with the object branch taken — no bespoke framing, which is the
+   * point: a scenario that built its own frame would test the scenario.
+   */
+  sendControl(toAddress: string, content: object): Promise<void>;
   /** Delete all local DM sessions — simulates a reset/wipe. Returns rows removed. */
   wipeSessions(): Promise<number>;
   /**
@@ -149,6 +157,31 @@ export async function createBot(
         identity.keyset
       );
       // A send may have created a new session inbox — subscribe to it.
+      await refreshSubscriptions();
+    },
+    sendControl: async (toAddress: string, content: object) => {
+      const self = (await apiClient.getUser(identity.address))?.data as UserRegistration;
+      const counterparty = (await apiClient.getUser(toAddress))?.data as UserRegistration;
+      if (!self || !counterparty) {
+        throw new Error(`missing registration (self=${!!self} counterparty=${!!counterparty})`);
+      }
+      const passkeyInfo = {
+        credentialId: '',
+        address: identity.address,
+        publicKey: Buffer.from(
+          new Uint8Array(identity.keyset.userKeyset.user_key.public_key)
+        ).toString('hex'),
+        completedOnboarding: true,
+      };
+      await messageService.submitMessage(
+        toAddress,
+        content,
+        self,
+        counterparty,
+        queryClient,
+        passkeyInfo,
+        identity.keyset
+      );
       await refreshSubscriptions();
     },
     wipeSessions: async () => {

@@ -131,7 +131,7 @@ not just failures), no key material in service code. See the task file for detai
 | `identity.ts` | ed448 key → registered user + device keyset (generate or from-hex) |
 | `canonical.ts` | your two `.env` test users (createUserA/B, createCanonicalPair) |
 | `transport.ts` | REST client + WebSocket (`{type:'listen'}` subscribe) |
-| `bot.ts` | DM bot: the real MessageService + MessageDB + transport (send/receive/wipe/drain) |
+| `bot.ts` | DM bot: the real MessageService + MessageDB + transport (send/sendControl/receive/wipe/drain) |
 | `deps.ts` | MessageServiceDependencies wiring (real for DM, no-op for space/sync) |
 | `spaceBot.ts` | SPACE bot: same construction, plus create/invite/join/post and a member-row capture seam |
 | `spaceDeps.ts` | the real ConfigService/SyncService/InvitationService/SpaceService graph |
@@ -156,6 +156,7 @@ Log analyzers stay in `.agents/tools/dm-debug/` (`dr-ablate`, `dr-replay`,
 | `yarn harness ping` | a bot registers, connects, subscribes (hits prod) |
 | `yarn harness dm-receive` | waits for a DM you send from a browser, decrypts it |
 | `yarn harness dm-basic` | two bots exchange numbered DMs, no browser (HARNESS_ROUNDS) |
+| `yarn harness dm-delivery` | did a change drop a DM content type? One honest frame per type — post, embed, sticker, reaction, edit-message, remove-message, remove-reaction, dm-update-profile — sent the real way through `send` / `sendControl` and asserted on the bot that did NOT send it. `dm-update-profile` is checked separately, on the receiver's stored conversation row, because it is intercepted before `saveMessage` and never becomes a message (see the file header). No outbound arm: a DM bot has no `graph`, unlike the space arm |
 | `yarn harness dm-volume` | concurrent bidirectional load; samples skipped-keys growth |
 | `yarn harness dm-reset-recover` | wipe a session mid-conversation, verify it re-inits and recovers |
 | `yarn harness dm-itp-wipe` | destroy one side's whole database (storage eviction: Safari ITP, cleared site data, new device) and measure the cost — history and sessions go to zero, the conversation resumes on a fresh session, and nothing revives the old messages. The other bot is a control arm. Distinct from `dm-reset-recover`, which wipes only sessions and keeps history |
@@ -335,4 +336,4 @@ See `2026-07-27-headless-dm-harness.md` under .agents/issues/ for the DM slice p
 `.agents/issues/transport/2026-07-27-headless-space-harness.md` for the space one,
 and `.agents/issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §1 for the DM
 findings.
-*Last updated: 2026-08-21*
+*Last updated: 2026-08-23*
