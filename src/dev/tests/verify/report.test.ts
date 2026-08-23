@@ -90,8 +90,16 @@ describe('errorCountOf', () => {
     expect(errorCountOf('shared:typecheck', output)).toBe(2);
   });
 
-  it('returns null when the output matches no known shape', () => {
+  it('returns null when the output matches no known shape (eslint)', () => {
     expect(errorCountOf('mobile:lint', 'Segmentation fault (core dumped)')).toBeNull();
+  });
+
+  // Same guarantee, tsc shape: a step that failed for a reason other than
+  // reported type errors (crash, bad tsconfig) must not silently read as "0
+  // errors" — see baseline.mjs's tscErrors for why it returns null, not 0,
+  // on zero "error TS" matches.
+  it('returns null when the output matches no known shape (tsc)', () => {
+    expect(errorCountOf('shared:typecheck', 'FATAL ERROR: JavaScript heap out of memory')).toBeNull();
   });
 
   it('returns null for a step id with no recorded shape', () => {
@@ -134,9 +142,14 @@ describe('classifyKnownRed', () => {
   });
 
   // Row 3: fails, unparseable -> FAIL. Never assume an unreadable failure is the known one.
-  it('keeps FAIL when the count cannot be parsed', () => {
+  it('keeps FAIL when the count cannot be parsed (eslint shape)', () => {
     const output = 'Segmentation fault (core dumped)';
     expect(classifyKnownRed('mobile:lint', 'FAIL', output).status).toBe('FAIL');
+  });
+
+  it('keeps FAIL when the count cannot be parsed (tsc shape)', () => {
+    const output = 'FATAL ERROR: JavaScript heap out of memory';
+    expect(classifyKnownRed('shared:typecheck', 'FAIL', output).status).toBe('FAIL');
   });
 
   // Row 4: passes -> PASS, plus a warning that the exemption is stale.

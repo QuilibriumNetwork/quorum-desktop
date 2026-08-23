@@ -10,10 +10,12 @@ updated: 2026-08-23
 # quorum-mobile: yarn lint fails with 302 pre-existing errors on master
 
 **Affected repo: `quorum-mobile`** (not desktop). Filed here because this
-repo's `.agents/issues/` is where Task 4B's cross-repo regression gate keeps
-its tracking issues, to keep the sibling repos' own PRs free of source
-changes. See `quorum-desktop/.agents/issues/.open/2026-08-22-verify-regression-gate-plan.md`
-and its Task 4B addendum for why this issue exists.
+repo's `.agents/issues/` is where this repo's `yarn verify` cross-repo
+regression gate keeps its tracking issues, to keep the sibling repos' own PRs
+free of source changes. See
+`quorum-desktop/.agents/issues/.open/2026-08-22-verify-regression-gate-plan.md`
+for the gate itself, and `quorum-desktop/scripts/verify/baseline.mjs` for why
+this specific exemption exists.
 
 ## Symptoms
 
@@ -34,9 +36,9 @@ an exemption sized for a bug that no longer exists.
 
 ## Root Cause
 
-Not investigated as part of this task — 302 errors is far beyond what Task 4B
-(a cross-repo regression-gate hardening task in `quorum-desktop`) is scoped to
-fix, and the errors live entirely in `quorum-mobile`'s own source. This issue
+Not investigated as part of this task — 302 errors is far beyond what the
+`quorum-desktop` regression-gate work that filed this issue is scoped to fix,
+and the errors live entirely in `quorum-mobile`'s own source. This issue
 exists to make the debt visible and bounded, not to diagnose or resolve it.
 
 Whoever picks this up should start with `cd quorum-mobile && yarn lint` to get

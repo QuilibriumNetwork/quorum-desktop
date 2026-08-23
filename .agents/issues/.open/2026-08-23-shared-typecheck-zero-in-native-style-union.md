@@ -10,10 +10,12 @@ updated: 2026-08-23
 # quorum-shared: Input.native.tsx leaks a falsy ReactNode literal into a View style slot (TS2769)
 
 **Affected repo: `quorum-shared`** (not desktop). Filed here because this repo's
-`.agents/issues/` is where Task 4B's cross-repo regression gate keeps its
-tracking issues, to keep the sibling repos' own PRs free of source changes.
-See `quorum-desktop/.agents/issues/.open/2026-08-22-verify-regression-gate-plan.md`
-and its Task 4B addendum for why this issue exists.
+`.agents/issues/` is where this repo's `yarn verify` cross-repo regression gate
+keeps its tracking issues, to keep the sibling repos' own PRs free of source
+changes. See
+`quorum-desktop/.agents/issues/.open/2026-08-22-verify-regression-gate-plan.md`
+for the gate itself, and `quorum-desktop/scripts/verify/baseline.mjs` for why
+this specific exemption exists.
 
 ## Symptoms
 
@@ -63,22 +65,24 @@ typecheck failure in `quorum-shared` hide behind a stale "known" one.
   arbitrary literal. A bare `0` (or `""`, or `0n`) does not satisfy that
   branded type, so `tsc` rejects the array.
 
-**Note for whoever fixes this:** Task 4B's brief predicted this would turn out
-to be a numeric `count && {...}` pattern (`count > 0 && {...}` as the likely
-fix). That prediction was checked against the actual file and does **not**
-match — there is no `count` variable anywhere in `Input.native.tsx`. The real
-mechanism is the `leftIcon`/`rightIcon`/`showFloatingLabel` truthiness chain
-described above. The broader insight the brief wanted preserved is still
-correct and still the reason this is a `bug`, not just a lint nag: **a bare
-number in a React Native style position is not inert.** RN resolves numbers in
-style arrays as registered `StyleSheet` ids. That's exactly why `tsc` is
-refusing a plain literal `0` here rather than silently accepting it — the type
-system is protecting against a value that, at runtime, RN would try to
-interpret as a style id rather than "no style". Any fix should keep that
-protection rather than route around it with a type assertion.
+**Note for whoever fixes this:** before this issue was filed, the working guess
+was that this would turn out to be a numeric `count && {...}` pattern
+(`count > 0 && {...}` as the likely fix) — a common shape for this exact class
+of RN typecheck error. That guess was checked against the actual file and does
+**not** match — there is no `count` variable anywhere in `Input.native.tsx`.
+The real mechanism is the `leftIcon`/`rightIcon`/`showFloatingLabel`
+truthiness chain described above. The general insight behind that guess is
+still correct, though, and is still the reason this is a `bug`, not just a
+lint nag: **a bare number in a React Native style position is not inert.** RN
+resolves numbers in style arrays as registered `StyleSheet` ids. That's
+exactly why `tsc` is refusing a plain literal `0` here rather than silently
+accepting it — the type system is protecting against a value that, at
+runtime, RN would try to interpret as a style id rather than "no style". Any
+fix should keep that protection rather than route around it with a type
+assertion.
 
 A plausible fix direction (not implemented, not verified as *the* fix, and
-explicitly out of scope for Task 4B): coerce the guard to an actual boolean
+explicitly out of scope for this issue): coerce the guard to an actual boolean
 before using it in the style array — e.g. `Boolean(showFloatingLabel ||
 leftIcon || rightIcon) && styles.floatingContainer` — so the array element's
 type is `false | typeof styles.floatingContainer` instead of leaking the

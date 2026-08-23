@@ -4,15 +4,18 @@
  *
  * An entry here is a DEBT MARKER, not permission. It exists only so that
  * breakage that already existed on master before this gate shipped doesn't
- * masquerade as new breakage on every single run — see Task 4B's brief for
- * why the gate needed this (`yarn verify` failed on arrival, on checks the
- * plan never baselined). It is NOT a budget: nobody should raise a recorded
- * `errors` count to make room for more breakage. The only two edits this file
- * should ever see are lowering a count (progress) or deleting an entry
- * entirely (the bug got fixed). `runner.mjs` enforces the second case itself
- * — a KNOWN_RED step that starts passing again downgrades to a warning
- * instead of a quiet PASS, specifically so a stale entry can't hide here
- * forever.
+ * masquerade as new breakage on every single run. `yarn verify`'s first real
+ * run failed on arrival: `shared:typecheck` and `mobile:lint` were both
+ * already red on master, yet neither appears in
+ * `.agents/issues/.open/2026-08-22-verify-regression-gate-plan.md`'s Measured
+ * Baseline table — the step catalogue ran them anyway.
+ *
+ * It is NOT a budget: nobody should raise a recorded `errors` count to make
+ * room for more breakage. The only two edits this file should ever see are
+ * lowering a count (progress) or deleting an entry entirely (the bug got
+ * fixed). `runner.mjs` enforces the second case itself — a KNOWN_RED step
+ * that starts passing again downgrades to a warning instead of a quiet PASS,
+ * specifically so a stale entry can't hide here forever.
  */
 
 /**
