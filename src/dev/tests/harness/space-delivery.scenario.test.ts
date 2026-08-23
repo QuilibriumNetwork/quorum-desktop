@@ -501,12 +501,29 @@ test(
       // expired and a content type the receive path genuinely dropped produce
       // the SAME symptom — a type missing from the accepted list — and the
       // per-type message below would blame the receive path either way.
-      // Failing here first says "nothing arrived", which is the relay or the
-      // batch size, not the code under test.
+      //
+      // MEASURED 2026-08-23 (Task 9): do NOT read a clean-counters timeout as
+      // "the relay, not the code under test" — that claim was falsified. A
+      // permanent single-type drop inside `handleNewMessage` (a real receive-
+      // path bug) presents IDENTICALLY to relay/batch loss under this check:
+      // outbound failures 0/0, novel errors 0, and this still times out. The
+      // message below only claims what the counters actually show, and points
+      // at the accepted-types diagnostic instead of guessing "it's the relay".
+      const cleanCounters =
+        v.graph.outbound.failures.length === 0 &&
+        x.graph.outbound.failures.length === 0 &&
+        v.novelErrors().length === 0;
       expect(
         timedOut,
-        'DELIVERY: a wait expired, so the per-type results below are about ' +
-          'frames that never arrived rather than frames the receive path dropped.'
+        cleanCounters
+          ? 'DELIVERY: a wait expired with clean outbound sends and no novel ' +
+              'receive errors. This does NOT mean "not the receive path" — a ' +
+              'permanent drop of any batch item presents identically to relay/' +
+              'batch loss under this check (MEASURED 2026-08-23, Task 9). Check ' +
+              'the accepted-types diagnostic above for which type(s) are missing ' +
+              'before assuming this is the relay.'
+          : 'DELIVERY: a wait expired, so the per-type results below are about ' +
+              'frames that never arrived rather than frames the receive path dropped.'
       ).toEqual([]);
 
       // `post` cannot use the generic `typesSeenBy(...).has(type)` check below.
