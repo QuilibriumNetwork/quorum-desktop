@@ -72,6 +72,24 @@ describe('resolveMobileRepo', () => {
     );
   });
 
+  // `--repos-root=` is a CLI flag, so it beats an ambient variable. It exists
+  // to point the gate at an empty directory and prove the degrade-loudly path,
+  // which cannot work if a stray env var in the operator's shell wins.
+  it('lets an explicit siblings root beat the environment override', () => {
+    const out = resolveMobileRepo(
+      'E:/repo/quorum-desktop',
+      { HARNESS_MOBILE_REPO: 'D:/elsewhere/quorum-mobile' },
+      mainGit,
+      'E:/empty'
+    );
+    expect(norm(out)).toBe('E:/empty/quorum-mobile');
+  });
+
+  it('lets an explicit siblings root beat the inferred sibling', () => {
+    const out = resolveMobileRepo('E:/repo/quorum-desktop', {}, mainGit, 'E:/empty');
+    expect(norm(out)).toBe('E:/empty/quorum-mobile');
+  });
+
   it('falls back to the sibling guess when git fails', () => {
     // Fail-open, matching mainCheckoutFrom: with no git there is no better
     // answer available, and the old behaviour is still right for the common
@@ -92,17 +110,33 @@ describe('resolveMobileRepo', () => {
  */
 describe('the mobile path is computed in exactly one place', () => {
   const HARNESS = join(process.cwd(), 'src', 'dev', 'tests', 'harness');
+  const GATE = join(process.cwd(), 'scripts', 'verify');
 
-  // `.ts` as well as `.mjs`, and that breadth was not free. MEASURED
-  // 2026-08-24: the first version of this guard scanned only `.mjs`, passed
-  // clean, and missed `config-cross.scenario.test.ts` and
-  // `config-from-mobile.scenario.test.ts`, which carried the identical bug.
-  // Fixing only the orchestrators would have moved the failure one layer down
-  // — mobile found, scenario spawned, scenario dies on a state file it looked
-  // for inside `.worktrees/` — while this guard reported everything fine.
-  const scripts = readdirSync(HARNESS)
-    .filter((f) => /\.(mjs|ts)$/.test(f) && f !== 'mobileRepo.mjs')
-    .map((f) => ({ name: f, src: readFileSync(join(HARNESS, f), 'utf8') }));
+  /** The one file allowed to name the repo. */
+  const OWNER = join(GATE, 'routing.mjs');
+
+  // Two directories, and the breadth of BOTH was bought the hard way.
+  //
+  // MEASURED 2026-08-24: the first version scanned only `.mjs` under the
+  // harness, passed clean, and missed `config-cross.scenario.test.ts` and
+  // `config-from-mobile.scenario.test.ts`, which carried the identical bug —
+  // so fixing the orchestrators alone would have moved the failure one layer
+  // down while this guard reported everything fine.
+  //
+  // Adversarial review then found the other half: `scripts/verify/index.mjs`
+  // computed its own sibling path, so with `HARNESS_MOBILE_REPO` set, the gate
+  // would diff one checkout, find it present, run the arms — and the arms
+  // would test a different one. A green run that never executed the code that
+  // triggered it. The gate is scanned here for the same reason the harness is.
+  const scan = (dir: string, pattern: RegExp) =>
+    readdirSync(dir)
+      .filter((f) => pattern.test(f) && join(dir, f) !== OWNER)
+      .map((f) => ({ name: f, src: readFileSync(join(dir, f), 'utf8') }));
+
+  const scripts = [
+    ...scan(HARNESS, /\.(mjs|ts)$/).filter((s) => s.name !== 'mobileRepo.mjs'),
+    ...scan(GATE, /\.mjs$/),
+  ];
 
   // Files that RESOLVE the repo, as opposed to merely naming it. Keyed on the
   // constant every caller declares, because "mentions quorum-mobile" is too
@@ -161,17 +195,24 @@ describe('the mobile path is computed in exactly one place', () => {
 
     expect(
       offenders,
-      'These harness scripts assemble a path to quorum-mobile themselves. ' +
-        'That expression belongs in mobileRepo.mjs and nowhere else — a ' +
-        'second copy is a second thing to get wrong from a worktree.'
+      'These files assemble a path to quorum-mobile themselves. That ' +
+        'expression belongs in scripts/verify/routing.mjs and nowhere else. A ' +
+        'second copy is a second answer, and the gate and the arms it spawns ' +
+        'then disagree about which checkout is under test.'
     ).toEqual([]);
   });
 
-  it('finds that literal in mobileRepo.mjs, which is where it belongs', () => {
+  it('finds that literal in routing.mjs, which is where it belongs', () => {
     // Control for the assertion above: proves the pattern can match at all.
-    // Without this, deleting the helper's own path expression would make the
-    // guard vacuously green.
-    const helper = readFileSync(join(HARNESS, 'mobileRepo.mjs'), 'utf8');
-    expect(BUILDS_A_PATH.test(helper)).toBe(true);
+    // Without this, deleting the owner's path expression would make the guard
+    // vacuously green — every file would be clean because no file built a path.
+    expect(BUILDS_A_PATH.test(readFileSync(OWNER, 'utf8'))).toBe(true);
+  });
+
+  // The gate half of the scan, named explicitly. `index.mjs` is the file that
+  // actually regressed, so if it ever drops out of the scan set — a rename, a
+  // move into a subdirectory — this fails rather than silently covering less.
+  it('is actually scanning the gate, not just the harness', () => {
+    expect(scripts.map((s) => s.name)).toContain('index.mjs');
   });
 });

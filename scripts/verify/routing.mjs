@@ -302,3 +302,35 @@ export function mainCheckoutFrom(desktop, execGit) {
   if (!commonDir) return desktop;
   return dirname(resolve(desktop, commonDir.trim()));
 }
+
+/**
+ * Where quorum-mobile is. THE one rule — both the gate and the harness scripts
+ * it spawns must ask this, or they can disagree about which checkout is under
+ * test.
+ *
+ * That disagreement is not hypothetical, and it was introduced by making
+ * `HARNESS_MOBILE_REPO` real on 2026-08-24. Before then the variable was
+ * printed in error messages and read by nobody, so it could not cause a split.
+ * After, the harness honoured it and `index.mjs` still computed its own sibling
+ * path — so with the variable set to a different checkout, the gate would diff
+ * repo A, decide the live tier was needed, find repo A present, run the arms,
+ * and the arms would test repo B. A green run that had never executed the code
+ * that triggered it. Caught by adversarial review the same day.
+ *
+ * `execGit` is injected rather than imported so this module stays pure and
+ * testable; callers supply the real one. `env` is passed in for the same
+ * reason.
+ */
+export function resolveMobileRepo(desktop, env, execGit, siblingsRoot) {
+  // Precedence, most explicit first. `siblingsRoot` is `yarn verify`'s
+  // `--repos-root=` flag: a CLI argument beats an ambient variable, and it is
+  // handled HERE rather than at the call site so the repo name is written down
+  // in exactly one file — which is the entire point of this function.
+  if (siblingsRoot) return resolve(siblingsRoot, 'quorum-mobile');
+  // An explicit answer beats an inferred one, and it is the only route that
+  // works when the two repos genuinely are not siblings. An exported-but-empty
+  // variable is how a shell says "unset", so it must not count.
+  const override = env?.HARNESS_MOBILE_REPO;
+  if (override) return resolve(override);
+  return resolve(mainCheckoutFrom(desktop, execGit), '..', 'quorum-mobile');
+}

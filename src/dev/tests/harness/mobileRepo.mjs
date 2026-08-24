@@ -1,20 +1,16 @@
-// Where quorum-mobile is, from wherever desktop happens to be checked out.
+// The harness's adapter onto the one mobile-path rule.
 //
-// Both cross-client orchestrators used to compute this inline as
-// `resolve(DESKTOP_REPO, '..', 'quorum-mobile')`. That is correct from the main
-// checkout and wrong from a linked worktree, where `..` is just `.worktrees/`
-// rather than the directory the sibling repos actually sit in. Both arms then
-// failed before doing any work, `yarn verify` skipped them, and every single
-// run from a worktree reported `PASS (PARTIAL)` for a reason that had nothing
-// to do with the change under test — which is how the one verdict meaning
-// "coverage was reduced" becomes noise nobody reads.
+// The rule itself lives in `scripts/verify/routing.mjs`, beside
+// `mainCheckoutFrom()`, because the GATE needs it too: `index.mjs` decides
+// whether to run the cross-client arms based on where it thinks quorum-mobile
+// is, and if that disagrees with where the spawned scripts actually look, a run
+// can go green having tested a different checkout than the one it diffed. Read
+// that function's header for the full account.
 //
-// `mainCheckoutFrom()` in scripts/verify/routing.mjs already solves exactly
-// this bug class. It is reused rather than reimplemented: two copies of a path
-// rule is two things to fix, and this one was already fixed once.
+// All this file adds is the impure half — a real `git` and the real
+// environment — so the rule can stay dependency-injected and testable.
 import { execFileSync } from 'node:child_process';
-import { resolve } from 'node:path';
-import { mainCheckoutFrom } from '../../../../scripts/verify/routing.mjs';
+import { resolveMobileRepo as resolveWith } from '../../../../scripts/verify/routing.mjs';
 
 /**
  * Tri-state on purpose, matching what `mainCheckoutFrom` expects and what
@@ -33,14 +29,15 @@ const execGit = (cwd, args) => {
 
 /**
  * `env` and `git` are injectable so this can be tested without a real worktree
- * or a real sibling checkout on disk. Production callers pass neither.
+ * or a real sibling checkout on disk. Production callers in the harness pass
+ * neither.
+ *
+ * Every remaining argument is forwarded rather than enumerated. Naming them
+ * here means this wrapper silently swallows the next one somebody adds, which
+ * it did: `siblingsRoot` was dropped on the floor for the length of one test
+ * run, and the symptom was two precedence tests failing for a reason that had
+ * nothing to do with precedence.
  */
-export function resolveMobileRepo(desktopRepo, env = process.env, git = execGit) {
-  // The escape hatch both orchestrators' error messages have promised since
-  // they were written, and which neither of them read until now. Honoured
-  // first: an explicit answer beats an inferred one, and it is the only route
-  // that works if the two repos genuinely are not siblings.
-  const override = env.HARNESS_MOBILE_REPO;
-  if (override) return resolve(override);
-  return resolve(mainCheckoutFrom(desktopRepo, git), '..', 'quorum-mobile');
+export function resolveMobileRepo(desktopRepo, env = process.env, git = execGit, ...rest) {
+  return resolveWith(desktopRepo, env, git, ...rest);
 }

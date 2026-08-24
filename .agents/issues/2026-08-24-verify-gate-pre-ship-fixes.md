@@ -12,6 +12,40 @@ updated: 2026-08-24
 Written to be startable cold, immediately after a context compaction. Nothing
 below depends on remembering the session that produced it.
 
+## Status
+
+**All three done, 2026-08-24.** Commits `79080e5fa`, `f26ed9c43`, `f7edfce42`,
+`216b950a9`. Still unshipped — nothing pushed, no PRs.
+
+| item | outcome |
+|---|---|
+| 2. mobile path bug | Fixed in **four** call sites, not two — see below. `config-cross` now PASS in 33s where it had always been SKIP. No SKIP rows remain. |
+| 1. `cross-dm` minting | Fixed. MEASURED: account files went 94 → 95 (one-time mint of the fixed name) then stayed at 95 across five more runs. |
+| 3. `yarn verify --all` | MEASURED end to end. All six arms ran, `space-basic` PASS in 21s, no HELD BACK lines, verdict `FAIL` — because `cross-dm` found a real loss. |
+
+**Two things went wider than this issue predicted.**
+
+The path bug was in **four** files, not two: `config-cross.scenario.test.ts:36`
+and `config-from-mobile.scenario.test.ts:34` carried it as well. Fixing only the
+two `.mjs` orchestrators would have moved the failure one layer down — mobile
+found, scenario spawned, scenario dead on a state file it looked for inside
+`.worktrees/`. The first version of the contract test scanned only `.mjs` and
+would have reported everything fine.
+
+And `cross-dm`, once runnable, immediately reported a reproducible message loss
+(5 of 6 runs, always the first echo desktop sends). Mechanism found the same
+day: mobile receives desktop's X3DH session-initiation frame, cannot decrypt it
+against the session it already holds, and drops it. Filed as
+[2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md](.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md).
+The arm is held back to `--all` until that resolves.
+
+Two reporting defects were found and fixed along the way: the held-back reason
+was hardcoded to "it creates a permanent Space" (wrong for the second arm), and
+a FAIL row printed "arms green" because the extractor matched the *other*
+repo's test-runner output.
+
+**Remaining before ship:** independent adversarial review, then one PR per repo.
+
 ## Where the work is
 
 - Branch `feat/verify-regression-gate`, in the **linked worktree**

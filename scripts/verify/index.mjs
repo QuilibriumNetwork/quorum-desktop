@@ -20,6 +20,7 @@ import {
   planFromPaths,
   changedPaths,
   mainCheckoutFrom,
+  resolveMobileRepo,
   liveArmsFor,
   heldBackArms,
   needsMobile,
@@ -101,8 +102,21 @@ const SIBLINGS = reposRootArg
 const REPOS = {
   desktop: DESKTOP,
   shared: resolve(SIBLINGS, 'quorum-shared'),
-  mobile: resolve(SIBLINGS, 'quorum-mobile'),
+  // Asked, not computed. The harness scripts this gate spawns resolve mobile
+  // through this same function, which honours `HARNESS_MOBILE_REPO` — so a
+  // second, independent answer here is exactly how the gate ends up diffing
+  // one checkout and testing another. `--repos-root=` is passed in rather than
+  // applied locally so the repo name stays written down in one file. See that
+  // function's header in routing.mjs.
+  mobile: resolveMobileRepo(DESKTOP, process.env, execGit, reposRootArg ? SIBLINGS : null),
 };
+
+// Hand the resolved answer DOWN. `runner.mjs` spawns steps without an `env`
+// override, so children inherit this — including the grandchildren, since
+// `run-config-cross.mjs` spawns `yarn harness` which loads the scenarios that
+// resolve the path again. Without it, `--repos-root=` would redirect the gate's
+// own bookkeeping while the arms carried on testing the real sibling.
+process.env.HARNESS_MOBILE_REPO = REPOS.mobile;
 
 const allPaths = Object.entries(REPOS)
   .filter(([, path]) => existsSync(path))
