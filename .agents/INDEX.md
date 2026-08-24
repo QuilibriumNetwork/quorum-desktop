@@ -327,7 +327,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Rebuild the sync indicator on a per-space "behind by N" signal](issues/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md)
 - 📋 [A DB call landing mid-close still fails once](issues/.open/2026-08-17-a-db-call-landing-mid-close-still-fails-once.md)
 - 📋 [Outbound signing is decided in four places, only one of which is the shared rule](issues/.open/2026-08-21-outbound-signing-is-decided-in-four-places-not-one.md)
-- 📋 [Two checks the gate does not run](issues/.open/2026-08-24-verify-gate-cross-repo-tooling-gaps.md)
 
 ### Deferred
 
@@ -562,6 +561,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [`yarn verify` Implementation Plan](issues/.done/2026-08-22-verify-regression-gate-plan.md)
 - 📋 [Harness: reuse a persistent space instead of minting one every run](issues/.done/2026-08-23-harness-space-reuse-design.md)
 - 📋 [Review the verify gate: right tests, cheap, and what is missing](issues/.done/2026-08-23-verify-gate-coverage-and-cost-review.md)
+- 📋 [Two checks the gate does not run](issues/.done/2026-08-24-verify-gate-cross-repo-tooling-gaps.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
 - 📋 [Add DM-Specific Action Queue Handlers](issues/.done/dm-action-queue-handlers.md)
@@ -822,4 +822,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-24 13:32:29
+**Last Updated**: 2026-08-24 14:38:25

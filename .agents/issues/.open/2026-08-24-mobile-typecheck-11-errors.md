@@ -69,7 +69,7 @@ recorded number, so a partial fix cannot silently leave the ceiling too high.
 ## Related
 
 - The gate: [verify-gate.md](../../docs/verify-gate.md)
-- The gap that surfaced this: [cross-repo tooling gaps](2026-08-24-verify-gate-cross-repo-tooling-gaps.md)
+- The gap that surfaced this: [cross-repo tooling gaps](../.done/2026-08-24-verify-gate-cross-repo-tooling-gaps.md)
 - The sibling baseline: [mobile lint, 302 errors](2026-08-23-mobile-lint-302-errors.md)
 
 *Last updated: 2026-08-24*

@@ -164,7 +164,7 @@ Neither was in this issue's scope; both came out of mapping the system.
 that hands this behaviour to everyone else.
 
 Two smaller gaps found in the same pass, not blockers:
-[cross-repo tooling gaps](.open/2026-08-24-verify-gate-cross-repo-tooling-gaps.md)
+[cross-repo tooling gaps](.done/2026-08-24-verify-gate-cross-repo-tooling-gaps.md)
 — quorum-shared's `lint` script names a tool the repo has never had, and
 quorum-mobile has never been typechecked by anything (11 errors, 10 of them in
 the calling code the gate already reports as untested).

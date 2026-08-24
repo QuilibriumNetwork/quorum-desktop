@@ -38,7 +38,7 @@ them.** When an agent used to report "1808 tests pass", that was
 ```
 yarn verify
 │
-├── quorum-shared     build · typecheck · unit (766 tests)
+├── quorum-shared     build · typecheck · lint · unit (785 tests)
 │
 ├── quorum-desktop    typecheck · lint · unit (1808 tests)   ← "the tests"
 │                     harness-offline · build
@@ -79,13 +79,23 @@ without touching the relay.
 | `yarn bench` | Load-generating benchmarks. Running them alongside makes timing-sensitive tests flaky — documented in `vitest.config.ts`. |
 | `yarn format:check` | Cosmetic. A gate that goes red over a blank line teaches people to ignore red. |
 | `yarn validate` | Redundant — it is `tsc --noEmit && eslint .`, both already steps. |
-| quorum-shared `lint` | The script exists but the repo has no eslint installed, no config and no dependency. Tracked: [cross-repo tooling gaps](../issues/.open/2026-08-24-verify-gate-cross-repo-tooling-gaps.md). |
 
-quorum-mobile's typecheck **used** to be on this list. It had no script at all,
-so nothing ever ran one automatically. Added 2026-08-24 and wired in as a
-`KNOWN-RED` step at a baseline of 11 — the errors stay unfixed (10 are in the
-untested `services/calling/`), but the count can now only go down. See
-[the issue](../issues/.open/2026-08-24-mobile-typecheck-11-errors.md).
+Two entries came OFF this list on 2026-08-24, and they were closed differently
+on purpose:
+
+- **quorum-mobile typecheck** had no script at all. Added, and wired in as
+  `KNOWN-RED` at a baseline of 11. The errors stay unfixed — 10 are in the
+  untested `services/calling/`, where no change can be shown to be safe — but
+  the count can now only fall. [Issue](../issues/.open/2026-08-24-mobile-typecheck-11-errors.md).
+- **quorum-shared lint** had a script but no linter: no eslint binary, no
+  config, no declared dependency, so it failed with "'eslint' is not
+  recognized". eslint installed, and all 11 errors **fixed rather than
+  baselined** — eleven is small enough that a baseline would be debt nobody
+  pays, and a ceiling of 11 would let eleven *different* errors through
+  unnoticed. It is the only lint step of the three that runs green.
+
+The asymmetry is the point: baseline when fixing is genuinely impractical
+(302 errors), fix when it is not (11).
 
 ---
 

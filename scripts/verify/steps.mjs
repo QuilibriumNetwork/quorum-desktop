@@ -78,6 +78,22 @@ export function stepsFor(repoName, repoPath, tier) {
     if (repoName === 'shared')
       return [
         mk('typecheck', 'typecheck', ['typecheck'], () => ''),
+        // Added 2026-08-24, and the only one of the three repos' lint steps
+        // that goes in GREEN.
+        //
+        // The repo had a `lint` script since long before it had a linter: no
+        // eslint binary, no config, no declared dependency, so `yarn lint`
+        // failed with "'eslint' is not recognized" rather than reporting
+        // problems. The gate not running it was luck, not a decision — and
+        // this is the repo BOTH clients ship, so it was the least linted and
+        // the most shared.
+        //
+        // First run on 255 files: 45 problems, 11 of them errors, none a bug.
+        // All 11 fixed rather than baselined — unlike mobile's 302, eleven is
+        // small enough that a baseline would be debt nobody ever pays, and a
+        // ceiling of 11 would let eleven DIFFERENT errors pass unnoticed.
+        // MEASURED: 0 errors, 34 warnings.
+        mk('lint', 'lint', ['lint'], eslintDetail),
         mk('unit', 'unit', ['test:run'], vitestDetail),
         mk('build', 'build', ['build'], () => ''),
       ];

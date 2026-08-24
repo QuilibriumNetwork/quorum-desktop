@@ -1,7 +1,7 @@
 ---
 type: task
-title: 'verify: two checks the gate does not run, in the two repos it does not own'
-status: open
+title: 'verify: two checks the gate did not run, in the two repos it does not own'
+status: done
 priority: medium
 created: 2026-08-24
 updated: 2026-08-24
@@ -15,15 +15,81 @@ invisible precisely because the gate looks comprehensive.
 
 ## Status
 
-**B is fixed** (2026-08-24) — quorum-mobile now has a `typecheck` script and the
-gate runs it, as `KNOWN-RED` at a baseline of 11. The 11 errors are deliberately
-unfixed; the baseline makes them a ceiling. Tracked separately in
-[mobile typecheck: 11 errors](2026-08-24-mobile-typecheck-11-errors.md).
+**Both fixed, 2026-08-24. This issue is done.**
 
-**A is still open** — quorum-shared has no eslint at all. It needs a decision
-(install eslint, or delete the dead script), not just wiring.
+**B** — quorum-mobile now has a `typecheck` script and the gate runs it, as
+`KNOWN-RED` at a baseline of 11. The errors are deliberately unfixed; the
+baseline makes them a ceiling. Tracked in
+[mobile typecheck: 11 errors](../.open/2026-08-24-mobile-typecheck-11-errors.md).
 
-This issue stays open for A.
+**A** — eslint installed in quorum-shared (operator's call: "install it"), config
+written, and the step wired into the gate. First run on 255 files: **45 problems,
+11 errors, none of them a bug.** All 11 **fixed, not baselined** — see below for
+why the two halves were closed differently.
+
+MEASURED after: **0 errors, 34 warnings.** quorum-shared lint is the only one of
+the three repos' lint steps that runs green.
+
+### Why fix here and baseline there
+
+Not inconsistency. A baseline is justified when fixing is genuinely impractical
+— mobile's 302 errors are a project, and its 11 type errors sit in
+`services/calling/`, which has zero test coverage, so no change there can be
+shown to be safe.
+
+Eleven cosmetic errors in code with tests is neither. And a baseline is not free:
+a ceiling of 11 would let someone swap in eleven **different** errors with the
+gate staying green. Baselining trivia also trains people to ignore baselines,
+which is what makes the mobile ones dangerous to have.
+
+### What the 11 actually were
+
+| Rule | n | What it was |
+|---|---|---|
+| `no-useless-escape` | 5 | `\/` and `\[` **inside a character class**, where a backslash means nothing |
+| `no-useless-assignment` | 3 | `let top = 0` then a `switch` assigning on every branch, `default` included |
+| `prefer-const` | 1 | `let` never reassigned |
+| `no-case-declarations` | 1 | a `const` in an unbraced `case` |
+| `no-control-regex` | 1 | `validation.ts` stripping control characters — **deliberate**, suppressed with a comment, not "fixed" |
+
+### How each was verified, and what that exposed
+
+The escapes were the interesting ones, because three are in security-sensitive
+code (`DANGEROUS_HTML_PATTERN`, XSS name sanitising). Rather than argue from
+regex semantics, the equivalence was **measured**: old pattern vs new pattern
+over a 1680-case corpus (every ASCII character, plus structured inputs per
+pattern). **0 behavioural differences**, with a guard in the probe that fails if
+the two patterns are textually identical, so the comparison cannot be vacuous.
+
+The `no-useless-assignment` three were fixed by declaring without a value
+(`let top: number`), which hands the check to TypeScript's definite-assignment
+analysis — strictly stronger than the dead `= 0`, which would have silently
+placed a tooltip at the origin if a future branch forgot to assign. Typecheck
+stayed at its baseline of 1, confirming every branch does assign.
+
+**A mutation probe then found something worse than any of the lint errors.** Of
+the six files touched, only `validation.ts` had ANY test coverage — mutating the
+other five left the whole 766-test suite green. Three new test files were written
+(`messageLinkUtils`, `markdownStripping`, `messagePreview`, 19 tests) and
+falsified by mutation.
+
+Two of those tests initially could NOT fail, and both were fixed:
+
+- `messageLinkUtils`: the `[^/]` vs greedy `.+` case needs **three** path
+  segments to diverge. With `/spaces/a/b#msg-x` both give the same answer, so
+  the first version passed either way — the exact "assertion that manufactures
+  confidence" failure. Now uses `/spaces/a/b/c#msg-m1`.
+- `messagePreview`: dropping a label from the system-message fallthrough chain
+  is **undetectable**, because `default` returns the same `{ text: '' }`. No
+  assertion can distinguish them. Recorded honestly in the test as a
+  documentation test rather than left implying a guarantee it cannot give.
+
+### Left alone deliberately
+
+`package-lock.json` was deleted (tracked, last touched 2026-05-28, and after the
+eslint install it did not know about eslint at all while `yarn.lock` did).
+Nothing referenced `npm ci`; the only npm mentions are a consumer install line in
+the README and `prepublishOnly: npm run build`, which installs nothing.
 
 ## What the gate runs today
 
