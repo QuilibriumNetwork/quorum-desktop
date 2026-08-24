@@ -95,6 +95,31 @@ Documentation written at the same time:
 [.agents/docs/verify-gate.md](../docs/verify-gate.md) — the verdicts, the costs,
 the held-back arms, the permanence rules, and what the gate does not cover.
 
+MEASURED after the change, same four change types:
+
+| Change | Verdict now |
+|---|---|
+| desktop styles | `PASS` |
+| a desktop service | `PASS` |
+| a mobile screen | `PASS` |
+| a quorum-shared util | `PASS (PARTIAL)` — **correctly** |
+
+That last one is not a leftover. A quorum-shared change genuinely IS partial:
+mobile resolves the PUBLISHED `@quilibrium/quorum-shared`, so mobile's tests did
+not exercise your local edit. The run now says exactly that, in one line,
+instead of burying it under two that did not apply.
+
+**Final measured run** (plain `yarn verify`, this branch): **482s**, no SKIP
+rows, **0 new accounts**, verdict `PASS (PARTIAL)` with the KNOWN-RED steps
+listed as informational and one genuine `⚠`:
+
+```
+  VERDICT  PASS (PARTIAL) — reduced scope, see the warnings below
+           2 step(s) already broken on main, unchanged: typecheck, lint — not caused by this change
+           ⚠ shared changed, but mobile resolves the published @quilibrium/quorum-shared — mobile is NOT testing your change.
+           ⚠ This does NOT clear a change that touches shared or the wire.
+```
+
 **Remaining before ship:** one PR per repo, three PRs, do not merge. Held.
 
 ## Where the work is

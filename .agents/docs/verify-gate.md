@@ -43,6 +43,31 @@ different things:
 allowed to trigger it. That rule is load-bearing — a warning that fires when
 nothing is wrong stops being read, and then it is not a warning.
 
+### What you will actually see
+
+MEASURED 2026-08-24, by change type:
+
+| What you changed | Verdict when nothing is wrong |
+|---|---|
+| Desktop anything — styles, components, services | `PASS` |
+| quorum-mobile anything | `PASS` |
+| **quorum-shared anything** | **`PASS (PARTIAL)`, and correctly so** |
+
+The quorum-shared case is not a wart. Desktop consumes shared through a symlink,
+so it tests your local edit — but **mobile resolves the PUBLISHED
+`@quilibrium/quorum-shared` from npm**, so mobile's tests ran against the
+released package, not your change. That is genuinely reduced coverage, and the
+run says so in one line:
+
+```
+  ⚠ shared changed, but mobile resolves the published @quilibrium/quorum-shared
+    — mobile is NOT testing your change. Publish and bump before trusting it.
+```
+
+So for a shared change, `PASS (PARTIAL)` means: **desktop is clear, mobile is
+unproven.** Ship it if the change is desktop-facing; publish and re-check before
+relying on it for mobile.
+
 ### `KNOWN-RED` rows, and why they do not downgrade the verdict
 
 A row can say `KNOWN-RED`:
