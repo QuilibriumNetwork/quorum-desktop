@@ -149,7 +149,14 @@ export function planFromPaths(paths) {
     );
   }
 
-  return { repos: [...new Set(repos)], live, liveScope, reasons, skipped: [] };
+  // `skipped` and `notes` are two channels on purpose, and the distinction is
+  // the same one `report.mjs`'s SEVERITY comment defends: `skipped` means THIS
+  // RUN PROVED LESS, and forces `PASS (PARTIAL)`. `notes` is advisory — true,
+  // worth printing, and never a reduction in coverage, so it must not touch the
+  // verdict. Without the second channel, telling the reader something useful
+  // (a stale exemption, a debt count that improved) would cost a downgraded
+  // verdict, and a warning that fires when nothing is wrong stops being read.
+  return { repos: [...new Set(repos)], live, liveScope, reasons, skipped: [], notes: [] };
 }
 
 /**
@@ -277,6 +284,33 @@ export function changedPaths(repoName, repoPath, execGit) {
   return [...new Set(out.split('\n').map((l) => l.trim()).filter(Boolean))].map(
     (p) => `${repoName}/${p}`
   );
+}
+
+/**
+ * Which platform plays which role in the cross-client DM arm.
+ *
+ * Role `a` initiates and `b` echoes, so this decides whether the run measures
+ * mobile→desktop or the reverse. The default puts MOBILE as the initiator,
+ * because mobile→desktop is the field's reported bad direction.
+ *
+ * Lives HERE, beside `resolveMobileRepo`, for exactly the same reason that one
+ * does: two places need the answer and they must not compute it separately.
+ * `run-cross.mjs` needs it to launch the two processes; `mintGuard.mjs` needs it
+ * to know WHICH bot names the run will use, because the role decides the names
+ * (`cross-desktop-${ROLE}`, `dm-bot-${ROLE}`) and therefore which identity files
+ * have to exist for the arm to run without registering new accounts.
+ *
+ * Found by adversarial review 2026-08-24. The guard had the default names
+ * hardcoded with a comment noting the env var existed — so with
+ * `HARNESS_DESKTOP_ROLE=a` exported in the shell (`runner.mjs` spawns steps
+ * without an `env` override, so it reaches them), the guard checked
+ * `cross-desktop-b`/`dm-bot-a`, found them, reported the arm safe, and the arm
+ * then minted `cross-desktop-a` and `dm-bot-b` — two permanent accounts, one on
+ * each platform, under a clean report.
+ */
+export function crossRoles(env = process.env) {
+  const desktop = env?.HARNESS_DESKTOP_ROLE === 'a' ? 'a' : 'b';
+  return { desktop, mobile: desktop === 'a' ? 'b' : 'a' };
 }
 
 /**

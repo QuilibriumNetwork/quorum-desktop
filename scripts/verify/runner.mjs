@@ -129,7 +129,13 @@ function finish(step, plan, result, output) {
   // the report printed `cross-dm  FAIL  369s  arms green`.
   const detail = safeDetail(step, output, result.status);
   const classified = classifyKnownRed(step.id, result.status, output);
-  if (classified.staleWarning) plan?.skipped?.push(classified.staleWarning);
+  // `notes`, not `skipped`. Both messages classifyKnownRed can produce describe
+  // debt getting BETTER — an exemption that is now stale, or a count below its
+  // recorded baseline. Neither is reduced coverage, so neither may downgrade
+  // the verdict to PASS (PARTIAL); see planFromPaths in routing.mjs. Until
+  // 2026-08-24 the stale warning went to `skipped`, which meant fixing a
+  // tracked bug made the run report worse than leaving it broken.
+  if (classified.note) plan?.notes?.push(classified.note);
   return { ...result, status: classified.status, detail: classified.detail ?? detail };
 }
 
@@ -140,10 +146,20 @@ function finish(step, plan, result, output) {
  * all four rows of the table can be unit tested without spawning a process.
  *
  *   status  | count vs baseline        -> new status | why
- *   FAIL    | 0 < count <= baseline    -> KNOWN-RED   | pre-existing, already tracked
+ *   FAIL    | count == baseline        -> KNOWN-RED   | pre-existing, already tracked
+ *   FAIL    | 0 < count <  baseline    -> KNOWN-RED   | + note: RATCHET the baseline down
  *   FAIL    | count >  baseline        -> FAIL         | it got worse: that IS new breakage
  *   FAIL    | count unparseable OR 0   -> FAIL         | never assume an unreadable — or irrelevant — failure is the known one
- *   PASS    | (n/a)                    -> PASS         | + staleWarning: the exemption must be deleted
+ *   PASS    | (n/a)                    -> PASS         | + note: the exemption must be deleted
+ *
+ * The ratchet row is why a partial fix needs no code change to stay green, and
+ * still cannot be silently lost. Fixing 4 of 11 known type errors leaves the
+ * run green at 7 (7 <= 11), so nobody has to remember to touch this file to
+ * avoid a red — but the recorded ceiling is still 11, so drifting back up to 11
+ * would pass unnoticed. The note asks for the one-word edit that locks the
+ * improvement in. Fixing ALL of them trips the PASS row instead, which already
+ * asks for the entry to be deleted. Either way the gate tells you what to do
+ * rather than depending on anyone remembering.
  *
  * A step not in KNOWN_RED, or whose status is neither FAIL nor PASS (i.e.
  * FLAKY), passes through unchanged. FLAKY in particular must never be
@@ -170,7 +186,7 @@ export function classifyKnownRed(id, status, output) {
   if (status === 'PASS') {
     return {
       status,
-      staleWarning:
+      note:
         `${id} passed, but it is listed in baseline.mjs's KNOWN_RED as a tracked ` +
         `failure (${baseline.issue}) — that exemption is now stale and must be ` +
         'deleted, or it will silently hide a future regression',
@@ -184,6 +200,16 @@ export function classifyKnownRed(id, status, output) {
     return {
       status: 'KNOWN-RED',
       detail: `${count} errors (known-red, baseline ${baseline.errors}) — ${baseline.issue}`,
+      // Only when it actually improved. At exactly the baseline there is
+      // nothing to lock in, and a note printed on every ordinary run would be
+      // noise of the kind this gate keeps trying to remove.
+      ...(count < baseline.errors && {
+        note:
+          `${id} is down to ${count} errors from a recorded baseline of ` +
+          `${baseline.errors} — lower \`errors\` in scripts/verify/baseline.mjs to ` +
+          `${count} so the improvement is locked in, or a regression back to ` +
+          `${baseline.errors} will pass unnoticed`,
+      }),
     };
   }
   return { status };

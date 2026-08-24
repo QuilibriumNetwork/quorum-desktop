@@ -87,6 +87,12 @@ export function renderReport({ env, plan, results }) {
     );
   }
   for (const s of plan.skipped ?? []) lines.push(`           ⚠ ${s}`);
+  // Advisory only, and marked differently on purpose. `⚠` lines are the ones
+  // that made the verdict PARTIAL and the reader has to adjudicate; `ℹ` lines
+  // are housekeeping the run noticed (a stale exemption, a debt count that
+  // improved) and cost the verdict nothing. Same glyph for both would put the
+  // reader back to reading every line to find out which kind it is.
+  for (const n of plan.notes ?? []) lines.push(`           ℹ ${n}`);
   lines.push('─────────────────────────────────────────────────────────');
   return lines.join('\n');
 }
@@ -135,6 +141,9 @@ export function buildReceipt({ env, plan, results, verdict, startedAt, finishedA
       // an arm was absent by plan or by accident.
       liveScope: plan.liveScope ?? 'all',
       skipped: plan.skipped ?? [],
+      // Recorded too, so `--show-receipt` can answer "did the mint guard hold
+      // anything back on this machine?" without re-running the gate.
+      notes: plan.notes ?? [],
     },
     steps: results.map(({ id, status, ms, detail, skipReason }) => ({
       id,

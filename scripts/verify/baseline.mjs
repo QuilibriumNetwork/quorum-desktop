@@ -35,6 +35,16 @@ export const KNOWN_RED = {
     why: '302 pre-existing lint errors on quorum-mobile master, unrelated to any change this gate is meant to catch',
     issue: '.agents/issues/.open/2026-08-23-mobile-lint-302-errors.md',
   },
+  // Recorded 2026-08-24, the day quorum-mobile first got a `typecheck` script.
+  // These 11 are not new: nothing had ever run tsc over that repo automatically,
+  // so they are simply the first measurement. Deliberately left unfixed — 10 sit
+  // in `services/calling/`, which has zero test coverage (see report.mjs's
+  // NOT_COVERED), so a "fix" there cannot be shown to be safe.
+  'mobile:typecheck': {
+    errors: 11,
+    why: '11 pre-existing type errors, unfixed because 10 are in services/calling/ where nothing can verify a change is safe',
+    issue: '.agents/issues/.open/2026-08-24-mobile-typecheck-11-errors.md',
+  },
 };
 
 /** eslint: "✖ 475 problems (302 errors, 173 warnings)" — pull the errors figure, not the total. */
@@ -58,6 +68,7 @@ function tscErrors(output) {
 const EXTRACTOR_BY_STEP = {
   'shared:typecheck': tscErrors,
   'mobile:lint': eslintErrors,
+  'mobile:typecheck': tscErrors,
 };
 
 /**

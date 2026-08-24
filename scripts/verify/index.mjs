@@ -25,6 +25,7 @@ import {
   heldBackArms,
   needsMobile,
 } from './routing.mjs';
+import { mintGuardReason, MINT_GUARD_SUMMARY } from './mintGuard.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DESKTOP = resolve(HERE, '../..');
@@ -140,6 +141,19 @@ if (argv.includes('--fast')) {
   plan.live = false;
   plan.reasons.push('(--fast: live tier skipped by request)');
 }
+
+// Deliberately NOT implied by `--all`. `--all` means "run every arm", which is
+// a statement about coverage; this is a statement about accepting an
+// irreversible side effect on production, and the two must be consented to
+// separately. Bundling them would mean the flag people reach for when they want
+// thoroughness is also the one that registers permanent accounts — which is
+// exactly the surprise this guard exists to prevent.
+const allowMinting = argv.includes('--live-allow-minting');
+if (allowMinting) {
+  plan.reasons.push(
+    '(--live-allow-minting: live arms may register PERMANENT production accounts and Spaces)'
+  );
+}
 if (plan.repos.length === 0) {
   plan.repos = ['desktop'];
   plan.reasons.push('(no changes detected — desktop fast tier as a baseline)');
@@ -161,11 +175,33 @@ if (plan.repos.length === 0) {
 // for, and before `describeEnvironment` so it stays fast.
 if (argv.includes('--explain')) {
   const liveSteps = stepsFor('desktop', REPOS.desktop, 'live');
-  const arms = liveArmsFor(plan, liveSteps).map((s) => s.label);
+  const planned = liveArmsFor(plan, liveSteps);
+  // `--explain` has to model the mint guard, not just the routing. It is the
+  // only cheap way to ask "what will this actually run on THIS machine", and an
+  // answer that ignores the guard would over-promise on precisely the machines
+  // the guard exists for — a fresh clone would be told four live arms are
+  // coming and then watch all four skip. A predictor that is trusted and wrong
+  // is worse than none.
+  const guarded = allowMinting
+    ? []
+    : planned.filter((s) => mintGuardReason(s, REPOS) !== null);
+  const guardedLabels = new Set(guarded.map((s) => s.label));
+  const arms = planned.filter((s) => !guardedLabels.has(s.label)).map((s) => s.label);
   const held = heldBackArms(plan, liveSteps).map((s) => s.label);
   console.log(`  ROUTED     ${plan.repos.join(' + ') || 'nothing'}`);
   console.log(`  TIER       ${plan.live ? 'fast + live' : 'fast'}`);
   console.log(`  LIVE ARMS  ${arms.join(', ') || '(none)'}`);
+  if (guarded.length) {
+    // Deliberately NOT "no persisted identities": missing state is only one of
+    // the reasons an arm lands here. `HARNESS_FRESH=1` guards `space-delivery`
+    // on a machine where every file is present, and naming the wrong cause
+    // sends the reader off to fix files that are fine. The per-arm reason is
+    // printed in full on a real run; `--explain` just names the arms.
+    console.log(
+      `  MINT-GUARD ${guarded.map((s) => s.label).join(', ')}  ` +
+        '(would create PERMANENT production state — run `yarn verify` for the per-arm reason)'
+    );
+  }
   if (held.length) console.log(`  HELD BACK  ${held.join(', ')}  (run \`yarn verify --all\`)`);
   for (const reason of plan.reasons) console.log(`             ${reason}`);
   process.exit(0);
@@ -239,6 +275,7 @@ if (plan.live) {
     );
   }
   let ranPreviousLiveStep = false;
+  let mintGuarded = false;
   for (const step of liveArmsFor(plan, liveSteps)) {
     // The two cross-client arms need mobile; the rest do not. Skipping via
     // `skipped()` (not silently omitting the row) is what keeps a reduced run
@@ -249,12 +286,33 @@ if (plan.live) {
       results.push(skipped(step, 'quorum-mobile not found — cross-client arm skipped'));
       continue;
     }
+    // Would this arm register permanent, undeletable state on the PRODUCTION
+    // relay? Checked per-arm rather than once for the tier, because the answer
+    // genuinely differs: a machine can have `dm-basic`'s bots and not
+    // `config-cross`'s, and skipping arms that were safe to run would cost
+    // coverage for nothing. See mintGuard.mjs's header for why the predicate is
+    // "does the file exist" and not "who is running this".
+    //
+    // A SKIP row, deliberately — the same reasoning as the mobile-absent case
+    // above. This is not a routing decision about what could observe the change;
+    // it is coverage the run wanted and could not safely take, so it must reduce
+    // the verdict to PASS (PARTIAL) and say so.
+    const mintReason = allowMinting ? null : mintGuardReason(step, REPOS);
+    if (mintReason) {
+      results.push(skipped(step, mintReason));
+      mintGuarded = true;
+      continue;
+    }
     // Only wait after a step that actually touched the relay — a skip never
     // did, so there is nothing to settle from.
     if (ranPreviousLiveStep) await sleep(LIVE_STEP_GAP_MS);
     results.push(await runStep(step, plan));
     ranPreviousLiveStep = true;
   }
+  // Said once, not once per arm. The per-arm rows name the missing files; this
+  // explains the rule behind all of them, so the reader is not left inferring
+  // it from four near-identical skip reasons.
+  if (mintGuarded) plan.skipped.push(MINT_GUARD_SUMMARY);
 }
 
 // Channel A is asymmetric and the asymmetry is invisible: mobile resolves the

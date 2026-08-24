@@ -84,6 +84,17 @@ export function stepsFor(repoName, repoPath, tier) {
     if (repoName === 'mobile')
       return [
         mk('lint', 'lint', ['lint'], eslintDetail),
+        // Added 2026-08-24. quorum-mobile had no `typecheck` script at all, so
+        // nothing ever ran one automatically — TypeScript was installed and
+        // `tsconfig.json` present, but whether the repo typechecked depended on
+        // somebody choosing to run `npx tsc --noEmit` by hand.
+        //
+        // It goes in RED, at a KNOWN-RED baseline of 11 (baseline.mjs), which is
+        // the whole reason it can go in at all: the 11 are deliberately unfixed
+        // — 10 of them in `services/calling/`, where the fix is not obviously
+        // safe — and a baseline records them as a CEILING. The count may fall,
+        // never rise. A twelfth error fails the run.
+        mk('typecheck', 'typecheck', ['typecheck'], () => ''),
         mk('unit', 'unit', ['test', '--ci'], jestDetailWithLeak),
       ];
   }

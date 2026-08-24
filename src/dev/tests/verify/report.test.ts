@@ -106,6 +106,52 @@ describe('verdictOf', () => {
   });
 });
 
+/**
+ * `plan.notes` is advisory and must never reach the verdict.
+ *
+ * The distinction it encodes: `plan.skipped` means THIS RUN PROVED LESS, and
+ * forces PASS (PARTIAL). `notes` is housekeeping the run happened to notice —
+ * a stale exemption, a debt count that improved. Both are worth printing;
+ * only one is a reduction in coverage.
+ */
+describe('plan.notes vs plan.skipped', () => {
+  it('does not let a note downgrade a clean PASS', () => {
+    const results = [step('PASS', { id: 'desktop:unit', repo: 'desktop', label: 'unit' })];
+    const plan = { ...FULL_PLAN, skipped: [], notes: ['mobile:lint is down to 298 errors'] };
+    expect(verdictOf(results, plan)).toBe('PASS');
+  });
+
+  // CONTROL: the same shape on the OTHER channel must still downgrade, or the
+  // test above would pass just as well against a verdict function that ignored
+  // both lists.
+  it('still downgrades for a skip, proving the two channels differ', () => {
+    const results = [step('PASS', { id: 'desktop:unit', repo: 'desktop', label: 'unit' })];
+    const plan = { ...FULL_PLAN, skipped: ['a whole repo was unreachable'], notes: [] };
+    expect(verdictOf(results, plan)).toBe('PASS (PARTIAL)');
+  });
+
+  it('prints notes and skips under different markers', () => {
+    const results = [step('PASS', { id: 'desktop:unit', repo: 'desktop', label: 'unit' })];
+    const output = renderReport({
+      env: null,
+      plan: { ...FULL_PLAN, skipped: ['coverage was reduced'], notes: ['debt improved'] },
+      results,
+    });
+    expect(output).toContain('⚠ coverage was reduced');
+    expect(output).toContain('ℹ debt improved');
+  });
+
+  it('renders a plan with no notes field at all', () => {
+    // Every caller today supplies one, but `verdictOf`/`renderReport` are the
+    // two functions a future caller is most likely to hand a hand-rolled plan.
+    const results = [step('PASS', { id: 'desktop:unit', repo: 'desktop', label: 'unit' })];
+    const plan = { ...FULL_PLAN, skipped: [] };
+    delete (plan as { notes?: string[] }).notes;
+    expect(() => renderReport({ env: null, plan, results })).not.toThrow();
+    expect(verdictOf(results, plan)).toBe('PASS');
+  });
+});
+
 describe('renderReport', () => {
   it('prints the known-red row with its reason and its issue reference', () => {
     const results = [
@@ -238,17 +284,87 @@ describe('classifyKnownRed', () => {
     expect(classifyKnownRed('mobile:lint', 'FAIL', output).status).toBe('FAIL');
   });
 
-  // Row 4: passes -> PASS, plus a warning that the exemption is stale.
-  it('reports a stale-exemption warning when a known-red step passes', () => {
+  // Row 4: passes -> PASS, plus a note that the exemption is stale.
+  //
+  // Delivered as `note`, not `staleWarning`, since 2026-08-24. The rename is the
+  // point: `runner.mjs` routes notes to `plan.notes`, which prints but does not
+  // touch the verdict, whereas the old field went to `plan.skipped` and forced
+  // PASS (PARTIAL). A step going GREEN must never make the run report worse —
+  // that is the same rule that stopped KNOWN-RED rows downgrading the verdict.
+  it('reports a stale-exemption note when a known-red step passes', () => {
     const result = classifyKnownRed('mobile:lint', 'PASS', '');
     expect(result.status).toBe('PASS');
-    expect(result.staleWarning).toContain('mobile:lint');
-    expect(result.staleWarning).toContain(KNOWN_RED['mobile:lint'].issue);
+    expect(result.note).toContain('mobile:lint');
+    expect(result.note).toContain(KNOWN_RED['mobile:lint'].issue);
+  });
+
+  // Row 2: improved but not fixed -> still KNOWN-RED, plus a ratchet note.
+  //
+  // This is what makes a PARTIAL fix safe to leave in place. Fixing 4 of
+  // mobile's 302 lint errors keeps the run green at 298 with no edit to
+  // baseline.mjs required, so nobody has to remember anything to avoid a red —
+  // but the recorded ceiling is still 302, so drifting back up would pass
+  // unnoticed. The note asks for the one-word edit that locks the gain in.
+  it('asks for the baseline to be lowered when the count improves', () => {
+    const result = classifyKnownRed(
+      'mobile:lint',
+      'FAIL',
+      '✖ 400 problems (298 errors, 102 warnings)'
+    );
+    expect(result.status).toBe('KNOWN-RED');
+    expect(result.note).toContain('298');
+    expect(result.note).toContain('302');
+    expect(result.note).toContain('baseline.mjs');
+  });
+
+  // CONTROL for the test above: at exactly the baseline there is nothing to
+  // lock in, so there must be no note. Without this, a note printed on every
+  // ordinary run would read as an action item and be trained away.
+  it('stays silent when the count is exactly at baseline', () => {
+    const result = classifyKnownRed(
+      'mobile:lint',
+      'FAIL',
+      '✖ 475 problems (302 errors, 173 warnings)'
+    );
+    expect(result.status).toBe('KNOWN-RED');
+    expect(result.note).toBeUndefined();
   });
 
   // A step not in KNOWN_RED is completely unaffected.
   it('leaves a step outside KNOWN_RED unchanged', () => {
     expect(classifyKnownRed('desktop:lint', 'FAIL', 'anything')).toEqual({ status: 'FAIL' });
+  });
+
+  /**
+   * A baseline entry with no extractor is a silent no-op.
+   *
+   * `errorCountOf` returns null for an unknown step id, and a null count falls
+   * through to plain FAIL — so the entry sits in the table looking like an
+   * exemption while doing nothing at all, and the step it names hard-fails every
+   * run. Nothing else in the suite would notice: the entry is present, the
+   * classifier is correct, and only the pairing is missing. That is precisely
+   * the kind of gap that survives review, so it gets a test rather than a
+   * comment.
+   */
+  it('has a working extractor for every KNOWN_RED entry', () => {
+    // Output shaped like each tool's real summary, so this exercises the actual
+    // extractor rather than asserting a lookup table against itself.
+    const sample = (id: string, n: number) =>
+      id.endsWith(':lint')
+        ? `✖ ${n + 100} problems (${n} errors, 100 warnings)`
+        : Array.from({ length: n }, (_, i) => `f.ts(${i + 1},1): error TS2322: nope`).join('\n');
+
+    for (const [id, entry] of Object.entries(KNOWN_RED)) {
+      const result = classifyKnownRed(id, 'FAIL', sample(id, entry.errors));
+      expect(result.status, `${id}: no extractor in baseline.mjs — the entry does nothing`).toBe(
+        'KNOWN-RED'
+      );
+      // And it must still fail when it gets worse, per-entry, not just in aggregate.
+      expect(
+        classifyKnownRed(id, 'FAIL', sample(id, entry.errors + 1)).status,
+        `${id}: exceeding its baseline must FAIL`
+      ).toBe('FAIL');
+    }
   });
 
   // A retry that turns red into green already reports FLAKY, never PASS (see
