@@ -208,10 +208,10 @@ const LIVE_STEPS = [
 ].map((label) => ({
   id: `desktop:${label}`,
   label,
-  // Mirrors steps.mjs. Two arms run on `--all` rather than on every code
-  // change, for unrelated reasons: space-basic creates a permanent Space, and
-  // cross-dm reports a reproducible loss whose cause is still open.
-  ...(label === 'space-basic' || label === 'cross-dm' ? { exhaustiveOnly: true } : {}),
+  // Mirrors steps.mjs. ONE arm now runs on `--all` rather than on every code
+  // change: space-basic, because it creates a permanent, undeletable Space.
+  // cross-dm was released 2026-08-24 once the loss it reported was fixed.
+  ...(label === 'space-basic' ? { exhaustiveOnly: true } : {}),
 }));
 
 describe('liveArmsFor', () => {
@@ -222,22 +222,25 @@ describe('liveArmsFor', () => {
     expect(labels(planFromPaths(['desktop/README.md']))).toEqual([]);
   });
 
-  // space-basic and cross-dm are absent: both wait for --all, for unrelated
-  // reasons (a permanent Space, and an open loss finding).
+  // space-basic is absent: it waits for --all, because it mints a permanent
+  // Space. cross-dm IS here — it is a cross-client arm, and a desktop service
+  // change is exactly what it exists to observe.
   it('runs every per-change arm for a desktop change', () => {
     expect(labels(planFromPaths(['desktop/src/services/MessageService.ts']))).toEqual([
       'dm-basic',
       'dm-delivery',
       'space-delivery',
+      'cross-dm',
       'config-cross',
     ]);
   });
 
-  // Reduced to one arm while cross-dm is held back. That is a real narrowing
-  // of mobile-only coverage and it is stated on the run, not absorbed quietly:
-  // config-cross is the only arm left that loads mobile code.
-  it('runs only the in-scope cross-client arm for a mobile-only change', () => {
+  // Both cross-client arms, and only those: the four same-client arms are
+  // desktop vitest scenarios that never load mobile code, so they cannot
+  // observe a mobile-only change.
+  it('runs only the cross-client arms for a mobile-only change', () => {
     expect(labels(planFromPaths(['mobile/services/space/SpaceService.ts']))).toEqual([
+      'cross-dm',
       'config-cross',
     ]);
   });
@@ -245,16 +248,14 @@ describe('liveArmsFor', () => {
   // Defensive: a plan built before liveScope existed, or hand-made by a test,
   // must fail toward running MORE — the same direction as the allowlist.
   it('treats a missing liveScope as every arm', () => {
-    expect(labels({ live: true })).toHaveLength(4);
+    expect(labels({ live: true })).toHaveLength(5);
   });
 
-  it('releases the held-back arms only when the plan is exhaustive', () => {
+  it('releases the held-back arm only when the plan is exhaustive', () => {
     const perChange = planFromPaths(['desktop/src/services/MessageService.ts']);
     expect(labels(perChange)).not.toContain('space-basic');
-    expect(labels(perChange)).not.toContain('cross-dm');
     const exhaustive = labels({ ...perChange, exhaustive: true });
     expect(exhaustive).toContain('space-basic');
-    expect(exhaustive).toContain('cross-dm');
   });
 });
 
@@ -266,7 +267,6 @@ describe('heldBackArms', () => {
   it('names the arms a per-change run left out', () => {
     expect(labels(planFromPaths(['desktop/src/services/MessageService.ts']))).toEqual([
       'space-basic',
-      'cross-dm',
     ]);
   });
 
@@ -281,10 +281,9 @@ describe('heldBackArms', () => {
 
   // A mobile-only run never reaches space-basic in the first place, so it is
   // out of scope rather than held back — reporting it would be misleading.
-  // cross-dm IS in scope for such a run (it loads mobile code), so it is
-  // genuinely held back and must be named.
-  it('names only the in-scope arm for a mobile-only run', () => {
-    expect(labels(planFromPaths(['mobile/services/space/SpaceService.ts']))).toEqual(['cross-dm']);
+  // With cross-dm released there is nothing left to name for such a run.
+  it('names nothing for a mobile-only run, because nothing in scope is held back', () => {
+    expect(labels(planFromPaths(['mobile/services/space/SpaceService.ts']))).toEqual([]);
   });
 
   it('identifies exactly the two arms that spawn quorum-mobile', () => {
@@ -482,7 +481,12 @@ describe('LIVE_STEPS matches the real step catalogue', () => {
     // Stated as a value, not just a comparison: if BOTH sides lost the flag,
     // the equality above would still pass and space-basic would quietly start
     // creating a Space on every code change again.
-    expect(heldFor(real)).toEqual(['space-basic', 'cross-dm']);
+    //
+    // `cross-dm` was here until 2026-08-24 and is deliberately NOT any more.
+    // Adding an arm back to this list is a decision that costs every future
+    // run some coverage, so it has to be written down twice — here and in
+    // `steps.mjs` — and this assertion is what forces the second edit.
+    expect(heldFor(real)).toEqual(['space-basic']);
   });
 
   it('gives every held-back arm a reason to print', () => {

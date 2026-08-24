@@ -229,8 +229,7 @@ of them** — ask it rather than guessing from the list below:
 ```
   ROUTED     mobile
   TIER       fast + live
-  LIVE ARMS  config-cross
-  HELD BACK  cross-dm  (run `yarn verify --all`)
+  LIVE ARMS  cross-dm, config-cross
              (only quorum-mobile changed — running the cross-client arms; the
               four same-client arms load no mobile code and cannot observe it)
 ```
@@ -241,10 +240,10 @@ of them** — ask it rather than guessing from the list below:
   not run. Changing the colour of a button falls here, as does editing
   `src/i18n/<locale>/messages.po` — but not `src/i18n/i18n.ts`, which is code.
 - **A quorum-mobile-only change**: the fast tier plus **only the cross-client
-  arms**, which today means `config-cross` alone (`cross-dm` is held back, see
-  below). The four same-client arms are desktop vitest scenarios that never
-  load mobile code, so they cannot observe the change; running them would be
-  six minutes of real-relay traffic that could not have gone red.
+  arms**, `cross-dm` and `config-cross`. The four same-client arms are desktop
+  vitest scenarios that never load mobile code, so they cannot observe the
+  change; running them would be six minutes of real-relay traffic that could
+  not have gone red.
 - **Services, sync, storage, crypto, or any path nobody has classified**: the
   fast tier plus the live tier, about **6.5 minutes measured**. Real bots send
   real messages over a real relay.
@@ -253,21 +252,18 @@ of them** — ask it rather than guessing from the list below:
   change to it is exactly the change a live run has to check. Every other
   directory under `src/dev/tests/` stays on the fast tier, which already runs
   those tests.
-- **Two arms are HELD BACK from every per-change run**, for unrelated reasons.
-  `yarn verify --all` runs both, and every run that leaves one out says so on
-  its own `HELD BACK` line, quoting why — so this can never quietly become
-  "nobody ran it".
+- **One arm is HELD BACK from every per-change run.** `yarn verify --all` runs
+  it, and every run that leaves it out says so on its own `HELD BACK` line,
+  quoting why — so this can never quietly become "nobody ran it".
   - **`space-basic`** creates a permanent, undeletable Space each time it runs,
     and unlike `space-delivery` it cannot reuse one, because creating a space
     is its subject.
-  - **`cross-dm`** reports a reproducible cross-client message loss (5 of 6
-    runs, always the first echo desktop sends) whose cause is not yet known,
-    tracked in
-    `.agents/issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md`.
-    It is held back rather than removed because an arm that is red in most runs
-    for a reason unrelated to the change under test would block every piece of
-    work. Release it — two lines in `scripts/verify/steps.mjs` — once that issue
-    is resolved either way.
+  - **`cross-dm` was released on 2026-08-24** and now runs on every change that
+    routes to the live tier. It was held back while it reported a reproducible
+    cross-client message loss; that loss is now measured, fixed on both sides,
+    and the arm is green in five consecutive runs. It is the only cross-client
+    DM coverage there is, and the bug it found survived for months precisely
+    because nothing measured that cell.
 - `yarn verify --fast` skips the live tier on request, for a quick check
   mid-work; it is not a substitute for the full run before reporting done.
 - `space-delivery` is retried once if it fails, because it is load-sensitive
@@ -293,4 +289,4 @@ behalf.
 
 ---
 
-_Last updated: 2026-08-23_
+_Last updated: 2026-08-24_
