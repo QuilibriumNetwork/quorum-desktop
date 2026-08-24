@@ -12,12 +12,19 @@ updated: 2026-08-24
 ## Status
 
 Found 2026-08-24, the first time the mobile↔desktop DM cell has ever been
-measured. **Mechanism identified the same day** (see below): mobile receives
-desktop's X3DH session-initiation frame, cannot decrypt it against the session
-state it already holds, and drops it after bounded retries. The fix is not
-written, and it is probably mobile-side.
+measured. **Root cause MEASURED and fixed on the mobile side the same day**
+(quorum-mobile branch `fix/cross-dm-first-reply-drop`, commit `1661fc5`): mobile
+re-ran a full X3DH on **every** send while its session was unconfirmed, giving
+each send a different session key and replacing the row's ratchet. Desktop's
+first reply had been encrypted against the session mobile had just discarded, so
+it failed with `aead::Error` and was dropped.
 
-`cross-dm` is held back to `yarn verify --all` while this is open.
+**The reported symptom is fixed and the fix is measured** — desktop's first
+reply now arrives, and mobile↔mobile stays 6/6 with no loss. **The arm is still
+red**, because fixing this exposed a *second*, independent defect on the desktop
+side (§"Residual defect"). Do not close this issue on the strength of the fix.
+
+`cross-dm` stays held back to `yarn verify --all` while this is open.
 
 ## Symptoms
 
@@ -201,28 +208,167 @@ If that is right, this is **not harness-only**. The user-facing shape is two
 people messaging each other at the same moment, and one of the two messages
 never arriving.
 
+## Root cause — MEASURED 2026-08-24
+
+Step 1 of the plan below is done, and it went further than "mobile drops it".
+
+**Reproduce in ~50 seconds, not 6 minutes.** `HARNESS_ROUNDS=3` reproduces it as
+reliably as `20` — the loss can only ever hit index 1, so the extra 17 rounds
+buy nothing. `HARNESS_LOG_DEBUG=1` is required to see any `logger.debug` output
+from mobile; without it `dev/harness/shim.ts` leaves the level above debug and
+the decisive lines are invisible.
+
+```
+HARNESS_LOG_DEBUG=1 HARNESS_ROUNDS=3 yarn harness:cross
+```
+
+`confirmSenderSession` had **four** different `return null` paths and logged
+none of them, so every cause looked identical from the outside. With a reason
+attached to each (now committed), the failing frame reported:
+
+```
+[session-confirm] not a confirm case {"reason":"ratchet-decrypt-failed",
+  "err":"Double ratchet decryption error: Decryption failed: aead::Error"}
+```
+
+Not a missing row, not a partial envelope. The row was present, keyed by the
+very inbox desktop replied to, and unconfirmed — the ratchet simply did not
+match. And a second frame **560 ms later, on the same inbox, CONFIRMED**.
+
+The cause is on the mobile SEND path. `sessionSendShape` returns `'init'` for
+every send while `sendingInbox.inbox_public_key` is empty, and that branch called
+`encryptMessageForNewDevice` → `establishSession`, whose first line is an
+unconditional `generateX448()`. Instrumenting it:
+
+```
+1. hadPriorSession:false                    newEphemeral: <E1>
+2. hadPriorSession:true  prior:<E1>         newEphemeral: <E2>   ← replaces session 1
+3. hadPriorSession:true  prior:<E2>         newEphemeral: <E3>   ← replaces session 2
+```
+
+Three sessions on one row in one conversation. A fresh ephemeral is a different
+X3DH session key, so each re-init orphaned the previous session — and desktop's
+reply to session 1 arrived after mobile had moved to session 2.
+
+The code's own comment, 60 lines below that call, states the opposite invariant:
+
+> Store the X3DH ephemeral keypair for **reuse** in subsequent init envelopes.
+> Until the session is confirmed … ALL init envelopes must use the SAME
+> ephemeral key so the receiver derives the same session key via X3DH.
+
+The `x3dhEphemeral*` fields were being written on every save and never read.
+That is why this survived so long: the invariant was documented, believed, and
+unimplemented.
+
+### Why "always index 1", finally explained
+
+The window is exactly one message wide because it closes at confirmation. Once
+the peer's reply confirms the session, `sessionSendShape` stops returning
+`'init'`, no further re-init happens, and nothing else can be orphaned.
+
+## Two remedies tried; the first was refuted by measurement
+
+**Remedy A — reuse the stored ephemeral (implement the documented invariant).**
+Refuted. It fixed the reported bug (`B→A #1` arrived, session confirmed on the
+first reply) but reusing the ephemeral rebuilds the ratchet at **position 0**,
+so the next message re-used the first one's slot and the peer rejected it:
+
+```
+mobile→desktop: sent=3 arrived=1  missing=[2,3]
+```
+
+One lost message traded for two. Recorded because it is the obvious fix and the
+next person will reach for it.
+
+**Remedy B — re-announce, do not re-establish (shipped).** The ratchet must keep
+ADVANCING while the announcement is repeated. `buildReinitEnvelopeSend` wraps the
+EXISTING ratchet in an InitializationEnvelope and seals it with the session's
+STORED X3DH ephemeral, so the peer's derivation still points at the session our
+ratchet belongs to. This is what the SDK does (`sent_accept ? plain :
+init-wrapped`), what desktop does, and what `buildAcceptSend` already did for the
+mirror case. Rows predating the stored ephemeral fall back to the old path.
+
+Result: `establishSession` runs **once** instead of three times, and desktop's
+first reply arrives in every run since.
+
+Also shipped: an init-wrapped frame that no stored state can decrypt now
+**establishes** a session from it instead of being dropped. Routing on "do any
+states exist" rather than "did any state work" is what sent an unreadable init
+frame down a path whose only outcome was to discard it.
+
+## Residual defect — desktop churns its session per unconfirmed send
+
+**This is the reason the arm is still red, and it is NOT caused by the mobile
+fix** — it is visible in the baseline runs too, where desktop advertised a
+different return inbox on each of its two frames.
+
+Desktop mints a **new conversation inbox and a new session for each send** while
+its own side is unconfirmed. Measured, two consecutive frames on one mobile
+inbox, ~300–560 ms apart:
+
+```
+frame 1  peerReturn <D1>  → CONFIRMED; mobile now sends to <D1>
+frame 2  peerReturn <D2>  → different session → undecryptable
+```
+
+Mobile confirms to `<D1>`; desktop has already moved to `<D2>`. So:
+
+- desktop's **second** reply is unreadable by the session mobile just confirmed,
+  and `initializeRecipientSession` cannot build one from it either
+  (`init on conversation inbox failed to build a session`);
+- mobile's **third** send goes to `<D1>`, which desktop has abandoned, and is
+  lost.
+
+Net at `ROUNDS=3`: baseline lost 1 of 6, the branch loses 2 of 5. **By raw count
+the branch is not yet an improvement** — it fixes one defect and leaves a second
+one exposed. Diagnosing further needs desktop-side instrumentation of which
+session row its send path selects; everything above was measured from mobile.
+
+This is the mirror of the mobile bug just fixed, and the same remedy probably
+applies: while unconfirmed, re-announce the existing session rather than
+building a new one.
+
+## Two traps in the measuring equipment itself
+
+1. **`yarn harness:cross` does NOT go through `scripts/verify/mintGuard.mjs`.**
+   The guard only runs under `yarn verify`. Running the harness directly from a
+   checkout whose `.state/` lacks the bot file registers a **new permanent
+   account** with no warning. Each git worktree has its OWN gitignored
+   `.state/`, so "the identity exists" is true per checkout, not per repo —
+   running the same arm from a different worktree mints. One account
+   (`cross-desktop-b`) was registered this way on 2026-08-24. Pin harness runs
+   to one checkout, or copy the state file first.
+2. **Desktop's vitest side fails to start in roughly half of back-to-back
+   runs**, with `Vitest failed to find the current suite` at
+   `dm-cross.scenario.test.ts:53` (the `test.skipIf` registration) and
+   `import 0ms`. It collects fine in isolation. Mobile then fails with the
+   misleading `waited 120000ms for peer b's "hello"`. Re-run; a short sleep
+   between runs seems to help. Worth its own issue if it persists.
+
 ## Next steps
 
-Step 1 of the original plan is **done** — mobile receives it and drops it. What
-remains:
+Items 1 and 4 of the original plan are **done** (§"Root cause"): the frame was
+only ever tried against existing states, that routing is fixed, and "bounded
+retries" was a symptom rather than the cause — the frame was unreadable on
+arrival, not merely early. What remains:
 
-1. **Read `WebSocketContext.tsx:3300-3420` in quorum-mobile** and work out why
-   an init-wrapped frame is only ever tried against existing states. On first
-   contact from the other side there is no state that *can* decrypt it; the
-   init is supposed to establish a new one. Compare with desktop's equivalent
-   receive path, which does not lose this frame.
-2. **Delay `b`'s first echo by a few seconds and re-run.** If the loss
-   disappears, that confirms the collision is what triggers it and bounds the
-   fix to session establishment. Costs nothing, mints nothing.
-3. **Re-run with desktop as role `a`** (`HARNESS_DESKTOP_ROLE=a`). If the loss
-   follows the ECHO role rather than the platform, it is about who speaks
-   second, not about desktop. ⚠️ This mints one permanent account
-   (`cross-desktop-a` does not exist yet).
-4. **Check whether "bounded retries" is the real problem.** The frame is
-   retried and then discarded. If the session it needs is established a moment
-   later, a longer or event-driven retry would recover it — but silently
-   dropping a message the sender believes it delivered is the part that matters
-   most.
+1. **Fix desktop's session churn** (§"Residual defect") — the mirror of the
+   mobile bug. Desktop mints a new session and return inbox per send while
+   unconfirmed; it should re-announce the existing one, exactly as
+   `buildReinitEnvelopeSend` now does on mobile. Instrument desktop's send path
+   first to confirm which row it selects. This is what blocks the arm going
+   green. Costs nothing, mints nothing.
+2. **Re-run the mobile↔mobile control after any desktop change**
+   (`yarn harness:dm` in quorum-mobile, `HARNESS_ROUNDS=3`). It is currently
+   6/6 with no loss on the fix branch, and it is the arm that would notice a
+   session-handling regression first. Mints nothing.
+3. **Optional: delay `b`'s first echo by a few seconds and re-run.** Now only a
+   confirmation that the timing window is what it appears to be; the mechanism
+   is already measured. Mints nothing.
+4. **Re-run with desktop as role `a`** (`HARNESS_DESKTOP_ROLE=a`) to see whether
+   the residual loss follows the ECHO role rather than the platform.
+   ⚠️ **Mints one permanent account** (`cross-desktop-a` does not exist).
+   Do not run this casually — see the mint-guard trap above.
 
 ## Impact on the verify gate
 
@@ -245,3 +391,4 @@ tier rather than passing silently.
 See [2026-08-24-verify-gate-pre-ship-fixes.md](../.done/2026-08-24-verify-gate-pre-ship-fixes.md).
 
 *Last updated: 2026-08-24*
+
