@@ -87,7 +87,7 @@ And `cross-dm`, once runnable, immediately reported a reproducible message loss
 (5 of 6 runs, always the first echo desktop sends). Mechanism found the same
 day: mobile receives desktop's X3DH session-initiation frame, cannot decrypt it
 against the session it already holds, and drops it. Filed as
-[2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md](.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md).
+[2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md](../.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md).
 The arm is held back to `--all` until that resolves.
 
 Two reporting defects were found and fixed along the way: the held-back reason
@@ -113,7 +113,7 @@ carve-outs checked against all three real checkouts, and every reachable
 `liveScope` × `exhaustive` combination.
 
 It also raised one cosmetic issue, filed separately as
-[2026-08-24-verify-detail-column-blank-for-the-vitest-driven-arms.md](.open/2026-08-24-verify-detail-column-blank-for-the-vitest-driven-arms.md).
+[2026-08-24-verify-detail-column-blank-for-the-vitest-driven-arms.md](../.open/2026-08-24-verify-detail-column-blank-for-the-vitest-driven-arms.md).
 
 **One more fix came out of explaining the tool to the operator.** Asked how to
 read the verdict, the honest answer was "it says `PASS (PARTIAL)` on every
@@ -143,7 +143,7 @@ the old severity list turns both new assertions red while the FAIL/FLAKY/SKIP
 guards stay green.
 
 Documentation written at the same time:
-[.agents/docs/verify-gate.md](../docs/verify-gate.md) — the verdicts, the costs,
+[.agents/docs/verify-gate.md](../../docs/verify-gate.md) — the verdicts, the costs,
 the held-back arms, the permanence rules, and what the gate does not cover.
 
 MEASURED after the change, same four change types:
@@ -191,7 +191,7 @@ live arm runs only if the identities it reuses already exist, so a fresh clone
 skips them all and registers nothing, while this machine is unaffected.
 `--live-allow-minting` opts in. Full measurement, the options considered and why
 C+B was chosen:
-[2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md](.done/2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md).
+[2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md](2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md).
 
 The real fix — pointing the harness at a non-production relay — stays open, and
 needs one question answered by whoever runs the relay. The harness side is
@@ -204,7 +204,7 @@ Neither was in this issue's scope; both came out of mapping the system.
 - **quorum-mobile now typechecks.** It had no `typecheck` script, so nothing ran
   one automatically. Added, wired in, and recorded as `KNOWN-RED` at a baseline
   of 11 — the errors are untouched, but the count can now only fall.
-  [Issue](.open/2026-08-24-mobile-typecheck-11-errors.md).
+  [Issue](../.open/2026-08-24-mobile-typecheck-11-errors.md).
 - **`plan.notes`, a second reporting channel.** `⚠` (reduced coverage, forces
   PARTIAL) is now separate from `ℹ` (advisory, costs the verdict nothing). The
   stale-exemption warning moved to `ℹ`, because a step going GREEN must never
@@ -215,7 +215,7 @@ Neither was in this issue's scope; both came out of mapping the system.
 that hands this behaviour to everyone else.
 
 Two smaller gaps found in the same pass, not blockers:
-[cross-repo tooling gaps](.done/2026-08-24-verify-gate-cross-repo-tooling-gaps.md)
+[cross-repo tooling gaps](2026-08-24-verify-gate-cross-repo-tooling-gaps.md)
 — quorum-shared's `lint` script names a tool the repo has never had, and
 quorum-mobile has never been typechecked by anything (11 errors, 10 of them in
 the calling code the gate already reports as untested).
@@ -231,7 +231,7 @@ three PRs, do not merge. Held.
   clean; **nothing has been pushed and no PR exists.** The operator has held
   shipping deliberately.
 - Read the git log, not the checkboxes in
-  [2026-08-23-verify-gate-coverage-and-cost-review.md](.done/2026-08-23-verify-gate-coverage-and-cost-review.md),
+  [2026-08-23-verify-gate-coverage-and-cost-review.md](2026-08-23-verify-gate-coverage-and-cost-review.md),
   which predate most of the work. That issue's `## Status` section is current.
 
 Last measured full run (2026-08-23, plain `yarn verify` on this branch):
@@ -298,7 +298,7 @@ below.
    (`git status --porcelain`).
 
 Then update the "cost" column for `cross-dm` in
-[regression-coverage-map.md](../docs/regression-coverage-map.md) (Bucket 1
+[regression-coverage-map.md](../../docs/regression-coverage-map.md) (Bucket 1
 table) and delete the `⚠️` callout above it, which describes this bug.
 
 ---
@@ -306,7 +306,7 @@ table) and delete the `⚠️` callout above it, which describes this bug.
 ## 2. Two arms never run here, so every verdict says `PASS (PARTIAL)`
 
 Full diagnosis and the exact fix already written up in
-[2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md](.done/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md).
+[2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md](2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md).
 Do not re-derive it; that file names the two offending lines and the function
 that already solves the same problem correctly.
 
