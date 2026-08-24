@@ -16,6 +16,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
 - [Regression coverage map](docs/regression-coverage-map.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
+- [The verify gate](docs/verify-gate.md)
 
 ### .Archived
 - [Android Build Workflow](docs/.archived/android-build-workflow.md)
@@ -120,7 +121,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
 - 📋 [Name resolution: an API that cannot express a partial identity](issues/2026-08-10-identity-resolution-architecture-design.md)
 - 📋 [Identity Resolution Implementation Plan](issues/2026-08-10-identity-resolution-architecture-plan.md)
-- 📋 [Review the verify gate: right tests, cheap, and what is missing](issues/2026-08-23-verify-gate-coverage-and-cost-review.md)
 - 📋 [Three fixes to `yarn verify` before the branches ship](issues/2026-08-24-verify-gate-pre-ship-fixes.md)
 
 #### Messagedb
@@ -326,8 +326,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Rebuild the sync indicator on a per-space "behind by N" signal](issues/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md)
 - 📋 [A DB call landing mid-close still fails once](issues/.open/2026-08-17-a-db-call-landing-mid-close-still-fails-once.md)
 - 📋 [Outbound signing is decided in four places, only one of which is the shared rule](issues/.open/2026-08-21-outbound-signing-is-decided-in-four-places-not-one.md)
-- 📋 [`yarn verify` — a routed, cross-repo regression gate with a readable verdict](issues/.open/2026-08-22-verify-regression-gate-design.md)
-- 📋 [`yarn verify` Implementation Plan](issues/.open/2026-08-22-verify-regression-gate-plan.md)
 
 ### Deferred
 
@@ -557,7 +555,10 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Remove the single-repo cross-platform leftovers](issues/.done/2026-08-13-remove-single-repo-cross-platform-leftovers.md)
 - 📋 [DM identity on desktop: the dialect fix, then the privacy rule](issues/.done/2026-08-20-dm-identity-reveal-desktop-and-shared-plan.md)
 - 📋 [Is a whole-app regression net worth building, and if so what shape?](issues/.done/2026-08-22-regression-safety-net-what-would-it-take.md)
+- 📋 [`yarn verify` — a routed, cross-repo regression gate with a readable verdict](issues/.done/2026-08-22-verify-regression-gate-design.md)
+- 📋 [`yarn verify` Implementation Plan](issues/.done/2026-08-22-verify-regression-gate-plan.md)
 - 📋 [Harness: reuse a persistent space instead of minting one every run](issues/.done/2026-08-23-harness-space-reuse-design.md)
+- 📋 [Review the verify gate: right tests, cheap, and what is missing](issues/.done/2026-08-23-verify-gate-coverage-and-cost-review.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
 - 📋 [Add DM-Specific Action Queue Handlers](issues/.done/dm-action-queue-handlers.md)
@@ -818,4 +819,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-24 11:52:39
+**Last Updated**: 2026-08-24 12:08:21

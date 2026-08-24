@@ -1,18 +1,35 @@
 ---
 type: task
 title: 'Review the verify gate: is it running the right tests, cheaply, and what is missing?'
-status: in-progress
+status: done
 created: 2026-08-23
-updated: 2026-08-23
+updated: 2026-08-24
 ---
 
 # Review the verify gate: right tests, cheap, and what is missing
 
 ## Status
 
-Questions 1, 2 and 4 are answered and shipped. Question 3 is one slice of three
-done. Nothing is pushed. Read the git log on `feat/verify-regression-gate`
-rather than the checkboxes below, which predate the work.
+**Closed 2026-08-24.** Questions 1, 2 and 4 are answered and shipped. Question 3
+delivered its first slice; the remaining slice — the ten authorization arms —
+is a project in its own right and is NOT part of this review. It needs an
+identity fix plus space reuse per scenario before any of them can be allowed to
+run automatically. Read the git log on `feat/verify-regression-gate` rather than
+the checkboxes below, which predate the work.
+
+What happened after this review closed, in order:
+
+1. Three pre-ship defects, scoped and fixed in
+   [2026-08-24-verify-gate-pre-ship-fixes.md](../2026-08-24-verify-gate-pre-ship-fixes.md).
+2. `cross-dm` became runnable for the first time and immediately found a real
+   cross-client message loss, now diagnosed to a mechanism:
+   [the issue](../.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md).
+3. Independent adversarial review; one real defect found and fixed.
+4. `KNOWN-RED` stopped forcing `PASS (PARTIAL)`, because the two tracked
+   baselines on main were making every cross-repo run partial for reasons
+   unrelated to the change.
+
+For how the tool behaves now, read [verify-gate.md](../../docs/verify-gate.md).
 
 **Q1 — routing.** Three defects found and fixed, all falsified by mutation
 against a green control:
@@ -44,7 +61,7 @@ and reported a baseline PASS. The documented flow is commit, verify, open a PR
 diffs `merge-base(HEAD, base)..HEAD` as well.
 
 **Q2 — the 42-scenario audit.** Written into
-[regression-coverage-map.md](../docs/regression-coverage-map.md) as a new
+[regression-coverage-map.md](../../docs/regression-coverage-map.md) as a new
 "Scenario inventory" section: 27 regression arms, 11 instruments, 3 offline, 1
 needing a human. **Nothing is dead.** Two findings worth acting on: `cross-dm`
 is already wired in and still mints one permanent account per run, and ten
@@ -69,7 +86,7 @@ Then `cross-dm`'s minting, which needs the worktree path bug fixed first so the
 change can be verified at all.
 
 **Before shipping**, three fixes are scoped in
-[2026-08-24-verify-gate-pre-ship-fixes.md](2026-08-24-verify-gate-pre-ship-fixes.md):
+[2026-08-24-verify-gate-pre-ship-fixes.md](../2026-08-24-verify-gate-pre-ship-fixes.md):
 `cross-dm`'s minting, the worktree path bug that makes every verdict PARTIAL,
 and one real `--all` run. That file is startable cold; start there.
 
@@ -81,8 +98,8 @@ MEASURED, plain `yarn verify` on this branch after all of the above: **383s,
 cross-client arms, which still skip from a linked worktree (tracked separately).
 
 Follow-on from the two harness-cost issues, both now closed:
-[accounts](.done/2026-08-23-harness-mints-permanent-accounts-every-run.md) and
-[space reuse](.done/2026-08-23-harness-space-reuse-design.md). Those made the gate
+[accounts](2026-08-23-harness-mints-permanent-accounts-every-run.md) and
+[space reuse](2026-08-23-harness-space-reuse-design.md). Those made the gate
 stop littering the network. This one asks a different question: **is it running
 the right things, and only those?**
 

@@ -13,7 +13,7 @@ updated: 2026-08-23
 `.agents/issues/` is where this repo's `yarn verify` cross-repo regression gate
 keeps its tracking issues, to keep the sibling repos' own PRs free of source
 changes. See
-`quorum-desktop/.agents/issues/.open/2026-08-22-verify-regression-gate-plan.md`
+`quorum-desktop/.agents/issues/.done/2026-08-22-verify-regression-gate-plan.md`
 for the gate itself, and `quorum-desktop/scripts/verify/baseline.mjs` for why
 this specific exemption exists.
 

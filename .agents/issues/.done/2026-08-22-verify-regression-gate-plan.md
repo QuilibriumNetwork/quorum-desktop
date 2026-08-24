@@ -1,10 +1,10 @@
 ---
 type: task
 title: 'Implementation plan — `yarn verify` gate, coverage audit, and the top delivery gaps'
-status: in-progress
+status: done
 priority: high
 created: 2026-08-22
-updated: 2026-08-23
+updated: 2026-08-24
 area: testing / developer confidence
 ---
 
@@ -1824,8 +1824,8 @@ three repos and prints a verdict readable without reading the diff.
 Also closes two measured coverage gaps: no DM scenario asserted any content type
 beyond plain text, and `remove-reaction` was asserted nowhere.
 
-Design: `.agents/issues/.open/2026-08-22-verify-regression-gate-design.md`
-Plan:   `.agents/issues/.open/2026-08-22-verify-regression-gate-plan.md`
+Design: `.agents/issues/.done/2026-08-22-verify-regression-gate-design.md`
+Plan:   `.agents/issues/.done/2026-08-22-verify-regression-gate-plan.md`
 
 Both new live arms were run against deliberately broken code and seen to go red
 before being trusted.
@@ -1882,5 +1882,28 @@ Remaining before this can close:
    — routing tightness, an audit of all 42 scenarios, wiring in the user-ops and
    authorization arms, and the `space-basic` decision.
 2. Ship: one PR per repo. Held.
+
+## Status (2026-08-24) — plan delivered, issue closed
+
+Item 1 is **done** (that review is now in `.done/`), and so are the three
+pre-ship fixes that came out of it
+([2026-08-24-verify-gate-pre-ship-fixes.md](../2026-08-24-verify-gate-pre-ship-fixes.md)).
+Item 2 is the only thing left and is held at the operator's instruction —
+tracked there, not here.
+
+For how the tool behaves today, read
+[verify-gate.md](../../docs/verify-gate.md), not this plan. A plan describes
+intent at a point in time; four of its assumptions turned out to be wrong and
+are listed in the design doc's Status section.
+
+Last measured run before closing (plain `yarn verify`, commit `7716b77fa`):
+**455s**, no SKIP rows, **0 new accounts**. `yarn verify --all` was also watched
+end to end: all six live arms ran, `space-basic` PASS in 21s.
+
+An independent adversarial review of the whole branch found one real defect —
+the gate and the arms it spawns could disagree about which quorum-mobile was
+under test — which is fixed and re-verified.
+
+*Last updated: 2026-08-24*
 
 *Last updated: 2026-08-23*

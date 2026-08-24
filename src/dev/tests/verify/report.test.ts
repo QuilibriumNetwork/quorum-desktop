@@ -52,17 +52,57 @@ describe('verdictOf', () => {
     expect(verdictOf([step('FAIL'), step('FLAKY'), step('SKIP')], FULL_PLAN)).toBe('FAIL');
   });
 
-  // KNOWN-RED is a reduction like SKIP: it must never read as a bare PASS.
-  it('is PASS (PARTIAL) when a step is KNOWN-RED and nothing failed', () => {
-    expect(verdictOf([step('PASS'), step('KNOWN-RED')], FULL_PLAN)).toBe('PASS (PARTIAL)');
+  // Changed 2026-08-24, deliberately. A KNOWN-RED step RAN and returned the
+  // tracked result, so nothing was proved less — PARTIAL must mean "this run
+  // proved less than a full run", and nothing else. Before this, quorum-shared
+  // (1 known type error) and quorum-mobile (302 known lint errors) made EVERY
+  // cross-repo change report PARTIAL for reasons unrelated to it, which left
+  // the operator adjudicating warning lines to answer the question the verdict
+  // exists to answer.
+  it('is PASS when the only red steps are known-broken on main', () => {
+    expect(verdictOf([step('PASS'), step('KNOWN-RED')], FULL_PLAN)).toBe('PASS');
   });
 
+  // The escape hatch must not become a blanket. Everything that genuinely
+  // reduces coverage still outranks it.
   it('is FAIL when a step failed and another is KNOWN-RED', () => {
     expect(verdictOf([step('FAIL'), step('KNOWN-RED')], FULL_PLAN)).toBe('FAIL');
   });
 
   it('prefers FLAKY over KNOWN-RED', () => {
     expect(verdictOf([step('FLAKY'), step('KNOWN-RED')], FULL_PLAN)).toBe('FLAKY');
+  });
+
+  it('is still PARTIAL when something was skipped alongside a KNOWN-RED', () => {
+    expect(verdictOf([step('KNOWN-RED'), step('SKIP')], FULL_PLAN)).toBe('PASS (PARTIAL)');
+  });
+
+  it('is still PARTIAL when the plan recorded a skip alongside a KNOWN-RED', () => {
+    const plan = { ...FULL_PLAN, skipped: ['mobile resolves the published shared package'] };
+    expect(verdictOf([step('KNOWN-RED')], plan)).toBe('PASS (PARTIAL)');
+  });
+
+  // Getting WORSE than the recorded baseline is not KNOWN-RED at all — the
+  // classifier leaves it FAIL. Pinned here as well as in runner.test.ts,
+  // because it is the single assumption the change above rests on: if a
+  // regression could hide behind a baseline, none of this would be safe.
+  it('does not hide a step whose failure count exceeds its baseline', () => {
+    const worse = classifyKnownRed(
+      'mobile:lint',
+      'FAIL',
+      '✖ 476 problems (303 errors, 173 warnings)'
+    );
+    expect(worse.status).toBe('FAIL');
+
+    // Control, in the same test so the two can never drift apart. Without it,
+    // a classifier that returned FAIL for EVERYTHING would satisfy the
+    // assertion above while quietly breaking the whole KNOWN-RED mechanism.
+    const atBaseline = classifyKnownRed(
+      'mobile:lint',
+      'FAIL',
+      '✖ 475 problems (302 errors, 173 warnings)'
+    );
+    expect(atBaseline.status).toBe('KNOWN-RED');
   });
 });
 
@@ -80,6 +120,33 @@ describe('renderReport', () => {
     expect(output).toContain('KNOWN-RED');
     expect(output).toContain('302 errors');
     expect(output).toContain(KNOWN_RED['mobile:lint'].issue);
+  });
+
+  // A KNOWN-RED row no longer downgrades the verdict, so the headline has to
+  // acknowledge it explicitly. Without this line a reader sees a clean PASS
+  // sitting directly above two failing steps and nothing connecting the two.
+  it('names the known-broken steps on the verdict line, and still says PASS', () => {
+    const results = [
+      step('PASS', { id: 'desktop:unit', repo: 'desktop', label: 'unit' }),
+      step('KNOWN-RED', { id: 'mobile:lint', repo: 'mobile', label: 'lint' }),
+      step('KNOWN-RED', { id: 'shared:typecheck', repo: 'shared', label: 'typecheck' }),
+    ];
+    const output = renderReport({ env: null, plan: FULL_PLAN, results });
+
+    expect(output).toContain('VERDICT  PASS');
+    expect(output).not.toContain('PASS (PARTIAL)');
+    expect(output).toContain('2 step(s) already broken on main, unchanged');
+    expect(output).toContain('lint, typecheck');
+    expect(output).toContain('not caused by this change');
+  });
+
+  it('says nothing about known-broken steps when there are none', () => {
+    const output = renderReport({
+      env: null,
+      plan: FULL_PLAN,
+      results: [step('PASS', { label: 'unit' })],
+    });
+    expect(output).not.toContain('already broken on main');
   });
 });
 

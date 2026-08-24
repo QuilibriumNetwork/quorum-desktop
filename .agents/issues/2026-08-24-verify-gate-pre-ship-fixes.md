@@ -1,7 +1,7 @@
 ---
 type: task
 title: 'Three fixes to yarn verify before the branches ship'
-status: open
+status: in-progress
 priority: high
 created: 2026-08-24
 updated: 2026-08-24
@@ -64,10 +64,36 @@ carve-outs checked against all three real checkouts, and every reachable
 It also raised one cosmetic issue, filed separately as
 [2026-08-24-verify-detail-column-blank-for-the-vitest-driven-arms.md](.open/2026-08-24-verify-detail-column-blank-for-the-vitest-driven-arms.md).
 
-**Final measured run** (`7716b77fa`, plain `yarn verify`): **455s**,
-`PASS (PARTIAL)`, **no SKIP rows**, **0 new accounts**. The PARTIAL is the two
-tracked KNOWN-RED baselines plus the shared/mobile publish-asymmetry warning —
-the gate correctly reporting real gaps.
+**One more fix came out of explaining the tool to the operator.** Asked how to
+read the verdict, the honest answer was "it says `PASS (PARTIAL)` on every
+cross-repo change and you have to adjudicate three warning lines yourself" —
+which is the same defect this branch spent the day removing elsewhere: a warning
+that fires when nothing is wrong stops being read.
+
+MEASURED, per change type:
+
+| Change | Best possible verdict, before |
+|---|---|
+| desktop-only | `PASS` |
+| touches quorum-shared | **always `PASS (PARTIAL)`** |
+| touches quorum-mobile | **always `PASS (PARTIAL)`** |
+
+Cause: quorum-shared carries 1 known type error and quorum-mobile 302 known
+lint errors, both already on main and both tracked. `KNOWN-RED` forced PARTIAL,
+so those two made every cross-repo run partial for reasons unrelated to the
+change under test.
+
+Fixed: `PASS (PARTIAL)` now means exactly one thing — **this run proved less
+than a full run would**. A `KNOWN-RED` step ran and returned the tracked result,
+so it proved nothing less and no longer downgrades the verdict; it is named on
+the verdict line instead. A step that gets WORSE than its baseline still FAILs,
+and that path is pinned by a test with a control beside it. Falsified: restoring
+the old severity list turns both new assertions red while the FAIL/FLAKY/SKIP
+guards stay green.
+
+Documentation written at the same time:
+[.agents/docs/verify-gate.md](../docs/verify-gate.md) — the verdicts, the costs,
+the held-back arms, the permanence rules, and what the gate does not cover.
 
 **Remaining before ship:** one PR per repo, three PRs, do not merge. Held.
 
@@ -79,7 +105,7 @@ the gate correctly reporting real gaps.
   clean; **nothing has been pushed and no PR exists.** The operator has held
   shipping deliberately.
 - Read the git log, not the checkboxes in
-  [2026-08-23-verify-gate-coverage-and-cost-review.md](2026-08-23-verify-gate-coverage-and-cost-review.md),
+  [2026-08-23-verify-gate-coverage-and-cost-review.md](.done/2026-08-23-verify-gate-coverage-and-cost-review.md),
   which predate most of the work. That issue's `## Status` section is current.
 
 Last measured full run (2026-08-23, plain `yarn verify` on this branch):
@@ -154,7 +180,7 @@ table) and delete the `⚠️` callout above it, which describes this bug.
 ## 2. Two arms never run here, so every verdict says `PASS (PARTIAL)`
 
 Full diagnosis and the exact fix already written up in
-[2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md](.open/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md).
+[2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md](.done/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md).
 Do not re-derive it; that file names the two offending lines and the function
 that already solves the same problem correctly.
 

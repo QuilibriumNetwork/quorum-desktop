@@ -18,7 +18,7 @@ timings unchanged (91-92s against a 92-97s baseline).
 
 The one open thread — what to do about `space-basic`, now the only per-run space
 minter — moved to
-[2026-08-23-verify-gate-coverage-and-cost-review.md](../.open/2026-08-23-verify-gate-coverage-and-cost-review.md).
+[2026-08-23-verify-gate-coverage-and-cost-review.md](2026-08-23-verify-gate-coverage-and-cost-review.md).
 
 # Harness: reuse a persistent space instead of minting one every run
 
@@ -167,7 +167,7 @@ cheaper.
       option 1 (lower frequency). Creation is genuinely its subject — this is
       the ONLY remaining source of per-run space minting. **Moved out of this
       issue** to
-      [2026-08-23-verify-gate-coverage-and-cost-review.md](../.open/2026-08-23-verify-gate-coverage-and-cost-review.md),
+      [2026-08-23-verify-gate-coverage-and-cost-review.md](2026-08-23-verify-gate-coverage-and-cost-review.md),
       because the answer depends on which tier `space-basic` should sit in, and
       that is a question about the gate's routing rather than about space reuse
 

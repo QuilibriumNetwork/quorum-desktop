@@ -54,7 +54,7 @@ resolved plan without running anything.
 MEASURED 2026-08-23, full `yarn verify --all` from this worktree: verdict
 **`PASS (PARTIAL)`**, total **393s (6.5 min)** — this is the measured actual,
 replacing the plan's budgeted estimate of 15-20 minutes
-(`.agents/issues/.open/2026-08-22-verify-regression-gate-plan.md`, Task 12 Step 3):
+(`.agents/issues/.done/2026-08-22-verify-regression-gate-plan.md`, Task 12 Step 3):
 
 | live step | status | seconds |
 |---|---|---|

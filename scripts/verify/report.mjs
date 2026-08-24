@@ -10,17 +10,32 @@
 import { writeFileSync, rmSync } from 'node:fs';
 
 /**
- * Worst-first. The first status present in the results wins.
+ * `PASS (PARTIAL)` means exactly one thing: **this run proved LESS than a full
+ * run would have.** Nothing else may trigger it. The verdict has to answer
+ * "can I ship this?", and a word that fires when the answer is yes stops being
+ * read at all.
  *
- * KNOWN-RED sits below FLAKY: a retry that only went green by luck is a worse
- * signal than a failure that was already tracked and bounded, so a run with
- * both must report FLAKY, not the (arguably more specific-sounding) KNOWN-RED.
- * It sits above SKIP because a KNOWN-RED row is not skipped — it ran, it
- * failed, and it was deliberately classified. Both still render PASS
- * (PARTIAL): the point of the small vocabulary is that a reader only has to
- * learn four words, not five.
+ * KNOWN-RED is deliberately NOT in the list below, and that is a change from
+ * the original design (2026-08-24). A KNOWN-RED row is a step that RAN and
+ * returned exactly the tracked, pre-existing result — no worse. Nothing was
+ * proved less, so it is not a reduction. Treating it as one had a measured
+ * cost: quorum-shared carries 1 known type error and quorum-mobile 302 known
+ * lint errors, both already on main, so EVERY cross-repo change reported
+ * PARTIAL for reasons that had nothing to do with it. The operator was left
+ * adjudicating three warning lines on every run to answer a question the
+ * verdict was supposed to answer for them.
+ *
+ * The signal is not lost. A KNOWN-RED row still prints in the table with its
+ * count, its baseline and its issue link; the verdict block says how many there
+ * were; and `classifyKnownRed` only downgrades a failure whose count is at or
+ * below the recorded baseline — 303 lint errors where 302 were recorded is a
+ * FAIL, loudly. Getting WORSE still stops the run. Staying exactly as broken as
+ * main does not.
+ *
+ * Worst-first: a run that both failed and was partial is a FAIL, and a run that
+ * only went green on a retry is never a PASS.
  */
-const SEVERITY = ['FAIL', 'FLAKY', 'KNOWN-RED', 'SKIP'];
+const SEVERITY = ['FAIL', 'FLAKY', 'SKIP'];
 
 export function verdictOf(results, plan) {
   const present = new Set(results.map((r) => r.status));
@@ -60,6 +75,17 @@ export function renderReport({ env, plan, results }) {
   lines.push('');
   const verdict = verdictOf(results, plan);
   lines.push(`  VERDICT  ${verdict}${VERDICT_NOTE[verdict] ?? ''}`);
+  // Counted on the verdict line, not only in the table. A KNOWN-RED row no
+  // longer downgrades the verdict, so without this a clean-looking PASS could
+  // sit above two failing steps with nothing on the headline acknowledging
+  // them. The rows above carry the counts, baselines and issue links.
+  const knownRed = results.filter((r) => r.status === 'KNOWN-RED');
+  if (knownRed.length) {
+    lines.push(
+      `           ${knownRed.length} step(s) already broken on main, unchanged: ` +
+        `${knownRed.map((r) => r.label).join(', ')} — not caused by this change`
+    );
+  }
   for (const s of plan.skipped ?? []) lines.push(`           ⚠ ${s}`);
   lines.push('─────────────────────────────────────────────────────────');
   return lines.join('\n');

@@ -181,10 +181,18 @@ quorum-shared is not just a dependency — it's the migration destination for th
 Before reporting any code change complete, run `yarn verify` and paste the
 verdict block **verbatim**.
 
+**Full guide: [The verify gate](.agents/docs/verify-gate.md)** — what each
+verdict means, what it costs, what it does not cover, and where the pieces live.
+
 - Do not summarise it, and do not report a subset of the rows.
 - Do not report `PASS` when the block says `PASS (PARTIAL)` or `FLAKY`. Those
-  are distinct verdicts: `PASS (PARTIAL)` means coverage was reduced, `FLAKY`
-  means a step went green only on a retry.
+  are distinct verdicts: `PASS (PARTIAL)` means **this run proved less than a
+  full run would** — read the `⚠` lines and say whether the gap matters for
+  this change. `FLAKY` means a step went green only on a retry.
+- A `KNOWN-RED` row does **not** make a run partial. It is a step that ran and
+  failed exactly as already recorded on main, so it proved nothing less; the
+  verdict line names those steps separately. If one gets WORSE than its
+  recorded baseline the run FAILs — the baseline is a ceiling, never a budget.
 - `yarn verify --show-receipt` prints the last run's record, including the
   commit it ran against.
 
