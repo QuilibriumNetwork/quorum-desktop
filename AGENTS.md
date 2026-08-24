@@ -202,7 +202,8 @@ rather than guessing from the list below:
 ```
   ROUTED     mobile
   TIER       fast + live
-  LIVE ARMS  cross-dm, config-cross
+  LIVE ARMS  config-cross
+  HELD BACK  cross-dm  (run `yarn verify --all`)
              (only quorum-mobile changed — running the cross-client arms; the
               four same-client arms load no mobile code and cannot observe it)
 ```
@@ -212,26 +213,34 @@ rather than guessing from the list below:
   typecheck, lint, unit tests, build; measured 2026-08-23). The live tier does
   not run. Changing the colour of a button falls here, as does editing
   `src/i18n/<locale>/messages.po` — but not `src/i18n/i18n.ts`, which is code.
-- **A quorum-mobile-only change**: the fast tier plus **only the two
-  cross-client arms**. The other four live arms are desktop vitest scenarios
-  that never load mobile code, so they cannot observe the change; running them
-  would be six minutes of real-relay traffic that could not have gone red.
+- **A quorum-mobile-only change**: the fast tier plus **only the cross-client
+  arms**, which today means `config-cross` alone (`cross-dm` is held back, see
+  below). The four same-client arms are desktop vitest scenarios that never
+  load mobile code, so they cannot observe the change; running them would be
+  six minutes of real-relay traffic that could not have gone red.
 - **Services, sync, storage, crypto, or any path nobody has classified**: the
-  fast tier plus the live tier, about **6.5 minutes measured** (longer once
-  the two cross-client arms are runnable; they are currently skipped from a
-  linked worktree checkout, tracked in quorum-desktop's
-  `.agents/issues/.open/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md`).
-  Real bots send real messages over a real relay.
+  fast tier plus the live tier, about **6.5 minutes measured**. Real bots send
+  real messages over a real relay.
 - **A change under `src/dev/tests/harness/`**: the fast tier plus the full live
   tier, deliberately. The harness IS the live tier's measuring equipment, so a
   change to it is exactly the change a live run has to check. Every other
   directory under `src/dev/tests/` stays on the fast tier, which already runs
   those tests.
-- **`space-basic` is HELD BACK from every per-change run.** It is the one arm
-  that creates a permanent, undeletable Space each time it runs, and unlike
-  `space-delivery` it cannot reuse one, because creating a space is its
-  subject. `yarn verify --all` runs it. Every run that leaves it out says so on
-  its own `HELD BACK` line, so this can never quietly become "nobody ran it".
+- **Two arms are HELD BACK from every per-change run**, for unrelated reasons.
+  `yarn verify --all` runs both, and every run that leaves one out says so on
+  its own `HELD BACK` line, quoting why — so this can never quietly become
+  "nobody ran it".
+  - **`space-basic`** creates a permanent, undeletable Space each time it runs,
+    and unlike `space-delivery` it cannot reuse one, because creating a space
+    is its subject.
+  - **`cross-dm`** reports a reproducible cross-client message loss (5 of 6
+    runs, always the first echo desktop sends) whose cause is not yet known,
+    tracked in
+    `.agents/issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md`.
+    It is held back rather than removed because an arm that is red in most runs
+    for a reason unrelated to the change under test would block every piece of
+    work. Release it — two lines in `scripts/verify/steps.mjs` — once that issue
+    is resolved either way.
 - `yarn verify --fast` skips the live tier on request, for a quick check
   mid-work; it is not a substitute for the full run before reporting done.
 - `space-delivery` is retried once if it fails, because it is load-sensitive

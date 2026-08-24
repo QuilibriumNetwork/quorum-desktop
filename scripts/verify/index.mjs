@@ -214,9 +214,13 @@ if (plan.live) {
   // Named on the run itself, not only in AGENTS.md. The person reading a PASS
   // is not usually the person who read the doc, and an arm that quietly stops
   // running is exactly what this gate exists to prevent.
+  // The reason is per-step, not a single sentence about cost: the two arms
+  // held back today are held for different causes (one mints a permanent
+  // Space, one is red for a tracked reason nobody is fixing this week), and a
+  // shared message would have been wrong for whichever arm it did not describe.
   for (const step of heldBackArms(plan, liveSteps)) {
     plan.reasons.push(
-      `(held back for cost: ${step.label} — it creates a permanent Space; ` +
+      `(held back: ${step.label} — ${step.heldBackWhy ?? 'no reason recorded'}; ` +
         '`yarn verify --all` runs it)'
     );
   }

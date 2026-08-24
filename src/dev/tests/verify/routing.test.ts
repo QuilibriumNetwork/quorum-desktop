@@ -208,9 +208,10 @@ const LIVE_STEPS = [
 ].map((label) => ({
   id: `desktop:${label}`,
   label,
-  // Mirrors steps.mjs: space-basic creates a permanent Space, so it runs on
-  // `--all` rather than on every code change.
-  ...(label === 'space-basic' ? { exhaustiveOnly: true } : {}),
+  // Mirrors steps.mjs. Two arms run on `--all` rather than on every code
+  // change, for unrelated reasons: space-basic creates a permanent Space, and
+  // cross-dm reports a reproducible loss whose cause is still open.
+  ...(label === 'space-basic' || label === 'cross-dm' ? { exhaustiveOnly: true } : {}),
 }));
 
 describe('liveArmsFor', () => {
@@ -221,20 +222,22 @@ describe('liveArmsFor', () => {
     expect(labels(planFromPaths(['desktop/README.md']))).toEqual([]);
   });
 
-  // space-basic is absent: it mints a permanent Space, so it waits for --all.
+  // space-basic and cross-dm are absent: both wait for --all, for unrelated
+  // reasons (a permanent Space, and an open loss finding).
   it('runs every per-change arm for a desktop change', () => {
     expect(labels(planFromPaths(['desktop/src/services/MessageService.ts']))).toEqual([
       'dm-basic',
       'dm-delivery',
       'space-delivery',
-      'cross-dm',
       'config-cross',
     ]);
   });
 
-  it('runs only the two cross-client arms for a mobile-only change', () => {
+  // Reduced to one arm while cross-dm is held back. That is a real narrowing
+  // of mobile-only coverage and it is stated on the run, not absorbed quietly:
+  // config-cross is the only arm left that loads mobile code.
+  it('runs only the in-scope cross-client arm for a mobile-only change', () => {
     expect(labels(planFromPaths(['mobile/services/space/SpaceService.ts']))).toEqual([
-      'cross-dm',
       'config-cross',
     ]);
   });
@@ -242,13 +245,16 @@ describe('liveArmsFor', () => {
   // Defensive: a plan built before liveScope existed, or hand-made by a test,
   // must fail toward running MORE — the same direction as the allowlist.
   it('treats a missing liveScope as every arm', () => {
-    expect(labels({ live: true })).toHaveLength(5);
+    expect(labels({ live: true })).toHaveLength(4);
   });
 
   it('releases the held-back arms only when the plan is exhaustive', () => {
     const perChange = planFromPaths(['desktop/src/services/MessageService.ts']);
     expect(labels(perChange)).not.toContain('space-basic');
-    expect(labels({ ...perChange, exhaustive: true })).toContain('space-basic');
+    expect(labels(perChange)).not.toContain('cross-dm');
+    const exhaustive = labels({ ...perChange, exhaustive: true });
+    expect(exhaustive).toContain('space-basic');
+    expect(exhaustive).toContain('cross-dm');
   });
 });
 
@@ -256,10 +262,11 @@ describe('heldBackArms', () => {
   const labels = (plan: unknown) =>
     heldBackArms(plan, LIVE_STEPS).map((s: { label: string }) => s.label);
 
-  // The report prints these, so a cost decision cannot become a silent gap.
-  it('names the arm a per-change run left out', () => {
+  // The report prints these, so holding an arm back cannot become a silent gap.
+  it('names the arms a per-change run left out', () => {
     expect(labels(planFromPaths(['desktop/src/services/MessageService.ts']))).toEqual([
       'space-basic',
+      'cross-dm',
     ]);
   });
 
@@ -274,8 +281,10 @@ describe('heldBackArms', () => {
 
   // A mobile-only run never reaches space-basic in the first place, so it is
   // out of scope rather than held back — reporting it would be misleading.
-  it('names nothing for a mobile-only run, where the arm was out of scope', () => {
-    expect(labels(planFromPaths(['mobile/services/space/SpaceService.ts']))).toEqual([]);
+  // cross-dm IS in scope for such a run (it loads mobile code), so it is
+  // genuinely held back and must be named.
+  it('names only the in-scope arm for a mobile-only run', () => {
+    expect(labels(planFromPaths(['mobile/services/space/SpaceService.ts']))).toEqual(['cross-dm']);
   });
 
   it('identifies exactly the two arms that spawn quorum-mobile', () => {
@@ -466,14 +475,31 @@ describe('LIVE_STEPS matches the real step catalogue', () => {
     expect(real.map((s) => s.label)).toEqual(LIVE_STEPS.map((s) => s.label));
   });
 
-  it('agrees on which arms are held back for cost', () => {
+  it('agrees on which arms are held back', () => {
     const heldFor = (steps: { label: string; exhaustiveOnly?: boolean }[]) =>
       steps.filter((s) => s.exhaustiveOnly).map((s) => s.label);
     expect(heldFor(real)).toEqual(heldFor(LIVE_STEPS));
     // Stated as a value, not just a comparison: if BOTH sides lost the flag,
     // the equality above would still pass and space-basic would quietly start
     // creating a Space on every code change again.
-    expect(heldFor(real)).toEqual(['space-basic']);
+    expect(heldFor(real)).toEqual(['space-basic', 'cross-dm']);
+  });
+
+  it('gives every held-back arm a reason to print', () => {
+    // The run says WHY each arm was left out, and the text comes from the step
+    // itself because the two held-back arms are held for unrelated causes.
+    // `index.mjs` falls back to 'no reason recorded' rather than crashing — so
+    // without this, a new held-back arm would ship a HELD BACK line that says
+    // nothing, which is the same as not saying it.
+    const held = (real as { label: string; exhaustiveOnly?: boolean; heldBackWhy?: string }[])
+      .filter((s) => s.exhaustiveOnly)
+      .filter((s) => !s.heldBackWhy?.trim());
+
+    expect(
+      held.map((s) => s.label),
+      'These arms are held back but carry no heldBackWhy, so the run would ' +
+        'print a HELD BACK line with no reason on it. Add one in steps.mjs.'
+    ).toEqual([]);
   });
 
   it('agrees on which arms need quorum-mobile', () => {

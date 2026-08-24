@@ -1,13 +1,39 @@
 ---
 type: bug
 title: 'run-cross.mjs / run-config-cross.mjs resolve quorum-mobile wrong from a linked worktree'
-status: open
+status: done
 priority: medium
 created: 2026-08-23
-updated: 2026-08-23
+updated: 2026-08-24
 ---
 
 # run-cross.mjs / run-config-cross.mjs resolve quorum-mobile wrong from a linked worktree
+
+## Status
+
+Fixed 2026-08-24, commit `79080e5fa`. `src/dev/tests/harness/mobileRepo.mjs`
+now resolves the path once, reusing `mainCheckoutFrom()`, and honours
+`HARNESS_MOBILE_REPO` — the escape hatch the error messages had always promised
+and no script read. The gate's matching skip guard is gone.
+
+**Wider than this issue described.** Two `.ts` scenarios carried the identical
+bug (`config-cross.scenario.test.ts:36`, `config-from-mobile.scenario.test.ts:34`)
+and are fixed too. Fixing only the two `.mjs` orchestrators would have moved the
+failure one layer down — mobile found, scenario spawned, scenario dead on a
+state file it looked for inside `.worktrees/`.
+
+MEASURED after the fix, from the worktree: `yarn harness:config-cross` passes
+both directions in 34.6s, and `yarn harness:cross` reaches the relay and
+exchanges real messages. Both had been skipped on every run.
+
+`src/dev/tests/verify/mobileRepo.test.ts` guards it: 7 unit cases plus a
+source-level contract, derived from disk, that no harness file may build its
+own path to quorum-mobile.
+
+⚠️ The first thing `cross-dm` did once it could run was report a reproducible
+message loss — see
+[2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md](../.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md).
+That is a separate finding, not a regression from this fix.
 
 ## Symptoms
 

@@ -276,9 +276,9 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A failed QNS verification can stay failed for the whole session](issues/.open/2026-08-17-a-failed-qns-verification-can-stay-failed-for-the-whole-session.md)
 - 🐛 [A just-joined member permanently misses a space-manifest broadcast](issues/.open/2026-08-19-a-just-joined-member-permanently-misses-a-space-manifest.md)
 - 🐛 [Desktop applies any signed space-manifest, with no staleness guard](issues/.open/2026-08-19-desktop-applies-any-space-manifest-with-no-staleness-guard.md)
-- 🐛 [run-cross.mjs / run-config-cross.mjs resolve quorum-mobile wrong from a linked worktree](issues/.open/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md)
 - 🐛 [quorum-mobile: yarn lint fails with 302 pre-existing errors on master](issues/.open/2026-08-23-mobile-lint-302-errors.md)
 - 🐛 [quorum-shared: Input.native.tsx leaks a falsy ReactNode literal into a View style slot (TS2769)](issues/.open/2026-08-23-shared-typecheck-zero-in-native-style-union.md)
+- 🐛 [Cross-client DM loses the first desktop→mobile message in most runs](issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -415,6 +415,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A failed refetch keeps serving stale QNS verifications](issues/.done/2026-08-17-a-failed-refetch-keeps-serving-stale-qns-verifications.md)
 - 🐛 [A failing decrypt leaks 10 characters of plaintext into the error message](issues/.done/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md)
 - 🐛 [2026 08 22 Partial Notification Record Crashes Channel Route](issues/.done/2026-08-22-partial-notification-record-crashes-channel-route.md)
+- 🐛 [run-cross.mjs / run-config-cross.mjs resolve quorum-mobile wrong from a linked worktree](issues/.done/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md)
 - 🐛 [Harness mints permanent, undeletable accounts on the production relay every run](issues/.done/2026-08-23-harness-mints-permanent-accounts-every-run.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
@@ -816,4 +817,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-24 09:24:48
+**Last Updated**: 2026-08-24 10:58:38

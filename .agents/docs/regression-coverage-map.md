@@ -88,10 +88,16 @@ The two skips are why the verdict reads `PASS (PARTIAL)`, not `PASS`:
 `cross-dm` and `config-cross` both spawn `run-cross.mjs` /
 `run-config-cross.mjs`, which resolve `quorum-mobile` relative to the desktop
 checkout in a way that is correct from the main checkout but wrong from a
-linked worktree (`.worktrees/secondary`, where this was measured) — tracked in
-`.agents/issues/.open/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md`.
-On a normal, non-worktree checkout both arms are expected to run rather than
-skip.
+linked worktree (`.worktrees/secondary`, where this was measured).
+
+> **Superseded 2026-08-24** (commit `79080e5fa`). The path bug is fixed:
+> `mobileRepo.mjs` resolves it once via `mainCheckoutFrom()`, and the two `.ts`
+> scenarios that carried the same bug are fixed too. `config-cross` now runs
+> from a worktree — MEASURED, both directions, 34.6s. `cross-dm` runs as well,
+> and immediately reported a reproducible message loss, so it is now held back
+> to `--all` for a different reason:
+> `.agents/issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md`.
+> The table above is kept as the record of what the run looked like before that.
 
 This closes the "space delivery" and "DM delivery" gaps named in the previous
 version of this warning: those two now run on every `yarn verify --all`, not
@@ -142,17 +148,19 @@ prerequisite for wiring anything in, not a follow-up.
 - **mints N/run** — a timestamped name; N permanent accounts per run
 - **+space** — creates a Space, which is also permanent and undeletable
 
-> ⚠️ **`cross-dm` is in the gate today and still mints.** READ
-> `dm-cross.scenario.test.ts:64`: the desktop bot is named
-> `cross-desktop-${ROLE}-${stamp}`, so every run registers one more permanent
-> account. It has been invisible because both cross-client arms currently SKIP
-> from a linked worktree (see the wiring note above), so on this machine it has
-> not actually been minting — but on a normal checkout it mints on every code
-> change that reaches the live tier. Mobile's half is already correct
-> (`quorum-mobile/dev/harness/dm-two-bot.scenario.ts:74` uses the fixed
-> `dm-bot-${ROLE}`, and `identity.ts` persists), so the fix is desktop-side and
-> small. It cannot be verified from a worktree until the cross-script path bug
-> is fixed.
+> ✅ **`cross-dm` no longer mints** (fixed 2026-08-24, commit `f26ed9c43`). The
+> desktop bot was named `cross-desktop-${ROLE}-${stamp}`, registering one more
+> permanent account every run. It had been invisible because both cross-client
+> arms skipped from a linked worktree; lifting that skip is what made it urgent.
+> Now a fixed `cross-desktop-${ROLE}`, with `drainInbox()` moved before
+> `start()`. MEASURED across five consecutive runs: the account-file count went
+> 94 → 95 (the one-time mint of the fixed name) and then stayed at 95.
+>
+> The drain ordering is load-bearing on this arm specifically. Labels here are
+> bare round numbers and the format is shared with quorum-mobile, which this
+> repo does not modify, so unlike `dm-delivery` there is no per-run stamp in the
+> CONTENT to fall back on. The drain is the only thing preventing a frame queued
+> for a previous run from being counted as an arrival.
 
 ### Bucket 1 — regression arms (27)
 
@@ -164,7 +172,7 @@ Asserts behaviour that must keep working. "In gate" marks the six live arms.
 | `dm-delivery` | every DM content type reaches the receiver's store | ✅ | reuses |
 | `space-basic` | a joiner gets both the post and the roster row | `--all` only | reuses, **+space** |
 | `space-delivery` | every space content type survives the receive path | ✅ | reuses |
-| `cross-dm` (file: `dm-cross`) | mobile↔desktop DM delivery | ✅ | **mints 1/run** |
+| `cross-dm` (file: `dm-cross`) | mobile↔desktop DM delivery | `--all` only | reuses |
 | `config-cross` | a desktop-written config decrypts on mobile | ✅ | reuses |
 | `config-from-mobile` | the reverse direction | via `harness:config-cross` | reuses |
 | `space-kick` | a kicked member stays out, and a backup cannot re-admit them | — | reuses, **+space** |
