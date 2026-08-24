@@ -16,10 +16,13 @@ import { spawn } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { resolveMobileRepo } from './mobileRepo.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DESKTOP_REPO = resolve(HERE, '../../../..');
-const MOBILE_REPO = resolve(DESKTOP_REPO, '..', 'quorum-mobile');
+// Via the helper, NOT as a sibling of this checkout: that guess is wrong from
+// a linked worktree. See mobileRepo.mjs.
+const MOBILE_REPO = resolveMobileRepo(DESKTOP_REPO);
 // Must match BOTH rendezvous.ts files. Mobile owns the layout because its
 // orchestrator defined it first; desktop's rendezvous.ts points here too.
 const RENDEZVOUS_ROOT = resolve(MOBILE_REPO, 'dev/harness/.state/rendezvous');

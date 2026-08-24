@@ -200,18 +200,6 @@ for (const repo of plan.repos) {
 const LIVE_STEP_GAP_MS = 5000;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// `run-cross.mjs` and `run-config-cross.mjs` are plain Node scripts, not part
-// of scripts/verify/, and independently resolve mobile as
-// `resolve(DESKTOP, '..', 'quorum-mobile')` — correct from the main checkout,
-// wrong from a linked worktree (there, `DESKTOP/..` is just `.worktrees/`).
-// This predicts the exact path those scripts will compute so we can skip
-// BEFORE paying for a spawn we already know fails, rather than after.
-// MEASURED 2026-08-23: both scripts fail with this identical error whether
-// run through this orchestrator or standalone — a pre-existing bug, not a
-// sequencing artifact. Tracked:
-// .agents/issues/.open/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md
-const crossScriptMobilePath = resolve(DESKTOP, '..', 'quorum-mobile');
-
 // Live tier: six arms driving real bots against a real relay. Desktop-only —
 // see steps.mjs — because that is where every scenario (including the two
 // cross-client ones) actually lives.
@@ -241,17 +229,6 @@ if (plan.live) {
     // is an accident, not a plan, so it must be loud.
     if (needsMobile(step) && !existsSync(REPOS.mobile)) {
       results.push(skipped(step, 'quorum-mobile not found — cross-client arm skipped'));
-      continue;
-    }
-    if (needsMobile(step) && !existsSync(crossScriptMobilePath)) {
-      results.push(
-        skipped(
-          step,
-          `${step.label} resolves mobile at ${crossScriptMobilePath} (worktree-relative, not ` +
-            'the real sibling) and fails there even though quorum-mobile is present — see ' +
-            '.agents/issues/.open/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md'
-        )
-      );
       continue;
     }
     // Only wait after a step that actually touched the relay — a skip never

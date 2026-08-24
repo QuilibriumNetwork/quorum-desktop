@@ -28,14 +28,19 @@ import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { resolveMobileRepo } from './mobileRepo.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DESKTOP_REPO = resolve(HERE, '../../../..');
-const MOBILE_REPO = resolve(DESKTOP_REPO, '..', 'quorum-mobile');
+// Via the helper, NOT as a sibling of this checkout: that guess is wrong from
+// a linked worktree. See mobileRepo.mjs.
+const MOBILE_REPO = resolveMobileRepo(DESKTOP_REPO);
 
 if (!existsSync(MOBILE_REPO)) {
   console.error(`[config-cross] quorum-mobile not found at ${MOBILE_REPO}`);
-  console.error('[config-cross] both repos must be checked out side by side.');
+  console.error(
+    '[config-cross] both repos must be checked out side by side, or set HARNESS_MOBILE_REPO.'
+  );
   process.exit(1);
 }
 

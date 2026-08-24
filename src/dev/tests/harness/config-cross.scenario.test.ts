@@ -30,10 +30,15 @@ import { test, expect } from 'vitest';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { createSpaceBot } from './spaceBot';
+import { resolveMobileRepo } from './mobileRepo.mjs';
 import type { UserConfig } from '../../../db/messages';
 
 const DESKTOP_REPO = resolve(__dirname, '../../../..');
-const MOBILE_REPO = resolve(DESKTOP_REPO, '..', 'quorum-mobile');
+// Via the helper, NOT as a sibling of this checkout: that guess is wrong from
+// a linked worktree. See mobileRepo.mjs. Fixing only the orchestrator is not
+// enough — it would find mobile, spawn this scenario, and this scenario would
+// then fail on a state file it had looked for in the wrong place.
+const MOBILE_REPO = resolveMobileRepo(DESKTOP_REPO);
 const MOBILE_BOT_STATE = resolve(MOBILE_REPO, 'dev/harness/.state/config-sync-bot.json');
 const HANDOFF = resolve(MOBILE_REPO, 'dev/harness/.state/rendezvous/config-cross.json');
 

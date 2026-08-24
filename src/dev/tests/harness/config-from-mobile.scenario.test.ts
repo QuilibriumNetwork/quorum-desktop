@@ -29,9 +29,12 @@ import { test, expect } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createSpaceBot } from './spaceBot';
+import { resolveMobileRepo } from './mobileRepo.mjs';
 
 const DESKTOP_REPO = resolve(__dirname, '../../../..');
-const MOBILE_REPO = resolve(DESKTOP_REPO, '..', 'quorum-mobile');
+// Via the helper, NOT as a sibling of this checkout: that guess is wrong from
+// a linked worktree. See mobileRepo.mjs.
+const MOBILE_REPO = resolveMobileRepo(DESKTOP_REPO);
 const MOBILE_BOT_STATE = resolve(MOBILE_REPO, 'dev/harness/.state/config-sync-bot.json');
 const HANDOFF = resolve(MOBILE_REPO, 'dev/harness/.state/rendezvous/config-from-mobile.json');
 
