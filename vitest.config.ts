@@ -22,11 +22,15 @@ export default defineConfig({
     // is never initialised, so every scenario fails on `js_generate_ed448` or on a
     // missing lingui locale. They were failing this suite (8 files) purely for that
     // reason. Run them with `yarn harness`.
-    // `security/**` belongs to vitest.security.config.ts and CANNOT run here.
-    // Those tests must execute against the PRODUCTION build of react-dom, which
-    // is the only build whose behaviour is worth asserting; this config runs the
-    // development build, where they self-detect and fail on purpose. Run them
-    // with `yarn test:security`.
+    // There is no `security/**` exclusion, and there was no need for one.
+    // MEASURED 2026-08-24: `src/dev/tests/security/` does not exist, nor does
+    // `vitest.security.config.ts`, nor a `test:security` script — the comment
+    // and exclude line that named all three were describing a suite that was
+    // never written. The two security-named tests that DO exist
+    // (`securityBackupFocus`, `securityKeyExportGating`) live under
+    // `components/` and run in this suite like any other. Removed rather than
+    // left in place: an exclusion matching nothing reads as coverage that is
+    // handled elsewhere, and sends the next reader looking for it.
     // `perf/**` belongs to vitest.perf.config.ts and MUST NOT run here. Those are
     // load-generating benchmarks, and extra CPU contention raises the failure rate
     // of the suite's timing-sensitive tests.
@@ -41,7 +45,6 @@ export default defineConfig({
       'node_modules',
       'dist',
       'src/dev/tests/harness/**',
-      'src/dev/tests/security/**',
       'src/dev/tests/perf/**',
     ],
     server: {

@@ -280,6 +280,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [quorum-shared: Input.native.tsx leaks a falsy ReactNode literal into a View style slot (TS2769)](issues/.open/2026-08-23-shared-typecheck-zero-in-native-style-union.md)
 - 🐛 [Cross-client DM loses the first desktop→mobile message in most runs](issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md)
 - 🐛 [`verify`: the detail column is blank for four of the six live arms](issues/.open/2026-08-24-verify-detail-column-blank-for-the-vitest-driven-arms.md)
+- 🐛 [`verify` mints permanent state on every fresh checkout](issues/.open/2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -326,6 +327,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Rebuild the sync indicator on a per-space "behind by N" signal](issues/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md)
 - 📋 [A DB call landing mid-close still fails once](issues/.open/2026-08-17-a-db-call-landing-mid-close-still-fails-once.md)
 - 📋 [Outbound signing is decided in four places, only one of which is the shared rule](issues/.open/2026-08-21-outbound-signing-is-decided-in-four-places-not-one.md)
+- 📋 [Two checks the gate does not run](issues/.open/2026-08-24-verify-gate-cross-repo-tooling-gaps.md)
 
 ### Deferred
 
@@ -819,4 +821,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-24 12:18:18
+**Last Updated**: 2026-08-24 12:31:04

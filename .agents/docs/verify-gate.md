@@ -27,6 +27,60 @@ yarn verify --show-receipt   # what the last run did, and which commit it ran ag
 
 ---
 
+## How this relates to "the tests"
+
+**It is not a separate tool from the test suites. It is the thing that runs
+them.** When an agent used to report "1808 tests pass", that was
+`yarn test:run` — which is now one row inside `yarn verify`.
+
+```
+yarn verify
+│
+├── quorum-shared     build · typecheck · unit (766 tests)
+│
+├── quorum-desktop    typecheck · lint · unit (1808 tests)   ← "the tests"
+│                     harness-offline · build
+│
+├── quorum-mobile     lint · unit (1222 tests)
+│
+└── live tier         dm-basic · dm-delivery · space-delivery · config-cross
+                      real bots, real messages, real relay
+```
+
+**One command at the end of a change. Nothing else.**
+
+`yarn verify` exists in all three repos, but the two siblings just delegate to
+desktop's orchestrator (`quorum-shared/scripts/verify.mjs`,
+`quorum-mobile/scripts/verify.mjs`). Same tool, three entry points — so it does
+not matter which repo you happen to be standing in. If quorum-desktop is not
+checked out beside them, they fall back to that repo's own fast tier and say so.
+
+### Is it wasteful, if agents already lint and typecheck as they work?
+
+Slightly, and deliberately. Two different jobs:
+
+- **While working**, run `tsc --noEmit` and `eslint` directly. That is ~50s of
+  fast feedback on desktop and it is the right tool for the loop.
+- **Before reporting done**, run `yarn verify`. It re-runs them.
+
+The duplication is under a minute, and it buys the property that matters: **the
+gate does not trust that somebody already ran something.** A gate that skips a
+check because it assumes it was covered is not a gate. If you want a middle
+option, `yarn verify --fast` runs the whole fast tier across all three repos
+without touching the relay.
+
+### What it does not run
+
+| Command | Why not |
+|---|---|
+| `yarn bench` | Load-generating benchmarks. Running them alongside makes timing-sensitive tests flaky — documented in `vitest.config.ts`. |
+| `yarn format:check` | Cosmetic. A gate that goes red over a blank line teaches people to ignore red. |
+| `yarn validate` | Redundant — it is `tsc --noEmit && eslint .`, both already steps. |
+| quorum-shared `lint` | The script exists but the repo has no eslint installed, no config and no dependency. Tracked: [cross-repo tooling gaps](../issues/.open/2026-08-24-verify-gate-cross-repo-tooling-gaps.md). |
+| quorum-mobile typecheck | No script exists. It **can** be typechecked and currently has 11 errors. Same issue. |
+
+---
+
 ## Reading the verdict
 
 The last line is the answer. There are four possible words and they mean

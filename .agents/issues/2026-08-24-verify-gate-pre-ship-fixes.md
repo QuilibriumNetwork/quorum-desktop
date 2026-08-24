@@ -120,7 +120,33 @@ listed as informational and one genuine `⚠`:
            ⚠ This does NOT clear a change that touches shared or the wire.
 ```
 
-**Remaining before ship:** one PR per repo, three PRs, do not merge. Held.
+## ⛔ Ship is BLOCKED — not on polish, on a design question
+
+The three fixes in this issue are done. Shipping is not waiting on them.
+
+While explaining the tool to the operator, a harder question surfaced: **what
+happens when other developers' agents start running this?** Measured, and the
+answer is bad enough to hold the PRs:
+
+**A fresh checkout mints 6 permanent accounts and 1 permanent Space on the
+production relay, on its first run.** Fixed bot names solved the per-machine
+half of this; they did nothing about the number of machines, because `.state/`
+is gitignored and cannot be otherwise. CI is worse — an ephemeral filesystem
+means every job pays it again, unbounded.
+
+Full measurement and four options:
+[2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md](.open/2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md).
+**That decision comes before the PRs**, because merging is precisely the act
+that hands this behaviour to everyone else.
+
+Two smaller gaps found in the same pass, not blockers:
+[cross-repo tooling gaps](.open/2026-08-24-verify-gate-cross-repo-tooling-gaps.md)
+— quorum-shared's `lint` script names a tool the repo has never had, and
+quorum-mobile has never been typechecked by anything (11 errors, 10 of them in
+the calling code the gate already reports as untested).
+
+**Remaining before ship:** resolve the minting question, then one PR per repo,
+three PRs, do not merge. Held.
 
 ## Where the work is
 
