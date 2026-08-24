@@ -73,7 +73,10 @@
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { crossRoles } from './routing.mjs';
+// Both imported, not re-derived. `run-cross.mjs` and `spaceState.ts` use the
+// same two functions from the same module, so the guard cannot answer "which
+// bots?" or "will it reuse the space?" differently from the code it guards.
+import { crossRoles, wantsFreshSpace } from './routing.mjs';
 
 /** Relative to each repo root. */
 export const DESKTOP_STATE_DIR = 'src/dev/tests/harness/.state';
@@ -95,10 +98,6 @@ export const REAL_IO = {
     }
   },
 };
-
-/** `spaceState.ts`'s `wantsFreshSpace`, read from an injectable env. */
-const wantsFreshSpace = (env) =>
-  env?.HARNESS_FRESH === '1' || env?.HARNESS_FRESH === 'true';
 
 /**
  * The persisted state each live arm reuses, keyed by step label.

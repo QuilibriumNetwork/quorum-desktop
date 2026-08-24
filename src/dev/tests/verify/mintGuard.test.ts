@@ -210,6 +210,39 @@ describe('space-delivery: mirroring restoreSharedSpace', () => {
       mintGuardReason({ label: 'space-delivery' }, REPOS, io, { HARNESS_FRESH: '0' })
     ).toBeNull();
   });
+
+  /**
+   * The guard and the scenario must answer "fresh space?" identically.
+   *
+   * Adversarial review found this rule hand-copied into the guard, because
+   * `spaceState.ts` is TypeScript and the guard is plain `.mjs` run by node. The
+   * two agreed at the time and nothing coupled them, so a later edit to either
+   * would have left the guard silently under-protecting — clearing
+   * `space-delivery` while the scenario went on to create a permanent Space.
+   *
+   * The rule now lives in `routing.mjs` and `spaceState.ts` re-exports it. This
+   * test pins that: it imports the function through the HARNESS's path, so if
+   * anyone reintroduces a local definition there, the two objects stop being
+   * the same one and this goes red.
+   */
+  it('shares one wantsFreshSpace with the harness, not a copy', async () => {
+    const fromRouting = (await import('../../../../scripts/verify/routing.mjs'))
+      .wantsFreshSpace;
+    const fromHarness = (await import('../harness/spaceState')).wantsFreshSpace;
+    expect(fromHarness).toBe(fromRouting);
+
+    // And it still behaves, so "same reference" cannot be satisfied by two
+    // identically-broken exports.
+    for (const [env, expected] of [
+      [{ HARNESS_FRESH: '1' }, true],
+      [{ HARNESS_FRESH: 'true' }, true],
+      [{ HARNESS_FRESH: '0' }, false],
+      [{ HARNESS_FRESH: '' }, false],
+      [{}, false],
+    ] as [Record<string, string>, boolean][]) {
+      expect(fromRouting(env), JSON.stringify(env)).toBe(expected);
+    }
+  });
 });
 
 /**

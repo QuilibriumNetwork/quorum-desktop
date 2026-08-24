@@ -24,12 +24,16 @@
  * beat, never exceed. `issue` is repo-relative so it reads the same from any
  * clone.
  */
+// `shared:typecheck` was here, at a baseline of 1, until 2026-08-24. Deleted
+// rather than lowered because the bug was FIXED: `Input.native.tsx:164` now
+// wraps its condition in `!!`, so the falsy `0`/`''` a React.ReactNode can carry
+// no longer reaches a style-array slot. quorum-shared typechecks clean.
+//
+// Deleting the entry is mandatory, not tidiness. `classifyKnownRed` emits a
+// note the moment a listed step passes, precisely so a stale exemption cannot
+// sit here hiding a future regression — leaving it would have printed that note
+// on every single run.
 export const KNOWN_RED = {
-  'shared:typecheck': {
-    errors: 1,
-    why: "leftIcon/rightIcon (React.ReactNode) leak a falsy 0/''/0n through the || chain into a View style array slot — TS2769 at Input.native.tsx:164",
-    issue: '.agents/issues/.open/2026-08-23-shared-typecheck-zero-in-native-style-union.md',
-  },
   'mobile:lint': {
     errors: 302,
     why: '302 pre-existing lint errors on quorum-mobile master, unrelated to any change this gate is meant to catch',
@@ -66,7 +70,6 @@ function tscErrors(output) {
 }
 
 const EXTRACTOR_BY_STEP = {
-  'shared:typecheck': tscErrors,
   'mobile:lint': eslintErrors,
   'mobile:typecheck': tscErrors,
 };

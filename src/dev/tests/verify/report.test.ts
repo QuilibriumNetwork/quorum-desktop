@@ -175,7 +175,7 @@ describe('renderReport', () => {
     const results = [
       step('PASS', { id: 'desktop:unit', repo: 'desktop', label: 'unit' }),
       step('KNOWN-RED', { id: 'mobile:lint', repo: 'mobile', label: 'lint' }),
-      step('KNOWN-RED', { id: 'shared:typecheck', repo: 'shared', label: 'typecheck' }),
+      step('KNOWN-RED', { id: 'mobile:typecheck', repo: 'mobile', label: 'typecheck' }),
     ];
     const output = renderReport({ env: null, plan: FULL_PLAN, results });
 
@@ -206,7 +206,7 @@ describe('errorCountOf', () => {
       'src/a.ts(1,1): error TS2769: nope',
       'src/b.ts(2,2): error TS2322: nope either',
     ].join('\n');
-    expect(errorCountOf('shared:typecheck', output)).toBe(2);
+    expect(errorCountOf('mobile:typecheck', output)).toBe(2);
   });
 
   it('returns null when the output matches no known shape (eslint)', () => {
@@ -218,7 +218,7 @@ describe('errorCountOf', () => {
   // errors" — see baseline.mjs's tscErrors for why it returns null, not 0,
   // on zero "error TS" matches.
   it('returns null when the output matches no known shape (tsc)', () => {
-    expect(errorCountOf('shared:typecheck', 'FATAL ERROR: JavaScript heap out of memory')).toBeNull();
+    expect(errorCountOf('mobile:typecheck', 'FATAL ERROR: JavaScript heap out of memory')).toBeNull();
   });
 
   it('returns null for a step id with no recorded shape', () => {
@@ -241,9 +241,9 @@ describe('classifyKnownRed', () => {
     expect(classifyKnownRed('mobile:lint', 'FAIL', output).status).toBe('KNOWN-RED');
   });
 
-  it('downgrades the tsc shape at its baseline of 1', () => {
+  it('downgrades the tsc shape at or under its baseline of 11', () => {
     const output = 'src/primitives/Input/Input.native.tsx(164,11): error TS2769: nope';
-    expect(classifyKnownRed('shared:typecheck', 'FAIL', output).status).toBe('KNOWN-RED');
+    expect(classifyKnownRed('mobile:typecheck', 'FAIL', output).status).toBe('KNOWN-RED');
   });
 
   // Row 2: fails, over the baseline -> FAIL. Getting worse IS new breakage.
@@ -253,11 +253,22 @@ describe('classifyKnownRed', () => {
   });
 
   it('keeps FAIL for the tsc shape when its count exceeds baseline', () => {
-    const output = [
-      'src/a.ts(1,1): error TS2769: nope',
-      'src/b.ts(2,2): error TS2322: nope either',
-    ].join('\n');
-    expect(classifyKnownRed('shared:typecheck', 'FAIL', output).status).toBe('FAIL');
+    // Built from the baseline rather than hardcoded, so this cannot silently
+    // stop testing anything when the count is ratcheted down. It went stale
+    // exactly that way once: the fixture was two errors against a baseline of
+    // 1, and when the tsc-shaped entry became `mobile:typecheck` (baseline 11)
+    // two errors was suddenly UNDER it, so the test asserted the opposite of
+    // its own name.
+    const over = KNOWN_RED['mobile:typecheck'].errors + 1;
+    const output = Array.from(
+      { length: over },
+      (_, i) => `src/f${i}.ts(${i + 1},1): error TS2769: nope`
+    ).join('\n');
+    expect(classifyKnownRed('mobile:typecheck', 'FAIL', output).status).toBe('FAIL');
+
+    // Control: one fewer must be KNOWN-RED, or "exceeds" is untested.
+    const atBaseline = output.split('\n').slice(0, over - 1).join('\n');
+    expect(classifyKnownRed('mobile:typecheck', 'FAIL', atBaseline).status).toBe('KNOWN-RED');
   });
 
   // Row 3: fails, unparseable -> FAIL. Never assume an unreadable failure is the known one.
@@ -268,7 +279,7 @@ describe('classifyKnownRed', () => {
 
   it('keeps FAIL when the count cannot be parsed (tsc shape)', () => {
     const output = 'FATAL ERROR: JavaScript heap out of memory';
-    expect(classifyKnownRed('shared:typecheck', 'FAIL', output).status).toBe('FAIL');
+    expect(classifyKnownRed('mobile:typecheck', 'FAIL', output).status).toBe('FAIL');
   });
 
   // A parsed-but-zero count is a distinct case from "unparseable" — the

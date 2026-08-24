@@ -314,6 +314,28 @@ export function crossRoles(env = process.env) {
 }
 
 /**
+ * Skip any persisted space and mint a fresh one.
+ *
+ * Lives here for the same reason `crossRoles` does, and it arrived here the
+ * same way: adversarial review 2026-08-24 found it hand-copied into
+ * `mintGuard.mjs`, because `spaceState.ts` is TypeScript and the guard is a
+ * plain `.mjs` run directly by node, which cannot import TS without a loader.
+ * The two copies agreed at the time, and nothing coupled them — so a later edit
+ * to one (a third truthy value, a renamed variable) would silently leave the
+ * guard under-protecting: it would clear `space-delivery` as safe while the
+ * scenario went on to create a permanent, undeletable Space.
+ *
+ * A plain-JS module is importable from BOTH sides — `.ts` files in this repo
+ * already import `mobileRepo.mjs` — so one definition can serve both. That
+ * asymmetry is the whole trick: TypeScript can import `.mjs`, the reverse needs
+ * a loader.
+ *
+ * `spaceState.ts` re-exports this so the harness's own surface is unchanged.
+ */
+export const wantsFreshSpace = (env = process.env) =>
+  env?.HARNESS_FRESH === '1' || env?.HARNESS_FRESH === 'true';
+
+/**
  * Resolve the MAIN checkout root from any worktree, linked or not.
  *
  * Deviation from the plan's verbatim source, ruled authorized on review

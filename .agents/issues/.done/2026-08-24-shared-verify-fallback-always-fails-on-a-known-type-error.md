@@ -1,13 +1,38 @@
 ---
 type: bug
 title: "quorum-shared's single-repo verify fallback reports FAIL on every change"
-status: open
+status: done
 priority: medium
 created: 2026-08-24
 updated: 2026-08-24
 ---
 
 # `yarn verify` in quorum-shared always FAILs without a desktop checkout
+
+## Status
+
+**2026-08-24 — FIXED in quorum-shared PR #89.**
+
+Closed by fixing the cause, which was **option A** in the list below — the
+one-line coercion in `Input.native.tsx`. Options B and C were not needed.
+
+MEASURED after, in quorum-shared with no sibling desktop checkout carrying the
+orchestrator:
+
+```
+VERDICT  PASS (PARTIAL) — orchestrator not found, single-repo fast tier only (typecheck, unit, build)
+```
+
+That is the fallback working as designed: it proves less than a full run and says
+so, rather than reporting a red that has nothing to do with the change under
+test.
+
+The warning added to quorum-shared's `AGENTS.md` while this was open has been
+removed, since it described a state that no longer exists. What remains there is
+the operational fact — the fallback stops at the first failing step and has no
+`KNOWN-RED` notion, so keeping that repo typechecking clean is what keeps it
+useful.
+
 
 Found by independent review of quorum-shared PR #89, 2026-08-24, before merge.
 

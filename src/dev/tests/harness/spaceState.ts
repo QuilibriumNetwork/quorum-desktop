@@ -289,9 +289,14 @@ export function loadSpaceState(name: string): SpaceStateSnapshot | undefined {
  *
  * Use it for clean-room reproduction when a persisted space is suspected of
  * being the problem, and after any change to PERSIST_STORES.
+ *
+ * Re-exported, not defined here. `scripts/verify/mintGuard.mjs` has to ask the
+ * same question — an arm that would mint a Space must not be cleared to run —
+ * and it is plain `.mjs` executed by node, so it cannot import this TypeScript
+ * module. Owning the rule in a `.mjs` both sides can import is what stops the
+ * two answers drifting apart; see that function's header in `routing.mjs`.
  */
-export const wantsFreshSpace = (): boolean =>
-  process.env.HARNESS_FRESH === '1' || process.env.HARNESS_FRESH === 'true';
+export { wantsFreshSpace } from '../../../../scripts/verify/routing.mjs';
 
 /**
  * Restore a space shared by several bots, or report that one must be created.

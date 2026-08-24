@@ -88,7 +88,7 @@ function once(step) {
  * `plan` is optional so `runStep` stays callable in isolation (as the
  * classifyKnownRed tests do, indirectly, by not needing it at all); when
  * given, a KNOWN_RED step that unexpectedly passes pushes a warning there —
- * see classifyKnownRed's `staleWarning`.
+ * see classifyKnownRed's `note`.
  */
 export async function runStep(step, plan) {
   const base = { id: step.id, label: step.label, repo: step.repo, tier: step.tier };

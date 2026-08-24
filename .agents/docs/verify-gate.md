@@ -184,11 +184,12 @@ verdict nothing** — they are housekeeping the run noticed. An improvement must
 never make the report look worse, which is the same rule that stopped `KNOWN-RED`
 rows downgrading the verdict.
 
-> Changed 2026-08-24. `KNOWN-RED` used to force `PASS (PARTIAL)`. Since
-> quorum-shared carries 1 known type error and quorum-mobile 302 known lint
-> errors, that meant **every** cross-repo change reported PARTIAL for reasons
-> unrelated to it, and the operator had to adjudicate three warning lines on
-> every run to answer a question the verdict exists to answer.
+> **Why `KNOWN-RED` does not force `PASS (PARTIAL)`.** It once did, and the
+> effect was that any repo carrying tracked debt made *every* cross-repo change
+> report PARTIAL for reasons unrelated to it. The reader then had to adjudicate
+> several warning lines on each run to answer the exact question the verdict
+> exists to answer for them. A verdict that always says "it depends" is not a
+> verdict.
 
 ---
 

@@ -1,13 +1,37 @@
 ---
 type: bug
 title: 'quorum-shared: Input.native.tsx leaks a falsy ReactNode literal into a View style slot (TS2769)'
-status: open
+status: done
 priority: medium
 created: 2026-08-23
-updated: 2026-08-23
+updated: 2026-08-24
 ---
 
 # quorum-shared: Input.native.tsx leaks a falsy ReactNode literal into a View style slot (TS2769)
+
+## Status
+
+**2026-08-24 — FIXED in quorum-shared PR #89.**
+
+`Input.native.tsx:164` now reads
+`!!(showFloatingLabel || leftIcon || rightIcon) && styles.floatingContainer`,
+matching the `!!leftIcon` / `!!rightIcon` idiom already used a few lines below.
+
+**Runtime behaviour is unchanged, and that is checkable rather than asserted.**
+READ, `node_modules/react-native/Libraries/StyleSheet/flattenStyle.js`: the
+function returns `undefined` for any entry that is not an object, and the caller
+then skips it on `if (computedStyle)`. So `0`, `''` and `false` are all discarded
+identically, and the style is applied in exactly the cases it was before —
+whenever the condition is truthy.
+
+MEASURED after: quorum-shared `npx tsc --noEmit` reports **0 errors** (was 1),
+lint 0 errors, 785 tests pass.
+
+The `shared:typecheck` entry has been **deleted** from
+`scripts/verify/baseline.mjs` — not lowered. Leaving it would have made the gate
+print a stale-exemption note on every run, which is exactly the mechanism that
+stops a dead baseline hiding a future regression.
+
 
 **Affected repo: `quorum-shared`** (not desktop). Filed here because this repo's
 `.agents/issues/` is where this repo's `yarn verify` cross-repo regression gate

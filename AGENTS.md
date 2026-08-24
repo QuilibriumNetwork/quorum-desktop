@@ -222,11 +222,9 @@ forget, so this cannot rot silently.
 The gate routes itself from the diff (`scripts/verify/routing.mjs`), so the
 cost depends on what changed. "What changed" means **this branch's own commits
 plus any uncommitted work** — so committing before you verify is fine, and
-running it on a clean branch still checks that branch. (Until 2026-08-23 it read
-only the working tree, so a clean tree reported "no changes detected" and ran
-nothing, however much the branch had changed.) **`yarn verify --explain` prints the plan and
-the arms it would run, in milliseconds, without running any of them** — ask it
-rather than guessing from the list below:
+running it on a clean branch still checks that branch. **`yarn verify --explain`
+prints the plan and the arms it would run, in milliseconds, without running any
+of them** — ask it rather than guessing from the list below:
 
 ```
   ROUTED     mobile
