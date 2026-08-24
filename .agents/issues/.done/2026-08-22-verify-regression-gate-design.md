@@ -404,7 +404,7 @@ Follow-on records:
 
 - [implementation plan](2026-08-22-verify-regression-gate-plan.md) — what was built
 - [coverage and cost review](2026-08-23-verify-gate-coverage-and-cost-review.md) — whether it runs the right things
-- [pre-ship fixes](../2026-08-24-verify-gate-pre-ship-fixes.md) — the last three defects
+- [pre-ship fixes](2026-08-24-verify-gate-pre-ship-fixes.md) — the last three defects
 
 **Four design assumptions did not survive contact.** All are corrected in the
 issues above; recorded here because a design doc that hides its own misses is

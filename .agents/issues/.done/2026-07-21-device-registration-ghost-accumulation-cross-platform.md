@@ -449,7 +449,7 @@ Mobile:
 Desktop reset copy claims it deletes "your private keys" but `KeyDB` survives
 (only `quorum_db` is deleted). Deleting `KeyDB` on reset would honor the copy and
 is a real hardening, but it interacts with the app-lock / duress-wipe work
-([2026-06-22-app-lock-password-gate-research.md](../../.agents/reports/2026-06-22-app-lock-password-gate-research.md)).
+([2026-06-22-app-lock-password-gate-research.md](../../reports/2026-06-22-app-lock-password-gate-research.md)).
 Decide explicitly (with the lead if needed); don't fold it into the ghost fix
 without calling it out.
 

@@ -1887,7 +1887,7 @@ Remaining before this can close:
 
 Item 1 is **done** (that review is now in `.done/`), and so are the three
 pre-ship fixes that came out of it
-([2026-08-24-verify-gate-pre-ship-fixes.md](../2026-08-24-verify-gate-pre-ship-fixes.md)).
+([2026-08-24-verify-gate-pre-ship-fixes.md](2026-08-24-verify-gate-pre-ship-fixes.md)).
 Item 2 is the only thing left and is held at the operator's instruction —
 tracked there, not here.
 

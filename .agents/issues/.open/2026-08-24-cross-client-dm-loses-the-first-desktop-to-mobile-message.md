@@ -242,6 +242,6 @@ either way. `src/dev/tests/verify/routing.test.ts` asserts the held-back set by
 value, so removing the flag without updating the expectation fails the fast
 tier rather than passing silently.
 
-See [2026-08-24-verify-gate-pre-ship-fixes.md](../2026-08-24-verify-gate-pre-ship-fixes.md).
+See [2026-08-24-verify-gate-pre-ship-fixes.md](../.done/2026-08-24-verify-gate-pre-ship-fixes.md).
 
 *Last updated: 2026-08-24*

@@ -392,6 +392,6 @@ verdict block verbatim.** Not a summary, not a subset of the rows. `PASS
 
 Design decisions and the measurements behind them:
 [2026-08-23-verify-gate-coverage-and-cost-review.md](../issues/.done/2026-08-23-verify-gate-coverage-and-cost-review.md)
-and [2026-08-24-verify-gate-pre-ship-fixes.md](../issues/2026-08-24-verify-gate-pre-ship-fixes.md).
+and [2026-08-24-verify-gate-pre-ship-fixes.md](../issues/.done/2026-08-24-verify-gate-pre-ship-fixes.md).
 
 *Last updated: 2026-08-24*

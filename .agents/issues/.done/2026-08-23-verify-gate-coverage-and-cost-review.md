@@ -20,7 +20,7 @@ the checkboxes below, which predate the work.
 What happened after this review closed, in order:
 
 1. Three pre-ship defects, scoped and fixed in
-   [2026-08-24-verify-gate-pre-ship-fixes.md](../2026-08-24-verify-gate-pre-ship-fixes.md).
+   [2026-08-24-verify-gate-pre-ship-fixes.md](2026-08-24-verify-gate-pre-ship-fixes.md).
 2. `cross-dm` became runnable for the first time and immediately found a real
    cross-client message loss, now diagnosed to a mechanism:
    [the issue](../.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md).
@@ -86,7 +86,7 @@ Then `cross-dm`'s minting, which needs the worktree path bug fixed first so the
 change can be verified at all.
 
 **Before shipping**, three fixes are scoped in
-[2026-08-24-verify-gate-pre-ship-fixes.md](../2026-08-24-verify-gate-pre-ship-fixes.md):
+[2026-08-24-verify-gate-pre-ship-fixes.md](2026-08-24-verify-gate-pre-ship-fixes.md):
 `cross-dm`'s minting, the worktree path bug that makes every verdict PARTIAL,
 and one real `--all` run. That file is startable cold; start there.
 

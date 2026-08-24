@@ -191,6 +191,6 @@ the contract tests fail the fast tier if the table drifts from the scenarios.
 - Fixed names and `drainInbox()`: `src/dev/tests/harness/README.md`, and
   [2026-08-23-harness-mints-permanent-accounts-every-run.md](../.done/2026-08-23-harness-mints-permanent-accounts-every-run.md) (closed — it solved the per-machine half)
 - The gate itself: [verify-gate.md](../../docs/verify-gate.md)
-- Ship is held on this: [2026-08-24-verify-gate-pre-ship-fixes.md](../2026-08-24-verify-gate-pre-ship-fixes.md)
+- Ship is held on this: [2026-08-24-verify-gate-pre-ship-fixes.md](2026-08-24-verify-gate-pre-ship-fixes.md)
 
 *Last updated: 2026-08-24*
