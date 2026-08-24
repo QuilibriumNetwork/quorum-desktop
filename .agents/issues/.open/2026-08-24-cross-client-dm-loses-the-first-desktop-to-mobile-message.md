@@ -296,7 +296,79 @@ Also shipped: an init-wrapped frame that no stored state can decrypt now
 states exist" rather than "did any state work" is what sent an unreadable init
 frame down a path whose only outcome was to discard it.
 
-## Residual defect — desktop churns its session per unconfirmed send
+## Residual defect — MEASURED 2026-08-24, desktop replaces its session 8× per 3 rounds
+
+**The desktop half of this arm was BLIND until 2026-08-24.** Vitest swallows that
+side's console entirely when its stdout is piped, which is exactly how
+`run-cross.mjs` drives it. Proof: a run whose scenario emitted
+`console.log('[dm-cross b] …')` produced **zero** such lines in the piped output
+while the identical strings appeared in its RunLog jsonl. Every `logger.warn`
+from the service layer was invisible — so "no session replacement logged" read
+as "no session replacement happened", which was false.
+
+`HARNESS_CONSOLE_FILE=1` now mirrors that side's console to
+`src/dev/tests/harness/logs/<runId>-<role>-console.log`, which the capture does
+not intercept. **Do not diagnose this arm's desktop side without it.**
+
+With it on, a **3-round** run shows:
+
+```
+⚠️ SESSION REPLACED by init envelope    ×8
+   replacedRows: <D1> → <D2> → <D3> → <D4> → <D5> → <D6> → <D7>
+DM frame for unknown inbox — no encryption state, retained unread   ×2
+   inbox: <D7>
+```
+
+Those last two lines **are** the lost `mobile→desktop #3`, caught in the act:
+mobile sent it to the inbox desktop had advertised, desktop had already deleted
+that row, and the frame is retained on the relay, undelivered. (Retained rather
+than destroyed thanks to the PR #273 guardrail — `MessageService.ts:5082`.)
+
+`MessageService.ts:4694` mints `NewInboxKeyset()` on **every** init envelope,
+`:4755-4757` deletes the prior rows, and `:4774` keys the new row by the new
+address. The peer is never told, so it keeps writing to an address that no
+longer exists.
+
+### A second defect found the same way: the zombie guard compares two clocks
+
+The envelope timestamps in that capture alternate `…616, …618, …616, …618` — the
+same two envelopes reprocessed repeatedly, each replacing the session the other
+installed. The staleness guard is supposed to defuse exactly this, and cannot:
+
+```js
+isStaleInitEnvelope(envelope.timestamp, existing.map((e) => e.timestamp))  // :4713
+...
+saveEncryptionState({ …, timestamp: message.timestamp, … })               // :4773
+```
+
+It tests `envelope.timestamp` (the SENDER's stamp) against rows written with
+`message.timestamp` (the RELAY's delivery stamp). Different clocks, so "strictly
+newer" is not a meaningful comparison and the guard does not fire.
+
+### Relationship to existing issues — this is not a new discovery
+
+Both halves were already filed. Neither was verified.
+
+- **Mobile:** `quorum-mobile/.agents/issues/.done/2026-07-24-dm-session-confirm-row-mismatch-x3dh-every-send.md`
+  was closed 2026-08-16 "on a 'likely fixed' judgement, not a confirmed one",
+  its own Status noting *"nothing records that anyone confirmed X3DH stopped
+  repeating on every send. Worth one deliberate check."* The check has now been
+  done and **it was not fixed**. Step 2 of that issue's own plan is the fix that
+  shipped here.
+- **Desktop:** `.agents/issues/.done/2026-07-29-session-replacement-strands-in-flight-frames.md`
+  §1 is this exact mechanism. Its causal claim was retired after three
+  `dm-session-churn` bench runs found no loss — but it states plainly that the
+  **code defect is real and not retired**. Those bench runs were all
+  desktop↔desktop; the cross-client arm reproduces it every run. That issue
+  said the missing evidence was "a capture taken DURING a failure". This is it.
+
+⚠️ **`DoubleRatchetInboxEncryptForceSenderInit` is NOT the desktop bug.** It
+reads like one, and the name invites the mistake. The mobile issue above
+documents it as the correct reference behaviour: *"it re-init-wraps but keeps
+the session (same receiving_inbox, same tag, advancing ratchet)… No fresh X3DH
+per send."* The defect is on the RECEIVE path, not the send path.
+
+## Earlier framing of the residual defect (superseded by the measurement above)
 
 **This is the reason the arm is still red, and it is NOT caused by the mobile
 fix** — it is visible in the baseline runs too, where desktop advertised a
