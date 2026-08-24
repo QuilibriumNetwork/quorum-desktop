@@ -279,6 +279,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [quorum-mobile: yarn lint fails with 302 pre-existing errors on master](issues/.open/2026-08-23-mobile-lint-302-errors.md)
 - 🐛 [quorum-shared: Input.native.tsx leaks a falsy ReactNode literal into a View style slot (TS2769)](issues/.open/2026-08-23-shared-typecheck-zero-in-native-style-union.md)
 - 🐛 [Cross-client DM loses the first desktop→mobile message in most runs](issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md)
+- 🐛 [`verify`: the detail column is blank for four of the six live arms](issues/.open/2026-08-24-verify-detail-column-blank-for-the-vitest-driven-arms.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -817,4 +818,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-24 11:26:06
+**Last Updated**: 2026-08-24 11:52:39

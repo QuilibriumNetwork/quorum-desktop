@@ -44,7 +44,32 @@ was hardcoded to "it creates a permanent Space" (wrong for the second arm), and
 a FAIL row printed "arms green" because the extractor matched the *other*
 repo's test-runner output.
 
-**Remaining before ship:** independent adversarial review, then one PR per repo.
+**Independent adversarial review: done.** It found one real defect, and it was
+one this branch created. Making `HARNESS_MOBILE_REPO` real meant the harness
+honoured it while `index.mjs` still computed its own sibling path — so with the
+variable set to a different checkout, the gate would diff repo A, find it
+present, run the cross-client arms, and the arms would test repo B. A green run
+that never executed the code that triggered it. Fixed in `7716b77fa`: the rule
+moved to `routing.mjs`, the gate asks it instead of computing, and the answer is
+exported to every spawned child. MEASURED — both resolvers now return the same
+path with and without the override.
+
+The review confirmed as correct: the `drainInbox()`-before-`start()` ordering
+(the calls are plain signed HTTP, independent of the websocket), the fixed bot
+name (storage is in-memory per process, so isolation never came from the
+identity), the `harnessDetail` status threading, the `SAFE`/`SAFE_ALONE`
+carve-outs checked against all three real checkouts, and every reachable
+`liveScope` × `exhaustive` combination.
+
+It also raised one cosmetic issue, filed separately as
+[2026-08-24-verify-detail-column-blank-for-the-vitest-driven-arms.md](.open/2026-08-24-verify-detail-column-blank-for-the-vitest-driven-arms.md).
+
+**Final measured run** (`7716b77fa`, plain `yarn verify`): **455s**,
+`PASS (PARTIAL)`, **no SKIP rows**, **0 new accounts**. The PARTIAL is the two
+tracked KNOWN-RED baselines plus the shared/mobile publish-asymmetry warning —
+the gate correctly reporting real gaps.
+
+**Remaining before ship:** one PR per repo, three PRs, do not merge. Held.
 
 ## Where the work is
 
