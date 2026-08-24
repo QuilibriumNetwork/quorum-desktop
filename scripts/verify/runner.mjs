@@ -122,7 +122,12 @@ export async function runStep(step, plan) {
  * returns — that suffix only ever decorates a passthrough result.
  */
 function finish(step, plan, result, output) {
-  const detail = safeDetail(step, output);
+  // The status goes to the extractor because output alone is not enough to
+  // tell green from red: the cross-client arms embed the OTHER repo's test
+  // runner output, so mobile's own "PASS dev/harness/..." line sat inside the
+  // output of a run that had ended in LOSS DETECTED. MEASURED 2026-08-24 —
+  // the report printed `cross-dm  FAIL  369s  arms green`.
+  const detail = safeDetail(step, output, result.status);
   const classified = classifyKnownRed(step.id, result.status, output);
   if (classified.staleWarning) plan?.skipped?.push(classified.staleWarning);
   return { ...result, status: classified.status, detail: classified.detail ?? detail };
@@ -198,9 +203,9 @@ export function skipped(step, reason) {
 }
 
 /** A detail extractor must never be able to fail the run it is describing. */
-function safeDetail(step, output) {
+function safeDetail(step, output, status) {
   try {
-    return step.detail(output);
+    return step.detail(output, status);
   } catch {
     return '';
   }

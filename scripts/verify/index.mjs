@@ -120,7 +120,7 @@ if (argv.includes('--all')) {
   // Releases the arms held back for cost on the per-change tier — today just
   // `space-basic`, which creates a permanent Space every time it runs.
   plan.exhaustive = true;
-  plan.reasons = ['(--all: every repo, every tier, including the arms held back for cost)'];
+  plan.reasons = ['(--all: every repo, every tier, including the arms held back)'];
 }
 if (argv.includes('--fast')) {
   plan.live = false;

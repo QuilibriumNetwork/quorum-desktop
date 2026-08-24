@@ -508,3 +508,60 @@ describe('LIVE_STEPS matches the real step catalogue', () => {
     );
   });
 });
+
+/**
+ * The detail column must never contradict the status beside it.
+ *
+ * The cross-client arms spawn quorum-mobile's own test runner, so its output —
+ * including its "PASS dev/harness/..." line — is captured into theirs. The
+ * original extractor was `out.includes('PASS')`, which meant a run that ended
+ * in LOSS DETECTED still printed "arms green". MEASURED 2026-08-24 on a real
+ * `yarn verify --all`:
+ *
+ *   desktop  cross-dm  FAIL  369s  arms green
+ *
+ * A reader seeing that would reasonably conclude the arm fell over for
+ * infrastructural reasons, when in fact it had measured and reported a real
+ * message loss. That is the most expensive kind of wrong a report can be.
+ */
+describe('harness detail lines', () => {
+  const crossDm = (stepsFor('desktop', '/fake/desktop', 'live') as {
+    label: string;
+    detail: (out: string, status?: string) => string;
+  }[]).find((s) => s.label === 'cross-dm')!;
+
+  // Trimmed from the real captured output of the 2026-08-24 --all run.
+  const LOSING_OUTPUT = [
+    'PASS dev/harness/dm-two-bot.scenario.ts (65.138 s)',
+    'Tests:       1 passed, 1 total',
+    '[cross] mobile→desktop: sent=20 arrived=20 loss=0.0%',
+    '[cross] desktop→mobile: sent=20 arrived=19 loss=5.0%  missing=[1]',
+    '[cross] LOSS DETECTED — 1/40 messages did not arrive.',
+  ].join('\n');
+
+  const CLEAN_OUTPUT = [
+    'PASS dev/harness/dm-two-bot.scenario.ts (65.138 s)',
+    '[cross] desktop→mobile: sent=20 arrived=20 loss=0.0%',
+    '[cross] no loss.',
+  ].join('\n');
+
+  it('never claims "arms green" on a step that failed', () => {
+    expect(crossDm.detail(LOSING_OUTPUT, 'FAIL')).not.toContain('arms green');
+  });
+
+  it('surfaces the loss itself, so the row says what went wrong', () => {
+    expect(crossDm.detail(LOSING_OUTPUT, 'FAIL')).toBe(
+      'LOSS DETECTED — 1/40 messages did not arrive.'
+    );
+  });
+
+  it('still reports green when the step really passed', () => {
+    expect(crossDm.detail(CLEAN_OUTPUT, 'PASS')).toBe('arms green');
+  });
+
+  // Defensive: an extractor called without a status (an older call site, a
+  // hand-written test) must still refuse to call a losing run green.
+  it('reports the loss even when no status is supplied', () => {
+    expect(crossDm.detail(LOSING_OUTPUT)).toContain('LOSS DETECTED');
+  });
+});

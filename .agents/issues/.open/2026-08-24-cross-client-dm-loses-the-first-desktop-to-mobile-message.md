@@ -12,7 +12,12 @@ updated: 2026-08-24
 ## Status
 
 Found 2026-08-24, the first time the mobile↔desktop DM cell has ever been
-measured. Not yet diagnosed. The measurement is solid; the mechanism is not.
+measured. **Mechanism identified the same day** (see below): mobile receives
+desktop's X3DH session-initiation frame, cannot decrypt it against the session
+state it already holds, and drops it after bounded retries. The fix is not
+written, and it is probably mobile-side.
+
+`cross-dm` is held back to `yarn verify --all` while this is open.
 
 ## Symptoms
 
@@ -119,7 +124,64 @@ mobile-side one.
 - **Not random.** Five runs, four losses, always index 1. Random loss would
   scatter across indices.
 
-## Leading hypothesis (INFERRED — not yet tested)
+## Mechanism — MEASURED 2026-08-24
+
+Mobile **receives the frame and drops it.** It does not fail to arrive.
+
+Captured from mobile's own output during `yarn verify --all`
+(`quorum-mobile/context/WebSocketContext.tsx:3407`):
+
+```
+[DM-recv] init-wrapped frame undecryptable by ALL states — dropping after bounded retries
+  {"inbox":"Qmc8CadFcW2w","ts":1787562913071,"states":1}
+```
+
+**Exactly one occurrence, matching exactly one lost message.** (The log shows
+the string twice; the second is the source line echoed inside the stack trace,
+not a second drop.)
+
+Two details carry the diagnosis:
+
+- **`init-wrapped`** — this is an X3DH session-initiation frame. Only the first
+  message of a new session is wrapped that way, which is why the loss can only
+  ever hit index 1.
+- **`states: 1`** — mobile already held one session state for this conversation
+  and could not decrypt the init against it.
+
+That gives the sequence, end to end:
+
+1. Mobile (role `a`) sends `#1`. Doing so **creates mobile's session state** for
+   desktop.
+2. Desktop receives it and decrypts cleanly.
+3. Desktop echoes `#1`. This is desktop's first outbound, so it goes out
+   **init-wrapped** — desktop is opening its own session.
+4. Mobile gets the init-wrapped frame, tries it against its one existing state,
+   fails, and **drops it after bounded retries**.
+5. From `#2` onward desktop's session is established, frames are ordinary, and
+   mobile decrypts every one.
+
+This is the collision the scenario's own header warned about, now confirmed by
+mechanism rather than inferred:
+
+> Both sides sending from the same instant looked natural and was wrong: it
+> opens sessions in both directions at once, and a 25-round run failed all 50
+> messages on X3DH while every frame arrived intact.
+
+Role `b` echoes the moment `#1` arrives, so both sides open a session at almost
+the same instant — one message wide instead of all of them.
+
+## Why this is probably not harness-only
+
+**Desktop↔desktop never shows it.** `dm-loss` measured 301/301 and 201/201 with
+0% loss, over 402 decrypted posts, and `dm-basic`/`dm-delivery` pass in the gate
+every run. Desktop's receive path evidently survives the case that mobile's
+drops, so this looks like a **divergence between the two implementations**, not
+a property of the protocol.
+
+The user-facing shape is two people messaging each other at the same moment, and
+the mobile user never seeing the reply. Nothing about that requires a harness.
+
+## Earlier hypothesis, now superseded (kept for the record)
 
 Simultaneous bidirectional session establishment.
 
@@ -139,18 +201,28 @@ If that is right, this is **not harness-only**. The user-facing shape is two
 people messaging each other at the same moment, and one of the two messages
 never arriving.
 
-## Next steps to diagnose
+## Next steps
 
-1. Check whether mobile **never received** the frame or received it and failed
-   to decrypt. Those are different bugs. Desktop prints
-   `novel decrypt failures=N`; mobile's scenario prints its own counts.
-2. Delay `b`'s first echo by a few seconds and re-run. If the loss disappears,
-   the race is confirmed and the fix belongs in session establishment, not
-   transport.
-3. Re-run with desktop as role `a` (`HARNESS_DESKTOP_ROLE=a`). If the loss
-   follows the ECHO role rather than the platform, that rules out
-   "desktop→mobile is a weak direction" and confirms it is about who speaks
-   second.
+Step 1 of the original plan is **done** — mobile receives it and drops it. What
+remains:
+
+1. **Read `WebSocketContext.tsx:3300-3420` in quorum-mobile** and work out why
+   an init-wrapped frame is only ever tried against existing states. On first
+   contact from the other side there is no state that *can* decrypt it; the
+   init is supposed to establish a new one. Compare with desktop's equivalent
+   receive path, which does not lose this frame.
+2. **Delay `b`'s first echo by a few seconds and re-run.** If the loss
+   disappears, that confirms the collision is what triggers it and bounds the
+   fix to session establishment. Costs nothing, mints nothing.
+3. **Re-run with desktop as role `a`** (`HARNESS_DESKTOP_ROLE=a`). If the loss
+   follows the ECHO role rather than the platform, it is about who speaks
+   second, not about desktop. ⚠️ This mints one permanent account
+   (`cross-desktop-a` does not exist yet).
+4. **Check whether "bounded retries" is the real problem.** The frame is
+   retried and then discarded. If the session it needs is established a moment
+   later, a longer or event-driven retry would recover it — but silently
+   dropping a message the sender believes it delivered is the part that matters
+   most.
 
 ## Impact on the verify gate
 

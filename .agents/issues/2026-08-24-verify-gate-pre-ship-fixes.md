@@ -115,8 +115,21 @@ skim past the one signal the gate has for "this run proved less than you think".
 **After fixing**, remove the matching skip block in `scripts/verify/index.mjs`
 (search for the issue filename above; it is the `crossScriptMobilePath` guard,
 which deliberately predicts the broken path so the run skips before paying for a
-spawn it knows will fail). Then confirm a plain `yarn verify` reaches a bare
-`PASS`, not `PASS (PARTIAL)` — that is the observable outcome.
+spawn it knows will fail).
+
+> ⚠️ **The success criterion below was wrong when written.** It said "confirm a
+> plain `yarn verify` reaches a bare `PASS`, not `PASS (PARTIAL)`". That was not
+> achievable and never had been: READ `scripts/verify/report.mjs:25-36`, a
+> KNOWN-RED row renders `PASS (PARTIAL)` by design, and this branch has two
+> (`shared:typecheck`, `mobile:lint`). The 2026-08-23 run was going to say
+> PARTIAL whatever happened to the cross-client arms.
+>
+> **The right criterion is "no SKIP rows"**, and that is what was MEASURED on
+> 2026-08-24: `config-cross` PASS in 33s where it had always been SKIP, no SKIP
+> row anywhere in the table, 0 new accounts. The residual PARTIAL now comes from
+> the two tracked KNOWN-RED baselines plus the shared/mobile publish-asymmetry
+> warning — all of which are the gate correctly reporting real gaps, not a
+> broken path.
 
 Note the second, smaller defect recorded in that issue: both scripts print "or
 set `HARNESS_MOBILE_REPO`" and neither script reads that variable. Either make

@@ -91,7 +91,21 @@ export function stepsFor(repoName, repoPath, tier) {
   if (tier === 'live' && repoName === 'desktop') {
     // Desktop-only: every live arm is driven from this repo, including the two
     // cross-client ones, which spawn mobile's scenarios without modifying it.
-    const harnessDetail = (out) => (out.includes('PASS') ? 'arms green' : '');
+    // `out.includes('PASS')` on its own was a lie on the cross-client arms.
+    // They spawn quorum-mobile's jest, whose "PASS dev/harness/..." line ends
+    // up in this output, so a run that finished with LOSS DETECTED still
+    // rendered "arms green" — beside the word FAIL, in the same row. A reader
+    // would take that to mean the failure was infrastructural rather than a
+    // real measured loss, which is the opposite of the truth.
+    //
+    // So: surface the loss line when there is one, and never claim green for a
+    // step that did not pass.
+    const harnessDetail = (out, status) => {
+      const loss = out.match(/LOSS DETECTED[^\r\n]*/)?.[0];
+      if (loss) return loss.trim();
+      if (status && status !== 'PASS') return '';
+      return out.includes('PASS') ? 'arms green' : '';
+    };
     return [
       mk('dm-basic', 'dm-basic', ['harness', 'dm-basic'], harnessDetail),
       mk('dm-delivery', 'dm-delivery', ['harness', 'dm-delivery'], harnessDetail),
