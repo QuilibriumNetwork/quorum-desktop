@@ -1,13 +1,64 @@
 ---
 type: task
 title: 'Three fixes to yarn verify before the branches ship'
-status: in-progress
+status: done
 priority: high
 created: 2026-08-24
 updated: 2026-08-24
 ---
 
 # Three fixes to `yarn verify` before the branches ship
+
+## Status
+
+**2026-08-24 — SHIPPED.** Three PRs, merged in dependency order:
+
+| Repo | PR | Squash commit |
+|---|---|---|
+| quorum-shared | #89 | `c00c61e` |
+| quorum-mobile | #275 | `4da8df3` |
+| quorum-desktop | #367 | `c1c18a0` |
+
+Order was load-bearing, not cosmetic: desktop's gate calls `yarn lint` in shared
+and `yarn typecheck` in mobile, and neither script existed on those base
+branches. Merging desktop first would have turned `yarn verify` red on `main`
+for everyone. Both dependencies were confirmed working on their base branches
+before desktop merged.
+
+Final gate run before merge: every step PASS or at its recorded baseline,
+785 + 1842 + 1222 tests, all four live arms green, **zero accounts or Spaces
+created** (95 identity files before and after).
+
+### What shipped beyond the three fixes
+
+- **The mint guard** (`scripts/verify/mintGuard.mjs`). A fresh checkout used to
+  register 6 permanent accounts and a Space on its first run; it now skips any
+  arm that would mint and says so. This was the ship blocker.
+- **quorum-mobile typechecks**, at a `KNOWN-RED` ceiling of 11.
+- **quorum-shared has a linter**, and the 11 errors it found were fixed rather
+  than baselined — including the one type error that had been a `KNOWN-RED`
+  baseline of 1, so that entry is deleted.
+- **`plan.notes`**, separating advisory `ℹ` lines from coverage-reducing `⚠`
+  ones, so an improvement can never make a run report worse.
+
+### Three rounds of independent review, and what each caught
+
+Worth recording, because the pattern held every time: **each round found real
+defects in code that had just been verified by its author.**
+
+1. `HARNESS_MOBILE_REPO` let the gate diff one checkout while the arms tested
+   another.
+2. Three ways the mint guard could clear an arm that would mint — a missing
+   space snapshot, a role env var that renames bots on both platforms at once,
+   and `HARNESS_FRESH`.
+3. quorum-shared's single-repo fallback reported `FAIL` on every change, and a
+   duplicated `wantsFreshSpace` that nothing coupled to its original.
+
+And the gate then caught a defect in the *fix* for round 3: a bare
+`export … from` binds a name for importers but not in the module's own scope, so
+`restoreSharedSpace` threw at runtime while all 152 unit tests stayed green. The
+fast tier now covers that case.
+
 
 Written to be startable cold, immediately after a context compaction. Nothing
 below depends on remembering the session that produced it.

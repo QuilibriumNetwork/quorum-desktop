@@ -121,7 +121,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
 - 📋 [Name resolution: an API that cannot express a partial identity](issues/2026-08-10-identity-resolution-architecture-design.md)
 - 📋 [Identity Resolution Implementation Plan](issues/2026-08-10-identity-resolution-architecture-plan.md)
-- 📋 [Three fixes to `yarn verify` before the branches ship](issues/2026-08-24-verify-gate-pre-ship-fixes.md)
 
 #### Messagedb
 
@@ -563,6 +562,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Harness: reuse a persistent space instead of minting one every run](issues/.done/2026-08-23-harness-space-reuse-design.md)
 - 📋 [Review the verify gate: right tests, cheap, and what is missing](issues/.done/2026-08-23-verify-gate-coverage-and-cost-review.md)
 - 📋 [Two checks the gate does not run](issues/.done/2026-08-24-verify-gate-cross-repo-tooling-gaps.md)
+- 📋 [Three fixes to `yarn verify` before the branches ship](issues/.done/2026-08-24-verify-gate-pre-ship-fixes.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
 - 📋 [Add DM-Specific Action Queue Handlers](issues/.done/dm-action-queue-handlers.md)
@@ -823,4 +823,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-24 15:26:05
+**Last Updated**: 2026-08-24 15:56:36
