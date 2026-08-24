@@ -12,19 +12,31 @@ updated: 2026-08-24
 ## Status
 
 Found 2026-08-24, the first time the mobile↔desktop DM cell has ever been
-measured. **Root cause MEASURED and fixed on the mobile side the same day**
-(quorum-mobile branch `fix/cross-dm-first-reply-drop`, commit `1661fc5`): mobile
-re-ran a full X3DH on **every** send while its session was unconfirmed, giving
-each send a different session key and replacing the row's ratchet. Desktop's
-first reply had been encrypted against the session mobile had just discarded, so
-it failed with `aead::Error` and was dropped.
+measured. **Root cause MEASURED and fixed the same day.** Two commits on
+quorum-mobile branch `fix/cross-client-dm-message-loss` carry the whole
+behavioural fix:
 
-**The reported symptom is fixed and the fix is measured** — desktop's first
-reply now arrives, and mobile↔mobile stays 6/6 with no loss. **The arm is still
-red**, because fixing this exposed a *second*, independent defect on the desktop
-side (§"Residual defect"). Do not close this issue on the strength of the fix.
+- `1661fc5` — mobile re-ran a full X3DH on **every** send while its session was
+  unconfirmed, giving each send a different session key and replacing the row's
+  ratchet. Desktop's first reply had been encrypted against the session mobile
+  had just discarded, so it failed with `aead::Error` and was dropped. Fixed by
+  re-announcing the existing ratchet instead of re-establishing.
+- `36d1f69` — the re-announce could still **throw**, and the caller's `??`
+  fallback only catches `null`, so every failure fell back to a fresh X3DH
+  anyway. This is what the "8 replacements per 3 rounds" capture below was
+  actually measuring; see §"Residual defect" for the correction.
 
-`cross-dm` stays held back to `yarn verify --all` while this is open.
+**MEASURED 2026-08-24 19:07, `ROUNDS=3`: 6/6 delivered, 0 loss, both
+directions** — the first clean cross-client run there has ever been.
+
+A desktop-side defect on the same theme was fixed too (`c4c30ccc3`, branch
+`fix/cross-client-dm-message-loss`) — but **honestly, it is not what turned the
+arm green**: its branch logged zero hits in the green run, so that run's outcome
+is identical with or without it. It is shipped on its own merits and covered by
+unit tests, not on the strength of this arm. See §"Residual defect".
+
+`cross-dm` stays held back to `yarn verify --all` until the green is confirmed
+over several consecutive runs.
 
 ## Symptoms
 
@@ -296,7 +308,12 @@ Also shipped: an init-wrapped frame that no stored state can decrypt now
 states exist" rather than "did any state work" is what sent an unreadable init
 frame down a path whose only outcome was to discard it.
 
-## Residual defect — MEASURED 2026-08-24, desktop replaces its session 8× per 3 rounds
+## Residual defect — real, fixed, but NOT what turned the arm green
+
+> ⚠️ **Read the attribution correction at the end of this section before quoting
+> the "8× per 3 rounds" figure.** The measurement is real; what caused it is not
+> what this section originally said.
+
 
 **The desktop half of this arm was BLIND until 2026-08-24.** Vitest swallows that
 side's console entirely when its stdout is piped, which is exactly how
@@ -329,21 +346,84 @@ than destroyed thanks to the PR #273 guardrail — `MessageService.ts:5082`.)
 address. The peer is never told, so it keeps writing to an address that no
 longer exists.
 
-### A second defect found the same way: the zombie guard compares two clocks
+### Fixed in `c4c30ccc3` — and what the fix is actually worth
 
-The envelope timestamps in that capture alternate `…616, …618, …616, …618` — the
-same two envelopes reprocessed repeatedly, each replacing the session the other
-installed. The staleness guard is supposed to defuse exactly this, and cannot:
+An init envelope whose X3DH ephemeral matches the one that created the session
+we already hold is a **re-announcement**, and is now left alone: same row, same
+ratchet, same address, message taken and delivered normally.
+
+The ephemeral is an exact identity for the session, not a heuristic. X3DH's four
+inputs are the sender's ephemeral private key, the sender's identity key, our
+identity key and our signed pre-key; three are fixed for a device pair, so the
+same ephemeral necessarily derives the same session key. A reinstall, a reset or
+a second device generates a new one and cannot collide.
+
+It is kept in its own ledger (`src/utils/dmInitSessionLedger.ts`, localStorage)
+rather than on the encryption-state row, because that row is rewritten WHOLE by
+four paths that know nothing about init envelopes — the send path, both
+conversation-inbox receive branches, and the offline action queue. A field added
+to the row is erased the first time we reply, which is exactly when it is needed.
+Unknown reads as "different session", so every uncertainty takes the old
+replace-the-session path and a peer reinstall keeps working.
+
+Covered by `src/dev/tests/services/MessageService.initReannounce.unit.test.ts`
+(9 cases) and `src/dev/tests/utils/dmInitSessionLedger.unit.test.ts` (14 cases).
+Both were confirmed able to FAIL: neutralising the discriminator turns 9 of them
+red while every control arm — genuinely-new-session, message-still-delivered,
+peer-reinstall-still-works — stays green.
+
+### ⚠️ ATTRIBUTION CORRECTION: the 8× churn was a MOBILE defect
+
+The capture above was taken at **18:12**. Mobile's `36d1f69` — which stops
+`buildReinitEnvelopeSend` from throwing and silently falling back to a fresh
+X3DH — landed at **18:40**. So those 8 replacements were 8 genuinely different
+X3DH sessions arriving from a mobile whose re-announce was failing on every send,
+not desktop mishandling re-announcements of one session.
+
+With `36d1f69` in place, a 3-round run shows **1 `SESSION REPLACED`** (the
+legitimate first install), **0 strandings**, and **0 hits** on desktop's new
+re-announcement branch. Desktop simply does not receive a second init envelope in
+this scenario: mobile's session is confirmed by desktop's echo of `#1` before
+mobile sends `#2`.
+
+So the desktop fix is **currently unexercised by this arm**, and the green run
+would have been green without it. What it does buy, INFERRED and not yet
+measured, is the redelivery case that
+`.agents/issues/.done/2026-07-29-session-replacement-strands-in-flight-frames.md`
+§1 describes: once we reply, the send path rewrites the row's timestamp to
+`Date.now()`, so guard rule 2 stops matching that envelope, and a redelivery
+within the 120 s tolerance is accepted and destroys the session. That is now
+harmless instead. **Worth building an instrument for** — a harness arm that
+redelivers an init envelope would move this from INFERRED to MEASURED.
+
+### ⚠️ CORRECTION: the "guard compares two clocks" claim was WRONG
+
+An earlier revision of this file claimed the staleness guard could not fire
+because it tests `envelope.timestamp` (a sender stamp) against rows written with
+`message.timestamp` (a relay stamp). **That is false, and anyone acting on it
+would have "fixed" a non-bug.**
+
+`envelope.timestamp` IS `message.timestamp`, assigned explicitly:
 
 ```js
-isStaleInitEnvelope(envelope.timestamp, existing.map((e) => e.timestamp))  // :4713
-...
-saveEncryptionState({ …, timestamp: message.timestamp, … })               // :4773
+const envelope = Object.assign(
+  secureChannel.UnsealInitializationEnvelope(...),
+  { timestamp: message.timestamp }            // MessageService.ts:4579
+);
 ```
 
-It tests `envelope.timestamp` (the SENDER's stamp) against rows written with
-`message.timestamp` (the RELAY's delivery stamp). Different clocks, so "strictly
-newer" is not a meaningful comparison and the guard does not fire.
+`Object.assign` overwrites whatever the unsealed envelope carried, so both sides
+of the comparison are the same clock. `initEnvelopeGuard.ts` says so in its own
+rule 2: *"Init-created rows are saved with the envelope's own timestamp."*
+
+**The real reason the guard did not stop the churn** is structural, and the
+guard's own doc already names it under KNOWN RESIDUAL GAP. Rule 2 only catches
+an exact timestamp match against a row we **still hold** — and each envelope
+DELETES the row the other one created. So two envelopes seconds apart
+(`…616`, `…618`) ping-pong forever: neither is an exact match for a surviving
+row, and rule 3's 120 s tolerance means neither is "old enough" to be a zombie.
+The fix for that is not a timestamp comparison; it is not deleting the row,
+which is what `c4c30ccc3` does.
 
 ### Relationship to existing issues — this is not a new discovery
 
@@ -419,26 +499,23 @@ building a new one.
 
 ## Next steps
 
-Items 1 and 4 of the original plan are **done** (§"Root cause"): the frame was
-only ever tried against existing states, that routing is fixed, and "bounded
-retries" was a symptom rather than the cause — the frame was unreadable on
-arrival, not merely early. What remains:
+The reported bug is fixed and the arm is green. What remains:
 
-1. **Fix desktop's session churn** (§"Residual defect") — the mirror of the
-   mobile bug. Desktop mints a new session and return inbox per send while
-   unconfirmed; it should re-announce the existing one, exactly as
-   `buildReinitEnvelopeSend` now does on mobile. Instrument desktop's send path
-   first to confirm which row it selects. This is what blocks the arm going
-   green. Costs nothing, mints nothing.
-2. **Re-run the mobile↔mobile control after any desktop change**
-   (`yarn harness:dm` in quorum-mobile, `HARNESS_ROUNDS=3`). It is currently
-   6/6 with no loss on the fix branch, and it is the arm that would notice a
-   session-handling regression first. Mints nothing.
-3. **Optional: delay `b`'s first echo by a few seconds and re-run.** Now only a
-   confirmation that the timing window is what it appears to be; the mechanism
-   is already measured. Mints nothing.
-4. **Re-run with desktop as role `a`** (`HARNESS_DESKTOP_ROLE=a`) to see whether
-   the residual loss follows the ECHO role rather than the platform.
+1. **Confirm the green over several consecutive runs** before releasing
+   `cross-dm` from `exhaustiveOnly`. One green run against a baseline of 5
+   losses in 6 is suggestive, not conclusive. Costs nothing, mints nothing.
+2. **Re-run the mobile↔mobile control after any further change**
+   (`yarn harness:dm` in quorum-mobile, `HARNESS_ROUNDS=3`). It is the arm that
+   would notice a session-handling regression first. Mints nothing.
+3. **Build the redelivery instrument.** Desktop's re-announcement branch is
+   INFERRED-useful and MEASURED-unexercised (§"Residual defect"). A harness arm
+   that redelivers an init envelope after the receiver has replied would settle
+   it either way, and would also cover the 2026-07-29 issue that has been open
+   on inference alone since July. Mints nothing.
+4. **Make `yarn harness:cross` run the mint guard.** It currently bypasses it
+   entirely, which cost one permanent account on 2026-08-24 (see §"Two traps").
+5. **Re-run with desktop as role `a`** (`HARNESS_DESKTOP_ROLE=a`) to see whether
+   anything follows the ECHO role rather than the platform.
    ⚠️ **Mints one permanent account** (`cross-desktop-a` does not exist).
    Do not run this casually — see the mint-guard trap above.
 
@@ -461,6 +538,20 @@ value, so removing the flag without updating the expectation fails the fast
 tier rather than passing silently.
 
 See [2026-08-24-verify-gate-pre-ship-fixes.md](../.done/2026-08-24-verify-gate-pre-ship-fixes.md).
+
+## Scoreboard
+
+`ROUNDS=3`, production relay, desktop as role `b` (echo), mobile as role `a`.
+
+| | baseline | mobile `1661fc5` only | mobile `36d1f69` + desktop `c4c30ccc3` |
+|---|---|---|---|
+| desktop→mobile `#1` | lost | arrives | arrives |
+| desktop→mobile `#2` | ok | lost | arrives |
+| mobile→desktop `#3` | ok | lost | arrives |
+| total delivered | 5/6 | 3/5 | **6/6** |
+| desktop `SESSION REPLACED` | — | 8 | **1** |
+| desktop strandings | — | 2 | **0** |
+| mobile↔mobile control | 6/6 | 6/6 | *(re-run pending)* |
 
 *Last updated: 2026-08-24*
 
