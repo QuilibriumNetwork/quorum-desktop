@@ -193,8 +193,29 @@ verdict means, what it costs, what it does not cover, and where the pieces live.
   failed exactly as already recorded on main, so it proved nothing less; the
   verdict line names those steps separately. If one gets WORSE than its
   recorded baseline the run FAILs — the baseline is a ceiling, never a budget.
+- A `ℹ` line is advisory and costs the verdict nothing (a stale exemption, a
+  debt count that improved). Only `⚠` lines are the ones that made a run
+  PARTIAL. Do not report an `ℹ` line as a problem.
 - `yarn verify --show-receipt` prints the last run's record, including the
   commit it ran against.
+
+### The live tier will not run on a machine with no bot identities
+
+The live arms drive real bots against the **production relay**, and accounts and
+Spaces there are **permanent — there is no delete endpoint**. On a machine whose
+`src/dev/tests/harness/.state/` is empty (a fresh clone, or CI), running them
+would register 6 accounts and a Space that can never be removed.
+
+So the gate checks first (`scripts/verify/mintGuard.mjs`) and skips any arm that
+would mint, printing a `MINT-GUARD` line and reporting `PASS (PARTIAL)`. **That
+is correct behaviour, not a failure — do not work around it, and do not pass
+`--live-allow-minting` to make it go away.** The fast tier still ran in full
+(typecheck, lint, 1808 + 766 + 1222 tests, build), which is what a PASS on that
+run means.
+
+If you add a new live arm, add its identities to `STATE_BY_ARM` in that file. An
+unlisted arm is assumed to mint and will not run; the fast tier fails if you
+forget, so this cannot rot silently.
 
 ### What it costs, so you can predict before you run it
 

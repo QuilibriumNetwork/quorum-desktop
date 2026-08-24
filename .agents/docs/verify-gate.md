@@ -23,6 +23,8 @@ yarn verify --explain    # print the plan and stop. Instant, runs nothing.
 yarn verify --fast       # skip the real-relay checks, for a quick look mid-work
 yarn verify --all        # everything, including the arms held back. ~12 minutes
 yarn verify --show-receipt   # what the last run did, and which commit it ran against
+
+yarn verify --live-allow-minting   # rarely. See "Accounts and Spaces are permanent".
 ```
 
 ---
@@ -41,10 +43,11 @@ yarn verify
 ├── quorum-desktop    typecheck · lint · unit (1808 tests)   ← "the tests"
 │                     harness-offline · build
 │
-├── quorum-mobile     lint · unit (1222 tests)
+├── quorum-mobile     lint · typecheck · unit (1222 tests)
 │
 └── live tier         dm-basic · dm-delivery · space-delivery · config-cross
                       real bots, real messages, real relay
+                      (auto-skipped where it would mint — see below)
 ```
 
 **One command at the end of a change. Nothing else.**
@@ -77,7 +80,12 @@ without touching the relay.
 | `yarn format:check` | Cosmetic. A gate that goes red over a blank line teaches people to ignore red. |
 | `yarn validate` | Redundant — it is `tsc --noEmit && eslint .`, both already steps. |
 | quorum-shared `lint` | The script exists but the repo has no eslint installed, no config and no dependency. Tracked: [cross-repo tooling gaps](../issues/.open/2026-08-24-verify-gate-cross-repo-tooling-gaps.md). |
-| quorum-mobile typecheck | No script exists. It **can** be typechecked and currently has 11 errors. Same issue. |
+
+quorum-mobile's typecheck **used** to be on this list. It had no script at all,
+so nothing ever ran one automatically. Added 2026-08-24 and wired in as a
+`KNOWN-RED` step at a baseline of 11 — the errors stay unfixed (10 are in the
+untested `services/calling/`), but the count can now only go down. See
+[the issue](../issues/.open/2026-08-24-mobile-typecheck-11-errors.md).
 
 ---
 
@@ -145,6 +153,26 @@ failing steps:
 were recorded is a `FAIL`, loudly — the baseline is a ceiling, never a budget.
 Baselines live in `scripts/verify/baseline.mjs`; the only edits that file should
 ever see are lowering a number or deleting an entry.
+
+### If you fix some of them, do you have to edit anything?
+
+**No — the run stays green either way, and the gate tells you what to do.**
+
+| You fixed | Verdict | What the run says |
+|---|---|---|
+| some of them (11 → 7) | still green | `ℹ down to 7 from a recorded baseline of 11 — lower it in baseline.mjs` |
+| all of them | still green | `ℹ that exemption is now stale and must be deleted` |
+| none, but added one | **`FAIL`** | the count exceeded its ceiling |
+
+Nothing breaks if you ignore the `ℹ` line, so a partial fix never costs you a
+red. But the recorded ceiling would still be 11, so drifting back up to 11 would
+pass unnoticed — the note asks for the one-word edit that locks the gain in.
+
+`ℹ` and `⚠` are different on purpose. **`⚠` lines are why the verdict says
+PARTIAL** and you have to decide whether the gap matters. **`ℹ` lines cost the
+verdict nothing** — they are housekeeping the run noticed. An improvement must
+never make the report look worse, which is the same rule that stopped `KNOWN-RED`
+rows downgrading the verdict.
 
 > Changed 2026-08-24. `KNOWN-RED` used to force `PASS (PARTIAL)`. Since
 > quorum-shared carries 1 known type error and quorum-mobile 302 known lint
@@ -232,6 +260,87 @@ Spaces. `yarn verify --all` creates one Space, via `space-basic`.
 
 Full rules: `src/dev/tests/harness/README.md`.
 
+### The mint guard: why a fresh clone runs no live arms
+
+Fixed bot names bounded the cost **per machine**, not globally. The identities
+live in `src/dev/tests/harness/.state/`, which is **gitignored** — it holds real
+private keys — so a different machine starts empty and mints the lot. MEASURED
+2026-08-24 on a simulated fresh checkout: **6 accounts and 1 Space** on the first
+plain `yarn verify`, and a CI runner would pay that on *every* job, because its
+filesystem is wiped each time.
+
+So before running any live arm, the gate asks the only question that matters:
+**would this arm create permanent state that does not already exist?** It answers
+by checking for the identity files the arm reuses
+(`scripts/verify/mintGuard.mjs`).
+
+| Machine | `.state/` | What happens |
+|---|---|---|
+| The maintainer's | populated | every arm runs, exactly as before — **no change** |
+| A fresh clone | empty | arms skipped, reason printed, `PASS (PARTIAL)`, **nothing minted** |
+| CI | empty | same |
+
+MEASURED 2026-08-24, `--explain` with the state directory temporarily moved
+aside — and with the populated directory as the control:
+
+```
+  LIVE ARMS  (none)
+  MINT-GUARD dm-basic, dm-delivery, space-delivery, config-cross
+             (no persisted identities — would register permanent production state)
+```
+
+The check is deliberately about **state, not identity** — "would this mint?",
+never "who is running this". A machine-identity check answers a question that
+merely *correlates* with the one we care about, and correlations drift.
+
+For bot accounts that means checking the identity files, which is the same
+condition `identity.ts` uses. **For Spaces it needs more**, and the first version
+of the guard wrongly claimed otherwise. Adversarial review found three ways a
+file could sit on disk while `space-delivery` still created a permanent Space, so
+the guard now mirrors `restoreSharedSpace` instead of approximating it:
+
+| Situation | Old guard | Now |
+|---|---|---|
+| Only the victim's space file present | **said safe → minted a Space** | blocked |
+| A space file present but truncated | **said safe → minted** | blocked |
+| The two files naming different spaces | **said safe → minted** | blocked |
+| `HARNESS_FRESH=1` with every file present | **said safe → minted** | blocked, naming the env var |
+
+`HARNESS_FRESH` is the one most likely to bite: the harness's own docs recommend
+setting it for clean-room reproduction, and nothing in `scripts/verify/` clears
+it.
+
+Same class of bug in the other arm. **`cross-dm` chooses its bot names from
+`HARNESS_DESKTOP_ROLE`** — desktop `a` implies mobile `b`, and both names change
+together. The guard had the default pair hardcoded, so with that variable
+exported in the shell it cleared the arm and the run minted **two** accounts, one
+per platform. The role rule now lives in one place (`routing.mjs`'s
+`crossRoles`), imported by both `run-cross.mjs` and the guard, so they cannot
+disagree. MEASURED, with a control:
+
+```
+  (default)                LIVE ARMS  … cross-dm …
+  HARNESS_DESKTOP_ROLE=a   MINT-GUARD cross-dm
+  HARNESS_FRESH=1          MINT-GUARD space-delivery
+```
+
+**An arm the guard does not recognise is treated as minting** and held back. Note
+this is the opposite of the routing allowlist, which fails toward running MORE:
+there an unnecessary six minutes is cheap, here the mistake is irreversible.
+`mintGuard.test.ts` fails the fast tier if a live arm has no entry, if a declared
+bot no longer exists in its scenario, or if a scenario creates a bot nobody
+declared.
+
+**`--live-allow-minting` opts in.** It is deliberately NOT implied by `--all`:
+`--all` is a statement about coverage, this is a statement about accepting an
+irreversible side effect on production, and the two are consented to separately.
+
+> Still unsolved, and the real fix: point the harness at a **non-production
+> relay**. The client half already exists — `env.ts:48-49` reads `QUORUM_API_URL`
+> and `QUORUM_WS_URL`, so switching is two environment variables. What is missing
+> is a relay server to point at. Tracked in
+> [the minting issue](../issues/.done/2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md).
+
 ---
 
 ## What it does NOT cover
@@ -267,7 +376,8 @@ verdict block verbatim.** Not a summary, not a subset of the rows. `PASS
 | `scripts/verify/runner.mjs` | Spawns steps, handles the one retryable arm, applies baselines. |
 | `scripts/verify/report.mjs` | The verdict rules and the printed block. |
 | `scripts/verify/baseline.mjs` | KNOWN-RED debt markers. A ceiling, not a budget. |
-| `src/dev/tests/verify/` | 118 tests over all of the above, run in the fast tier. |
+| `scripts/verify/mintGuard.mjs` | Refuses live arms that would register permanent production state. |
+| `src/dev/tests/verify/` | 151 tests over all of the above, run in the fast tier. |
 
 Design decisions and the measurements behind them:
 [2026-08-23-verify-gate-coverage-and-cost-review.md](../issues/.done/2026-08-23-verify-gate-coverage-and-cost-review.md)

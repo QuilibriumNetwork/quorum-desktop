@@ -120,22 +120,46 @@ listed as informational and one genuine `⚠`:
            ⚠ This does NOT clear a change that touches shared or the wire.
 ```
 
-## ⛔ Ship is BLOCKED — not on polish, on a design question
+## ✅ Ship was BLOCKED on a design question — now unblocked
 
-The three fixes in this issue are done. Shipping is not waiting on them.
+The three fixes in this issue were never the blocker.
 
 While explaining the tool to the operator, a harder question surfaced: **what
 happens when other developers' agents start running this?** Measured, and the
-answer is bad enough to hold the PRs:
+answer was bad enough to hold the PRs:
 
 **A fresh checkout mints 6 permanent accounts and 1 permanent Space on the
 production relay, on its first run.** Fixed bot names solved the per-machine
 half of this; they did nothing about the number of machines, because `.state/`
-is gitignored and cannot be otherwise. CI is worse — an ephemeral filesystem
-means every job pays it again, unbounded.
+is gitignored and cannot be otherwise. CI would be worse — an ephemeral
+filesystem means every job pays it again, unbounded — though MEASURED
+2026-08-24, none of the three repos has any CI at all today.
 
-Full measurement and four options:
-[2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md](.open/2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md).
+**Resolved 2026-08-24 by the mint guard** (`scripts/verify/mintGuard.mjs`): a
+live arm runs only if the identities it reuses already exist, so a fresh clone
+skips them all and registers nothing, while this machine is unaffected.
+`--live-allow-minting` opts in. Full measurement, the options considered and why
+C+B was chosen:
+[2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md](.done/2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md).
+
+The real fix — pointing the harness at a non-production relay — stays open, and
+needs one question answered by whoever runs the relay. The harness side is
+already done (`env.ts:48-49`).
+
+## Also landed while unblocking
+
+Neither was in this issue's scope; both came out of mapping the system.
+
+- **quorum-mobile now typechecks.** It had no `typecheck` script, so nothing ran
+  one automatically. Added, wired in, and recorded as `KNOWN-RED` at a baseline
+  of 11 — the errors are untouched, but the count can now only fall.
+  [Issue](.open/2026-08-24-mobile-typecheck-11-errors.md).
+- **`plan.notes`, a second reporting channel.** `⚠` (reduced coverage, forces
+  PARTIAL) is now separate from `ℹ` (advisory, costs the verdict nothing). The
+  stale-exemption warning moved to `ℹ`, because a step going GREEN must never
+  make the run report worse — the same rule that stopped `KNOWN-RED` downgrading
+  the verdict. A new `ℹ` asks for a baseline to be lowered when a count improves,
+  so a partial fix cannot silently leave the ceiling too high.
 **That decision comes before the PRs**, because merging is precisely the act
 that hands this behaviour to everyone else.
 

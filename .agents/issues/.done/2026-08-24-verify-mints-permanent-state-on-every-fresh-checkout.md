@@ -1,7 +1,7 @@
 ---
 type: bug
 title: 'verify: every fresh checkout mints permanent accounts and a Space on the production relay'
-status: open
+status: done
 priority: high
 created: 2026-08-24
 updated: 2026-08-24
@@ -9,7 +9,73 @@ updated: 2026-08-24
 
 # `verify` mints permanent state on every fresh checkout
 
-## ⚠️ This is a ship blocker for the verify gate
+## Status
+
+**Fixed 2026-08-24 by option C + B — the mint guard.** Ship is no longer blocked.
+
+`scripts/verify/mintGuard.mjs` asks, before every live arm, whether running it
+would create permanent state that does not already exist, and skips it if so.
+`--live-allow-minting` opts in, and is deliberately not implied by `--all`.
+
+MEASURED the same day, with a control:
+
+| Machine | `--explain` output |
+|---|---|
+| This one (95 identity files) | `LIVE ARMS dm-basic, dm-delivery, space-delivery, config-cross` — unchanged |
+| Same machine, `.state/` moved aside | `LIVE ARMS (none)` + `MINT-GUARD` naming all four |
+
+So a fresh checkout registers **nothing**, and the maintainer's workflow is
+byte-identical to before. Covered by 26 tests in
+`src/dev/tests/verify/mintGuard.test.ts`, falsified by mutation.
+
+### Independent review found three defects in the first version — all fixed
+
+Dispatched an adversarial review specifically asked to hunt for the DANGEROUS
+direction: can the guard report an arm safe while it would in fact mint? It found
+three, all confirmed by reading the source, all fixed and each falsified by
+reverting the fix and watching the suite go red.
+
+| # | Defect | Consequence |
+|---|---|---|
+| 1 | `space-delivery` declared only the VICTIM's space file | `restoreSharedSpace` is all-or-nothing (`snaps.some((s) => !s)`), so a machine missing just the SENDER's file was cleared and left a permanent Space |
+| 2 | `cross-dm`'s bot names hardcoded to the default role | `HARNESS_DESKTOP_ROLE=a` (which `runner.mjs` passes through, since it spawns with no `env` override) makes the arm use `cross-desktop-a` + `dm-bot-b` — **two** accounts minted under a clean report |
+| 3 | Existence treated as sufficient for space reuse | `HARNESS_FRESH=1` skips restore before reading anything; an unparseable file, or two files naming different spaces, also fall through to create |
+
+Root cause was one modelling error, not three: `STATE_BY_ARM` described "the
+identities this arm reuses" as **one fixed list per arm**, and that cannot
+represent state which depends on the environment. Entries are now functions of
+`env`, the role rule lives in `routing.mjs` and is imported by both the guard and
+`run-cross.mjs`, and the space check mirrors `restoreSharedSpace`'s four
+bail-outs rather than approximating them.
+
+Worth recording plainly: **the first version shipped with 141/141 tests green.**
+The tests only ever asked whether declared names still existed in the scenarios,
+so they were structurally incapable of noticing a name that should have been
+declared and was not. Green was consistent with the bugs, not evidence against
+them. MEASURED end to end afterwards, with a control:
+
+```
+  (default)                LIVE ARMS  … cross-dm …
+  HARNESS_DESKTOP_ROLE=a   MINT-GUARD cross-dm
+  HARNESS_FRESH=1          MINT-GUARD space-delivery
+```
+
+**Option A was NOT taken and remains the real fix.** Ruled out for now on the
+operator's information (2026-08-24): the harness's client half already supports
+it — `env.ts:48-49` reads `QUORUM_API_URL` / `QUORUM_WS_URL`, so switching
+endpoints is two environment variables — but there is no relay server available
+to point at, and the lead who would know is unavailable. quorum-mobile's "local
+API" setting in user settings is the same client-side switch, which is evidence
+a relay runs somewhere, not that one is obtainable. **One question resolves it:
+"is there a relay we can run locally, or a staging endpoint?"** If the answer is
+yes, this whole issue evaporates and the guard becomes unnecessary.
+
+Also worth recording, MEASURED 2026-08-24: **none of the three repos has any CI**
+(no `.github/workflows` in desktop, mobile or shared). The unbounded-CI-growth
+scenario below was therefore hypothetical, not live. The per-developer cost was
+real.
+
+## ⚠️ This was a ship blocker for the verify gate
 
 Not because it is broken here. Because **shipping it hands the behaviour to
 everyone else.** The moment `yarn verify` is on `main`, every other developer's
@@ -105,6 +171,20 @@ keys in a public repo.
 
 **A + C** is the strongest combination if a test relay is available. **B + C** if
 not.
+
+**Chosen: C + B**, since no relay is available (see Status). C is the automatic
+half — the guard refuses an arm that would mint — and B is the manual escape
+hatch, `--live-allow-minting`. A stays the right fix whenever a relay appears.
+
+### Why C turned out stronger than it looked when written
+
+Written above as "cheap, strictly better than today". In implementation it is
+better than that, because the check is per-arm and asks the *same* predicate the
+minting code asks. So it does not degrade the maintainer's experience at all —
+their arms all have state, so all of them run — while giving a fresh clone total
+protection with no configuration, no flag, and nothing to remember. The guard
+also cannot silently rot: an arm it does not recognise is assumed to mint, and
+the contract tests fail the fast tier if the table drifts from the scenarios.
 
 ## Related
 

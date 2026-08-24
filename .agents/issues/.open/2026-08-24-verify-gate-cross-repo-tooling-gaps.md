@@ -13,6 +13,18 @@ Found 2026-08-24 while mapping the whole test system across the three repos, at
 the operator's request. Neither is urgent; both are the kind of gap that stays
 invisible precisely because the gate looks comprehensive.
 
+## Status
+
+**B is fixed** (2026-08-24) — quorum-mobile now has a `typecheck` script and the
+gate runs it, as `KNOWN-RED` at a baseline of 11. The 11 errors are deliberately
+unfixed; the baseline makes them a ceiling. Tracked separately in
+[mobile typecheck: 11 errors](2026-08-24-mobile-typecheck-11-errors.md).
+
+**A is still open** — quorum-shared has no eslint at all. It needs a decision
+(install eslint, or delete the dead script), not just wiring.
+
+This issue stays open for A.
+
 ## What the gate runs today
 
 READ, `scripts/verify/steps.mjs`, fast tier:
@@ -21,7 +33,7 @@ READ, `scripts/verify/steps.mjs`, fast tier:
 |---|---|---|---|---|
 | quorum-desktop | ✅ | ✅ | ✅ 1808 tests | ✅ |
 | quorum-shared | ✅ | **❌ absent** | ✅ 766 tests | ✅ |
-| quorum-mobile | **❌ absent** | ✅ | ✅ 1222 tests | ❌ (no build script) |
+| quorum-mobile | ✅ *(added 2026-08-24)* | ✅ | ✅ 1222 tests | ❌ (no build script) |
 
 The two gaps are not symmetrical, and only one of them is really the gate's
 fault.
@@ -58,7 +70,14 @@ not a small or unimportant surface to have unlinted.
 
 ---
 
-## B. quorum-mobile is never typechecked, by anything
+## B. quorum-mobile is never typechecked, by anything — FIXED 2026-08-24
+
+> **Wording correction.** "Never typechecked by anything" overstated it, as the
+> operator pointed out: agents run `npx tsc --noEmit` in that repo by hand, and
+> that is real typechecking. What was missing was **automation** — no script, no
+> gate, so whether it happened depended on somebody choosing to. That is what
+> was added.
+
 
 There is no `typecheck` script in `quorum-mobile/package.json`. TypeScript
 **is** installed (5.9.2) and `tsconfig.json` exists, so it can be typechecked —
@@ -82,14 +101,17 @@ Worth noting against the gate's own `NOT COVERED` line, which already says
 subsystem with no test coverage is also the one with no type coverage. That is
 not a coincidence worth ignoring.
 
-**Decision needed:** add a `typecheck` script to quorum-mobile and wire it in as
-a step. Because it is currently red, it would go in as a `KNOWN-RED` baseline of
-11 (`scripts/verify/baseline.mjs`) with its own issue — exactly as
-`mobile:lint`'s 302 and `shared:typecheck`'s 1 already are. That way the count
-can only go down, and a twelfth error fails the run.
+**DONE 2026-08-24**, exactly as proposed: `"typecheck": "tsc --noEmit"` added to
+quorum-mobile, wired in as a fast-tier step, and recorded as a `KNOWN-RED`
+baseline of 11 (`scripts/verify/baseline.mjs`) — exactly as `mobile:lint`'s 302
+and `shared:typecheck`'s 1 already are. The count can only go down; a twelfth
+error fails the run. The errors themselves are untouched.
 
-⚠️ Do not add the step without the baseline entry, or every mobile change fails
-from the moment it lands.
+⚠️ Do not add a step without its baseline entry, or every mobile change fails
+from the moment it lands. A new guard test enforces the inverse too: **every
+`KNOWN_RED` entry must have a matching extractor**, because an entry without one
+silently classifies nothing and the step hard-fails every run while the table
+looks correct. Falsified by removing the extractor and watching it go red.
 
 ---
 

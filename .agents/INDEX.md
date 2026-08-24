@@ -279,8 +279,8 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [quorum-mobile: yarn lint fails with 302 pre-existing errors on master](issues/.open/2026-08-23-mobile-lint-302-errors.md)
 - 🐛 [quorum-shared: Input.native.tsx leaks a falsy ReactNode literal into a View style slot (TS2769)](issues/.open/2026-08-23-shared-typecheck-zero-in-native-style-union.md)
 - 🐛 [Cross-client DM loses the first desktop→mobile message in most runs](issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md)
+- 🐛 [quorum-mobile has 11 type errors](issues/.open/2026-08-24-mobile-typecheck-11-errors.md)
 - 🐛 [`verify`: the detail column is blank for four of the six live arms](issues/.open/2026-08-24-verify-detail-column-blank-for-the-vitest-driven-arms.md)
-- 🐛 [`verify` mints permanent state on every fresh checkout](issues/.open/2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -418,6 +418,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [2026 08 22 Partial Notification Record Crashes Channel Route](issues/.done/2026-08-22-partial-notification-record-crashes-channel-route.md)
 - 🐛 [run-cross.mjs / run-config-cross.mjs resolve quorum-mobile wrong from a linked worktree](issues/.done/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md)
 - 🐛 [Harness mints permanent, undeletable accounts on the production relay every run](issues/.done/2026-08-23-harness-mints-permanent-accounts-every-run.md)
+- 🐛 [`verify` mints permanent state on every fresh checkout](issues/.done/2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -821,4 +822,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-24 12:31:04
+**Last Updated**: 2026-08-24 13:32:29
