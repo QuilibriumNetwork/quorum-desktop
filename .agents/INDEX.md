@@ -121,6 +121,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Name resolution: an API that cannot express a partial identity](issues/2026-08-10-identity-resolution-architecture-design.md)
 - 📋 [Identity Resolution Implementation Plan](issues/2026-08-10-identity-resolution-architecture-plan.md)
 - 📋 [Review the verify gate: right tests, cheap, and what is missing](issues/2026-08-23-verify-gate-coverage-and-cost-review.md)
+- 📋 [Three fixes to `yarn verify` before the branches ship](issues/2026-08-24-verify-gate-pre-ship-fixes.md)
 
 #### Messagedb
 
@@ -815,4 +816,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-23 22:59:37
+**Last Updated**: 2026-08-24 09:24:48

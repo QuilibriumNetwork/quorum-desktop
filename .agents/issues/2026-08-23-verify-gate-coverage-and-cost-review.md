@@ -68,6 +68,11 @@ arms (the operator chose this over a separate `--deep` tier), then wire them in.
 Then `cross-dm`'s minting, which needs the worktree path bug fixed first so the
 change can be verified at all.
 
+**Before shipping**, three fixes are scoped in
+[2026-08-24-verify-gate-pre-ship-fixes.md](2026-08-24-verify-gate-pre-ship-fixes.md):
+`cross-dm`'s minting, the worktree path bug that makes every verdict PARTIAL,
+and one real `--all` run. That file is startable cold; start there.
+
 **Q4 — `space-basic`.** Held back to `yarn verify --all`. Every run that leaves
 it out prints a `HELD BACK` line naming it and the flag that runs it.
 
