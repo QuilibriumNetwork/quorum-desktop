@@ -280,6 +280,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [quorum-shared: Input.native.tsx leaks a falsy ReactNode literal into a View style slot (TS2769)](issues/.open/2026-08-23-shared-typecheck-zero-in-native-style-union.md)
 - 🐛 [Cross-client DM loses the first desktop→mobile message in most runs](issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md)
 - 🐛 [quorum-mobile has 11 type errors](issues/.open/2026-08-24-mobile-typecheck-11-errors.md)
+- 🐛 [`yarn verify` in quorum-shared always FAILs without a desktop checkout](issues/.open/2026-08-24-shared-verify-fallback-always-fails-on-a-known-type-error.md)
 - 🐛 [`verify`: the detail column is blank for four of the six live arms](issues/.open/2026-08-24-verify-detail-column-blank-for-the-vitest-driven-arms.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
@@ -822,4 +823,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-24 14:38:25
+**Last Updated**: 2026-08-24 15:11:52
