@@ -224,8 +224,12 @@ describe('handleNewMessage — init envelope on our device inbox', () => {
     beforeEach(async () => {
       // The first envelope installs the session and records its ephemeral.
       await deliverInitEnvelope(EPHEMERAL_A, now - 2_000);
-      // From here the row IS the one that first envelope installed.
-      mockDeps.messageDB.getEncryptionStates.mockResolvedValue([
+
+      // From here the row IS the one that first envelope installed — and the
+      // store is STATEFUL, so a save the code performs is visible to the next
+      // delivery. A fixed mock would hide exactly the behaviour the replay test
+      // below depends on.
+      const rows = [
         {
           ...existingRow(now - 2_000),
           inboxId: FRESH_INBOX,
@@ -237,7 +241,17 @@ describe('handleNewMessage — init envelope on our device inbox', () => {
             },
           }),
         },
+      ];
+      mockDeps.messageDB.getEncryptionStates.mockImplementation(async () => [
+        ...rows,
       ]);
+      mockDeps.messageDB.saveEncryptionState.mockImplementation(
+        async (row: any) => {
+          const i = rows.findIndex((r) => r.inboxId === row.inboxId);
+          if (i >= 0) rows[i] = { ...rows[i], ...row };
+          else rows.push(row);
+        }
+      );
       vi.clearAllMocks();
       sdk.newInboxKeyset.mockResolvedValue({
         inbox_address: 'QmShouldNeverBeMintedGGGGGGGGGGGGGGGGGGGGGG',
@@ -281,6 +295,37 @@ describe('handleNewMessage — init envelope on our device inbox', () => {
       expect(sdk.newInboxKeyset).not.toHaveBeenCalled();
       expect(mockDeps.messageDB.deleteEncryptionState).not.toHaveBeenCalled();
       expect(mockDeps.messageDB.saveMessage).toHaveBeenCalledTimes(5);
+    });
+
+    it('refuses an exact replay of a re-announcement it already accepted', async () => {
+      // The relay redelivers any frame whose ack-by-delete failed, so a
+      // re-announcement can arrive twice. `isStaleInitEnvelope` rule 2 catches
+      // that by exact timestamp match against a row we hold — which only works
+      // because the keep branch advances the row's timestamp. Without that, the
+      // replay is accepted forever: a duplicate notification and a redundant
+      // X3DH every time.
+      const ts = now + 1_000;
+      await deliverInitEnvelope(EPHEMERAL_A, ts);
+      expect(mockDeps.messageDB.saveMessage).toHaveBeenCalledTimes(1);
+      // The accept advanced the row's timestamp to this envelope's, which is
+      // what arms rule 2 against the replay below.
+      expect(mockDeps.messageDB.saveEncryptionState).toHaveBeenCalledTimes(1);
+      expect(
+        mockDeps.messageDB.saveEncryptionState.mock.calls[0][0].timestamp
+      ).toBe(ts);
+
+      vi.clearAllMocks();
+      await deliverInitEnvelope(EPHEMERAL_A, ts); // byte-identical replay
+
+      // ⚠️ The discriminating assertion. `saveEncryptionState` alone would NOT
+      // discriminate: the stale path and an unbumped keep path both leave it
+      // uncalled, so asserting on it passes whether or not the fix is present.
+      // Only the stale path returns BEFORE re-subscribing, so the absence of a
+      // listen frame is what distinguishes "refused" from "accepted again".
+      expect(mockDeps.enqueueOutbound).not.toHaveBeenCalled();
+      expect(mockDeps.messageDB.saveEncryptionState).not.toHaveBeenCalled();
+      expect(sdk.newInboxKeyset).not.toHaveBeenCalled();
+      expect(mockDeps.messageDB.deleteEncryptionState).not.toHaveBeenCalled();
     });
 
     it('a DIFFERENT ephemeral still replaces it — a peer reinstall must work', async () => {

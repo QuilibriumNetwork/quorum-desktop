@@ -4779,20 +4779,26 @@ export class MessageService {
           // address we keep listening on is the address we are advertising.
           // Reading any other row could pin us to an inbox we never told the
           // peer about, which is the bug this branch exists to prevent.
-          const priorRow = existing.length
-            ? (existing.find(
-                (e) =>
-                  e.inboxId ===
-                  (orderSessionsForSend(existing)[0]?.receiving_inbox as
-                    | secureChannel.InboxKeyset
-                    | undefined)?.inbox_address
-              ) ?? null)
-            : null;
-          const priorReceivingInbox = priorRow
-            ? (JSON.parse(priorRow.state).receiving_inbox as
-                | secureChannel.InboxKeyset
-                | undefined)
-            : undefined;
+          const sendOrdered = orderSessionsForSend(existing);
+          const sendRowInbox = (
+            sendOrdered[0]?.receiving_inbox as secureChannel.InboxKeyset | undefined
+          )?.inbox_address;
+          const priorRow =
+            (sendRowInbox && existing.find((e) => e.inboxId === sendRowInbox)) ||
+            null;
+          let priorReceivingInbox: secureChannel.InboxKeyset | undefined;
+          try {
+            // Guarded for the same reason `orderSessionsForSend` guards its own
+            // parse: a corrupted row must degrade to "no prior session" (and so
+            // to the replace path), never take the whole receive loop down.
+            priorReceivingInbox = priorRow
+              ? (JSON.parse(priorRow.state).receiving_inbox as
+                  | secureChannel.InboxKeyset
+                  | undefined)
+              : undefined;
+          } catch {
+            priorReceivingInbox = undefined;
+          }
           if (
             priorRow &&
             priorReceivingInbox?.inbox_address &&
@@ -4802,10 +4808,23 @@ export class MessageService {
               envelope.ephemeral_public_key
             )
           ) {
-            // Keep the row, the ratchet and the address exactly as they are.
-            // The payload has already been decrypted out of the envelope
-            // above, so the message is processed normally below.
+            // Keep the ratchet and the address exactly as they are, and take
+            // the message — it was already decrypted out of the envelope above.
+            //
+            // The row IS still written, with its state byte-identical and only
+            // its timestamp advanced to this envelope's. That is not
+            // bookkeeping: `isStaleInitEnvelope` rule 2 refuses an envelope
+            // whose timestamp exactly matches a row we hold, and it is the only
+            // defence against the relay replaying a frame whose ack-by-delete
+            // failed. Leaving the timestamp pinned at the first install would
+            // mean every LATER re-announcement stayed replayable for as long as
+            // the session was unconfirmed — each replay costing a duplicate
+            // notification and a redundant X3DH.
             newState = priorRow.state;
+            await this.messageDB.saveEncryptionState(
+              { ...priorRow, timestamp: message.timestamp },
+              true
+            );
             logger.debug(
               '[MessageService] init envelope is a re-announcement of the session we already hold — keeping it',
               {

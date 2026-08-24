@@ -68,6 +68,30 @@ function isUsableIdentifier(value: unknown): value is string {
 }
 
 /**
+ * Storage failures are reported ONCE per session, not once per frame.
+ *
+ * They have to be reported at all: a systematically unreadable store makes this
+ * ledger answer "different session" forever, which silently restores the exact
+ * bug it was written to remove. But `isSameInitSession` runs on every init
+ * envelope, so an unconditional warn would bury the log it is trying to make
+ * visible.
+ */
+let storageFailureReported = false;
+function reportStorageFailure(what: string, conversationId: string, err: unknown): void {
+  if (storageFailureReported) return;
+  storageFailureReported = true;
+  logger.warn(
+    `[DMInitSessionLedger] ${what} failed — re-announcements will replace the session until storage recovers (reported once)`,
+    { conversation: conversationId.slice(0, 16), err }
+  );
+}
+
+/** Test seam: let a test observe the once-per-session warn more than once. */
+export function __resetInitSessionLedgerWarnForTests(): void {
+  storageFailureReported = false;
+}
+
+/**
  * INVARIANT: key(conversationId, tag) must be INJECTIVE, for the same reason
  * `dmRevealLedger` spells out at length — a hand-rolled `${a}:${b}` template is
  * not injective over arbitrary strings, and a collision here would report one
@@ -105,12 +129,8 @@ export function recordInitSession(
   } catch (err) {
     // Quota, private mode, storage disabled. Not fatal: the NEXT init envelope
     // simply fails to match and takes the old replace-the-session path, which
-    // is what shipped before this ledger existed. Logged because a systematic
-    // failure would silently restore the old bug with no signal at all.
-    logger.warn(
-      '[DMInitSessionLedger] write failed — re-announcements will replace the session this session',
-      { conversation: conversationId.slice(0, 16), err }
-    );
+    // is what shipped before this ledger existed.
+    reportStorageFailure('write', conversationId, err);
   }
 }
 
@@ -134,7 +154,12 @@ export function isSameInitSession(
   }
   try {
     return localStorage.getItem(key(conversationId, tag)) === ephemeralPublicKey;
-  } catch {
+  } catch (err) {
+    // Reported, not silent. An unreadable store answers "different session" for
+    // every envelope from here on, which is precisely the pre-fix behaviour —
+    // and a degradation back into a fixed bug must never be inferable only from
+    // the absence of a log line.
+    reportStorageFailure('read', conversationId, err);
     return false;
   }
 }
@@ -160,7 +185,10 @@ export function forgetInitSessions(conversationId: string): void {
       if (k && k.startsWith(prefix)) doomed.push(k);
     }
     for (const k of doomed) localStorage.removeItem(k);
-  } catch {
-    // Storage unreachable. Nothing to do: reads from it already fail closed.
+  } catch (err) {
+    // Storage unreachable. Reads already fail safe, so nothing is left in a
+    // wrong state — but it is still the same underlying fault, and reporting it
+    // here means a clear-only failure cannot pass unnoticed.
+    reportStorageFailure('clear', conversationId, err);
   }
 }

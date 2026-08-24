@@ -12,10 +12,12 @@
  * branch unreachable from any test while appearing covered.
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { logger } from '@quilibrium/quorum-shared';
 import {
   recordInitSession,
   isSameInitSession,
   forgetInitSessions,
+  __resetInitSessionLedgerWarnForTests,
 } from '@/utils/dmInitSessionLedger';
 
 const CONV = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imAAAA/QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imAAAA';
@@ -27,10 +29,12 @@ const EPH_B = 'ff99ee88dd77cc66';
 
 beforeEach(() => {
   localStorage.clear();
+  __resetInitSessionLedgerWarnForTests();
 });
 afterEach(() => {
   vi.restoreAllMocks();
   localStorage.clear();
+  __resetInitSessionLedgerWarnForTests();
 });
 
 describe('dmInitSessionLedger', () => {
@@ -109,6 +113,19 @@ describe('dmInitSessionLedger', () => {
       // path — the behaviour that shipped before this ledger existed.
       vi.restoreAllMocks();
       expect(isSameInitSession(CONV, TAG, EPH_A)).toBe(false);
+    });
+
+    it('reports a storage failure once, not once per envelope', () => {
+      // The point of the throttle: a broken store makes this ledger answer
+      // "different session" forever, which silently restores the old bug. That
+      // must be visible — but `isSameInitSession` runs on every init envelope,
+      // so an unthrottled warn would bury its own signal.
+      const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {});
+      vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+        throw new Error('storage unavailable');
+      });
+      for (let i = 0; i < 20; i++) isSameInitSession(CONV, TAG, EPH_A);
+      expect(warn).toHaveBeenCalledTimes(1);
     });
 
     it('a failing sweep does not throw out of forgetInitSessions', () => {
