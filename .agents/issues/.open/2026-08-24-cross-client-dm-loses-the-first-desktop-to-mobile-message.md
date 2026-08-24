@@ -35,8 +35,14 @@ arm green**: its branch logged zero hits in the green run, so that run's outcome
 is identical with or without it. It is shipped on its own merits and covered by
 unit tests, not on the strength of this arm. See §"Residual defect".
 
-`cross-dm` stays held back to `yarn verify --all` until the green is confirmed
-over several consecutive runs.
+**Repeatability, against a baseline of 5 losses in 6 runs:** `cross-dm` green in
+**5 consecutive runs**, `harness:dm` (the mobile↔mobile control) green in **3
+consecutive runs**, `yarn verify` PASS. `cross-dm` has been **released** from
+`exhaustiveOnly` and now runs on every change that routes to the live tier.
+
+One change was **reverted** in response to independent review, and it is the one
+worth knowing about if you are reading this to understand the final diff:
+mobile's receive-path reorder. See §"Independent review".
 
 ## Symptoms
 
@@ -480,6 +486,85 @@ This is the mirror of the mobile bug just fixed, and the same remedy probably
 applies: while unconfirmed, re-announce the existing session rather than
 building a new one.
 
+## Independent review, and what it changed
+
+Three reviewers ran over both diffs in fresh contexts: correctness, security, and
+a silent-failure hunt. Acted on:
+
+### Mobile's receive-path reorder was REVERTED
+
+All three flagged the same change — moving the trial-decrypt loop ahead of the
+branch so an init-wrapped frame no state can decrypt falls through to
+`initializeRecipientSession` instead of being dropped:
+
+- it installs a row keyed by `unsealed.user_address` / `unsealed.tag`, both
+  **unauthenticated plaintext fields inside the envelope**, and `selectSendState`
+  prefers send-ready-then-newest — so a forged init frame on a conversation
+  inbox could outrank a **confirmed** session and redirect the victim's next
+  sends to attacker-held keys;
+- it deleted the only `warn` on that path and replaced it with a `debug`, which
+  production discards entirely, so a session replacement on the receive side
+  became invisible;
+- it dropped the `recordInboxAttempt` call, so a genuinely undecryptable frame
+  is no longer bounded.
+
+Independently, the mobile↔mobile control arm lost `B→A #2` in one run and the
+failing line was that exact path.
+
+The deciding argument is that **it is not needed**. It was written for desktop
+minting a session per send, which turned out to be mobile's own re-announce
+failing (`36d1f69`). The cross arm's real path is `confirmSenderSession`, which
+this reorder does not touch. Reverted; the diagnostic log it added is kept.
+
+### Desktop: the keep branch reopened a replay window, now closed
+
+`isStaleInitEnvelope` rule 2 refuses an envelope whose timestamp exactly matches
+a row we hold — the only defence against the relay replaying a frame whose
+ack-by-delete failed. The keep branch persisted nothing, so the row's timestamp
+stayed pinned at first install and **every later re-announcement stayed
+replayable** for as long as the session was unconfirmed, each replay costing a
+duplicate notification and a redundant X3DH.
+
+Fixed by writing the row back byte-identical with only its timestamp advanced.
+A test pins it, and — this took two attempts — that test now asserts on the
+absence of a `listen` frame rather than on `saveEncryptionState`, because the
+first version passed whether or not the fix was present.
+
+### Also fixed
+- `forgetInitSessions` was missing from `EncryptionService.deleteEncryptionStates`,
+  which backs the user-facing "Reset session" and "Fix DM Encryption" actions.
+  Inert today, but it violated the ledger's own stated contract.
+- The second `JSON.parse` of the prior row is now guarded, matching what
+  `orderSessionsForSend` already does with the same data.
+- The ledger's read and clear paths now report storage failures, throttled to
+  once per session. A silent revert into a fixed bug is the failure mode this
+  whole issue is about.
+- Mobile's caller-side fallback log no longer names a cause it cannot know;
+  `buildReinitEnvelopeSend` returns `null` for two unrelated reasons and logs
+  the serious one itself.
+
+### Recorded, not acted on
+
+- **X3DH ephemeral reuse for the OUTER seal.** If the WASM's AEAD nonce is
+  derived deterministically from the (ephemeral, recipient-pubkey) DH output,
+  sealing several different envelopes under one ephemeral is nonce reuse, and
+  the plaintext at that layer includes `return_inbox_private_key`. **Cannot be
+  checked from either repo** — it lives in compiled Rust. Context the reviewer
+  lacked: desktop has done this since `75d76f0c5` via
+  `DoubleRatchetInboxEncryptForceSenderInit`, so mobile is now matching
+  long-standing behaviour rather than inventing it, and the alternative is the
+  bug this issue exists to fix. Worth a source-level audit on its own schedule.
+- **Whether desktop's own re-announcements carry a stable ephemeral.** The SDK
+  takes no stored ephemeral, so it either derives one deterministically or mints
+  a fresh one; unreadable from TypeScript. If fresh, desktop's new branch never
+  fires desktop↔desktop — which fails toward today's behaviour, and
+  desktop↔desktop measures 301/301 and 201/201 with no loss, so there is no
+  evidence of a problem there.
+- **Dual rows per tag.** `sessionSelection.ts` documents that a send-created and
+  a receive-created row can coexist for one tag, while the ledger records one
+  ephemeral per `(conversation, tag)`. No exploit was constructed; worst case is
+  a fail-toward-replace.
+
 ## Two traps in the measuring equipment itself
 
 1. **`yarn harness:cross` does NOT go through `scripts/verify/mintGuard.mjs`.**
@@ -521,21 +606,34 @@ The reported bug is fixed and the arm is green. What remains:
 
 ## Impact on the verify gate
 
-`cross-dm` is **held back to `yarn verify --all`** while this is open
-(`exhaustiveOnly` in `scripts/verify/steps.mjs`, alongside `space-basic`). It is
-red in 5 of 6 runs for a reason unrelated to whatever change is being verified,
-and an arm in that state would block every piece of work behind a bug nobody is
-fixing this week.
+**`cross-dm` was RELEASED on 2026-08-24** and now runs on every change that
+routes to the live tier. It had been held back to `yarn verify --all` while it
+was red in 5 of 6 runs for a reason unrelated to whatever change was being
+verified — an arm in that state blocks every piece of work.
 
-Held back, not removed: every per-change run prints a `HELD BACK` line naming
-it and quoting this issue, so it cannot quietly become "nobody runs it". The
-cost is stated plainly — a **mobile-only change now runs one live arm**
-(`config-cross`) instead of two.
+Released rather than left held back because it is the **only cross-client DM
+coverage there is**, and the bug it found survived for months precisely because
+nothing measured that cell. Leaving it out would recreate the condition that
+hid it.
 
-**Releasing it is two deleted lines** in `steps.mjs` once this is resolved
-either way. `src/dev/tests/verify/routing.test.ts` asserts the held-back set by
-value, so removing the flag without updating the expectation fails the fast
-tier rather than passing silently.
+If it turns out to be flaky INSIDE the gate — it has a known collect-time flake
+in back-to-back vitest runs, §"Two traps" — re-add `exhaustiveOnly: true` with
+a fresh reason rather than deleting the arm.
+`src/dev/tests/verify/routing.test.ts` asserts the held-back set BY VALUE, so
+that decision costs two edits in two files and cannot be made quietly.
+
+### A separate gate bug found on the way, and fixed
+
+`yarn verify` could not report a clean run at all: `space-delivery` failed in
+**every** run since the gate landed, with
+`ReferenceError: wantsFreshSpace is not defined`.
+`src/dev/tests/harness/spaceState.ts:299` used `export { x } from '…'`, which
+forwards a binding WITHOUT introducing it into the module's scope, so
+`restoreSharedSpace` threw on its own first line. A static scoping mistake, so
+it failed deterministically for everyone, and the arm's documented retry could
+not help — the failure is not load-related. Repaired in `c528be9c2`: the arm
+fails in 589 ms before, passes in 90 s after. Unrelated to this issue except
+that the gate could not be trusted until it was fixed.
 
 See [2026-08-24-verify-gate-pre-ship-fixes.md](../.done/2026-08-24-verify-gate-pre-ship-fixes.md).
 
@@ -551,7 +649,12 @@ See [2026-08-24-verify-gate-pre-ship-fixes.md](../.done/2026-08-24-verify-gate-p
 | total delivered | 5/6 | 3/5 | **6/6** |
 | desktop `SESSION REPLACED` | — | 8 | **1** |
 | desktop strandings | — | 2 | **0** |
-| mobile↔mobile control | 6/6 | 6/6 | *(re-run pending)* |
+| mobile↔mobile control | 6/6 | 6/6 | **6/6 × 3 runs** |
+
+Repeatability, which is the part that matters against a baseline of 5 losses in
+6: **`cross-dm` green in 5 consecutive runs** (3 before the mobile receive-path
+revert, 2 after), and **`harness:dm` green in 3 consecutive runs** after it.
+`yarn verify` PASS with `cross-dm` released into the per-change set.
 
 *Last updated: 2026-08-24*
 
