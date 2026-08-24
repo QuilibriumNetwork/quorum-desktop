@@ -16,10 +16,18 @@ import { spawn } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { resolveMobileRepo } from './mobileRepo.mjs';
+// Imported, not re-derived. `scripts/verify/mintGuard.mjs` uses the same
+// function to work out which bot identities this run will need, and a second
+// copy of the rule here is precisely how the guard ends up clearing one pair of
+// names while this file launches another — see that function's header.
+import { crossRoles } from '../../../../scripts/verify/routing.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DESKTOP_REPO = resolve(HERE, '../../../..');
-const MOBILE_REPO = resolve(DESKTOP_REPO, '..', 'quorum-mobile');
+// Via the helper, NOT as a sibling of this checkout: that guess is wrong from
+// a linked worktree. See mobileRepo.mjs.
+const MOBILE_REPO = resolveMobileRepo(DESKTOP_REPO);
 // Must match BOTH rendezvous.ts files. Mobile owns the layout because its
 // orchestrator defined it first; desktop's rendezvous.ts points here too.
 const RENDEZVOUS_ROOT = resolve(MOBILE_REPO, 'dev/harness/.state/rendezvous');
@@ -28,8 +36,7 @@ const RENDEZVOUS_ROOT = resolve(MOBILE_REPO, 'dev/harness/.state/rendezvous');
 // scenario for why one-initiator matters), so this decides whether we measure
 // mobile→desktop first or the reverse. Default puts MOBILE as the initiator,
 // because mobile→desktop is the field's reported bad direction.
-const DESKTOP_ROLE = process.env.HARNESS_DESKTOP_ROLE === 'a' ? 'a' : 'b';
-const MOBILE_ROLE = DESKTOP_ROLE === 'a' ? 'b' : 'a';
+const { desktop: DESKTOP_ROLE, mobile: MOBILE_ROLE } = crossRoles(process.env);
 
 if (!existsSync(MOBILE_REPO)) {
   console.error(

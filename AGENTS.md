@@ -176,6 +176,112 @@ quorum-shared is not just a dependency — it's the migration destination for th
 
 ---
 
+## Verifying a change
+
+Before reporting any code change complete, run `yarn verify` and paste the
+verdict block **verbatim**.
+
+**Full guide: [The verify gate](.agents/docs/verify-gate.md)** — what each
+verdict means, what it costs, what it does not cover, and where the pieces live.
+
+- Do not summarise it, and do not report a subset of the rows.
+- Do not report `PASS` when the block says `PASS (PARTIAL)` or `FLAKY`. Those
+  are distinct verdicts: `PASS (PARTIAL)` means **this run proved less than a
+  full run would** — read the `⚠` lines and say whether the gap matters for
+  this change. `FLAKY` means a step went green only on a retry.
+- A `KNOWN-RED` row does **not** make a run partial. It is a step that ran and
+  failed exactly as already recorded on main, so it proved nothing less; the
+  verdict line names those steps separately. If one gets WORSE than its
+  recorded baseline the run FAILs — the baseline is a ceiling, never a budget.
+- A `ℹ` line is advisory and costs the verdict nothing (a stale exemption, a
+  debt count that improved). Only `⚠` lines are the ones that made a run
+  PARTIAL. Do not report an `ℹ` line as a problem.
+- `yarn verify --show-receipt` prints the last run's record, including the
+  commit it ran against.
+
+### The live tier will not run on a machine with no bot identities
+
+The live arms drive real bots against the **production relay**, and accounts and
+Spaces there are **permanent — there is no delete endpoint**. On a machine whose
+`src/dev/tests/harness/.state/` is empty (a fresh clone, or CI), running them
+would register 6 accounts and a Space that can never be removed.
+
+So the gate checks first (`scripts/verify/mintGuard.mjs`) and skips any arm that
+would mint, printing a `MINT-GUARD` line and reporting `PASS (PARTIAL)`. **That
+is correct behaviour, not a failure — do not work around it, and do not pass
+`--live-allow-minting` to make it go away.** The fast tier still ran in full
+(typecheck, lint, 1808 + 766 + 1222 tests, build), which is what a PASS on that
+run means.
+
+If you add a new live arm, add its identities to `STATE_BY_ARM` in that file. An
+unlisted arm is assumed to mint and will not run; the fast tier fails if you
+forget, so this cannot rot silently.
+
+### What it costs, so you can predict before you run it
+
+The gate routes itself from the diff (`scripts/verify/routing.mjs`), so the
+cost depends on what changed. "What changed" means **this branch's own commits
+plus any uncommitted work** — so committing before you verify is fine, and
+running it on a clean branch still checks that branch. **`yarn verify --explain`
+prints the plan and the arms it would run, in milliseconds, without running any
+of them** — ask it rather than guessing from the list below:
+
+```
+  ROUTED     mobile
+  TIER       fast + live
+  LIVE ARMS  config-cross
+  HELD BACK  cross-dm  (run `yarn verify --all`)
+             (only quorum-mobile changed — running the cross-client arms; the
+              four same-client arms load no mobile code and cannot observe it)
+```
+
+- **Docs, styles, images, translation catalogues, or a components-only
+  change**: the fast tier only, about **3 minutes** (desktop's fast tier:
+  typecheck, lint, unit tests, build; measured 2026-08-23). The live tier does
+  not run. Changing the colour of a button falls here, as does editing
+  `src/i18n/<locale>/messages.po` — but not `src/i18n/i18n.ts`, which is code.
+- **A quorum-mobile-only change**: the fast tier plus **only the cross-client
+  arms**, which today means `config-cross` alone (`cross-dm` is held back, see
+  below). The four same-client arms are desktop vitest scenarios that never
+  load mobile code, so they cannot observe the change; running them would be
+  six minutes of real-relay traffic that could not have gone red.
+- **Services, sync, storage, crypto, or any path nobody has classified**: the
+  fast tier plus the live tier, about **6.5 minutes measured**. Real bots send
+  real messages over a real relay.
+- **A change under `src/dev/tests/harness/`**: the fast tier plus the full live
+  tier, deliberately. The harness IS the live tier's measuring equipment, so a
+  change to it is exactly the change a live run has to check. Every other
+  directory under `src/dev/tests/` stays on the fast tier, which already runs
+  those tests.
+- **Two arms are HELD BACK from every per-change run**, for unrelated reasons.
+  `yarn verify --all` runs both, and every run that leaves one out says so on
+  its own `HELD BACK` line, quoting why — so this can never quietly become
+  "nobody ran it".
+  - **`space-basic`** creates a permanent, undeletable Space each time it runs,
+    and unlike `space-delivery` it cannot reuse one, because creating a space
+    is its subject.
+  - **`cross-dm`** reports a reproducible cross-client message loss (5 of 6
+    runs, always the first echo desktop sends) whose cause is not yet known,
+    tracked in
+    `.agents/issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md`.
+    It is held back rather than removed because an arm that is red in most runs
+    for a reason unrelated to the change under test would block every piece of
+    work. Release it — two lines in `scripts/verify/steps.mjs` — once that issue
+    is resolved either way.
+- `yarn verify --fast` skips the live tier on request, for a quick check
+  mid-work; it is not a substitute for the full run before reporting done.
+- `space-delivery` is retried once if it fails, because it is load-sensitive
+  under the live tier's back-to-back real-relay traffic. A retry-pass reports
+  `FLAKY`, never `PASS`: that distinction is the point, not a bug.
+
+An unclassified path defaults to the live tier on purpose: the routing is an
+allowlist of provably safe paths, not a denylist of risky ones, so it rots
+loudly (an occasional unnecessary few minutes) rather than silently (a real
+risk shipping with no coverage). That is the trade this rule makes on your
+behalf.
+
+---
+
 ## Development Checklist
 
 - ✅ Read AGENTS.md for relevant patterns
@@ -187,4 +293,4 @@ quorum-shared is not just a dependency — it's the migration destination for th
 
 ---
 
-_Last updated: 2026-04-09_
+_Last updated: 2026-08-23_

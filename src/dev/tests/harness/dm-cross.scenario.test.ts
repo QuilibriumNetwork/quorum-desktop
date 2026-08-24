@@ -61,12 +61,30 @@ test.skipIf(!paired)(
     };
     const peer = peerOf(ROLE);
 
-    const bot = await createBot(`cross-desktop-${ROLE}-${String(startedAt).slice(-6)}`);
-    await bot.start();
+    // FIXED name, not stamped. A stamped name mints a new relay account on
+    // every run, and account registrations are permanent — there is no delete
+    // endpoint and they do not expire. This arm ran on a stamped name until
+    // 2026-08-24 only because it was skipped from a worktree checkout and
+    // therefore almost never executed; the moment the skip was lifted it would
+    // have started minting one account per run of the whole gate.
+    //
+    // Reuse is safe because isolation never came from the identity:
+    // `storage.ts` backs MessageDB with in-memory fake-indexeddb, so every run
+    // starts from an empty database regardless of the name.
+    const bot = await createBot(`cross-desktop-${ROLE}`);
 
-    // Stale frames from an earlier run would be counted as this run's arrivals.
+    // Drain BEFORE start, and this ordering is load-bearing here in a way it
+    // is not elsewhere. Labels on this wire are bare round numbers (1..N) and
+    // the format is shared with quorum-mobile, which is not modified by this
+    // repo — so unlike `dm-delivery` there is no per-run stamp in the CONTENT
+    // to fall back on. A frame the relay queued for a previous run carries a
+    // label indistinguishable from this run's, and would be counted as an
+    // arrival that never happened, understating loss. The drain is the only
+    // thing standing between a reused inbox and a falsely clean number.
     const drained = await bot.drainInbox();
-    if (drained > 0) say(`drained ${drained} stale frame(s) before starting`);
+    say(`drained ${drained} stale frame(s) before starting`);
+
+    await bot.start();
 
     publish(ROLE, 'hello', {
       address: bot.identity.address,

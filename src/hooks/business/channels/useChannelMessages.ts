@@ -8,6 +8,42 @@ import type { Message as MessageType, Channel, Role } from '@quilibrium/quorum-s
 import { DefaultImages } from '../../../utils';
 import { useBlockUser } from '../user/useBlockUser';
 
+/**
+ * Which messages a viewer actually sees in a channel.
+ *
+ * Extracted from the `useMemo` below so it can be tested without mounting a
+ * hook. It carries three independent rules that had no test of any kind
+ * (audited 2026-08-23), and the reason is worth stating: two of them are
+ * viewer-side only, so no relay scenario can ever observe them however many
+ * are added. The personal block in particular has no wire component at all —
+ * nothing is broadcast, no permission is checked, no peer is told — so this
+ * function and `blockUtils` in quorum-shared are the whole feature.
+ *
+ * Order matters and is deliberate. Dedup runs first and records `seen` only
+ * for messages that SURVIVE, so a filtered-out duplicate does not consume the
+ * slot its visible twin needs.
+ */
+export function selectVisibleMessages(
+  allMessages: MessageType[],
+  { threadsEnabled, blockedSet }: { threadsEnabled: boolean; blockedSet: Set<string> }
+): MessageType[] {
+  // Deduplicate by messageId and filter out thread replies (defense-in-depth)
+  // Thread replies should be filtered at the DB layer, but this guards against
+  // any code path that bypasses getMessages() (e.g., setQueryData with raw data)
+  const seen = new Set<string>();
+  return allMessages.filter((msg) => {
+    if (seen.has(msg.messageId)) return false;
+    if (msg.isThreadReply && threadsEnabled) return false;
+    // Personal block: hide blocked senders' messages from this viewer's stream.
+    // Optional-chain content to match every other consumer of this list (e.g.
+    // Channel.tsx reads msg.content?.senderId off the same filtered array) and
+    // guard against any raw/partial message that bypasses getMessages().
+    if (msg.content?.senderId && blockedSet.has(msg.content.senderId)) return false;
+    seen.add(msg.messageId);
+    return true;
+  });
+}
+
 interface UseChannelMessagesProps {
   spaceId: string;
   channelId: string;
@@ -74,21 +110,7 @@ export function useChannelMessages({
     const allMessages = messages.pages.flatMap(
       (p) => (p as { messages: MessageType[] }).messages as MessageType[]
     );
-    // Deduplicate by messageId and filter out thread replies (defense-in-depth)
-    // Thread replies should be filtered at the DB layer, but this guards against
-    // any code path that bypasses getMessages() (e.g., setQueryData with raw data)
-    const seen = new Set<string>();
-    return allMessages.filter((msg) => {
-      if (seen.has(msg.messageId)) return false;
-      if (msg.isThreadReply && threadsEnabled) return false;
-      // Personal block: hide blocked senders' messages from this viewer's stream.
-      // Optional-chain content to match every other consumer of this list (e.g.
-      // Channel.tsx reads msg.content?.senderId off the same filtered array) and
-      // guard against any raw/partial message that bypasses getMessages().
-      if (msg.content?.senderId && blockedSet.has(msg.content.senderId)) return false;
-      seen.add(msg.messageId);
-      return true;
-    });
+    return selectVisibleMessages(allMessages, { threadsEnabled, blockedSet });
   }, [messages, threadsEnabled, blockedSet]);
 
   const canDeleteMessages = useCallback(

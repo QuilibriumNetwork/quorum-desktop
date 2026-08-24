@@ -1,10 +1,10 @@
 ---
 type: task
 title: '`yarn verify` — a routed, cross-repo regression gate with a readable verdict'
-status: open
+status: done
 priority: high
 created: 2026-08-22
-updated: 2026-08-22
+updated: 2026-08-24
 area: testing / developer confidence
 ---
 
@@ -392,3 +392,33 @@ ships unnoticed.
 ---
 
 _Last updated: 2026-08-22_
+
+## Status (2026-08-24) — design delivered
+
+**Built, reviewed and documented.** This design is closed; the tool it describes
+exists and is measured. User-facing documentation now lives at
+[verify-gate.md](../../docs/verify-gate.md) — read that rather than this
+document for how the tool behaves today.
+
+Follow-on records:
+
+- [implementation plan](2026-08-22-verify-regression-gate-plan.md) — what was built
+- [coverage and cost review](2026-08-23-verify-gate-coverage-and-cost-review.md) — whether it runs the right things
+- [pre-ship fixes](../2026-08-24-verify-gate-pre-ship-fixes.md) — the last three defects
+
+**Four design assumptions did not survive contact.** All are corrected in the
+issues above; recorded here because a design doc that hides its own misses is
+worse than none:
+
+1. The harness was minting permanent, undeletable relay state on every run.
+2. Reusing state across runs required delivery assertions to be scoped per run,
+   or a failing run could turn the next one green.
+3. "What changed" read only the working tree, so a committed-clean branch
+   reported no changes and ran nothing at all.
+4. `KNOWN-RED` was specified to render `PASS (PARTIAL)`. Since two repos carry
+   tracked breakage on main, that made **every** cross-repo change partial for
+   reasons unrelated to it — turning the one verdict that means "coverage was
+   reduced" into noise. Corrected 2026-08-24: it no longer downgrades the
+   verdict, and is named separately on the verdict line instead.
+
+*Last updated: 2026-08-24*

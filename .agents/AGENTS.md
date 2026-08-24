@@ -78,7 +78,10 @@ yarn build            # Build project (you can run)
 yarn validate         # Type check + lint (run after changes)
 yarn lint             # Lint only
 yarn format           # Format (run on modified files)
+yarn verify           # Regression gate: ~3 min fast-only, ~6.5 min with live tier; required before reporting done
 ```
+
+→ **Full rule**: root [AGENTS.md](../AGENTS.md) → "Verifying a change"
 
 
 ## 📦 Package Management

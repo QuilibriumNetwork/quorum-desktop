@@ -115,6 +115,62 @@ Two things to know about the canonical pair:
   re-runs do not spawn new device registrations (which would feed the
   device-registration ghost-accumulation problem).
 
+### Accounts and spaces are permanent — reuse them
+
+**The relay has no delete endpoint for either.** `/inbox/delete` and `/hub/delete`
+remove messages, and `DELETE /users/<addr>/public-profile` removes a profile, but
+nothing removes an account or a space. Registrations do not expire either, so
+anything a scenario mints is there for good.
+
+So a scenario must **not** mint either unless minting is the thing it measures:
+
+- **Bot names are fixed, never stamped.** A new name means a new
+  `.state/<name>.json`, which sends `loadOrCreateBot` down the mint-and-register
+  branch. Reuse is safe because isolation never came from the identity —
+  `storage.ts` backs `MessageDB` with in-memory `fake-indexeddb`, so every run
+  already starts from an empty database. Per-run uniqueness comes from a `stamp`
+  in the message *content*, which is free. Call `drainInbox()` before `start()`
+  so a reused inbox does not inherit frames the relay queued for a previous run.
+- **Spaces are carried across runs** by `spaceState.ts`, which snapshots the
+  space-scoped rows of `spaces`, `space_keys`, `space_members`,
+  `space_member_devices` and `encryption_states` to `.state/<bot>-space.json` and
+  restores them into the fresh in-memory database before `start()`. Read that
+  file's header before changing the store list: the split is deliberate, and
+  `messages` in particular must never be carried.
+
+`HARNESS_FRESH=1 yarn harness <scenario>` bypasses the persisted space and mints
+a new one. Use it for clean-room reproduction, and after any change to the
+persisted store list.
+
+> ⚠️ **Reuse changes what an assertion is worth.** The relay holds a frame until
+> it is acked, so a run that fails partway leaves its frames queued and the next
+> run gets them re-pushed. A check like `typesSeenBy('v').has('embed')` cannot
+> tell last run's embed from this run's, so under reuse it can go green on
+> evidence produced by a *failing* run. Scope every delivery check to something
+> this run minted — a stamped string, or the messageId the sender's own local
+> echo recorded (`sendAs` in `space-delivery.scenario.test.ts`).
+
+`.state/` is gitignored and machine-local, so a persisted space differs between
+machines and between checkouts. A failure may reproduce on one and not another;
+`HARNESS_FRESH=1` is the first thing to try when that happens.
+
+### Pointing at a local relay
+
+Both clients support it, so nothing here is desktop-specific: quorum-mobile has a
+dev toggle for `http://localhost:5000` (`services/api/config.ts`), and this
+harness honours `QUORUM_API_URL` / `QUORUM_WS_URL` (`env.ts`). Switching is one
+environment variable and no code change:
+
+```bash
+QUORUM_API_URL=http://localhost:5000 \
+QUORUM_WS_URL=ws://localhost:5000/ws \
+yarn harness dm-basic
+```
+
+The server that serves that port is **not** in any of the three repos and is not
+documented, so this is currently unusable here. It is recorded because it is the
+clean fix for everything above: against a local relay, minting costs nothing.
+
 ## Why it does NOT need the `diag/dm-frame-join` branch
 
 That branch smears probe logging (and real key material) into `MessageService`
@@ -131,10 +187,11 @@ not just failures), no key material in service code. See the task file for detai
 | `identity.ts` | ed448 key → registered user + device keyset (generate or from-hex) |
 | `canonical.ts` | your two `.env` test users (createUserA/B, createCanonicalPair) |
 | `transport.ts` | REST client + WebSocket (`{type:'listen'}` subscribe) |
-| `bot.ts` | DM bot: the real MessageService + MessageDB + transport (send/receive/wipe/drain) |
+| `bot.ts` | DM bot: the real MessageService + MessageDB + transport (send/sendControl/receive/wipe/drain) |
 | `deps.ts` | MessageServiceDependencies wiring (real for DM, no-op for space/sync) |
 | `spaceBot.ts` | SPACE bot: same construction, plus create/invite/join/post and a member-row capture seam |
 | `spaceDeps.ts` | the real ConfigService/SyncService/InvitationService/SpaceService graph |
+| `spaceState.ts` | carry one space across runs so scenarios stop minting permanent ones |
 | `outbound.ts` | the app's serialized outbound FIFO (spaces need it — see below) |
 | `storage.ts` | MessageDB on fake-indexeddb |
 | `inspect.ts` | read ratchet state (skipped-keys count) out of a bot's MessageDB |
@@ -156,6 +213,7 @@ Log analyzers stay in `.agents/tools/dm-debug/` (`dr-ablate`, `dr-replay`,
 | `yarn harness ping` | a bot registers, connects, subscribes (hits prod) |
 | `yarn harness dm-receive` | waits for a DM you send from a browser, decrypts it |
 | `yarn harness dm-basic` | two bots exchange numbered DMs, no browser (HARNESS_ROUNDS) |
+| `yarn harness dm-delivery` | did a change drop a DM content type? One honest frame per type — post, embed, sticker, reaction, edit-message, remove-message, remove-reaction, dm-update-profile — sent the real way through `send` / `sendControl` and asserted on the bot that did NOT send it. `dm-update-profile` is checked separately, on the receiver's stored conversation row, because it is intercepted before `saveMessage` and never becomes a message (see the file header). No outbound arm: a DM bot has no `graph`, unlike the space arm |
 | `yarn harness dm-volume` | concurrent bidirectional load; samples skipped-keys growth |
 | `yarn harness dm-reset-recover` | wipe a session mid-conversation, verify it re-inits and recovers |
 | `yarn harness dm-itp-wipe` | destroy one side's whole database (storage eviction: Safari ITP, cleared site data, new device) and measure the cost — history and sessions go to zero, the conversation resumes on a fresh session, and nothing revives the old messages. The other bot is a control arm. Distinct from `dm-reset-recover`, which wipes only sessions and keeps history |
@@ -174,6 +232,7 @@ Log analyzers stay in `.agents/tools/dm-debug/` (`dr-ablate`, `dr-replay`,
 | `yarn harness space-thread-reply-wipe` | can someone who opened a thread on your message DELETE your replies inside it? Three arms: a raw-sealed `remove` (a modified client), the same request through the real send path (which an honest client must refuse to broadcast AND must not apply locally), and a control that removes a thread holding only the sender's own replies. The send-side half is measured the instant the send returns, not at the end — see the note below |
 | `yarn harness space-thread-target-mismatch` | a thread frame names what it acts on twice — `threadMeta.threadId` (which every authorization check reads) and `targetMessageId` (which the destructive work operates on). Can they be pointed at different things? Attack arm removes the attacker's own thread while targeting the victim's caption-less image; control arm removes that same thread honestly and must still hard-delete its own root |
 | `yarn harness space-message-id-derivation` | may an ordinary member REPLACE your stored message by sending an unsigned post that reuses its `messageId`? A space message's id is a hash of its own content, and the receiver only recomputed it for signed frames. Four arms: the attack; a CONTROL forgery whose id IS correctly derived, which must still arrive (so the refusal is narrow); the refusal's own log line as a positive control; and one honest frame per content type — post, embed, sticker, reply, reaction, edit, thread, remove, mute, update-profile — each of which must survive the gate. Read the two harness traps in the file header before changing its batching |
+| `yarn harness space-delivery` | did a change drop a feature? Extracted from `space-message-id-derivation`'s DELIVERY arm so this question can be asked without also running an attack. One honest frame per content type — post, embed, sticker, reply, reaction, edit, thread, remove, remove-reaction, update-profile, mute — sent the real way and asserted on the bot that did NOT send it. `pin` is sent but not asserted (no owner bypass on a freshly created space — see the file header). Read the two harness traps in the file header before changing its batching |
 | `yarn harness space-wipe-restore` | what logging back in restores after a storage eviction. Two accounts of identical shape, one variable — `allowSync`. Sync on: Space, keys and profile return, DMs do not. Sync off (the DEFAULT): nothing returns, so the eviction takes the Spaces too. The sync-off arm is also the control — if both restored, something other than the published config would be doing it |
 
 `space-basic` asserts the ROSTER as well as the message, because the roster half
@@ -334,4 +393,4 @@ See `2026-07-27-headless-dm-harness.md` under .agents/issues/ for the DM slice p
 `.agents/issues/transport/2026-07-27-headless-space-harness.md` for the space one,
 and `.agents/issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §1 for the DM
 findings.
-*Last updated: 2026-08-21*
+*Last updated: 2026-08-23*

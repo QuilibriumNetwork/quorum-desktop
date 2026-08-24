@@ -14,7 +14,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mobile-Browser Touch Support](docs/mobile-browser-touch-support.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
 - [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
+- [Regression coverage map](docs/regression-coverage-map.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
+- [The verify gate](docs/verify-gate.md)
 
 ### .Archived
 - [Android Build Workflow](docs/.archived/android-build-workflow.md)
@@ -119,6 +121,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
 - 📋 [Name resolution: an API that cannot express a partial identity](issues/2026-08-10-identity-resolution-architecture-design.md)
 - 📋 [Identity Resolution Implementation Plan](issues/2026-08-10-identity-resolution-architecture-plan.md)
+- 📋 [Three fixes to `yarn verify` before the branches ship](issues/2026-08-24-verify-gate-pre-ship-fixes.md)
 
 #### Messagedb
 
@@ -273,6 +276,10 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A failed QNS verification can stay failed for the whole session](issues/.open/2026-08-17-a-failed-qns-verification-can-stay-failed-for-the-whole-session.md)
 - 🐛 [A just-joined member permanently misses a space-manifest broadcast](issues/.open/2026-08-19-a-just-joined-member-permanently-misses-a-space-manifest.md)
 - 🐛 [Desktop applies any signed space-manifest, with no staleness guard](issues/.open/2026-08-19-desktop-applies-any-space-manifest-with-no-staleness-guard.md)
+- 🐛 [quorum-mobile: yarn lint fails with 302 pre-existing errors on master](issues/.open/2026-08-23-mobile-lint-302-errors.md)
+- 🐛 [Cross-client DM loses the first desktop→mobile message in most runs](issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md)
+- 🐛 [quorum-mobile has 11 type errors](issues/.open/2026-08-24-mobile-typecheck-11-errors.md)
+- 🐛 [`verify`: the detail column is blank for four of the six live arms](issues/.open/2026-08-24-verify-detail-column-blank-for-the-vitest-driven-arms.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -319,8 +326,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Rebuild the sync indicator on a per-space "behind by N" signal](issues/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md)
 - 📋 [A DB call landing mid-close still fails once](issues/.open/2026-08-17-a-db-call-landing-mid-close-still-fails-once.md)
 - 📋 [Outbound signing is decided in four places, only one of which is the shared rule](issues/.open/2026-08-21-outbound-signing-is-decided-in-four-places-not-one.md)
-- 📋 [`yarn verify` — a routed, cross-repo regression gate with a readable verdict](issues/.open/2026-08-22-verify-regression-gate-design.md)
-- 📋 [`yarn verify` Implementation Plan](issues/.open/2026-08-22-verify-regression-gate-plan.md)
 
 ### Deferred
 
@@ -409,6 +414,11 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A failed refetch keeps serving stale QNS verifications](issues/.done/2026-08-17-a-failed-refetch-keeps-serving-stale-qns-verifications.md)
 - 🐛 [A failing decrypt leaks 10 characters of plaintext into the error message](issues/.done/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md)
 - 🐛 [2026 08 22 Partial Notification Record Crashes Channel Route](issues/.done/2026-08-22-partial-notification-record-crashes-channel-route.md)
+- 🐛 [run-cross.mjs / run-config-cross.mjs resolve quorum-mobile wrong from a linked worktree](issues/.done/2026-08-23-cross-client-harness-scripts-resolve-mobile-wrong-from-worktree.md)
+- 🐛 [Harness mints permanent, undeletable accounts on the production relay every run](issues/.done/2026-08-23-harness-mints-permanent-accounts-every-run.md)
+- 🐛 [quorum-shared: Input.native.tsx leaks a falsy ReactNode literal into a View style slot (TS2769)](issues/.done/2026-08-23-shared-typecheck-zero-in-native-style-union.md)
+- 🐛 [`yarn verify` in quorum-shared always FAILs without a desktop checkout](issues/.done/2026-08-24-shared-verify-fallback-always-fails-on-a-known-type-error.md)
+- 🐛 [`verify` mints permanent state on every fresh checkout](issues/.done/2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -548,6 +558,11 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Remove the single-repo cross-platform leftovers](issues/.done/2026-08-13-remove-single-repo-cross-platform-leftovers.md)
 - 📋 [DM identity on desktop: the dialect fix, then the privacy rule](issues/.done/2026-08-20-dm-identity-reveal-desktop-and-shared-plan.md)
 - 📋 [Is a whole-app regression net worth building, and if so what shape?](issues/.done/2026-08-22-regression-safety-net-what-would-it-take.md)
+- 📋 [`yarn verify` — a routed, cross-repo regression gate with a readable verdict](issues/.done/2026-08-22-verify-regression-gate-design.md)
+- 📋 [`yarn verify` Implementation Plan](issues/.done/2026-08-22-verify-regression-gate-plan.md)
+- 📋 [Harness: reuse a persistent space instead of minting one every run](issues/.done/2026-08-23-harness-space-reuse-design.md)
+- 📋 [Review the verify gate: right tests, cheap, and what is missing](issues/.done/2026-08-23-verify-gate-coverage-and-cost-review.md)
+- 📋 [Two checks the gate does not run](issues/.done/2026-08-24-verify-gate-cross-repo-tooling-gaps.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
 - 📋 [Add DM-Specific Action Queue Handlers](issues/.done/dm-action-queue-handlers.md)
@@ -808,4 +823,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-22 19:45:50
+**Last Updated**: 2026-08-24 15:26:05
