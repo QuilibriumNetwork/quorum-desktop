@@ -1,16 +1,16 @@
 ---
 type: recap
 title: "Quorum Desktop — Project State"
-updated: 2026-08-22
+updated: 2026-08-25
 ---
 
 # Quorum Desktop — Project State
 
-> Last updated: 2026-08-22
+> Last updated: 2026-08-25
 
 ## Dashboard
 
-> Updated: 2026-08-24 · 88 live · 72 startable · 7 nearly done · 10 blocked
+> Updated: 2026-08-25 · 88 live · 72 startable · 7 nearly done · 10 blocked
 
 **Next step:** Finish production diagnostics (Option 2: a diagnostics toggle with an export) — it is the only route that gets a failure report from a user who will never open devtools, and **four** separate issues are now waiting on evidence it would collect.
 
@@ -20,11 +20,11 @@ updated: 2026-08-22
 |---|-------|----------------|
 | 1 | [Production diagnostics reach a developer, not an ordinary user](issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md) | Half done. PR #349 shipped `quorumLogger.enable()`, so warn/error can now be read in a production build — but only by someone willing to open devtools. The remaining piece (Option 2: a diagnostics toggle with an export) is the only route that gets a report from a user who never will, and it is now the shared gate on the forced-close evidence, on measuring whether storage eviction reaches real users at all, and (new, 2026-08-17) on noticing when QNS verification has silently stopped for a whole session. |
 | 2 | [Safari wipes all IndexedDB after 7 idle days](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md) | **Reframed 2026-08-17 by PR #350.** The app-side consequence is now measured headlessly, and the correction matters: with `allowSync` off (the default) an eviction takes Spaces and profile too, not just DMs. M4 shipped — a backup reminder for sync-off users. What is left is either **Mac-gated** (WebKit's 7-day trigger, the installed-app exemption, M2's passkey Phase 0) or small and unbuilt (M3 `persist()`, M5, M6). Do the small ones here; the reproduction waits on Apple hardware. |
-| 3 | [Cross-client DM loses the first desktop→mobile message](issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md) | **New 2026-08-24, and measured rather than reported.** The cross-client arm could not run at all until this week (it resolved quorum-mobile wrongly from a worktree); the moment it could, it lost a message in 5 of 6 runs — always the FIRST echo desktop sends, while the opposite direction stayed 20/20. Mechanism found the same day: mobile receives desktop's X3DH session-initiation frame, cannot decrypt it against the session it already holds, and drops it. Real message loss between the two clients, with a reproduction that runs in seven minutes. The arm is held back to `yarn verify --all` until it resolves, so this is also blocking a piece of the regression gate. |
-| 4 | Thread control-message authorization hardening | **New 2026-08-20, and now unblocked.** Route `thread` actions through the same verified-signer primitive the other four control types already use, instead of the parallel check they use today. Its structural prerequisite shipped the same day (shared #86 + desktop #358): the primitive now verifies and resolves in one step, so routing a new type through it can no longer hand back an identity nothing checked — which is exactly the trap the naive version of this fix would have sprung. Detail deliberately held privately — see the security folder, not this file. Still not a one-liner: it changes how thread message IDs are scoped, so it needs a cross-client compatibility plan before any code moves. |
-| 5 | [A reconnecting client starves control-message processing](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md) | Sync requests expire unread, so a new joiner is answered by nobody. Already confirmed in the harness with the failing line captured, so it is ready to fix. |
-| 6 | [The config upload has no size guard and fails silently](issues/.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md) | No client measures the payload before sending. A config save can fail with the user believing it succeeded. |
-| 7 | [Config sync space loss race condition](issues/.open/2026-01-09-config-sync-space-loss-race-condition.md) | Spaces can be lost outright. Filed January and never actioned; still reads as a data-loss path. |
+| 3 | Thread control-message authorization hardening | **New 2026-08-20, and now unblocked.** Route `thread` actions through the same verified-signer primitive the other four control types already use, instead of the parallel check they use today. Its structural prerequisite shipped the same day (shared #86 + desktop #358): the primitive now verifies and resolves in one step, so routing a new type through it can no longer hand back an identity nothing checked — which is exactly the trap the naive version of this fix would have sprung. Detail deliberately held privately — see the security folder, not this file. Still not a one-liner: it changes how thread message IDs are scoped, so it needs a cross-client compatibility plan before any code moves. |
+| 4 | [A reconnecting client starves control-message processing](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md) | Sync requests expire unread, so a new joiner is answered by nobody. Already confirmed in the harness with the failing line captured, so it is ready to fix. |
+| 5 | [The config upload has no size guard and fails silently](issues/.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md) | No client measures the payload before sending. A config save can fail with the user believing it succeeded. |
+| 6 | [Config sync space loss race condition](issues/.open/2026-01-09-config-sync-space-loss-race-condition.md) | Spaces can be lost outright. Filed January and never actioned; still reads as a data-loss path. |
+| 7 | [No instrument redelivers an init envelope](issues/.open/2026-08-25-no-instrument-redelivers-an-init-envelope.md) | **New 2026-08-25.** Two pieces of shipped code exist solely to survive a redelivered session-initiation frame — the staleness guard, and the re-announcement branch from #368 — and neither has ever been exercised by a live arm. The July issue on the same mechanism sat open for a month for exactly this reason: it could argue the defect from code but never capture it failing. Mints nothing, and the replay machinery mostly exists. |
 
 ### Nearly done — needs a check
 
@@ -36,6 +36,7 @@ updated: 2026-08-22
 
 ### Blocked
 
+- **X3DH ephemeral reuse in the outer envelope seal** — raised 2026-08-25 by an independent review of #368 / mobile #277. Cannot be answered from either repo: it depends on a nonce derivation that lives in compiled Rust in the SDK. Not a regression — desktop has behaved this way for months — but it wants a source-level look by someone with SDK access. Detail deliberately held privately; see the security folder, not this file.
 - [A DB call landing mid-close still fails once](issues/.open/2026-08-17-a-db-call-landing-mid-close-still-fails-once.md) — deliberately gated on evidence, not queued. The fix is 104 hand-edits across the storage layer to remove a brief self-healing hiccup; #346 added the log line that can say whether forced closes reach real users at all. PR #349 made that line readable in a production build, but only via `quorumLogger.enable()` in devtools, so the evidence still has to be collected deliberately rather than arriving on its own.
 - [Security tab key warning understates what the key controls](issues/.open/2026-08-14-security-tab-key-warning-understates-wallet-access.md) — two product decisions: whether desktop should name wallets while the wallet UI is mobile-only, and whether the copy should branch on account origin.
 - [Pre-existing key-handling items for the lead](issues/.open/2026-08-12-pre-existing-key-handling-items-for-the-lead.md) — five findings sharing one owner and one decision.

@@ -15,6 +15,44 @@ related:
 
 # Session replacement orphans the receiving inbox
 
+## Status
+
+**2026-08-25 — the code defect in §1 is FIXED, in PR #368. The evidence this
+file said was missing was finally captured.**
+
+This issue retired its causal claim in July after three `dm-session-churn` bench
+runs found no loss, while affirming that the code defect was real and not
+retired. It named what was missing: *"a capture taken DURING a failure"*.
+
+The bench runs were all desktop↔desktop. A cross-client arm — which had never
+been able to run — reproduced it on the first attempt, and the capture shows
+exactly §1's mechanism: **8 session replacements in one 3-round run, 7 distinct
+receiving inboxes, and the peer's next message logged as `DM frame for unknown
+inbox — no encryption state, retained unread`** on an address whose row had just
+been deleted.
+
+Fixed by routing on whether an init envelope is a **re-announcement** of the
+session we already hold (same X3DH ephemeral) rather than assuming every init
+envelope is a new session. Same row, same ratchet, same address.
+
+Two honest qualifications, both recorded in the closing issue:
+
+- The 8× churn was largely a **quorum-mobile** defect fixed 28 minutes after
+  that capture was taken. With it fixed, desktop sees one replacement per
+  session — the legitimate one — and the new branch logs zero hits in a normal
+  run. So this fix is not what turned the cross-client arm green.
+- What it therefore buys is still **INFERRED**: the redelivery case, where the
+  send path has moved the row's timestamp so the staleness guard no longer
+  matches. Filed as
+  [an instrument to build](../.open/2026-08-25-no-instrument-redelivers-an-init-envelope.md),
+  because this file's own lesson is that a defect argued from code and not from
+  a capture stays open for a month.
+
+Full chain:
+[2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md](2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md).
+
+---
+
 > ⛔ **READ §8 FIRST, THEN §7.** Everything between here and §7 is the original
 > write-up, preserved so the reasoning is legible. Its central causal claim was
 > **retired on 2026-07-29** after three purpose-built bench runs failed to

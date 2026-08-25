@@ -1,15 +1,36 @@
 ---
 type: bug
 title: 'Cross-client DM loses the first desktop→mobile message in most runs'
-status: open
+status: done
 priority: high
 created: 2026-08-24
-updated: 2026-08-24
+updated: 2026-08-25
 ---
 
 # Cross-client DM loses the first desktop→mobile message in most runs
 
 ## Status
+
+**2026-08-25 — shipped in quorum-mobile #277 and quorum-desktop #368.**
+
+What landed: mobile stopped re-running X3DH on every send while a session is
+unconfirmed, and re-announces the existing ratchet instead; desktop stopped
+treating a re-announced init envelope as a new session. `cross-dm` went from
+5 losses in 6 runs to **6/6 in six consecutive runs**, the mobile↔mobile control
+stayed clean over three, and `yarn verify` is PASS with `cross-dm` released back
+into the per-change gate.
+
+Verified in-session, not by inspection: six live runs against the production
+relay, 25 new unit tests, and a red-on-revert check on every one that depends on
+the fix. One earlier test was found to pass with the fix removed and was
+rewritten.
+
+Follow-ups filed separately rather than held here — they are new work, not
+unfinished criteria of this bug:
+[the ephemeral-reuse audit](../.secret/2026-08-25-repeated-envelopes-share-one-x3dh-ephemeral.md)
+and [the init-envelope redelivery instrument](2026-08-25-no-instrument-redelivers-an-init-envelope.md).
+
+---
 
 Found 2026-08-24, the first time the mobile↔desktop DM cell has ever been
 measured. **Root cause MEASURED and fixed the same day.** Two commits on
@@ -656,5 +677,5 @@ Repeatability, which is the part that matters against a baseline of 5 losses in
 revert, 2 after), and **`harness:dm` green in 3 consecutive runs** after it.
 `yarn verify` PASS with `cross-dm` released into the per-change set.
 
-*Last updated: 2026-08-24*
+*Last updated: 2026-08-25*
 
