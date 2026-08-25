@@ -105,6 +105,11 @@ import {
   recordReveal,
 } from '../utils/dmRevealLedger';
 import {
+  forgetInitSessions,
+  isSameInitSession,
+  recordInitSession,
+} from '../utils/dmInitSessionLedger';
+import {
   claimSpaceProfileAnnounce,
   recordSpaceProfileAnnounce,
   releaseSpaceProfileAnnounce,
@@ -4643,6 +4648,10 @@ export class MessageService {
             }
           );
           await this.deleteEncryptionStates({ conversationId });
+          // The rows are gone, so the record of which X3DH ephemeral produced
+          // them describes nothing. Cleared here rather than left to expire
+          // (see utils/dmInitSessionLedger.ts).
+          forgetInitSessions(conversationId);
           this.dispatchInboxDelete(
             keyset.deviceKeyset.inbox_keyset,
             [envelope.timestamp],
@@ -4691,11 +4700,18 @@ export class MessageService {
           return;
         }
 
-        const inbox_key = await secureChannel.NewInboxKeyset();
         // Ratchet critical section: replacing the session rows for this tag
         // and persisting the new session must be atomic vs concurrent sends
         // on the same conversation (see dmRatchetMutex).
-        const installed = await dmRatchetMutex.runExclusive(conversationId, async () => {
+        //
+        // Returns the inbox we are listening on for this session, or null when
+        // nothing was installed. It is RETURNED rather than assigned to a
+        // captured variable so the compiler can see it is set on every path
+        // that claims success — the receiving inbox is now minted on only one
+        // of three branches, and "which address did we end up on" must not be
+        // answerable by reading a variable that might still hold its initial
+        // value.
+        const inbox_key = await dmRatchetMutex.runExclusive(conversationId, async () => {
           const encryptionStates = await this.messageDB.getEncryptionStates({
             conversationId,
           });
@@ -4735,8 +4751,92 @@ export class MessageService {
                   : null,
               }
             );
-            return false;
+            return null;
           }
+
+          // ── RE-ANNOUNCEMENT, NOT A NEW SESSION ──────────────────────────
+          //
+          // Both clients re-wrap an EXISTING, still-advancing session in a
+          // fresh init envelope on every send until the peer's reply confirms
+          // it (desktop: DoubleRatchetInboxEncryptForceSenderInit; mobile:
+          // buildReinitEnvelopeSend). Treating those as new sessions is what
+          // this branch stops, and the cost of not having it was measured:
+          // a 3-round cross-client run replaced the session EIGHT times,
+          // minting seven receiving inboxes, and the peer's next message
+          // landed on an address whose row had just been deleted.
+          //
+          // Rebuilding is not merely wasteful, it is destructive in both
+          // directions: it mints a receiving inbox the peer has never been
+          // told about, AND it discards the sending chain our own replies are
+          // encrypted with — the chain the peer has already confirmed.
+          //
+          // The ephemeral is a sound identity for the session, not a guess:
+          // the same X3DH ephemeral necessarily derives the same session key.
+          // See utils/dmInitSessionLedger.ts for why it is kept off the row.
+          //
+          // The row consulted is the one `orderSessionsForSend` puts first —
+          // i.e. the exact row our own SEND path uses for this tag, so the
+          // address we keep listening on is the address we are advertising.
+          // Reading any other row could pin us to an inbox we never told the
+          // peer about, which is the bug this branch exists to prevent.
+          const sendOrdered = orderSessionsForSend(existing);
+          const sendRowInbox = (
+            sendOrdered[0]?.receiving_inbox as secureChannel.InboxKeyset | undefined
+          )?.inbox_address;
+          const priorRow =
+            (sendRowInbox && existing.find((e) => e.inboxId === sendRowInbox)) ||
+            null;
+          let priorReceivingInbox: secureChannel.InboxKeyset | undefined;
+          try {
+            // Guarded for the same reason `orderSessionsForSend` guards its own
+            // parse: a corrupted row must degrade to "no prior session" (and so
+            // to the replace path), never take the whole receive loop down.
+            priorReceivingInbox = priorRow
+              ? (JSON.parse(priorRow.state).receiving_inbox as
+                  | secureChannel.InboxKeyset
+                  | undefined)
+              : undefined;
+          } catch {
+            priorReceivingInbox = undefined;
+          }
+          if (
+            priorRow &&
+            priorReceivingInbox?.inbox_address &&
+            isSameInitSession(
+              conversationId,
+              session.tag,
+              envelope.ephemeral_public_key
+            )
+          ) {
+            // Keep the ratchet and the address exactly as they are, and take
+            // the message — it was already decrypted out of the envelope above.
+            //
+            // The row IS still written, with its state byte-identical and only
+            // its timestamp advanced to this envelope's. That is not
+            // bookkeeping: `isStaleInitEnvelope` rule 2 refuses an envelope
+            // whose timestamp exactly matches a row we hold, and it is the only
+            // defence against the relay replaying a frame whose ack-by-delete
+            // failed. Leaving the timestamp pinned at the first install would
+            // mean every LATER re-announcement stayed replayable for as long as
+            // the session was unconfirmed — each replay costing a duplicate
+            // notification and a redundant X3DH.
+            newState = priorRow.state;
+            await this.messageDB.saveEncryptionState(
+              { ...priorRow, timestamp: message.timestamp },
+              true
+            );
+            logger.debug(
+              '[MessageService] init envelope is a re-announcement of the session we already hold — keeping it',
+              {
+                conversationId: conversationId?.slice(0, 16),
+                inboxId: priorReceivingInbox.inbox_address?.slice(0, 12),
+                rowCount: existing.length,
+              }
+            );
+            return priorReceivingInbox;
+          }
+
+          const freshInbox = await secureChannel.NewInboxKeyset();
           logger.warn(
             '[MessageService] ⚠️ SESSION REPLACED by init envelope',
             {
@@ -4758,7 +4858,7 @@ export class MessageService {
 
           newState = JSON.stringify({
             ratchet_state: session.state,
-            receiving_inbox: inbox_key,
+            receiving_inbox: freshInbox,
             tag: session.tag,
             sending_inbox: {
               inbox_address: session.return_inbox_address,
@@ -4771,14 +4871,22 @@ export class MessageService {
             {
               state: newState,
               timestamp: message.timestamp,
-              inboxId: inbox_key.inbox_address,
+              inboxId: freshInbox.inbox_address,
               conversationId: conversationId,
             },
             true
           );
-          return true;
+          // Written LAST, and only after the row it describes is persisted: a
+          // record naming an ephemeral whose session failed to save would make
+          // the next re-announcement of it look like one we already hold.
+          recordInitSession(
+            conversationId,
+            session.tag,
+            envelope.ephemeral_public_key
+          );
+          return freshInbox;
         });
-        if (!installed) {
+        if (!inbox_key) {
           // Stale envelope refused: keep the current session and delete the
           // frame so it cannot redeliver. SALVAGE the payload first: a frame
           // retained after a persist failure re-enters here on redelivery
@@ -4853,6 +4961,9 @@ export class MessageService {
         // `session.user_address` is the address the crypto layer authenticated,
         // not the `envelope.user_address` field the sender wrote themselves.
         this.maybeAutoRevealToPartner(self_address, session.user_address, keyset);
+        // Re-subscribing to an inbox we are already listening on is a no-op, so
+        // the re-announcement branch sends this too rather than guessing whether
+        // the subscription survived the last reconnect.
         this.enqueueOutbound(async () => {
           return [
             JSON.stringify({
@@ -4863,7 +4974,8 @@ export class MessageService {
         });
 
         if (decryptedContent && newState) {
-          // Encryption state already persisted inside the locked section above.
+          // A session is in place for this frame — either persisted inside the
+          // locked section above, or the one the re-announcement branch kept.
           // The frame's payload is now the only copy of the message, so the
           // non-essential steps are isolated: a settings/notification/UI-cache
           // failure must never abort the save. (A throw anywhere in this block
@@ -5180,6 +5292,10 @@ export class MessageService {
                 }
               );
               await this.deleteEncryptionStates({ conversationId });
+              // The rows are gone, so the record of which X3DH ephemeral
+              // produced them describes nothing. Cleared here rather than left
+              // to expire (see utils/dmInitSessionLedger.ts).
+              forgetInitSessions(conversationId);
               // NOT awaited — dispatched after the state wipe above. This used to
               // rethrow; it no longer can, so its .catch is the only signal.
               this.dispatchInboxDelete(
@@ -5319,6 +5435,10 @@ export class MessageService {
                 }
               );
               await this.deleteEncryptionStates({ conversationId });
+              // The rows are gone, so the record of which X3DH ephemeral
+              // produced them describes nothing. Cleared here rather than left
+              // to expire (see utils/dmInitSessionLedger.ts).
+              forgetInitSessions(conversationId);
               // NOT awaited — dispatched after the state wipe above. This used to
               // rethrow; it no longer can, so its .catch is the only signal.
               this.dispatchInboxDelete(

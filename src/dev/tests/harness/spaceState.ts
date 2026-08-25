@@ -295,8 +295,17 @@ export function loadSpaceState(name: string): SpaceStateSnapshot | undefined {
  * and it is plain `.mjs` executed by node, so it cannot import this TypeScript
  * module. Owning the rule in a `.mjs` both sides can import is what stops the
  * two answers drifting apart; see that function's header in `routing.mjs`.
+ *
+ * ⚠️ IMPORTED, then re-exported — NOT `export { x } from '…'`. That form
+ * forwards the binding without introducing it into this module's scope, so
+ * `restoreSharedSpace` below threw `ReferenceError: wantsFreshSpace is not
+ * defined` on its first line, failing `space-delivery` in every run. It is a
+ * static scoping mistake, so it fails deterministically and identically for
+ * everyone; do not "simplify" it back.
  */
-export { wantsFreshSpace } from '../../../../scripts/verify/routing.mjs';
+import { wantsFreshSpace } from '../../../../scripts/verify/routing.mjs';
+
+export { wantsFreshSpace };
 
 /**
  * Restore a space shared by several bots, or report that one must be created.

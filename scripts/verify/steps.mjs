@@ -156,29 +156,25 @@ export function stepsFor(repoName, repoPath, tier) {
         heldBackWhy: 'it creates a permanent, undeletable Space every run',
       },
       mk('space-delivery', 'space-delivery', ['harness', 'space-delivery'], harnessDetail),
-      // `exhaustiveOnly` for a different reason than `space-basic`: not cost,
-      // but trust. This arm could not run at all until 2026-08-24 (it resolved
-      // quorum-mobile wrong from a worktree), and the first thing it did once
-      // fixed was report a reproducible message loss — 5 of 6 runs, always the
-      // FIRST echo desktop sends, while the opposite direction stayed 20/20.
+      // RELEASED 2026-08-24, after being held back for two weeks.
       //
-      // That loss is real as far as it has been measured: desktop's own log
-      // says `sent=20/20 received=20 novel decrypt failures=0`, and mobile's
-      // counting half is the same instrument that measured mobile↔mobile at
-      // 80/80. But the cause is not yet known, and an arm that goes red in
-      // most runs for a reason unrelated to the change under test would block
-      // every piece of work behind a bug nobody is fixing this week.
+      // This arm could not run at all until then (it resolved quorum-mobile
+      // wrong from a worktree), and the first thing it did once fixed was
+      // report a reproducible message loss — 5 of 6 runs, always the FIRST
+      // echo desktop sends, while the opposite direction stayed 20/20. It was
+      // held back on trust rather than cost: an arm red in most runs for a
+      // reason unrelated to the change under test blocks every piece of work.
       //
-      // So it is held back rather than removed, and the report names it on
-      // every run that skips it. Release it — delete these two lines — as soon
-      // as the tracked issue is resolved either way.
-      {
-        ...mk('cross-dm', 'cross-dm', ['harness:cross'], harnessDetail),
-        exhaustiveOnly: true,
-        heldBackWhy:
-          'it reports a reproducible cross-client message loss whose cause is not yet known — ' +
-          '.agents/issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md',
-      },
+      // The cause is now measured and fixed on both sides, and the arm is
+      // green in 5 consecutive runs. Holding it back any longer would mean the
+      // ONLY cross-client coverage never runs — and this bug existed for
+      // months precisely because nothing measured that cell.
+      //
+      // If it turns out to be flaky INSIDE the gate (it has a known
+      // collect-time flake in back-to-back vitest runs, see the issue's
+      // "traps" section), re-add `exhaustiveOnly: true` with a fresh reason
+      // rather than deleting the arm.
+      mk('cross-dm', 'cross-dm', ['harness:cross'], harnessDetail),
       mk('config-cross', 'config-cross', ['harness:config-cross'], harnessDetail),
     ];
   }

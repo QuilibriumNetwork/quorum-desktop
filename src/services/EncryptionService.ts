@@ -5,6 +5,7 @@ import { MessageDB, EncryptionState } from '../db/messages';
 import { int64ToBytes } from '@quilibrium/quorum-shared';
 import type { Space } from '@quilibrium/quorum-shared';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
+import { forgetInitSessions } from '../utils/dmInitSessionLedger';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildConfigKey } from '../hooks';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -78,6 +79,12 @@ export class EncryptionService {
       try {
         await this.messageDB.deleteLatestState(conversationId);
       } catch { /* ignore */ }
+      // The rows this ledger describes are gone, so its records describe
+      // nothing. Harmless to leave today (the re-announcement branch also
+      // requires a surviving row), but a ledger that outlives what it describes
+      // is a trap for the next change — and this is the USER-INITIATED reset,
+      // the one place a stale record would be most surprising.
+      forgetInitSessions(conversationId);
     } catch { /* ignore */ }
   }
 
