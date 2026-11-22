@@ -21,7 +21,7 @@ Comprehensive development suite for building and managing cross-platform compone
 **Purpose**: Interactive frontend for browsing project documentation, issues, and reports
 
 - Browse all documentation files from `.agents/docs/`
-- Browse issues — bugs and tasks together — from `.agents/issues/`, filtered by
+- Browse issues — bugs and tasks together — from `.agents/tickets/`, filtered by
   type, state and priority. State comes from the folder an issue sits in
   (`.open/`, `.deferred/`, `.done/`, `.archived/`, or the root for in-progress),
   not from its `status:` field, which routinely goes stale when a file is refiled

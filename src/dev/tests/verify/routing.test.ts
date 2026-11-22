@@ -30,7 +30,7 @@ describe('planFromPaths', () => {
   it('skips the live tier for docs and styles', () => {
     const plan = planFromPaths([
       'desktop/README.md',
-      'desktop/.agents/issues/x.md',
+      'desktop/.agents/tickets/x.md',
       'desktop/src/styles/theme.scss',
     ]);
     expect(plan.live).toBe(false);

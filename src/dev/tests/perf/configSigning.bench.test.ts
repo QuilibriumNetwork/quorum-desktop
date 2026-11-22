@@ -5,7 +5,7 @@ import { channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
  * Does the config-save Ed448 signature scale with config blob size?
  *
  * Context: a browser A/B (see
- * .agents/issues/2026-08-13-notification-toggle-freeze-is-the-config-encode-chain.md)
+ * .agents/tickets/2026-08-13-notification-toggle-freeze-is-the-config-encode-chain.md)
  * showed the queued save-user-config task causes ~93% of the notification-toggle
  * freeze — one contiguous main-thread block of 1699-2372ms. That is well above
  * the ~1,000ms recorded for Ed448 in 2025-12, so either signing got slower or

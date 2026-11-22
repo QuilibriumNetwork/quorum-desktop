@@ -13,7 +13,7 @@ import {
   type IssueType,
 } from '../utils/issueTaxonomy';
 
-/** The three trees the dev viewer browses. `.agents/issues/` replaced the old
+/** The three trees the dev viewer browses. `.agents/tickets/` replaced the old
  *  `tasks/` + `bugs/` split, so there is one issue section, not two. */
 export type MarkdownSection = 'docs' | 'issues' | 'reports';
 

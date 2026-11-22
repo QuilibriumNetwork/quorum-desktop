@@ -2,7 +2,7 @@
  * Identity Coverage — pure core logic.
  *
  * The instrument for Step 4 of
- * `2026-08-01-identity-announce-cadence-research.md` under .agents/issues/: one number
+ * `2026-08-01-identity-announce-cadence-research.md` under .agents/tickets/: one number
  * you can read before and after an identity fix, instead of taking anyone's
  * word for it. Every change in that task exists to move this number down.
  *
@@ -538,7 +538,7 @@ export function formatSigned(value: number): string {
 // ---------------------------------------------------------------------------
 
 export const IDENTITY_COVERAGE_TASK_POINTER =
-  '2026-08-01-identity-announce-cadence-research.md under .agents/issues/';
+  '2026-08-01-identity-announce-cadence-research.md under .agents/tickets/';
 
 /** The 2026-06-13 run on the "Quorum Test 2" space, from the task's Step 4
  *  brief. Quoted in the report so a fresh reader has something to compare a

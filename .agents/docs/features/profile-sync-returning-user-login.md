@@ -9,7 +9,7 @@ related_docs:
   - ".agents/docs/config-sync-system.md"
   - ".agents/docs/features/user-config-sync.md"
 related_tasks:
-  - ".agents/issues/.done/user-config-sync-on-existing-accounts.md"
+  - ".agents/tickets/.done/user-config-sync-on-existing-accounts.md"
 ---
 
 # Profile Sync on Returning User Login
@@ -183,8 +183,8 @@ All remote config data is treated as untrusted (zero-trust model):
 
 - [Config Sync System](../config-sync-system.md) — Full config encryption/sync architecture
 - [User Config Sync Feature Doc](./user-config-sync.md) — Earlier documentation
-- [Completed Task](../../issues/.done/user-config-sync-on-existing-accounts.md) — Original implementation details
-- [Config Save Stale Cache Bug](../../issues/.done/config-save-stale-cache-allowsync.md) — Related React Query cache bug
+- [Completed Task](../../tickets/.done/user-config-sync-on-existing-accounts.md) — Original implementation details
+- [Config Save Stale Cache Bug](../../tickets/.done/config-save-stale-cache-allowsync.md) — Related React Query cache bug
 
 ---
 

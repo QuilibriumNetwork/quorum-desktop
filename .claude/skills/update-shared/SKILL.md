@@ -10,7 +10,7 @@ This skill guides **small additions** to the `quorum-shared` package — a new i
 
 **For larger moves** — relocating existing code from desktop to shared, deleting the local source, updating consumer imports — use the `migrate-to-shared` skill instead. That workflow has six phases (analyze, prepare, copy, update desktop, verify, commit) and handles `@lingui` stripping, DOM-API guards, ESM/Metro fallbacks, and partial migrations.
 
-**For tracking ongoing migrations,** see `.agents/issues/quorum-shared-migration/README.md` in this repo — that's the master tracker for what's done, in progress, ready, and blocked.
+**For tracking ongoing migrations,** see `.agents/tickets/quorum-shared-migration/README.md` in this repo — that's the master tracker for what's done, in progress, ready, and blocked.
 
 ## Locate the Shared Repo
 
@@ -137,7 +137,7 @@ When a feature stabilizes and its types should be shared:
 4. Build
 5. In the consuming repo, import: `import { useMyHook } from '@quilibrium/quorum-shared'`
 
-Important: most desktop hooks are NOT shareable yet — the hooks migration is blocked on mobile codebase access (see `.agents/issues/quorum-shared-migration/designs/`, currently `2026-05-28-hooks-audit-refresh.md`). Only add a hook to shared if it has zero context dependencies (no `useMessageDB`, no `usePasskeysContext`, etc.) and zero DOM coupling.
+Important: most desktop hooks are NOT shareable yet — the hooks migration is blocked on mobile codebase access (see `.agents/tickets/quorum-shared-migration/designs/`, currently `2026-05-28-hooks-audit-refresh.md`). Only add a hook to shared if it has zero context dependencies (no `useMessageDB`, no `usePasskeysContext`, etc.) and zero DOM coupling.
 
 ### Adding a util
 

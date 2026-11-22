@@ -23,7 +23,7 @@ import { resolveSyncDeltaSlots } from '../../../services/MessageService';
 // (2026-07-16) deliberately stopped stamping the per-space OVERRIDE fields, so
 // they are empty unless someone set a real per-space override.
 //
-// See 2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md under .agents/issues/
+// See 2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md under .agents/tickets/
 
 const SPACE = 'space-1';
 const MEMBER = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';

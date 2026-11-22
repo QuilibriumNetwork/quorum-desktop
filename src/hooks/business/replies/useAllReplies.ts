@@ -29,7 +29,7 @@ interface UseAllRepliesProps {
  *   enabled: selectedTypes.includes('reply')
  * });
  *
- * @see reply-notification-system.md under .agents/issues/
+ * @see reply-notification-system.md under .agents/tickets/
  */
 export function useAllReplies({
   spaceId,

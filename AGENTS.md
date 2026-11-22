@@ -53,7 +53,7 @@ quorum-desktop/
 │
 └── .agents/                    # Development documentation
     ├── docs/                   # Architecture & feature guides
-    ├── issues/           # Bugs AND tasks being worked on right now
+    ├── tickets/          # Bugs AND tasks being worked on right now
     └── reports/                # Analysis & audits
 ```
 
@@ -108,7 +108,7 @@ if (someCondition) return <SomeComponent />;
 - Call hooks in the same order on every render
 - NEVER put conditional returns before hooks
 
-**Reference**: [React Hooks Violation Bug](.agents/issues/.done/2025-01-20-react-hooks-violation-conditional-return.md)
+**Reference**: [React Hooks Violation Bug](.agents/tickets/.done/2025-01-20-react-hooks-violation-conditional-return.md)
 
 ---
 
@@ -146,13 +146,13 @@ The `.agents/` folder contains all development context:
 - Active Bugs & Tasks
 - Reports & Audits
 
-**🔒 `.agents/issues/.secret/` — gitignored, never committed.** This repository is
-public, so issue write-ups that describe an attack working against code users are
+**🔒 `.agents/tickets/.secret/` — gitignored, never committed.** This repository is
+public, so ticket write-ups that describe an attack working against code users are
 running today (mechanism, `file:line` pointers, vulnerable code, repro steps) are
 created in `.secret/` from the start and kept out of `INDEX.md`. Ordinary
 reliability, data-loss and correctness bugs are filed normally, however serious.
 Full rule and the release procedure: [.agents/AGENTS.md](.agents/AGENTS.md) →
-"Security-sensitive issues".
+"Security-sensitive tickets".
 
 ---
 
@@ -170,7 +170,7 @@ quorum-shared is not just a dependency — it's the migration destination for th
 - **Import pattern**: Always import migrated utils and primitives from `@quilibrium/quorum-shared`, not from local paths.
 
 **Key reference docs:**
-- [Migration status overview](.agents/issues/quorum-shared-migration/reference/stacked-prs-workflow.md)
+- [Migration status overview](.agents/tickets/quorum-shared-migration/reference/stacked-prs-workflow.md)
 - [Hooks migration design + hook classification](.agents/tasks/quorum-shared-migration/2026-03-19-hooks-migration-design.md)
 - [quorum-shared architecture](.agents/docs/quorum-shared-architecture.md)
 
@@ -289,4 +289,4 @@ behalf.
 
 ---
 
-_Last updated: 2026-08-24_
+_Last updated: 2026-11-22_

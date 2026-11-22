@@ -12,7 +12,7 @@
 //
 // The account half of the same problem was fixed by simply reusing fixed bot
 // names (see `identity.ts` and
-// `.agents/issues/.done/2026-08-23-harness-mints-permanent-accounts-every-run.md`).
+// `.agents/tickets/.done/2026-08-23-harness-mints-permanent-accounts-every-run.md`).
 // That worked because isolation never depended on the identity: `storage.ts`
 // backs MessageDB with in-memory `fake-indexeddb`, so every run already starts
 // from an empty database.
@@ -48,7 +48,7 @@
 //                             arrives on it.
 //
 // ⚠️ The design doc for this work
-// (`.agents/issues/.done/2026-08-23-harness-space-reuse-design.md`) listed
+// (`.agents/tickets/.done/2026-08-23-harness-space-reuse-design.md`) listed
 // `encryption_states` under "never persist". That was WRONG, and the reason it
 // looked right is worth keeping: for DMs the store holds an advancing double
 // ratchet, and carrying a stale one across runs would be exactly the kind of

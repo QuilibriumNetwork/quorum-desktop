@@ -10,7 +10,7 @@
  * with `utils/resolveMemberName`), but that path had no production caller left:
  * both the composer and the edit textarea build pills from the identity
  * module's own resolution instead. See
- * `.agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md`.
+ * `.agents/tickets/.open/2026-08-10-identity-resolution-architecture-design.md`.
  *
  * @module mentionPillDom
  */

@@ -33,8 +33,8 @@ import { logger } from '@quilibrium/quorum-shared';
  *                         is stripped at the logger's choke point.
  *
  * Background:
- * .agents/issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md
- * .agents/issues/.open/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md
+ * .agents/tickets/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md
+ * .agents/tickets/.open/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md
  */
 
 export interface LogControl {

@@ -30,19 +30,19 @@
 //
 // ⚠️ This is a MITIGATION, not the repair. The real fix is either chunking the
 // member half or desktop consuming the send-retention fix that shipped in shared
-// 2.1.0-39 (transport item B1). Read `.agents/issues/transport/README.md` before
+// 2.1.0-39 (transport item B1). Read `.agents/tickets/transport/README.md` before
 // deciding this is enough.
 //
 // ⚠️ OBSERVABILITY. `shouldReAsk` returns a REASON, not a boolean, and the
 // caller logs it on every branch. That is not gold-plating: `logger` is a no-op
 // in production builds (see
-// 2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md under .agents/issues/),
+// 2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md under .agents/tickets/),
 // so a developer running a dev build is the ONLY audience this code will ever
 // have, and giving them "false" with no reason attached reproduces exactly the
 // blindness that made the original bug take a session to find.
 //
 // See 2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md under
-// .agents/issues/ (NEXT STEP B). Issues are filed by state and move between
+// .agents/tickets/ (NEXT STEP B). Issues are filed by state and move between
 // .open/, the root and .done/, so grep the filename rather than trusting a path.
 
 import { advertisedCount } from '@quilibrium/quorum-shared';

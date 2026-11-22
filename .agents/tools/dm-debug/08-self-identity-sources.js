@@ -237,7 +237,7 @@ window.__selfIdentitySources = async () => {
     // Bookmarks measured at 75% of one real blob, 94% of it a base64 sender
     // avatar copied into every bookmark. Break them down by field so the fix is
     // chosen on evidence — see
-    // 2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md under .agents/issues/.done/.
+    // 2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md under .agents/tickets/.done/.
     const marks = config.bookmarks ?? [];
     if (marks.length) {
       const sum = (f) =>
@@ -389,7 +389,7 @@ window.__selfIdentitySources = async () => {
           `%c⚠ ${fat.length} encryption state(s) over 500 KB, ${fat
             .reduce((n, k) => n + k.kb, 0)
             .toFixed(0)} KB total. This is the known evals bloat — ` +
-            '.agents/issues/.open/2025-12-09-encryption-state-evals-bloat.md (open, high). ' +
+            '.agents/tickets/.open/2025-12-09-encryption-state-evals-bloat.md (open, high). ' +
             'Not a bookmark problem: check that count against the number of Spaces you ' +
             'actually CREATED, since deleted Spaces have been seen to leak their state.',
           'color:#f87171;font-weight:bold'

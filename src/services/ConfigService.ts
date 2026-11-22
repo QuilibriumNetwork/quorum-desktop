@@ -285,7 +285,7 @@ export class ConfigService {
     //
     // Set on `config` itself rather than only on the object below, so the DB
     // row, the cache write and the returned value cannot disagree.
-    // See 2026-08-08-make-allowsync-a-per-device-setting.md under .agents/issues/
+    // See 2026-08-08-make-allowsync-a-per-device-setting.md under .agents/tickets/
     config.allowSync = storedConfig?.allowSync ?? false;
 
     await this.messageDB.saveUserConfig({
@@ -775,7 +775,7 @@ export class ConfigService {
       // momentarily incomplete, which is how a device silently wipes its own
       // Space list. Note the copies below: folder items are cloned rather than
       // mutated, because a shallow spread still shares those nested objects.
-      // See 2026-01-09-config-sync-space-loss-race-condition.md under .agents/issues/
+      // See 2026-01-09-config-sync-space-loss-race-condition.md under .agents/tickets/
       const uploadConfig: UserConfig = { ...config };
       const validSpaceIds = new Set(config.spaceKeys.map(sk => sk.spaceId));
       uploadConfig.spaceIds = config.spaceIds.filter(id => validSpaceIds.has(id));
@@ -809,7 +809,7 @@ export class ConfigService {
       // getConfig applies a remote Space list verbatim, so every other device
       // adopts the shorter list. Hold the upload and let a later save publish
       // the full list once the missing Spaces have synced.
-      // See 2026-01-09-config-sync-space-loss-race-condition.md under .agents/issues/
+      // See 2026-01-09-config-sync-space-loss-race-condition.md under .agents/tickets/
       const droppedSpaceIds = config.spaceIds.filter(id => !finalSpaceIds.has(id));
 
       if (droppedSpaceIds.length > 0) {

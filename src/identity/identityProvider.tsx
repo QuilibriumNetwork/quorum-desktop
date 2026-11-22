@@ -64,7 +64,7 @@ export interface IdentitySources {
    * address -> a name known LOCALLY, with no network round-trip. Fed by a
    * caller that already has this in memory — today that's a DM's
    * `Conversation.displayName` (learned from a peer broadcast or a decrypted
-   * message frame; see `.agents/issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md`).
+   * message frame; see `.agents/tickets/2026-08-01-dm-partner-identity-lost-on-established-sessions.md`).
    * Spaces have a roster instead and pass `{}` here.
    *
    * LAST `globalName` tier, after the roster global slot and the fetched
@@ -320,7 +320,7 @@ export const IdentityScopeProvider: React.FunctionComponent<{
   //
   // This is the structural fix for the recurring "provider mounted with
   // less data than the one above it" bug class (four rounds of it, found by
-  // hand each time — see .agents/issues/2026-08-10-name-surfaces-that-never-
+  // hand each time — see .agents/tickets/2026-08-10-name-surfaces-that-never-
   // reached-the-resolver.md): a provider that forgets a tier, or whose own
   // fetch for a tier is still loading, now still resolves through whatever
   // its ANCESTOR already knows, instead of silently shadowing it with less.

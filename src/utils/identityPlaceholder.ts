@@ -21,7 +21,7 @@
 // active when it was written, which can differ from the one active now.
 //
 // Spaces have the same class of placeholder problem (see
-// 2026-06-13-space-members-missing-no-join-row.md under .agents/issues/); this module is
+// 2026-06-13-space-members-missing-no-join-row.md under .agents/tickets/); this module is
 // the intended home for that rule too if it is fixed the same way.
 
 import { t } from '@lingui/core/macro';
@@ -89,7 +89,7 @@ const isTruncatedFormOfAddress = (
  * fallback written back into storage. Rendering it verbatim is worse than
  * falling through to the resolver's fallback a second time, because the
  * resolver truncates and this would not — see
- * `.agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md`.
+ * `.agents/tickets/2026-08-10-name-surfaces-that-never-reached-the-resolver.md`.
  *
  * `address` is OPTIONAL: several callers (the identity-coverage audit's
  * `hasRealName`, in particular) classify a value in isolation, with no

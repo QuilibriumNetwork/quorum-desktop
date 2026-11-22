@@ -7,7 +7,7 @@ import { FilterableList } from './components/FilterableList';
 import { useMarkdownFiles, type MarkdownFile } from './hooks/useMarkdownFiles';
 
 /**
- * Browser for `.agents/issues/` — bugs and tasks together.
+ * Browser for `.agents/tickets/` — bugs and tasks together.
  *
  * Replaces the old separate Tasks and Bugs pages. The two used to be different
  * folders; they are now one folder plus a `type:` field, so splitting them into
@@ -57,7 +57,7 @@ export const Issues: React.FC = () => {
         <DevPageHeader
           icon="clipboard-list"
           title="Issues"
-          subtitle="Bugs and tasks from .agents/issues/, filterable by type, state and priority"
+          subtitle="Bugs and tasks from .agents/tickets/, filterable by type, state and priority"
         />
 
         {/* Loading State */}

@@ -851,9 +851,9 @@ All mention components use `tokenData.isInteractive` flag to determine CSS class
 
 ## Related Documentation
 
-- **[Reply Notification System](../../issues/.done/reply-notification-system.md)** - Reply implementation details
-- **[Role Mention Notifications](../../issues/.done/role-mention-notifications.md)** - Role mention implementation task
-- **[Notification Settings](../../issues/.done/mention-notification-settings-phase4.md)** - Per-space configuration
+- **[Reply Notification System](../../tickets/.done/reply-notification-system.md)** - Reply implementation details
+- **[Role Mention Notifications](../../tickets/.done/role-mention-notifications.md)** - Role mention implementation task
+- **[Notification Settings](../../tickets/.done/mention-notification-settings-phase4.md)** - Per-space configuration
 - **[Data Management Architecture](../data-management-architecture-guide.md)** - Sync service integration
 
 ---

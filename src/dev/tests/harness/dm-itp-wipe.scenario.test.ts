@@ -2,7 +2,7 @@
 // destroys its database, and what comes back afterwards.
 //
 // Filed against
-// `.agents/issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md`,
+// `.agents/tickets/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md`,
 // whose Verification section opens with "Do not close this on reasoning."
 //
 // ── What this can and cannot answer ────────────────────────────────────────

@@ -116,10 +116,10 @@ All primitives live in `@quilibrium/quorum-shared`, re-exported from `src/compon
 
 → **Full API**: `docs/features/primitives/API-REFERENCE.md`
 
-## 🔒 Security-sensitive issues: `issues/.secret/`
+## 🔒 Security-sensitive tickets: `tickets/.secret/`
 
-**This repository is PUBLIC.** `issues/.secret/` is gitignored and must stay that
-way. It holds issue files whose contents would help someone attack users of the
+**This repository is PUBLIC.** `tickets/.secret/` is gitignored and must stay that
+way. It holds ticket files whose contents would help someone attack users of the
 shipped app.
 
 **The test, applied when you create the file, not later:**
@@ -150,14 +150,14 @@ recalled.
   description or a public GitHub issue.
 - A tracked file may reference the work in neutral language ("space-auth hardening,
   detail held privately") but must not restate the mechanism.
-  [`2026-06-25-MASTER-RECAP-control-message-auth.md`](issues/.open/2026-06-25-MASTER-RECAP-control-message-auth.md)
+  [`2026-06-25-MASTER-RECAP-control-message-auth.md`](tickets/.open/2026-06-25-MASTER-RECAP-control-message-auth.md)
   is the worked example of that neutral public hub.
 - The authoritative cross-repo tracker is the private repo
   `QuilibriumNetwork/quorum-app-prod` (issue #1 for the control-message-auth
   cluster). Link there, not to `.secret/` paths.
 - **Closing and releasing are two separate moves, usually far apart.** Merging a
   fix does not make its write-up publishable.
-  1. **Merged** → `issues/.secret/.done/`. The issue is finished and should stop
+  1. **Merged** → `tickets/.secret/.done/`. The ticket is finished and should stop
      reading as open work, but a merged fix is not a released one: until a build
      ships, the file still describes a mechanism against code users are running.
      Set `status: done`, record the PR numbers, move it there. Still gitignored,
@@ -167,7 +167,7 @@ recalled.
      A deliberate act, never a side effect of tidying.
 
   Do not collapse the two. Treating step 1 as step 2 publishes early; refusing
-  step 1 because it looks like step 2 leaves finished issues cluttering
+  step 1 because it looks like step 2 leaves finished tickets cluttering
   `.secret/` root, which is what happened before this was written down.
 
 ## 🔑 Key material

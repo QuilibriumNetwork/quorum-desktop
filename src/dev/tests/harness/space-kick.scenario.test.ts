@@ -33,7 +33,7 @@
 // received anything at all, which is the failure mode these harness files are
 // most prone to.
 //
-// See `.agents/issues/.open/2026-08-09-backup-restore-overhaul-design.md` §4.1.
+// See `.agents/tickets/.open/2026-08-09-backup-restore-overhaul-design.md` §4.1.
 import { test, expect } from 'vitest';
 import { createSpaceBot, type HarnessSpaceBot } from './spaceBot';
 import { BackupService } from '../../../services/BackupService';

@@ -19,7 +19,7 @@ describe('deriveState', () => {
   });
 
   it('treats a file in the root as work in progress', () => {
-    // The scanner emits 'root' for a file directly inside `.agents/issues/`.
+    // The scanner emits 'root' for a file directly inside `.agents/tickets/`.
     expect(deriveState('root')).toBe('in-progress');
     expect(deriveState('')).toBe('in-progress');
     expect(deriveState(null)).toBe('in-progress');
@@ -118,7 +118,7 @@ describe('normalizePriority', () => {
   });
 
   it('recovers the grade from prose agents wrote into the field', () => {
-    // Every one of these is a real value from `.agents/issues/`.
+    // Every one of these is a real value from `.agents/tickets/`.
     expect(
       normalizePriority('medium — downgraded from HIGH once the mechanism was shown to work')
     ).toBe('medium');

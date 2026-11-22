@@ -24,7 +24,7 @@ import { hasCurrentBackup } from '../../../utils/lastBackup';
  * `src/dev/tests/harness/` evicts two accounts that differ only in this flag.
  * The sync-on account gets its Space, keys and profile back on login; the
  * sync-off account gets nothing. See
- * `.agents/issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md`.
+ * `.agents/tickets/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md`.
  *
  * A sync-ON user is not warned, because their Spaces and profile do come back.
  * Their DM history still does not, which is a real gap this callout stays quiet

@@ -36,7 +36,7 @@ export interface UseResolvedNameOptions {
    * headers, the profile card. A virtualised list of members must NOT: one
    * request per rendered row is exactly the fetch storm the member
    * sidebar's no-fetch policy exists to prevent. See
-   * `.agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md`,
+   * `.agents/tickets/.open/2026-08-10-identity-resolution-architecture-design.md`,
    * decision 3.
    */
   enrich?: boolean;

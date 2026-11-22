@@ -17,7 +17,7 @@ const matter = require('gray-matter');
 /**
  * Parse frontmatter without letting one malformed file kill the scan.
  *
- * Eight files in `.agents/issues/` currently have YAML broken enough to throw —
+ * Eight files in `.agents/tickets/` currently have YAML broken enough to throw —
  * an unquoted `:` inside a long prose value, or prose indented under `status:`.
  * An unguarded `matter()` call turns any one of them into a failed scan and an
  * empty viewer, so a bad file degrades to "no frontmatter" plus a recorded

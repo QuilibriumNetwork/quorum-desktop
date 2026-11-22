@@ -5,7 +5,7 @@
 //
 // ── Why this exists ────────────────────────────────────────────────────────
 //
-// `.agents/issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md`
+// `.agents/tickets/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md`
 // carries a recoverability table saying profile, Spaces and Space keys come back
 // on login while DMs do not. `dm-itp-wipe` already measured the DM half. This
 // measures the OTHER half, which nothing covered: the restore runs through

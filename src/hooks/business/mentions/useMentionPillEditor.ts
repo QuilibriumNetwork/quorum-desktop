@@ -69,7 +69,7 @@ export interface UseMentionPillEditorOptions {
    * path that could drift from how the SAME address renders in a message
    * header or an already-inserted pill. `resolveName` routes user pills
    * through the identity module instead, the same read every other migrated
-   * surface uses. See `.agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md`.
+   * surface uses. See `.agents/tickets/.open/2026-08-10-identity-resolution-architecture-design.md`.
    */
   resolveName: (address: string) => string;
 }

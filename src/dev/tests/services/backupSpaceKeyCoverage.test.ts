@@ -2,7 +2,7 @@
  * Backup export — does a `.qmbak` carry the Space keys?
  *
  * WHY THIS FILE EXISTS
- * `.agents/issues/.open/2026-08-09-backup-restore-overhaul-design.md` §1 claimed
+ * `.agents/tickets/.open/2026-08-09-backup-restore-overhaul-design.md` §1 claimed
  * that a user with sync OFF exported a backup containing **no Space key material
  * at all** — including the `owner` private key, the sole proof of Space ownership,
  * which has no other copy anywhere. That was INFERRED from reading three places in

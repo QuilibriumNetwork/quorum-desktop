@@ -423,7 +423,7 @@ size broken down by part. Run it before theorising.
 | Contributor | Measured | Status |
 |---|---|---|
 | **Bookmark sender avatars** — a base64 avatar copied into every bookmark | 656 KB of an 873 KB blob (75%), of which `senderIcon` alone was 619.8 KB (69% of the whole blob) | ✅ **fixed on desktop 2026-08-05**, confirmed on the real account: bookmarks 656.5 KB → **37.1 KB**, `senderIcon` → 0.0 KB. `stripBookmarkSenderIcons` runs on upload AND on adopt in `ConfigService`; the avatar is resolved at render from `senderAddress`. Mobile still needs the same, blocked on a `quorum-shared` publish |
-| **Encryption states (`spaceKeys`)** | **4112 KB of a 4205 KB blob (98%)**, measured on the same account minutes after the bookmark fix landed | 🔴 **open, and now dominant by far.** ~10k polynomial evals (~2 MB) are pre-allocated per **created** space; a joined space costs ~12 KB. Deleted spaces have been observed to LEAK their state rather than remove it, so orphans accumulate. See `.agents/issues/.open/2025-12-09-encryption-state-evals-bloat.md` (priority high) |
+| **Encryption states (`spaceKeys`)** | **4112 KB of a 4205 KB blob (98%)**, measured on the same account minutes after the bookmark fix landed | 🔴 **open, and now dominant by far.** ~10k polynomial evals (~2 MB) are pre-allocated per **created** space; a joined space costs ~12 KB. Deleted spaces have been observed to LEAK their state rather than remove it, so orphans accumulate. See `.agents/tickets/.open/2025-12-09-encryption-state-evals-bloat.md` (priority high) |
 
 > ⚠️ **The two rows above were measured on the same account 20 minutes apart, and
 > the second reading is not a regression — it is the first HONEST one.**
@@ -440,7 +440,7 @@ reconstructible from an address already in the payload, and it still grew to two
 thirds of the transport that every synced setting shares.
 
 A pre-flight size check that fails loudly is still **not implemented** — see
-§4.3 of `.agents/issues/.done/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md`.
+§4.3 of `.agents/tickets/.done/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md`.
 
 ## Related Documentation
 

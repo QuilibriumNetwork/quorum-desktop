@@ -96,8 +96,8 @@ window.__actionQueue.processQueue()
 ## Related Documentation
 
 - [Action Queue Feature Docs](../../docs/features/action-queue.md)
-- [Message Sending Indicator Task](../../issues/.done/message-sending-indicator.md)
-- [DM Action Queue Handlers Task](../../issues/.done/dm-action-queue-handlers.md)
+- [Message Sending Indicator Task](../../tickets/.done/message-sending-indicator.md)
+- [DM Action Queue Handlers Task](../../tickets/.done/dm-action-queue-handlers.md)
 
 ## Key Files
 

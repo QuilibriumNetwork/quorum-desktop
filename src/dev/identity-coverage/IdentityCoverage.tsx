@@ -1,7 +1,7 @@
 /**
  * Identity Coverage — the resident panel.
  *
- * Step 4 of `2026-08-01-identity-announce-cadence-research.md` under .agents/issues/:
+ * Step 4 of `2026-08-01-identity-announce-cadence-research.md` under .agents/tickets/:
  * the instrument that turns "we think the identity fixes worked" into a number
  * you take twice, before and after, in one click.
  *

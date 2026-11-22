@@ -5,7 +5,7 @@
  * above it: the root's Kick/Mute/Block confirmations, DM search results,
  * and now MessagePreview/ReactionsModal/GlobalNotificationsModal/
  * BookmarksPage — see
- * .agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md).
+ * .agents/tickets/2026-08-10-name-surfaces-that-never-reached-the-resolver.md).
  *
  * Before this fix, every `<IdentityScopeProvider>` mount fully REPLACED
  * whatever an ancestor provider already knew: React context always resolves

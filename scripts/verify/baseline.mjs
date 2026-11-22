@@ -7,7 +7,7 @@
  * masquerade as new breakage on every single run. `yarn verify`'s first real
  * run failed on arrival: `shared:typecheck` and `mobile:lint` were both
  * already red on master, yet neither appears in
- * `.agents/issues/.open/2026-08-22-verify-regression-gate-plan.md`'s Measured
+ * `.agents/tickets/.open/2026-08-22-verify-regression-gate-plan.md`'s Measured
  * Baseline table — the step catalogue ran them anyway.
  *
  * It is NOT a budget: nobody should raise a recorded `errors` count to make
@@ -37,7 +37,7 @@ export const KNOWN_RED = {
   'mobile:lint': {
     errors: 302,
     why: '302 pre-existing lint errors on quorum-mobile master, unrelated to any change this gate is meant to catch',
-    issue: '.agents/issues/.open/2026-08-23-mobile-lint-302-errors.md',
+    issue: '.agents/tickets/.open/2026-08-23-mobile-lint-302-errors.md',
   },
   // Recorded 2026-08-24, the day quorum-mobile first got a `typecheck` script.
   // These 11 are not new: nothing had ever run tsc over that repo automatically,
@@ -47,7 +47,7 @@ export const KNOWN_RED = {
   'mobile:typecheck': {
     errors: 11,
     why: '11 pre-existing type errors, unfixed because 10 are in services/calling/ where nothing can verify a change is safe',
-    issue: '.agents/issues/.open/2026-08-24-mobile-typecheck-11-errors.md',
+    issue: '.agents/tickets/.open/2026-08-24-mobile-typecheck-11-errors.md',
   },
 };
 

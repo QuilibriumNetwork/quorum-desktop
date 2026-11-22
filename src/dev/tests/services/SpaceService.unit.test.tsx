@@ -6,7 +6,7 @@
  *
  * APPROACH: Unit tests with vi.fn() mocks - NOT integration tests
  *
- * KNOWN GAPS (see 2026-05-19-test-suite-review.md under .agents/issues/):
+ * KNOWN GAPS (see 2026-05-19-test-suite-review.md under .agents/tickets/):
  * - kickUser happy path: the bulk of the kick work (ratchet rekey, member filtering,
  *   SealSyncEnvelope loop) runs inside the enqueueOutbound callback which is fire-and-
  *   forget. EstablishTripleRatchetSessionForSpace returns a complex session object with

@@ -27,7 +27,7 @@
  *      out from behind it.
  *
  * See 2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md under
- * .agents/issues/ — issues are filed by state and move, so grep the filename.
+ * .agents/tickets/ — issues are filed by state and move, so grep the filename.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

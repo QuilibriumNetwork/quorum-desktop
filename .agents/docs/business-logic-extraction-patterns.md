@@ -18,7 +18,7 @@ updated: 2026-08-13
 > One section of the original was dropped rather than carried over: a
 > "Platform-Specific Components Pattern" showing `Component.tsx` /
 > `Component.native.tsx` splits. There are no `.native` files in this repo any more
-> (see the [removal issue](../issues/2026-08-13-remove-single-repo-cross-platform-leftovers.md)),
+> (see the [removal issue](../tickets/2026-08-13-remove-single-repo-cross-platform-leftovers.md)),
 > so that guidance would now be actively misleading.
 
 ### Key Patterns & Best Practices
