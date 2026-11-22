@@ -47,6 +47,10 @@ const scanDirectory = (dirPath, baseFolder = '') => {
     const stat = fs.statSync(fullPath);
 
     if (stat.isDirectory()) {
+      // `.secret/` is gitignored because its write-ups describe working attacks.
+      // markdownFiles.json is committed, so listing them here would publish
+      // their titles and frontmatter.
+      if (item === '.secret') continue;
       // Recursively scan subdirectories
       // Build full folder path for nested folders
       const folderPath = baseFolder ? `${baseFolder}/${item}` : item;
@@ -76,11 +80,12 @@ const scanDirectory = (dirPath, baseFolder = '') => {
 const scanMarkdownFiles = () => {
   const readmeDir = path.join(process.cwd(), '.agents');
 
-  // `issues` replaced the old `tasks` + `bugs` split; a file's bug-or-task
-  // nature now lives in its `type:` frontmatter, not in its folder.
+  // The tracker folder is `tickets/` (formerly `issues/`, before that `tasks/`
+  // + `bugs/`); a file's bug-or-task nature lives in its `type:` frontmatter.
+  // The manifest key stays `issues` so the viewer's sections and routes keep working.
   const results = {
     docs: scanDirectory(path.join(readmeDir, 'docs')),
-    issues: scanDirectory(path.join(readmeDir, 'issues')),
+    issues: scanDirectory(path.join(readmeDir, 'tickets')),
     reports: scanDirectory(path.join(readmeDir, 'reports')),
   };
 
