@@ -39,7 +39,7 @@ const deadModulePatterns = [
             '**/resolveSelfName'],
     message:
       'Resolve names via src/identity (<MemberName> / useResolvedName). ' +
-      'See .agents/issues/2026-08-10-identity-resolution-architecture-design.md',
+      'See .agents/tickets/2026-08-10-identity-resolution-architecture-design.md',
   },
 ];
 
@@ -72,7 +72,7 @@ const identityPrimitivePatterns = [
     message:
       'identityFromMaps is the tier ASSEMBLER internal to src/identity — only ' +
       'src/identity/ may call it directly. Resolve via <MemberName> / ' +
-      'useResolvedName / useNameResolver instead. See .agents/issues/' +
+      'useResolvedName / useNameResolver instead. See .agents/tickets/' +
       '2026-08-10-identity-resolution-architecture-design.md',
   },
 ];
@@ -86,7 +86,7 @@ const noIdentityPrimitiveImportRules = {
         message:
           'resolveIdentity is the low-level tier PICKER — only src/identity/ may ' +
           'call it directly. Resolve via <MemberName> / useResolvedName / ' +
-          'useNameResolver instead. See .agents/issues/' +
+          'useNameResolver instead. See .agents/tickets/' +
           '2026-08-10-identity-resolution-architecture-design.md',
       },
     ],

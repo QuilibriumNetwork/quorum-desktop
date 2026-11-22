@@ -159,7 +159,7 @@ Before implementing, read relevant docs:
 - [Primitives Introduction](docs/features/primitives/01-introduction-and-concepts.md)
 - [When to Use Primitives](docs/features/primitives/03-when-to-use-primitives.md)
 - [API Reference Template](docs/features/primitives/API-REFERENCE.md)
-- [quorum-shared migration overview](issues/quorum-shared-migration/README.md)
+- [quorum-shared migration overview](tickets/quorum-shared-migration/README.md)
 
 ---
 
@@ -249,7 +249,7 @@ For everything else (the common case): commit locally, let the next code PR swee
 
 ### Where this rule lives in the per-effort workflows
 
-The `.agents/tasks/<effort>/` folders may have their own workflow docs that elaborate on this for their specific context (e.g. [`issues/port-from-mobile/workflow.md`](issues/port-from-mobile/workflow.md) describes how the rule interacts with session-branch naming across multiple worktrees). The general principle above always applies; effort-specific workflows only extend it.
+The `.agents/tasks/<effort>/` folders may have their own workflow docs that elaborate on this for their specific context (e.g. [`tickets/port-from-mobile/workflow.md`](tickets/port-from-mobile/workflow.md) describes how the rule interacts with session-branch naming across multiple worktrees). The general principle above always applies; effort-specific workflows only extend it.
 
 ---
 
@@ -384,10 +384,10 @@ _Report Type: [Audit/Research/Analysis/Assessment]_
 - Active work: Root folder (`bugs/`, `tasks/`, `reports/`)
 - Completed work: `.done/` or `.solved/` subfolders
 - Archived/deprecated: `.archived/` subfolder
-- **Exploitable security detail: `issues/.secret/` — gitignored, never committed.**
+- **Exploitable security detail: `tickets/.secret/` — gitignored, never committed.**
   This repo is public. If a write-up describes an attack that works against code
   users are running today, it is created there from the start. See
-  [AGENTS.md](AGENTS.md) → "Security-sensitive issues".
+  [AGENTS.md](AGENTS.md) → "Security-sensitive tickets".
 
 ---
 
@@ -605,4 +605,4 @@ yarn add package-name
 
 ---
 
-_Created: 2025-10-08 | Last updated: 2026-04-09_
+_Created: 2025-10-08 | Last updated: 2026-11-22_

@@ -265,7 +265,7 @@ export interface MessageServiceDependencies {
  *
  * The clear has to travel to the DB as an explicit `clearFields`, because
  * `saveSpaceMember` merges and drops `undefined`s — see that method's doc and
- * 2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md under .agents/issues/
+ * 2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md under .agents/tickets/
  */
 /**
  * Strip every field that belongs to a STORED row but must never reach the wire.
@@ -2737,7 +2737,7 @@ export class MessageService {
       // fully and tolerate a cosmetic self-sync lag, because desktop's JS SDK does
       // not expose the per-message authenticated sender that would let us tell a
       // genuine self-echo from a peer spoofing your address. See
-      // 2026-06-25-MASTER-RECAP-control-message-auth.md under .agents/issues/.
+      // 2026-06-25-MASTER-RECAP-control-message-auth.md under .agents/tickets/.
       const isDM = spaceId === channelId;
       if (isDM) {
         const authorized =
@@ -5350,7 +5350,7 @@ export class MessageService {
             // on decrypted content. It is safe to pass the raw error here only
             // because quorum-shared's logger redacts it at the choke point when
             // logs are exposed in production. Do not "simplify" that away.
-            // .agents/issues/.open/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md
+            // .agents/tickets/.open/2026-08-17-decrypt-error-messages-leak-ten-characters-of-plaintext.md
             logger.error('[MessageService] DM decrypt failed (ConfirmDoubleRatchetSenderSession) — skipping frame, keeping session', decryptError);
             this.retainOrDropUndecryptableFrame(
               'Confirm',
@@ -5797,7 +5797,7 @@ export class MessageService {
               const isUpdateProfile = decryptedContent.content.type === 'update-profile';
               // participant may be null: the sender's join broadcast never
               // reached us, so there is no space_members row yet (common — see
-              // 2026-06-13-space-members-missing-no-join-row.md under .agents/issues/).
+              // 2026-06-13-space-members-missing-no-join-row.md under .agents/tickets/).
               // Optional-chain the deref; a missing inbox_address means we have
               // nothing to compare against, so there is no mismatch to flag and
               // the signature is verified below as normal. Without the guard
@@ -6673,7 +6673,7 @@ export class MessageService {
             // was, which is why re-asking is the whole repair.
             //
             // See 2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md
-            // under .agents/issues/ (filed by state, so grep the name — it moves).
+            // under .agents/tickets/ (filed by state, so grep the name — it moves).
             const learnedTarget = this.rosterConvergence.noteAdvertisedRoster(
               spaceId,
               envelope.message.memberCount ?? envelope.message.summary?.memberCount
@@ -7152,7 +7152,7 @@ export class MessageService {
             // nothing distinguishes "the payload never came", "it came empty"
             // and "it came full and every row was skipped". That gap cost a
             // full debugging session on 2026-08-02.
-            // See 2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md under .agents/issues/
+            // See 2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md under .agents/tickets/
             logger.log(
               `[MessageService] sync-delta: memberDelta=${
                 envelope.message.memberDelta

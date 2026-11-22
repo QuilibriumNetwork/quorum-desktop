@@ -12,7 +12,7 @@
 // It mattered to the handful of surfaces that have no provider of their own
 // and render directly from an app-level host ABOVE every Space/DM provider:
 // `ModalProvider`'s Kick/Mute/Block confirmations (see
-// `.agents/issues/2026-08-10-...`), and the nav rail's own avatar/name (no
+// `.agents/tickets/2026-08-10-...`), and the nav rail's own avatar/name (no
 // spaceId, so rosters are irrelevant there — see `selfLocalNameEntry`, the
 // other half of this fix). Those surfaces have nothing to fall back to but
 // the root, so the root has to actually know something.

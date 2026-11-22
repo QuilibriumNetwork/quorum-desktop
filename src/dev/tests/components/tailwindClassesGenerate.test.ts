@@ -25,7 +25,7 @@ import tailwindConfig from '../../../../tailwind.config.js';
  * modifier cannot apply to a bare `var()` value, which is what `accent-rgb`
  * exists for.
  *
- * See `.agents/issues/.done/2026-08-12-hover-text-utilities-generate-no-css.md`.
+ * See `.agents/tickets/.done/2026-08-12-hover-text-utilities-generate-no-css.md`.
  *
  * Related: `cssColourVariableFormat.test.ts` catches the neighbouring defect,
  * where the class does generate but its `rgb(var(--x))` value is invalid CSS.

@@ -21,7 +21,7 @@
  * which is right, because the backup file they took is no longer *on* this
  * device and the fresh database is once more the only copy.
  *
- * See .agents/issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md (M4)
+ * See .agents/tickets/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md (M4)
  */
 
 const KEY = 'quorum:backup:lastBackup';

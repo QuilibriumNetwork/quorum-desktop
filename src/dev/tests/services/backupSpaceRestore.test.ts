@@ -1,7 +1,7 @@
 /**
  * Backup restore — Spaces come back, and an import can never make a device worse.
  *
- * Slice 2 of `.agents/issues/.open/2026-08-09-backup-restore-overhaul-design.md`.
+ * Slice 2 of `.agents/tickets/.open/2026-08-09-backup-restore-overhaul-design.md`.
  *
  * THE PROPERTY UNDER TEST
  * §4 of the design argues the restore must reconcile **per record**, not per

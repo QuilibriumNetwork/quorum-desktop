@@ -176,7 +176,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
         <div className="text-subtitle-2">
           <Trans>Bio</Trans>
         </div>
-        {/* Bio is local-only for now - not synced across devices. See 2025-01-06-add-user-bio-field.md under .agents/issues/ for future sync work */}
+        {/* Bio is local-only for now - not synced across devices. See 2025-01-06-add-user-bio-field.md under .agents/tickets/ for future sync work */}
         <div className="pt-2 text-label mb-4">
           <Trans>
             This bio will be visible to others when they view your profile.

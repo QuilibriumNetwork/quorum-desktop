@@ -77,7 +77,7 @@ export const DMUserProfileSidebar: React.FC<DMUserProfileSidebarProps> = ({ user
       <div className="dm-profile-identity">
         {/* withAvatar: the avatar's initials and the name label resolve from
             the SAME identity-module lookup, so they cannot disagree — see
-            .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md. */}
+            .agents/tickets/.open/2026-08-10-identity-resolution-architecture-design.md. */}
         <MemberName
           address={user.address}
           enrich

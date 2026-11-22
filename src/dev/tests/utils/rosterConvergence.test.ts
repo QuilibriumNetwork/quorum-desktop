@@ -17,7 +17,7 @@
 //                  never noticed and the user stares at truncated addresses
 //                  until they relaunch
 //
-// See 2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md under .agents/issues/
+// See 2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md under .agents/tickets/
 
 import { describe, it, expect } from 'vitest';
 import {

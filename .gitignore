@@ -53,9 +53,12 @@ src/dev/tests/harness/logs/
 .temp/
 .worktrees/
 
-# Security-sensitive issue reports. This repo is PUBLIC, so any write-up that
+# Security-sensitive ticket reports. This repo is PUBLIC, so any write-up that
 # describes a working attack against shipped code is held here and never
-# tracked. See .agents/AGENTS.md -> "Security-sensitive issues (.secret/)".
+# tracked. See .agents/AGENTS.md -> "Security-sensitive tickets (.secret/)".
+.agents/tickets/.secret/
+# Former name of the folder above. Keep until every local checkout has moved its
+# secret files to tickets/, so a pull never leaves them unignored.
 .agents/issues/.secret/
 
 # Logs and captures. Regenerated every run; carry account/machine names and,

@@ -13,7 +13,7 @@ import {
   type IssueType,
 } from '../utils/issueTaxonomy';
 
-/** The three trees the dev viewer browses. `.agents/issues/` replaced the old
+/** The three trees the dev viewer browses. `.agents/tickets/` replaced the old
  *  `tasks/` + `bugs/` split, so there is one issue section, not two. */
 export type MarkdownSection = 'docs' | 'issues' | 'reports';
 
@@ -73,8 +73,9 @@ const generateSlug = (path: string): string => {
     .replace(/\.md$/, '')
     .toLowerCase();
 
-  // Remove section prefix (docs/, issues/, reports/)
-  slug = slug.replace(/^(docs|issues|reports)\//, '');
+  // Remove section prefix (docs/, tickets/, reports/; issues/ is the former
+  // name of tickets/, kept so a stale manifest still yields the same slugs)
+  slug = slug.replace(/^(docs|tickets|issues|reports)\//, '');
 
   // Replace special characters and spaces with hyphens
   slug = slug

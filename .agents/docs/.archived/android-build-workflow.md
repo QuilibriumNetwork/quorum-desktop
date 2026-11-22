@@ -11,7 +11,7 @@ related_docs:
 
 # Android Build Workflow
 
-> **🗄️ ARCHIVED 2026-08-13 — everything this guide describes has been deleted.** The `yarn mobile:android` / `yarn mobile:clear` / `yarn mobile:connect` commands below drove the `quorum-desktop/mobile/` playground, a leftover from the abandoned plan to build the mobile app inside this repo. That workspace was removed on 2026-08-13 (see [`2026-08-13-remove-single-repo-cross-platform-leftovers.md`](../../issues/2026-08-13-remove-single-repo-cross-platform-leftovers.md)). **None of the commands below will work.** Real Android builds live in the separate **`quorum-mobile`** repo. Kept only for the Windows environment notes (`ANDROID_HOME` / `JAVA_HOME` / `GRADLE_USER_HOME`, and the accented-username junction workaround), which still apply to native builds anywhere on this machine.
+> **🗄️ ARCHIVED 2026-08-13 — everything this guide describes has been deleted.** The `yarn mobile:android` / `yarn mobile:clear` / `yarn mobile:connect` commands below drove the `quorum-desktop/mobile/` playground, a leftover from the abandoned plan to build the mobile app inside this repo. That workspace was removed on 2026-08-13 (see [`2026-08-13-remove-single-repo-cross-platform-leftovers.md`](../../tickets/2026-08-13-remove-single-repo-cross-platform-leftovers.md)). **None of the commands below will work.** Real Android builds live in the separate **`quorum-mobile`** repo. Kept only for the Windows environment notes (`ANDROID_HOME` / `JAVA_HOME` / `GRADLE_USER_HOME`, and the accented-username junction workaround), which still apply to native builds anywhere on this machine.
 
 > **AI-Generated**: May contain errors. Verify before use.
 
@@ -167,7 +167,7 @@ This was caused by multiple Metro configuration issues in the monorepo setup. Al
 - `multiformats` subpath imports need package exports support → mapped manually in `resolveRequest`
 - Stale `AccentColorSwitcher` imports in test files → removed
 
-See [bug report](../../issues/.done/2026-03-15-mobile-metro-bundling-failure.md) for full details.
+See [bug report](../../tickets/.done/2026-03-15-mobile-metro-bundling-failure.md) for full details.
 
 ### "No apps connected" in Metro
 
@@ -228,7 +228,7 @@ cd mobile/android && ./gradlew clean
 ## Related Documentation
 
 - [Expo Dev Testing Guide](expo-dev-testing-guide.md) — General Expo setup and testing workflows
-- [Metro Bundling Bug Report](../../issues/.done/2026-03-15-mobile-metro-bundling-failure.md) — Full investigation details
+- [Metro Bundling Bug Report](../../tickets/.done/2026-03-15-mobile-metro-bundling-failure.md) — Full investigation details
 
 ---
 

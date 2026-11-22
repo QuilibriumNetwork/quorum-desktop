@@ -344,7 +344,7 @@ const UserProfile: React.FunctionComponent<{
             </Flex>
             <div className="user-profile-state">
               {/* TODO: Re-enable when online/offline status is implemented
-                  See 2025-01-20-user-status.md under .agents/issues/ for implementation plan
+                  See 2025-01-20-user-status.md under .agents/tickets/ for implementation plan
                   Phase 1: Show current user's connection state
                   Phase 2: Show all users' online/offline status via presence system
               <UserOnlineStateIndicator user={props.user} />

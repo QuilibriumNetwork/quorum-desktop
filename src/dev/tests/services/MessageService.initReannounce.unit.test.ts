@@ -23,7 +23,7 @@
  * peer reinstall — the failure mode a whole separate issue exists about. So the
  * different-ephemeral case is asserted just as hard as the same-ephemeral one.
  *
- * See `.agents/issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md`
+ * See `.agents/tickets/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md`
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

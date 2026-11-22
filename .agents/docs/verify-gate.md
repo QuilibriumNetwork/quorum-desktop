@@ -86,7 +86,7 @@ on purpose:
 - **quorum-mobile typecheck** had no script at all. Added, and wired in as
   `KNOWN-RED` at a baseline of 11. The errors stay unfixed — 10 are in the
   untested `services/calling/`, where no change can be shown to be safe — but
-  the count can now only fall. [Issue](../issues/.open/2026-08-24-mobile-typecheck-11-errors.md).
+  the count can now only fall. [Issue](../tickets/.open/2026-08-24-mobile-typecheck-11-errors.md).
 - **quorum-shared lint** had a script but no linter: no eslint binary, no
   config, no declared dependency, so it failed with "'eslint' is not
   recognized". eslint installed, and all 11 errors **fixed rather than
@@ -145,7 +145,7 @@ relying on it for mobile.
 A row can say `KNOWN-RED`:
 
 ```
-  mobile   lint   KNOWN-RED   302 errors (known-red, baseline 302) — .agents/issues/.open/…
+  mobile   lint   KNOWN-RED   302 errors (known-red, baseline 302) — .agents/tickets/.open/…
 ```
 
 That is a step which **ran, failed, and failed exactly as recorded on main** —
@@ -242,7 +242,7 @@ become "nobody runs it". `yarn verify --all` runs both.
 | Arm | Why it is held back |
 |---|---|
 | `space-basic` | Creates a permanent, undeletable Space every run. Unlike `space-delivery` it cannot reuse one, because creating a Space *is* its subject. |
-| `cross-dm` | Reports a reproducible cross-client message loss whose cause is open — see [the issue](../issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md). An arm red in most runs, for a reason unrelated to the change under test, would block every piece of work. |
+| `cross-dm` | Reports a reproducible cross-client message loss whose cause is open — see [the issue](../tickets/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md). An arm red in most runs, for a reason unrelated to the change under test, would block every piece of work. |
 
 Releasing either is two lines in `scripts/verify/steps.mjs`. The held-back set is
 asserted **by value** in `src/dev/tests/verify/routing.test.ts`, so removing a
@@ -350,7 +350,7 @@ irreversible side effect on production, and the two are consented to separately.
 > relay**. The client half already exists — `env.ts:48-49` reads `QUORUM_API_URL`
 > and `QUORUM_WS_URL`, so switching is two environment variables. What is missing
 > is a relay server to point at. Tracked in
-> [the minting issue](../issues/.done/2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md).
+> [the minting issue](../tickets/.done/2026-08-24-verify-mints-permanent-state-on-every-fresh-checkout.md).
 
 ---
 
@@ -391,7 +391,7 @@ verdict block verbatim.** Not a summary, not a subset of the rows. `PASS
 | `src/dev/tests/verify/` | 151 tests over all of the above, run in the fast tier. |
 
 Design decisions and the measurements behind them:
-[2026-08-23-verify-gate-coverage-and-cost-review.md](../issues/.done/2026-08-23-verify-gate-coverage-and-cost-review.md)
-and [2026-08-24-verify-gate-pre-ship-fixes.md](../issues/.done/2026-08-24-verify-gate-pre-ship-fixes.md).
+[2026-08-23-verify-gate-coverage-and-cost-review.md](../tickets/.done/2026-08-23-verify-gate-coverage-and-cost-review.md)
+and [2026-08-24-verify-gate-pre-ship-fixes.md](../tickets/.done/2026-08-24-verify-gate-pre-ship-fixes.md).
 
 *Last updated: 2026-08-24*

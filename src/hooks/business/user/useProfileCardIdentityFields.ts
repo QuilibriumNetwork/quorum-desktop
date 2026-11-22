@@ -30,7 +30,7 @@
 // `useMultiSpaceRosters` have already populated — a cache read, not a second
 // IndexedDB round trip. Checking the key before asserting a cost is the
 // standing lesson from the identity work; see
-// `.agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md`.
+// `.agents/tickets/2026-08-10-name-surfaces-that-never-reached-the-resolver.md`.
 
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';

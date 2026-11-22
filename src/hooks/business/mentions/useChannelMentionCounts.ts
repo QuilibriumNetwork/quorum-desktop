@@ -30,7 +30,7 @@ const DISPLAY_THRESHOLD = 10;
  * Uses React Query with 30s stale time for performance while maintaining
  * reasonable real-time updates when invalidated.
  *
- * @see mention-notification-settings-phase4.md under .agents/issues/
+ * @see mention-notification-settings-phase4.md under .agents/tickets/
  */
 export function useChannelMentionCounts({
   spaceId,

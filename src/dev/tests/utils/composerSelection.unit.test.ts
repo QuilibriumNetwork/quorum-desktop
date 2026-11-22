@@ -25,7 +25,7 @@ import {
  * correct — they save, detect staleness, restore, and fall back as intended.
  * They do NOT prove that the fix works in a browser. The browser-level evidence
  * came from a throwaway Electron harness driving real input events, recorded in
- * .agents/issues/2026-08-06-emoji-panel-inserts-at-start-of-message.md.
+ * .agents/tickets/2026-08-06-emoji-panel-inserts-at-start-of-message.md.
  *
  * The call-order test at the bottom covers the wiring in MessageComposer that
  * these unit tests otherwise leave completely unverified.

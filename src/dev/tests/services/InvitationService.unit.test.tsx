@@ -337,7 +337,7 @@ describe('InvitationService - Unit Tests', () => {
      * which does the same job for that Space's message tombstones. This asserts
      * both, so the pair cannot drift apart.
      *
-     * See `.agents/issues/.open/2026-08-09-backup-restore-overhaul-design.md` §4.1.
+     * See `.agents/tickets/.open/2026-08-09-backup-restore-overhaul-design.md` §4.1.
      */
     it('clears the departure tombstone when rejoining, alongside message tombstones', async () => {
       mockDeps.messageDB.clearTombstonesForSpace = vi.fn().mockResolvedValue(0);

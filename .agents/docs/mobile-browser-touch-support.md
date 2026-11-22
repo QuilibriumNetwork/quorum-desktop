@@ -13,7 +13,7 @@ updated: 2026-08-13
 > what to keep once a native app existed. That question has been answered, and the
 > answer was **keep all of it**. So the audit below is no longer a plan to execute; it
 > is the inventory of a live subsystem, and the only documentation this repo has for it.
-> It was moved here from `issues/mobile-dev/` when that folder was archived.
+> It was moved here from `tickets/mobile-dev/` when that folder was archived.
 >
 > **This is about phones using the web app in a browser — not about React Native.**
 > Desktop-browser-on-a-phone is a supported case and always has been. The components

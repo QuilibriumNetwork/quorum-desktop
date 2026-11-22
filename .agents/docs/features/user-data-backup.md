@@ -195,14 +195,14 @@ The Data Backup section appears in **User Settings > Security**, below the "Acco
 > Spaces lacking key material or encryption state in the file are skipped and
 > reported rather than restored half-formed.
 >
-> Design history: [`.agents/issues/.open/2026-08-09-backup-restore-overhaul-design.md`](../../issues/.open/2026-08-09-backup-restore-overhaul-design.md).
+> Design history: [`.agents/tickets/.open/2026-08-09-backup-restore-overhaul-design.md`](../../tickets/.open/2026-08-09-backup-restore-overhaul-design.md).
 
-- **No automatic backups** — users must manually export. There is no scheduled or triggered backup. **Since 2026-08-17 there is a *reminder***, which is not the same thing: `BackupStatus` on the General settings tab shows a warning when `allowSync` is off and no backup has been taken in 30 days (`utils/lastBackup.ts`). It prompts; it does not export. It also only reaches users who open Settings, which is the population least in need of it — see M4 in [the ITP issue](../../issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md).
+- **No automatic backups** — users must manually export. There is no scheduled or triggered backup. **Since 2026-08-17 there is a *reminder***, which is not the same thing: `BackupStatus` on the General settings tab shows a warning when `allowSync` is off and no backup has been taken in 30 days (`utils/lastBackup.ts`). It prompts; it does not export. It also only reaches users who open Settings, which is the population least in need of it — see M4 in [the ITP issue](../../tickets/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md).
 - **No incremental backups** — each export contains all DM data. Acceptable given DM-only scope keeps file sizes manageable.
 - **Space messages not backed up** — they resync from other members. Single-member spaces can lose message history (space definition recovers via API).
 - **No fresh-device restore during onboarding** — users must complete login first, then import from Settings. A dedicated onboarding restore flow is a potential future enhancement.
 - **Import skips encryption states and config** — on an active account, only messages and conversations are restored. An `allowSync=false` user who lost data and then joined new spaces before importing cannot recover their old space list from the backup.
-- **DM session continuity is not restored** — history comes back, sessions do not. See §6 of the overhaul design above (absorbed from [the now-archived DM-sessions issue](../../issues/.archived/2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md)).
+- **DM session continuity is not restored** — history comes back, sessions do not. See §6 of the overhaul design above (absorbed from [the now-archived DM-sessions issue](../../tickets/.archived/2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md)).
 
 ### DM session continuity: a decision, not a gap — and deliberately not surfaced in the UI
 
@@ -251,6 +251,6 @@ peer sends *before* the wiped side re-initiates.
 - [Data Management Architecture](../data-management-architecture-guide.md) — IndexedDB schema, service architecture
 - [Config Sync System](../config-sync-system.md) — ConfigService encryption pattern (reference for domain separation)
 - [Cryptographic Architecture](../cryptographic-architecture.md) — Ed448 key hierarchy
-- [Task: User Data Backup & Restore](../../issues/.done/user-data-backup-restore-feature.md) — Implementation task with full context
+- [Task: User Data Backup & Restore](../../tickets/.done/user-data-backup-restore-feature.md) — Implementation task with full context
 
 _Last updated: 2026-08-17_

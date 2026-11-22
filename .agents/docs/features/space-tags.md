@@ -10,7 +10,7 @@ related_docs:
   - docs/cryptographic-architecture.md
   - docs/features/messages/message-signing-system.md
 related_tasks:
-  - issues/.done/space-tags.md
+  - tickets/.done/space-tags.md
 ---
 
 # Space Tags
@@ -341,7 +341,7 @@ See tasks/space-tag-info-modal.md for the full implementation plan.
 
 - [Cryptographic Architecture — Inbox Key Rotation](../cryptographic-architecture.md#inbox-key-rotation) — explains why `update-profile` is exempt from the inbox mismatch guard
 - [Message Signing System — Receive-Side Verification](./messages/message-signing-system.md#receive-side-verification) — the verification pipeline that `update-profile` passes through
-- [Space Tags Task](../../issues/.done/space-tags.md) — full implementation history, edge cases, and quorum-shared migration plan
+- [Space Tags Task](../../tickets/.done/space-tags.md) — full implementation history, edge cases, and quorum-shared migration plan
 
 ---
 

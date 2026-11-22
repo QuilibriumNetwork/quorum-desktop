@@ -10,8 +10,8 @@ related_docs:
   - "user-config-sync.md"
   - "../config-sync-system.md"
 related_tasks:
-  - ".agents/issues/port-from-mobile/.done/2026-06-08-port-public-profile.md"
-  - ".agents/issues/.done/2026-06-10-space-message-list-public-profile-fallback.md"
+  - ".agents/tickets/port-from-mobile/.done/2026-06-08-port-public-profile.md"
+  - ".agents/tickets/.done/2026-06-10-space-message-list-public-profile-fallback.md"
 ---
 
 # Identity resolution and profile sync (canonical model)
@@ -233,20 +233,20 @@ moves queue POSITION. See `issues/2026-08-02-sync-requests-arrive-four-minutes-l
 | **Your OWN identity** | `.agents/tools/dm-debug/08-self-identity-sources.js` — one console paste; prints all four stores your own name lives in, your roster row per space, and the config blob's size budget. Run this FIRST for any "my own name is wrong" report |
 | **Tripwire** | `localStorage['quorum:diag:selfOverrideWrites']` — every non-empty write to your OWN per-space override, with a stack. Should stay empty; only the Space Settings editor may appear |
 | **Migration record** | `localStorage['quorum:diag:clearedSpaceOverrides']` — what the one-time legacy-override clear destroyed, since it is irreversible |
-| **The full record** | `.agents/issues/.done/2026-08-01-identity-announce-cadence-research.md` — CLOSED, its box has every shipped PR and both measurements |
+| **The full record** | `.agents/tickets/.done/2026-08-01-identity-announce-cadence-research.md` — CLOSED, its box has every shipped PR and both measurements |
 
 **Open, with next steps written:**
 
 | Item | Where |
 |---|---|
 | **MOBILE cannot ask or answer** — the largest remaining gap, and the only one that needs a lead-dev decision | "What would actually close the gap" below. Do NOT ship a mobile fix for this unilaterally |
-| 🔴 **SHIP A MOBILE BUILD — the single highest-value action available.** Mobile #215 (`ca9309e`, "a mobile member is no longer invisible to everyone who joins later") is **merged to mobile `master` on 2026-08-02**. The last mobile build shipped **2026-07-31**, two days earlier, so it does NOT contain the fix. Until a build ships, **no further client work on either repo will move the two broken quadrants** — and re-measuring before it ships will measure the old behaviour | mobile #215; `issues/2026-08-01-space-member-identity-announce-on-connect.md` §10 |
-| Sync peer selection is message-first (`memberCount` is a tiebreaker that never fires); the member half is one payload with no retry | `issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` → NEXT STEPS |
-| A per-space name/avatar never reaches your own other devices | `issues/.open/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md` |
+| 🔴 **SHIP A MOBILE BUILD — the single highest-value action available.** Mobile #215 (`ca9309e`, "a mobile member is no longer invisible to everyone who joins later") is **merged to mobile `master` on 2026-08-02**. The last mobile build shipped **2026-07-31**, two days earlier, so it does NOT contain the fix. Until a build ships, **no further client work on either repo will move the two broken quadrants** — and re-measuring before it ships will measure the old behaviour | mobile #215; `tickets/2026-08-01-space-member-identity-announce-on-connect.md` §10 |
+| Sync peer selection is message-first (`memberCount` is a tiebreaker that never fires); the member half is one payload with no retry | `tickets/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` → NEXT STEPS |
+| A per-space name/avatar never reaches your own other devices | `tickets/.open/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md` |
 | Members that **no peer holds** — only the person re-announcing recovers them | same roster-pull file, NEXT STEP C. Blocked on a mobile release carrying #215 |
-| A deleted space tag still shows on **mobile** | `issues/.done/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md` §5 |
-| Every `logger` call is a no-op in production — why none of this was visible | `issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md` |
-| Hub-log migration; would delete the (working) pull | `issues/port-from-mobile/candidates.md` #32 |
+| A deleted space tag still shows on **mobile** | `tickets/.done/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md` §5 |
+| Every `logger` call is a no-op in production — why none of this was visible | `tickets/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md` |
+| Hub-log migration; would delete the (working) pull | `tickets/port-from-mobile/candidates.md` #32 |
 
 **Two corrections this effort had to make about itself**, both worth knowing
 before trusting any older wording:
@@ -260,7 +260,7 @@ before trusting any older wording:
 ## The root-provider class of bug, and the instrument that watches for it (2026-08-11)
 
 Two more defects, found by the operator with `/dev/fake-qns` after the eight
-surfaces in `.agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md`
+surfaces in `.agents/tickets/2026-08-10-name-surfaces-that-never-reached-the-resolver.md`
 were fixed. Both are the SAME shape as each other, and a different shape from
 that file's "read a name by hand" bugs: here every surface correctly called
 `<MemberName>`/`useResolvedMemberName` — the resolver just had nothing to
@@ -616,7 +616,7 @@ the quadratic case the moment several are online.
 2. ✅ **DONE — measure first** (Step 4). The measurement is what found #295, which
    turned out to matter more than everything else shipped that day. Record and
    both snapshots are in
-   `issues/.done/2026-08-01-identity-announce-cadence-research.md` (CLOSED). Tool:
+   `tickets/.done/2026-08-01-identity-announce-cadence-research.md` (CLOSED). Tool:
    `/dev/identity-coverage`.
 
 3. **A roster served by the relay** remains the only option that works when no
@@ -683,7 +683,7 @@ When someone reports a member rendering as an address:
   user's current one.
 
   **Fixed** in the Phase 1 work (see
-  `.agents/issues/.done/2026-08-05-own-identity-cross-device-sync-design.md`): joins
+  `.agents/tickets/.done/2026-08-05-own-identity-cross-device-sync-design.md`): joins
   file identity under the global slot, nothing authors our own override but the Space
   Settings editor, and a one-time broadcast clear removes the existing ones. The
   2026-07-16 "no auto-migration" decision was reversed for exactly this reason — the
@@ -718,7 +718,7 @@ residual: an unregistered key can still set the display name/avatar on a claimed
   and per-space + global profile updates render correctly.
 - **DM profile propagation:** BLOCKED by a pre-existing, unrelated DM-transport
   delivery issue (~6 months old; master bug
-  `.agents/issues/.done/2026-07-02-dm-message-delivery-unreliable-master.md`). The DM
+  `.agents/tickets/.done/2026-07-02-dm-message-delivery-unreliable-master.md`). The DM
   path is UNTOUCHED by this work; DM verification is parked on that transport
   issue, not on this feature.
 - **Mobile→desktop global propagation:** CONFIRMED 2026-07-16. A display-name

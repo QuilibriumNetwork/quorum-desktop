@@ -114,7 +114,7 @@ function renderAtRootAppShell(address: string) {
  * async conversations page this test cares about has resolved. That let both
  * assertions run against EMPTY `locallyKnownNames` (indistinguishable from
  * "not loaded yet"), so neither test ever exercised the placeholder guard at
- * all — see .agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md.
+ * all — see .agents/tickets/2026-08-10-name-surfaces-that-never-reached-the-resolver.md.
  * Waiting on the query's own `status` instead ties the wait to the thing the
  * guard actually runs over.
  */

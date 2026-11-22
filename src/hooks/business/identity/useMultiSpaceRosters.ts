@@ -12,7 +12,7 @@
 //
 // Originally `useBookmarkRosters` (bookmarks-only); generalised here so the
 // global notification panel can reuse it instead of a second copy of the
-// same assembly — see .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md.
+// same assembly — see .agents/tickets/.open/2026-08-10-identity-resolution-architecture-design.md.
 //
 // Local IndexedDB reads only (no network), reusing the same query key/fetcher
 // as `useSpaceMembers` so a space already open in a Channel tab is not

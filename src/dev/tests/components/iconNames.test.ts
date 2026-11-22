@@ -11,7 +11,7 @@ import { isValidIconName } from '@quilibrium/quorum-shared';
  * before this test existed.
  *
  * Until the emit is fixed in quorum-shared (see
- * .agents/issues/.open/2026-08-06-invalid-icon-names-render-nothing-and-no-type-error-catches-them.md)
+ * .agents/tickets/.open/2026-08-06-invalid-icon-names-render-nothing-and-no-type-error-catches-them.md)
  * this scan is the only thing standing between a typo and an invisible icon.
  */
 

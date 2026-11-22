@@ -11,8 +11,8 @@ related_docs:
   - "../docs/features/responsive-layout.md"
   - "../docs/cryptographic-architecture.md"
 related_tasks:
-  - ".agents/issues/.open/2025-12-14-service-worker-app-updates.md"
-  - ".agents/issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md"
+  - ".agents/tickets/.open/2025-12-14-service-worker-app-updates.md"
+  - ".agents/tickets/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md"
 ---
 
 # PWA feasibility — quorum-desktop as the mobile fallback
@@ -37,7 +37,7 @@ claim.
 
 3. **But the push architecture already fits.** Mobile's push payload carries **only identifiers, no ciphertext** (READ, `quorum-mobile/ios/QuorumNotificationService/NotificationService.swift`). That is content-less push plus local enrichment, which maps onto Web Push + Service Worker almost exactly — and the SW is better positioned than the iOS NSE, because it reads the same IndexedDB the page uses instead of needing an App Group catalog file.
 
-4. **Storage eviction is the silent data-loss risk, it is live today, and it is not mobile-only.** In a Safari *tab* on **macOS as well as iOS**, WebKit wipes all IndexedDB after 7 days of Safari use without visiting the site. Installed web apps (Home Screen on iOS, Add to Dock on macOS 14+) are exempt. This makes install a data-integrity requirement rather than an enhancement. **Filed separately as a live bug:** [2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md](../issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md).
+4. **Storage eviction is the silent data-loss risk, it is live today, and it is not mobile-only.** In a Safari *tab* on **macOS as well as iOS**, WebKit wipes all IndexedDB after 7 days of Safari use without visiting the site. Installed web apps (Home Screen on iOS, Add to Dock on macOS 14+) are exempt. This makes install a data-integrity requirement rather than an enhancement. **Filed separately as a live bug:** [2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md](../tickets/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md).
 
 5. **`largeBlob` on Android Chrome is the one unknown that can kill the plan.** The account private key lives in the passkey's `largeBlob` (READ, [privateKey.ts:6](../../src/utils/privateKey.ts#L6)). Support is confirmed on iOS/Safari 17+; Android is unverified. If it fails there, the mobile fallback degrades to pasting a 114-char hex key. **Test this first.**
 
@@ -89,7 +89,7 @@ neutralises. An earlier draft of this analysis over-weighted the second.
 |---|---|---|
 | Web app manifest | **Present**, `display: standalone`, 192/512/maskable icons | READ, `public/manifest.webmanifest` |
 | Service worker | **Absent.** No registration anywhere in `src/` or `web/` | READ, repo-wide grep |
-| SW tracked as work | Open issue, but scoped to *update detection*, not PWA | READ, [2025-12-14-service-worker-app-updates.md](../issues/.open/2025-12-14-service-worker-app-updates.md) |
+| SW tracked as work | Open issue, but scoped to *update detection*, not PWA | READ, [2025-12-14-service-worker-app-updates.md](../tickets/.open/2025-12-14-service-worker-app-updates.md) |
 | Notifications | In-page `Notification` API, fired from the WebSocket batch handler | READ, [desktop-notifications.md](../docs/features/desktop-notifications.md) |
 | Web Push | **Absent.** No VAPID, no push subscription, no SW `push` handler | READ |
 | Offline data | IndexedDB-backed, `networkMode: 'always'` on all local queries, Action Queue for offline sends | READ, [offline-support.md](../docs/features/offline-support.md) |
@@ -151,7 +151,7 @@ for how long? That determines whether "no background delivery" means *delayed* o
 > **Escalated after follow-up research (2026-08-05).** This is not a mobile-only
 > or future-only concern. It affects `app.quorummessenger.com` users on **macOS
 > Safari today**, and is filed as a live bug:
-> [2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md](../issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md).
+> [2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md](../tickets/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md).
 > The summary below is the short version; the bug carries the full analysis,
 > mitigations, and verification plan.
 
@@ -367,7 +367,7 @@ Blocking or near-blocking, and none of them answerable from this repo:
 
 ## 9. Action items
 
-- [ ] **Safari ITP eviction — mitigate for today's users** — Priority: high. Tracked as [2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md](../issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md). **Independent of the PWA decision** — worth doing whatever is decided here.
+- [ ] **Safari ITP eviction — mitigate for today's users** — Priority: high. Tracked as [2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md](../tickets/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md). **Independent of the PWA decision** — worth doing whatever is decided here.
 - [ ] **E1 — `largeBlob` support matrix** — Priority: critical. Blocks everything.
 - [ ] **E2 — storage survival test** (start early, 21-day wall clock) — Priority: critical
 - [ ] **E2b — "passkey intact, ratchet gone" recovery check** — Priority: high. Answerable immediately.
@@ -375,7 +375,7 @@ Blocking or near-blocking, and none of them answerable from this repo:
 - [ ] **E4 — cold-start measurement on a mid-range Android** — Priority: medium
 - [ ] **Put questions 1–4 (§8) to the lead dev and API owners** — Priority: high
 - [ ] **Narrow UI slice: DM path phone-native** — Priority: medium. Runs in parallel with Phase 0.
-- [ ] **Fold PWA requirements into the existing SW issue** ([2025-12-14-service-worker-app-updates.md](../issues/.open/2025-12-14-service-worker-app-updates.md)) rather than opening a second SW workstream — Priority: medium
+- [ ] **Fold PWA requirements into the existing SW issue** ([2025-12-14-service-worker-app-updates.md](../tickets/.open/2025-12-14-service-worker-app-updates.md)) rather than opening a second SW workstream — Priority: medium
 
 ---
 

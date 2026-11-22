@@ -128,7 +128,7 @@ export const dismissToast = (id: string): void => {
 // SyncService.requestSync(), which runs once per space on every connect, so it
 // appeared on every refresh whether or not anything needed syncing — and it was
 // a single global toast, not per-space. See
-// .agents/issues/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md
+// .agents/tickets/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md
 // for the diagnosis and the signal a future implementation should use.
 //
 // showPersistentToast / dismissToast above are deliberately kept: they are a

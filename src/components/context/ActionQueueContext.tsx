@@ -8,9 +8,9 @@
  *
  * Online detection uses WebSocket connection state as primary signal
  * because navigator.onLine is unreliable on Wi-Fi disconnect in Chromium
- * browsers. See: offline-detection-and-optimistic-message-reliability.md under .agents/issues/
+ * browsers. See: offline-detection-and-optimistic-message-reliability.md under .agents/tickets/
  *
- * See: background-action-queue.md under .agents/issues/
+ * See: background-action-queue.md under .agents/tickets/
  */
 
 import React, {

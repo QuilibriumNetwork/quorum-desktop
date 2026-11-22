@@ -54,7 +54,7 @@ resolved plan without running anything.
 MEASURED 2026-08-23, full `yarn verify --all` from this worktree: verdict
 **`PASS (PARTIAL)`**, total **393s (6.5 min)** — this is the measured actual,
 replacing the plan's budgeted estimate of 15-20 minutes
-(`.agents/issues/.done/2026-08-22-verify-regression-gate-plan.md`, Task 12 Step 3):
+(`.agents/tickets/.done/2026-08-22-verify-regression-gate-plan.md`, Task 12 Step 3):
 
 | live step | status | seconds |
 |---|---|---|
@@ -96,7 +96,7 @@ linked worktree (`.worktrees/secondary`, where this was measured).
 > from a worktree — MEASURED, both directions, 34.6s. `cross-dm` runs as well,
 > and immediately reported a reproducible message loss, so it is now held back
 > to `--all` for a different reason:
-> `.agents/issues/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md`.
+> `.agents/tickets/.open/2026-08-24-cross-client-dm-loses-the-first-desktop-to-mobile-message.md`.
 > The table above is kept as the record of what the run looked like before that.
 
 This closes the "space delivery" and "DM delivery" gaps named in the previous

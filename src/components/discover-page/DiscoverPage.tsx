@@ -106,7 +106,7 @@ const SpacesEmpty: React.FC = () => {
  *
  * A People tab previously lived at `/discover/people`; removed 2026-06-08
  * after verification that no profile-enumeration backend endpoint exists.
- * See `port-from-mobile/candidates.md` under .agents/issues/ #6.
+ * See `port-from-mobile/candidates.md` under .agents/tickets/ #6.
  */
 export const DiscoverPage: React.FC<{ mode?: 'discover' | 'spaces-empty' }> = ({
   mode = 'discover',

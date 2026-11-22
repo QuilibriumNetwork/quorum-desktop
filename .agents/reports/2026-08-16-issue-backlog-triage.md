@@ -10,7 +10,7 @@ area: process / issue tracking
 # Triage of the 87 live issues
 
 Run to answer one question before changing the issue taxonomy: **what is actually
-sitting in `issues/` root and `.open/`, and would new folders fix it?**
+sitting in `tickets/` root and `.open/`, and would new folders fix it?**
 
 Scope: the 87 files that are neither done nor archived (11 in root, 76 in
 `.open/`). No file was moved and no frontmatter was changed.
@@ -51,7 +51,7 @@ Scope: the 87 files that are neither done nor archived (11 in root, 76 in
 | | count | share |
 |---|---|---|
 | Live files total | **87** | |
-| ...in `issues/` root ("being worked on right now") | 11 | |
+| ...in `tickets/` root ("being worked on right now") | 11 | |
 | ...in `.open/` | 76 | |
 | Older than 6 months | 25 | 29% |
 | Older than 1 year | 4 | 5% |

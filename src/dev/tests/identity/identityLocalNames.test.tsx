@@ -7,10 +7,10 @@
  * all-null identity and rendered as a truncated address — even when the app
  * already knows their name locally, from `Conversation.displayName` (a peer
  * broadcast or a decrypted message frame, see
- * `.agents/issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md`).
+ * `.agents/tickets/2026-08-01-dm-partner-identity-lost-on-established-sessions.md`).
  *
  * That violated design constraint 5 in
- * `.agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md`:
+ * `.agents/tickets/.open/2026-08-10-identity-resolution-architecture-design.md`:
  * "DM identity currently renders from IndexedDB with no network round-trip.
  * The provider must preserve that, not make names await a fetch."
  *

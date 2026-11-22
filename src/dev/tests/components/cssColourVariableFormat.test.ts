@@ -15,7 +15,7 @@ import { join } from 'path';
  * pointed at variables (`--primary`, `--text-main`, `--text-on-primary`) that
  * were never defined anywhere in the repo.
  *
- * See `.agents/issues/.open/2026-08-12-typography-classes-have-no-working-colour.md`.
+ * See `.agents/tickets/.open/2026-08-12-typography-classes-have-no-working-colour.md`.
  *
  * This scan is the only thing that catches the whole class: neither TypeScript
  * nor the SCSS compiler looks inside a `var()`, because as far as either is

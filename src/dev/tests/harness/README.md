@@ -10,7 +10,7 @@ Two halves, sharing identity/transport/storage:
 - **SPACES** — `spaceBot.ts` + `spaceDeps.ts` + `outbound.ts` + `space-*.scenario.test.ts`.
   Slices S0-S1 done. Built to characterise the intermittent roster-pull failure
   (`2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` under
-  `.agents/issues/` — issues are filed by state and move, so grep the filename).
+  `.agents/tickets/` — issues are filed by state and move, so grep the filename).
 
 It is **not** a reimplementation of the protocol. It re-hosts the real client:
 the SDK wasm crypto core, `fake-indexeddb` for storage, Node's native `fetch` +
@@ -18,7 +18,7 @@ the SDK wasm crypto core, `fake-indexeddb` for storage, Node's native `fetch` +
 logic. If a bug lives in the app, the harness hits it.
 
 > Replaces the two-browser manual rig (see
-> `.agents/issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §6) for everything
+> `.agents/tickets/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §6) for everything
 > below the UI layer.
 
 ## Quick start
@@ -389,8 +389,8 @@ copy was defeated by the relay.
 - Slice S2 (delivery rate + lag at volume, and roster size as the first swept
   variable) — NEXT. This is the one that turns the anecdote into a number.
 
-See `2026-07-27-headless-dm-harness.md` under .agents/issues/ for the DM slice plan,
-`.agents/issues/transport/2026-07-27-headless-space-harness.md` for the space one,
-and `.agents/issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §1 for the DM
+See `2026-07-27-headless-dm-harness.md` under .agents/tickets/ for the DM slice plan,
+`.agents/tickets/transport/2026-07-27-headless-space-harness.md` for the space one,
+and `.agents/tickets/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §1 for the DM
 findings.
 *Last updated: 2026-08-23*

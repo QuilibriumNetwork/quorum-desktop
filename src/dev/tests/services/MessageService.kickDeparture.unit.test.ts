@@ -19,7 +19,7 @@
  * The kick handler is ~150 lines of sequential cleanup buried inside
  * `handleNewMessage`, which is exactly the shape a refactor disturbs.
  *
- * See `.agents/issues/.open/2026-08-09-backup-restore-overhaul-design.md` §4.1.
+ * See `.agents/tickets/.open/2026-08-09-backup-restore-overhaul-design.md` §4.1.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MessageService } from '../../../services/MessageService';

@@ -3,7 +3,7 @@
 // "Unknown User" with a "?" avatar while the header showed "QmYVto…LjDd" with
 // a "Q" avatar for the SAME row.
 //
-// Context: 2026-08-01-dm-partner-identity-lost-on-established-sessions.md under .agents/issues/
+// Context: 2026-08-01-dm-partner-identity-lost-on-established-sessions.md under .agents/tickets/
 
 import { describe, it, expect } from 'vitest';
 import {
@@ -50,7 +50,7 @@ describe('isPlaceholderDisplayName', () => {
 // used to accept it as real, which then rendered the FULL, UNTRUNCATED
 // address on screen — worse than doing nothing, since the resolver's own
 // fallback at least truncates. See
-// .agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md.
+// .agents/tickets/2026-08-10-name-surfaces-that-never-reached-the-resolver.md.
 describe('isPlaceholderDisplayName — a name that is the address itself', () => {
   const ADDRESS = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqzzABCDEF';
 
@@ -119,7 +119,7 @@ describe('demotion helpers', () => {
 
 // The integration that actually caused the reported bug used to be
 // `resolveMemberName` (deleted with the rest of `utils/resolveMemberName` —
-// see .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md).
+// see .agents/tickets/.open/2026-08-10-identity-resolution-architecture-design.md).
 // The demotion now happens upstream of `src/identity`: callers that build
 // `locallyKnownNames`/roster rows (DirectMessage.tsx, DirectMessageContactsList.tsx)
 // call `realDisplayNameOrUndefined`/`realIconOrUndefined` directly (see the

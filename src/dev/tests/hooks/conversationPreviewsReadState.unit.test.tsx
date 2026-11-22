@@ -23,7 +23,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
  *      called exactly once), so the pass is real cache reuse and not an
  *      accidental refetch papering over it.
  *
- * See .agents/issues/2026-08-01-dm-unread-dot-stale-previews-snapshot.md §4.3.
+ * See .agents/tickets/2026-08-01-dm-unread-dot-stale-previews-snapshot.md §4.3.
  */
 
 const getMessage = vi.fn();

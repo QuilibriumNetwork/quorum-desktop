@@ -6,7 +6,7 @@
  *
  * APPROACH: Unit tests with vi.fn() mocks - NOT integration tests
  *
- * KNOWN GAPS (see 2026-05-19-test-suite-review.md under .agents/issues/):
+ * KNOWN GAPS (see 2026-05-19-test-suite-review.md under .agents/tickets/):
  * - ensureKeyForSpace migration path — the 80-line key-rotation operation
  *   (re-ID conversations, copy messages, migrate members, post API, update
  *   config) is the most destructive operation in the service and is

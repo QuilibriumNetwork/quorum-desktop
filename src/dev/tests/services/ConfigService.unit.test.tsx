@@ -6,7 +6,7 @@
  *
  * APPROACH: Unit tests with vi.fn() mocks - NOT integration tests
  *
- * KNOWN GAPS (see 2026-05-19-test-suite-review.md under .agents/issues/):
+ * KNOWN GAPS (see 2026-05-19-test-suite-review.md under .agents/tickets/):
  * - getConfig newer-remote-timestamp branch (the 60-line decrypt-and-verify path)
  * - getConfig equal-timestamp / stale-remote branches
  * - getConfig bookmark merge, user notes merge, tombstone application paths
@@ -1072,7 +1072,7 @@ describe('ConfigService - Unit Tests', () => {
   describe('8. saveConfig() - a rejected publish must not cost the user their edit', () => {
     // THESE TESTS ARE EXPECTED TO FAIL until the fix lands. They exist to turn a
     // read-the-code claim into a measurement, and they are the acceptance tests
-    // for .agents/issues/.open/2026-08-08-record-and-show-what-the-last-config-
+    // for .agents/tickets/.open/2026-08-08-record-and-show-what-the-last-config-
     // publish-actually-did.md.
     //
     // The claim: postUserSettings is a bare `await` with no try/catch, so a 4xx

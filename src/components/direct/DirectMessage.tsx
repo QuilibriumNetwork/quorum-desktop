@@ -518,7 +518,7 @@ const DirectMessage: React.FC<{}> = () => {
   // carries no `display_name`, self's `globalName` tier was null and your
   // own messages rendered as your truncated address while the partner's
   // rendered correctly a few pixels away. See
-  // .agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md.
+  // .agents/tickets/2026-08-10-name-surfaces-that-never-reached-the-resolver.md.
   //
   // NOT replaced by `useLocalDmNames`/`buildLocalDmNames`
   // (`src/hooks/business/identity/`), even though those now cover this exact

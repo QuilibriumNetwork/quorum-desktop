@@ -290,7 +290,7 @@ export class MessageDB {
           // silently would erase the only evidence that happened.
           // NOTE: logger is a no-op in production builds, so this currently buys
           // local diagnosability only — see
-          // .agents/issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md
+          // .agents/tickets/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md
           logger.warn(
             '[MessageDB] connection force-closed by the browser (eviction, corruption, ITP wipe, or cleared site data); reopening on next access — local data may have been lost'
           );
@@ -1343,8 +1343,8 @@ export class MessageDB {
    * on every other member's roster forever. Name/avatar/bio do not need this:
    * the two-slot model clears them with `''`, which is a present value.
    *
-   * See 2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md under .agents/issues/
-   * and 2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md under .agents/issues/
+   * See 2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md under .agents/tickets/
+   * and 2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md under .agents/tickets/
    */
   async saveSpaceMember(
     spaceId: string,
@@ -1563,7 +1563,7 @@ export class MessageDB {
         // stored; and only when there is nothing stored do we fall back to the
         // incoming placeholder, so a brand-new row keeps today's shape (both
         // fields are required on `Conversation`).
-        // See 2026-08-01-identity-announce-cadence-research.md under .agents/issues/ §2.
+        // See 2026-08-01-identity-announce-cadence-research.md under .agents/tickets/ §2.
         const request = conversationStore.put({
           ...existingConv, // Preserve existing fields including isRepudiable
           conversationId,
@@ -2092,7 +2092,7 @@ export class MessageDB {
    *
    * Storage-adapter-shaped: this is the IndexedDB implementation of what
    * will become a SearchAdapter method once quorum-shared migration unblocks.
-   * Per `search-optimization/decisions.md` under .agents/issues/ decision #9.
+   * Per `search-optimization/decisions.md` under .agents/tickets/ decision #9.
    */
   async ensureIndexReady(context: SearchContext): Promise<void> {
     const indexKey = this.getIndexKey(context);
@@ -3235,7 +3235,7 @@ export class MessageDB {
   // ============================================
   // DEBUG UTILITIES FOR ENCRYPTION STATE ANALYSIS
   // ============================================
-  // See: 2025-12-09-encryption-state-evals-bloat.md under .agents/issues/
+  // See: 2025-12-09-encryption-state-evals-bloat.md under .agents/tickets/
   //
   // Usage (browser console, DEVELOPMENT BUILDS ONLY):
   //   await window.__messageDB.analyzeEncryptionStates()

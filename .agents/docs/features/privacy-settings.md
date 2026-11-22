@@ -11,7 +11,7 @@ related_docs:
   - "./identity-resolution-and-profile-sync.md"
   - "./user-data-backup.md"
 related_tasks:
-  - "../../issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md"
+  - "../../tickets/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md"
 ---
 
 # Privacy Settings — what each toggle discloses, and to whom
@@ -109,7 +109,7 @@ or wiped device means losing access to your spaces, not just their history. The
 returning-user restore path reads `getUserSettings(address)`
 ([profile-sync-returning-user-login.md](./profile-sync-returning-user-login.md)),
 which finds nothing if you never synced. Browser storage loss is not exotic:
-see [the Safari ITP issue](../../issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md).
+see [the Safari ITP issue](../../tickets/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md).
 
 ### Off is "stop publishing", not "unpublish"
 
@@ -319,7 +319,7 @@ auditing the panel does not mistake it for a working control.
 - [Security Architecture](./security.md) — client-side protections and cryptographic posture
 - [Identity Resolution and Profile Sync](./identity-resolution-and-profile-sync.md) — how public profiles feed name resolution
 - [User Data Backup & Restore](./user-data-backup.md) — `.qmbak` export, and what it cannot restore
-- [Safari ITP wipes IndexedDB](../../issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md) — why "sync off" has a real cost
+- [Safari ITP wipes IndexedDB](../../tickets/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md) — why "sync off" has a real cost
 
 ---
 

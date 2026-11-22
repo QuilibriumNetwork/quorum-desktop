@@ -524,7 +524,7 @@ import {
 } from '@quilibrium/quorum-shared';
 ```
 
-Desktop wraps each validator with a `errorKey → Lingui string` lookup in `src/hooks/business/validation/errorTranslator.ts`. Mobile does the same with plain English strings. The `errorKey` pattern is documented in `.agents/issues/quorum-shared-migration/cross-repo-workflow.md`.
+Desktop wraps each validator with a `errorKey → Lingui string` lookup in `src/hooks/business/validation/errorTranslator.ts`. Mobile does the same with plain English strings. The `errorKey` pattern is documented in `.agents/tickets/quorum-shared-migration/cross-repo-workflow.md`.
 
 ### Encoding
 
@@ -634,7 +634,7 @@ import { RNWebSocketClient } from '@quilibrium/quorum-shared';
 
 ## UI Primitives
 
-> **Status:** Migrated to quorum-shared. See [Migration Prep Task](../issues/quorum-shared-migration/.done/2026-03-15-primitives-migration-prep.md) for details.
+> **Status:** Migrated to quorum-shared. See [Migration Prep Task](../tickets/quorum-shared-migration/.done/2026-03-15-primitives-migration-prep.md) for details.
 
 18 cross-platform UI components with `.web.tsx` and `.native.tsx` implementations, plus a theme system with colors and ThemeProvider.
 
@@ -700,7 +700,7 @@ const { theme } = useTheme();
 
 ### Related Documentation
 
-- [Primitives Migration Task](../issues/.done/primitives-migration-to-quorum-shared.md) - Step-by-step migration plan
+- [Primitives Migration Task](../tickets/.done/primitives-migration-to-quorum-shared.md) - Step-by-step migration plan
 - [Gap Analysis Report](../reports/primitives-gap-analysis-quorum-shared_2026-01-14.md) - Desktop vs mobile comparison
 - Component Architecture Masterplan - Architectural philosophy
 
@@ -809,7 +809,7 @@ function MyComponent() {
 - [Cryptographic Architecture](cryptographic-architecture.md) - Encryption protocols
 - [Config Sync System](config-sync-system.md) - User config synchronization
 - [quorum-shared Migration Analysis](../reports/quorum-shared-migration-analysis_2026-01-05.md) - Future migration planning and gap analysis
-- [Primitives Migration Task](../issues/.done/primitives-migration-to-quorum-shared.md) - UI primitives migration plan
+- [Primitives Migration Task](../tickets/.done/primitives-migration-to-quorum-shared.md) - UI primitives migration plan
 - [Primitives Gap Analysis](../reports/primitives-gap-analysis-quorum-shared_2026-01-14.md) - Desktop vs mobile comparison
 
 ---

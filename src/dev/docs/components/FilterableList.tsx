@@ -13,7 +13,7 @@ import {
 /**
  * Filtered, grouped list of markdown files.
  *
- * Issues get three filters — type, state, priority — because `.agents/issues/`
+ * Issues get three filters — type, state, priority — because `.agents/tickets/`
  * merged what used to be two separate pages: the bug-or-task distinction became
  * a field, so it has to become a filter. Docs and reports keep the single
  * status filter they always had.

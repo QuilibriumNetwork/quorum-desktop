@@ -1,5 +1,5 @@
 /**
- * Issue taxonomy — pure folder-and-frontmatter semantics for `.agents/issues/`.
+ * Issue taxonomy — pure folder-and-frontmatter semantics for `.agents/tickets/`.
  *
  * No filesystem, no fetch, no DOM: strings in, classifications out, so the rules
  * that decide what an issue *is* can be unit-tested without a scan or a browser.
@@ -10,13 +10,13 @@
  *
  * ## The folder is the state
  *
- * `.agents/issues/` encodes an issue's state in its location, not in a field:
+ * `.agents/tickets/` encodes an issue's state in its location, not in a field:
  *
- *     issues/                  → in progress, being worked on right now
- *     issues/.open/            → not started, or an unfixed bug nobody is on
- *     issues/.deferred/        → consciously postponed
- *     issues/.done/            → completed or fixed
- *     issues/.archived/        → obsolete, superseded, won't-fix
+ *     tickets/                 → in progress, being worked on right now
+ *     tickets/.open/           → not started, or an unfixed bug nobody is on
+ *     tickets/.deferred/       → consciously postponed
+ *     tickets/.done/           → completed or fixed
+ *     tickets/.archived/       → obsolete, superseded, won't-fix
  *
  * so `deriveState` reads the folder and treats `status:` as advisory. That is
  * deliberate: 42 of 517 files currently carry a `status:` that contradicts the
@@ -31,8 +31,8 @@
  *
  * ## Epics
  *
- * A large issue that splits into sub-issues gets a named folder that behaves as
- * a miniature issues tree (`issues/transport/`, with its own `.done/`). The
+ * A large ticket that splits into sub-tickets gets a named folder that behaves as
+ * a miniature tickets tree (`tickets/transport/`, with its own `.done/`). The
  * epic is the first non-dot path segment; the state still comes from the
  * innermost dot-folder, so `transport/.done/x.md` is a done issue belonging to
  * the `transport` epic. Nothing nested under a top-level dot-folder is an epic:

@@ -11,7 +11,7 @@
  * enters UserConfig — in the synced blob it would broadcast a per-device fact to
  * every other device, rewrite the blob on every save, and grow the very payload
  * this instrument exists to watch.
- * See .agents/issues/.open/2026-08-08-record-and-show-what-the-last-config-publish-actually-did.md
+ * See .agents/tickets/.open/2026-08-08-record-and-show-what-the-last-config-publish-actually-did.md
  */
 
 import type { PublishOutcome, LastPublish } from '@quilibrium/quorum-shared';

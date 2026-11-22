@@ -17,7 +17,7 @@
 // broadcast: `ConfigService` strips the field from every upload AND from every
 // inbound config, so an un-migrated sibling device cannot push the bytes back.
 //
-// See `.agents/issues/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md`.
+// See `.agents/tickets/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md`.
 
 import { useEffect, useRef } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
