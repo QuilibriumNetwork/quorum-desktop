@@ -171,7 +171,7 @@ quorum-shared is not just a dependency — it's the migration destination for th
 
 **Key reference docs:**
 - [Migration status overview](.agents/tickets/quorum-shared-migration/reference/stacked-prs-workflow.md)
-- [Hooks migration design + hook classification](.agents/tasks/quorum-shared-migration/2026-03-19-hooks-migration-design.md)
+- [Hooks migration audit + hook classification](.agents/tickets/quorum-shared-migration/designs/2026-05-28-hooks-audit-refresh.md)
 - [quorum-shared architecture](.agents/docs/quorum-shared-architecture.md)
 
 ---
