@@ -26,4 +26,4 @@ Each folder is numbered independently. Numbered files always come before non-num
 
 ## When to run
 
-After any of: creating new issues/docs/reports in `.agents/`, renaming files, moving files between status folders (`.open/`, `.deferred/`, `.done/`, `.archived/`), deleting markdown under `.agents/`.
+After any of: creating new tickets/docs/reports in `.agents/`, renaming files, moving files between status folders (`.open/`, `.deferred/`, `.done/`, `.archived/`), deleting markdown under `.agents/`.
